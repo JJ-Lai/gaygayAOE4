@@ -1,0 +1,16 @@
+target/
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+data/
+*.log
+.DS_Store
+monitoring/prometheus/alertmanager.yml
+.env.prod
+.env
+.env.local
+.env.*.local
+aoe4-api/src/main/resources/application-local.yml
+*.local.env

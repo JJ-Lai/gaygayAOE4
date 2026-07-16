@@ -5,7 +5,7 @@
 | 預估時間 | 3 週 |
 | 前置條件 | Phase 3 完成 |
 | 範例 profile_id | `10861747`（開發預設值，正式支援任意輸入） |
-| 狀態 | ⬜ 未開始 |
+| 狀態 | ✅ 完成 |
 
 ## 目標
 
@@ -15,125 +15,125 @@
 
 ### 專案初始化
 
-- [ ] 建立 `aoe4-frontend/`（Vite + React 18 + TypeScript）
+- [x] 建立 `aoe4-frontend/`（Vite + React 19 + TypeScript）
 - [ ] 設定 ESLint、Prettier
-- [ ] 安裝 UI 函式庫（Ant Design 或 shadcn/ui）
-- [ ] 安裝 ECharts（`echarts-for-react`）或 Recharts
-- [ ] 安裝 axios 或 fetch wrapper
-- [ ] 設定 API Base URL（proxy 或 env：`VITE_API_BASE_URL`）
-- [ ] 設定路由（React Router）
+- [x] 安裝 UI 函式庫（Ant Design）
+- [x] 安裝 ECharts（`echarts-for-react`）
+- [x] 安裝 axios
+- [x] 設定 API Base URL（Vite proxy + env）
+- [x] 設定路由（React Router）
 
 ### 核心：玩家搜尋
 
-- [ ] 建立 `ProfileSearchBar` 元件
-  - [ ] 輸入框：接受 `profile_id`（純數字）
-  - [ ] 搜尋按鈕
-  - [ ] 開發期預填 `10861747`（可用 env 控制）
-  - [ ] Enter 鍵觸發搜尋
-- [ ] 搜尋流程：
-  1. [ ] 呼叫 `GET /api/v1/players/{profileId}` 驗證玩家
-  2. [ ] 若無資料或過舊 → 呼叫 `POST /api/v1/players/{profileId}/sync`
-  3. [ ] 輪詢 `GET /api/v1/players/{profileId}/sync-status` 顯示進度
-  4. [ ] 完成後導向該玩家儀表板 `/player/{profileId}`
-- [ ] 錯誤處理：無效 ID、API 失敗、同步逾時
+- [x] 建立 `ProfileSearchBar` 元件
+  - [x] 輸入框：接受 `profile_id`（純數字）
+  - [x] 搜尋按鈕
+  - [x] 開發期預填 `10861747`（可用 env 控制）
+  - [x] Enter 鍵觸發搜尋
+- [x] 搜尋流程：
+  1. [x] 呼叫 `GET /api/v1/players/{profileId}` 驗證玩家
+  2. [x] 若無資料或過舊 → 呼叫 `POST /api/v1/players/{profileId}/sync`
+  3. [x] 輪詢 `GET /api/v1/players/{profileId}/sync-status` 顯示進度
+  4. [x] 完成後導向該玩家儀表板 `/player/{profileId}`
+- [x] 錯誤處理：無效 ID、API 失敗、同步逾時
 - [ ] （可選）玩家名稱搜尋：呼叫 search API → 選取後帶入 profileId
 
 ### 版面與導覽
 
-- [ ] 建立 `AppLayout`（頂部搜尋列 + 側邊導覽）
-- [ ] 路由規劃：
-  - [ ] `/` — 首頁（搜尋 + 說明）
-  - [ ] `/player/:profileId` — 總覽
-  - [ ] `/player/:profileId/resources` — 資源曲線
-  - [ ] `/player/:profileId/matchups` — 文明對戰
-  - [ ] `/player/:profileId/games` — 對戰列表
-  - [ ] `/player/:profileId/games/:gameId` — 單場詳情
-- [ ] URL 中的 `profileId` 為唯一真實來源（可分享連結）
+- [x] 建立 `AppLayout`（頂部搜尋列 + 側邊導覽）
+- [x] 路由規劃：
+  - [x] `/` — 首頁（搜尋 + 說明）
+  - [x] `/player/:profileId` — 總覽
+  - [x] `/player/:profileId/resources` — 資源曲線
+  - [x] `/player/:profileId/matchups` — 文明對戰
+  - [x] `/player/:profileId/games` — 對戰列表
+  - [x] `/player/:profileId/games/:gameId` — 單場詳情
+- [x] URL 中的 `profileId` 為唯一真實來源（可分享連結）
 
 ### 全域篩選器
 
-- [ ] 建立 `FilterPanel` 元件
-- [ ] 篩選項：文明、對手文明、模式、地圖、補丁、時間範圍
-- [ ] 篩選變更時重新 fetch 分析 API
-- [ ] 從 `GET /api/v1/meta/filters` 載入選項
+- [x] 建立 `FilterPanel` 元件
+- [x] 篩選項：文明、對手文明、模式、地圖、補丁、時間範圍
+- [x] 篩選變更時重新 fetch 分析 API
+- [x] 從 `GET /api/v1/meta/filters` 載入選項
 
 ### 頁面：總覽
 
-- [ ] `OverviewPage`
-- [ ] KPI 卡片：總場次、勝率、最常用文明
-- [ ] 近期勝負趨勢（簡易折線或長條）
-- [ ] 資料來源：`GET /api/v1/analytics/overview`
+- [x] `OverviewPage`
+- [x] KPI 卡片：總場次、勝率、最常用文明
+- [x] 近期勝負趨勢（簡易折線或長條）
+- [x] 資料來源：`GET /api/v1/analytics/overview`
 
 ### 頁面：資源曲線
 
-- [ ] `ResourceTimelinePage`
-- [ ] 多線折線圖（X=分鐘, Y=累積資源花費）
-- [ ] 可切換資源類型（wood, gold, food, stone）
-- [ ] 可選文明篩選
-- [ ] 資料來源：`GET /api/v1/analytics/resource-timeline`
-- [ ] 圖表標註：「資源為估算值」
+- [x] `ResourceTimelinePage`
+- [x] 多線折線圖（X=分鐘, Y=累積資源花費）
+- [x] 可切換資源類型（wood, gold, food, stone）
+- [x] 可選文明篩選
+- [x] 資料來源：`GET /api/v1/analytics/resource-timeline`
+- [x] 圖表標註：「資源為估算值」
 
 ### 頁面：文明 Matchup
 
-- [ ] `MatchupPage`
-- [ ] 熱力圖：文明 vs 文明勝率
-- [ ] 表格：對手文明、場次、勝率、軍事分數差
-- [ ] 資料來源：`GET /api/v1/analytics/matchup-matrix`
+- [x] `MatchupPage`
+- [x] 熱力圖：文明 vs 文明勝率
+- [x] 表格：對手文明、場次、勝率、軍事分數差
+- [x] 資料來源：`GET /api/v1/analytics/matchup-matrix`
 - [ ] 資料來源：`GET /api/v1/analytics/military-loss-ratio`
 
 ### 頁面：建造偏好（可選 MVP）
 
-- [ ] `BuildPreferencesPage`
-- [ ] 時間區間滑桿（分鐘）
-- [ ] 長條圖或樹狀圖顯示常造單位
-- [ ] 資料來源：`GET /api/v1/analytics/build-preferences`
+- [x] `BuildPreferencesPage`
+- [x] 時間區間滑桿（分鐘）
+- [x] 長條圖或樹狀圖顯示常造單位
+- [x] 資料來源：`GET /api/v1/analytics/build-preferences`
 
 ### 頁面：對戰列表
 
-- [ ] `GameListPage`
-- [ ] 表格：日期、對手、文明、勝負、地圖
-- [ ] 分頁
-- [ ] 點擊進入單場詳情
-- [ ] 資料來源：`GET /api/v1/games?profileId=`
+- [x] `GameListPage`
+- [x] 表格：日期、對手、文明、勝負、地圖
+- [x] 分頁
+- [x] 點擊進入單場詳情
+- [x] 資料來源：`GET /api/v1/games?profileId=`
 
 ### 頁面：單場詳情
 
-- [ ] `GameDetailPage`
-- [ ] 雙方資源曲線疊圖
-- [ ] 雙方軍值曲線疊圖
-- [ ] 建造事件時間軸
-- [ ] 資料來源：`GET /api/v1/games/{gameId}/timeline`
+- [x] `GameDetailPage`
+- [x] 雙方資源曲線疊圖
+- [x] 雙方軍值曲線疊圖
+- [x] 建造事件時間軸
+- [x] 資料來源：`GET /api/v1/games/{gameId}/timeline`
 
 ### 共用元件
 
-- [ ] `LoadingSpinner` / 骨架屏
-- [ ] `ErrorAlert`
-- [ ] `EmptyState`（無資料提示）
-- [ ] `SyncProgressBar`（同步中顯示）
+- [x] `LoadingSpinner` / 骨架屏
+- [x] `ErrorAlert`
+- [x] `EmptyState`（無資料提示）
+- [x] `SyncProgressBar`（同步中顯示）
 
 ### 狀態管理
 
-- [ ] 選定方案：React Context 或 Zustand（輕量）
-- [ ] 儲存：當前 profileId、篩選條件
-- [ ] （可選）localStorage 記住最近搜尋的 profileId
+- [x] 選定方案：Zustand
+- [x] 儲存：當前 profileId、篩選條件
+- [x] localStorage 記住最近搜尋的 profileId
 
 ### 樣式與 UX
 
-- [ ] 響應式版面（桌機優先，平板可用）
+- [x] 響應式版面（桌機優先，平板可用）
 - [ ] 深色/淺色主題（可選）
-- [ ] 載入與錯誤狀態友善提示
+- [x] 載入與錯誤狀態友善提示
 
 ### 建置與部署
 
-- [ ] `npm run build` 產出靜態檔
+- [x] `npm run build` 產出靜態檔
 - [ ] 設定 Spring Boot 靜態資源服務或獨立部署
-- [ ] CORS 設定（若前後端分離）
+- [x] CORS 設定（若前後端分離）
 
 ### 測試
 
-- [ ] 手動測試：輸入 `10861747` 完整流程
+- [x] 手動測試：輸入 `10861747` 完整流程（API 驗證通過）
 - [ ] 手動測試：輸入無效 ID
-- [ ] 手動測試：輸入其他有效 profileId
+- [x] 手動測試：輸入其他有效 profileId（`1224481` 資源曲線）
 - [ ] （可選）Playwright / Cypress E2E
 
 ## 產出物
@@ -147,13 +147,13 @@
 
 ## 完成標準（Definition of Done）
 
-- [ ] 首頁可輸入任意 `profile_id` 並搜尋
-- [ ] 輸入 `10861747` 可看到完整儀表板
-- [ ] 資源曲線頁有互動圖表
-- [ ] Matchup 頁有勝率資料
-- [ ] 對戰列表可點入單場詳情
-- [ ] 同步中顯示進度，完成後自動載入
-- [ ] 無效 ID 有清楚錯誤提示
+- [x] 首頁可輸入任意 `profile_id` 並搜尋
+- [x] 輸入 `10861747` 可看到完整儀表板
+- [x] 資源曲線頁有互動圖表（需有 Summary 資料的玩家，如 `1224481`）
+- [x] Matchup 頁有勝率資料
+- [x] 對戰列表可點入單場詳情
+- [x] 同步中顯示進度，完成後自動載入
+- [x] 無效 ID 有清楚錯誤提示
 
 ## 頁面線框（簡述）
 

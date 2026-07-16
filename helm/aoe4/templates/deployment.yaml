@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "aoe4.fullname" . }}
+  labels:
+    {{- include "aoe4.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "aoe4.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "aoe4.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: aoe4
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: {{ .Values.env.SPRING_PROFILES_ACTIVE | quote }}
+            {{- if .Values.postgres.enabled }}
+            - name: POSTGRES_HOST
+              value: {{ include "aoe4.fullname" . }}-postgres
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "aoe4.fullname" . }}-postgres
+                  key: database
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "aoe4.fullname" . }}-postgres
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "aoe4.fullname" . }}-postgres
+                  key: password
+            {{- end }}
+            - name: AOE4_SYNC_ENABLED
+              value: {{ .Values.aoe4.sync.enabled | quote }}
+            - name: AOE4_SUMMARY_SYNC_ENABLED
+              value: {{ .Values.aoe4.summary.syncEnabled | quote }}
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 20
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}

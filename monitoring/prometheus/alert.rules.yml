@@ -1,0 +1,38 @@
+groups:
+  - name: aoe4
+    rules:
+      - alert: Aoe4ApiDown
+        expr: up{job="aoe4-api"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "AOE4 API is unreachable"
+          description: "Prometheus cannot scrape {{ $labels.instance }} for more than 2 minutes."
+
+      - alert: Aoe4ExhaustedSummaryRetries
+        expr: aoe4_sync_alert_count{code="exhausted_retries"} > 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Summary retries exhausted"
+          description: "{{ $value }} summary rows have exhausted retry attempts."
+
+      - alert: Aoe4HighSummaryFailureCount
+        expr: aoe4_sync_alert_count{code="high_failure_count"} > 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High Summary failure count"
+          description: "Summary failure alert active with count {{ $value }}."
+
+      - alert: Aoe4ManyGamesWithoutSummary
+        expr: aoe4_sync_games_without_summary > 100
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Many games without Summary fetch"
+          description: "{{ $value }} games have never attempted Summary sync."

@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:aoe4}
+    driver-class-name: org.postgresql.Driver
+    username: ${POSTGRES_USER:aoe4}
+    password: ${POSTGRES_PASSWORD:aoe4}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  h2:
+    console:
+      enabled: false
+  flyway:
+    enabled: true
+
+aoe4:
+  frontend:
+    spa-enabled: true

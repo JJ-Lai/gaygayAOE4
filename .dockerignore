@@ -1,0 +1,9 @@
+target/
+**/node_modules/
+aoe4-frontend/dist/
+aoe4-api/data/
+aoe4-api/target/
+**/.git/
+**/.idea/
+**/.cursor/
+samples/

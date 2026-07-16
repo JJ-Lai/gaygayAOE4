@@ -1,0 +1,27 @@
+@baseUrl = http://localhost:8080/api/v1
+
+### Meta
+GET {{baseUrl}}/meta/filters
+GET {{baseUrl}}/meta/civilizations
+GET {{baseUrl}}/meta/maps
+
+### Analytics — overview (10861747)
+GET {{baseUrl}}/analytics/overview?profileId=10861747
+
+### Analytics — civ stats
+GET {{baseUrl}}/analytics/civ-stats?profileId=10861747
+
+### Analytics — resource timeline (needs summary data; try 1224481)
+GET {{baseUrl}}/analytics/resource-timeline?profileId=1224481&resources=wood,gold
+
+### Analytics — matchup matrix
+GET {{baseUrl}}/analytics/matchup-matrix?profileId=10861747&leaderboard=rm_1v1
+
+### Analytics — military loss ratio
+GET {{baseUrl}}/analytics/military-loss-ratio?profileId=10861747&playerCiv=rus
+
+### Analytics — build preferences
+GET {{baseUrl}}/analytics/build-preferences?profileId=1224481&minuteFrom=8&minuteTo=12
+
+### Single game timeline
+GET {{baseUrl}}/games/131766848/timeline?profileId=1224481

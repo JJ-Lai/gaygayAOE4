@@ -67,7 +67,7 @@ aoe4-analytics/
 | Layer 1 | `GET /api/v0/games` | 對戰清單增量同步 | 輕 |
 | Layer 1 | `GET /api/v0/players/{id}/games` | 指定玩家對戰清單 | 輕 |
 | Layer 2 | `GET /api/v0/players/{id}/games/{game_id}` | 單場詳情 | 中 |
-| Layer 3 | `GET /api/v0/players/{id}/games/{game_id}/summary?camelize=true` | 建造歷史、資源、軍值曲線 | **重（CPU 密集）** |
+| Layer 3 | `GET https://aoe4world.com/players/{id}/games/{game_id}/summary?camelize=true` | 建造歷史、資源、軍值曲線 | **重（CPU 密集）** |
 | Layer 4 | `GET /api/v0/stats/{leaderboard}/civilizations` | 文明聚合統計 | 輕 |
 | Layer 4 | `GET /api/v0/stats/{leaderboard}/matchups` | 文明對戰矩陣 | 輕 |
 | Layer 4 | `GET /api/v0/stats/{leaderboard}/maps` | 地圖統計 | 輕 |
@@ -89,8 +89,10 @@ GET https://aoe4world.com/api/v0/players/10861747/games/last?include_stats=true
 # 單場詳情（game_id 需從清單取得）
 GET https://aoe4world.com/api/v0/players/10861747/games/{game_id}
 
-# 單場 Summary（詳細分析數據）
-GET https://aoe4world.com/api/v0/players/10861747/games/{game_id}/summary?camelize=true
+# 單場 Summary（詳細分析數據）— 注意：不在 /api/v0/ 下
+GET https://aoe4world.com/players/10861747/games/{game_id}/summary?camelize=true
+# 私人對戰可加：&api_key=... 或 &sig=...
+# 詳見 docs/SUMMARY-API-GUIDE.md
 
 # 增量同步（全域）
 GET https://aoe4world.com/api/v0/games?profile_ids=10861747&order=updated_at&updated_since=2026-07-01T00:00:00Z

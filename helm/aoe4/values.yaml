@@ -1,0 +1,47 @@
+image:
+  repository: ghcr.io/your-org/aoe4
+  tag: latest
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  className: nginx
+  annotations: {}
+  hosts:
+    - host: aoe4.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
+
+env:
+  SPRING_PROFILES_ACTIVE: prod,postgres
+
+postgres:
+  enabled: true
+  image: postgres:16-alpine
+  database: aoe4
+  username: aoe4
+  password: aoe4
+  storage: 10Gi
+  storageClassName: ""
+
+aoe4:
+  sync:
+    enabled: true
+  summary:
+    syncEnabled: true

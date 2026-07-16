@@ -1,0 +1,20 @@
+# 可選：在 monitoring stack 上加入 Alertmanager（需先設定 alertmanager.yml）
+# 用法：
+#   cp monitoring/prometheus/alertmanager.example.yml monitoring/prometheus/alertmanager.yml
+#   # 編輯 webhook URL
+#   docker compose -f docker-compose.monitoring.yml -f docker-compose.alerting.yml up
+services:
+  prometheus:
+    volumes:
+      - ./monitoring/prometheus/alert.rules.yml:/etc/prometheus/alert.rules.yml:ro
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.enable-lifecycle
+      - --alertmanager.url=http://alertmanager:9093
+
+  alertmanager:
+    image: prom/alertmanager:v0.28.1
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./monitoring/prometheus/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
