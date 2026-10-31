@@ -131,7 +131,7 @@ main { padding-block: 18px 48px; }
 .chart .marker { stroke-width: 1; stroke-dasharray: 2 4; opacity: .7; }
 .chart .hdot { stroke: var(--panel); stroke-width: 2; }
 .chart .dot { stroke: var(--panel); stroke-width: 1.5; }
-.tip { position: absolute; z-index: 5; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.18); padding: 6px 10px; font-size: 12px; min-width: 140px; max-width: 280px; }
+.tip { position: absolute; z-index: 5; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.18); padding: 6px 10px; font-size: 12px; min-width: 140px; max-width: 420px; }
 .tip-title { color: var(--muted); margin-bottom: 2px; }
 .tip-row { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
 .tip-row span { flex: 1; overflow: hidden; text-overflow: ellipsis; }
@@ -353,6 +353,15 @@ window.AOE4_CONFIG = {
         <div class="legend" id="mLegend"></div>
         <div class="ages" id="mAges"></div>
       </article>
+      <article class="card" id="mArmyCard" hidden>
+        <header>
+          <h2>軍事單位與克制</h2>
+          <p id="mArmyNote">依當時還活著的兵種數量，計算誰的兵更能克制對方。高於 0 代表我方佔優。</p>
+        </header>
+        <div class="chart" id="mArmyChart"></div>
+        <div class="legend" id="mArmyLegend"></div>
+        <div class="table-wrap"><table id="mArmyTable"></table></div>
+      </article>
       <div class="grid">
         <article class="card">
           <header><h2>勝負關鍵指標</h2><p>這場在各項指標上你是領先還是落後（組隊時對手取平均）。</p></header>
@@ -480,6 +489,33 @@ window.AOE4_CONFIG = {
     army: '依生產與陣亡紀錄估算的存活軍事單位數（不含村民、偵察兵、僧侶、商人與漁船）。',
     gathered: '開局到該時間點累積採集的資源總量。'
   };
+
+  const ARMY_CLASSES = ['spear', 'archer', 'horseman', 'knight', 'maa', 'crossbow', 'horsearcher', 'gunner', 'siege', 'springald'];
+  const CLASS_NAME = {
+    spear: '長矛', archer: '弓箭', horseman: '輕騎', knight: '重騎', maa: '裝甲步兵',
+    crossbow: '弩', horsearcher: '馬弓', gunner: '火槍', siege: '攻城', springald: '弩砲'
+  };
+  // 只記有明確加成或公認對位的克制：前者克後者
+  const BEATS = {
+    spear: ['horseman', 'knight', 'horsearcher'],
+    archer: ['spear'],
+    horseman: ['archer', 'crossbow', 'gunner', 'horsearcher', 'siege', 'springald'],
+    knight: ['archer', 'crossbow', 'gunner', 'siege', 'springald'],
+    maa: ['archer', 'horsearcher'],
+    crossbow: ['maa', 'knight'],
+    gunner: ['maa', 'knight'],
+    horsearcher: ['spear'],
+    springald: ['siege']
+  };
+  const UNIT_NAME = {
+    spearman: '長矛兵', archer: '弓箭手', horseman: '輕騎兵', knight: '騎士', manatarms: '裝甲兵',
+    crossbowman: '弩兵', horsearcher: '馬弓騎兵', handcannon: '火槍兵', mangonel: '投石車',
+    trebuchet: '投石機', springald: '弩砲', bombard: '火砲', ribauldequin: '多管火砲', culverin: '長砲',
+    militia: '民兵', militia_gunner: '火槍民兵', lancer: '槍騎兵', sipahi: '西帕希', landsknecht: '傭兵步兵',
+    palace_guard: '禁軍', ghulam: '古拉姆', musofadi: '穆索法迪', camel_rider: '駱駝騎兵',
+    janissary: '耶尼切里', streltsy: '射擊軍', longbowman: '長弓兵', zhuge_nu: '諸葛弩'
+  };
+  const unitName = (id) => UNIT_NAME[id] || (id ? String(id).replace(/_/g, ' ') : '—');
 
   // ================== 小工具 ==================
   const $ = (s) => document.querySelector(s);
@@ -1159,6 +1195,100 @@ window.AOE4_CONFIG = {
     return box;
   }
 
+  function rosterAt(p, t) {
+    const row = {};
+    ARMY_CLASSES.forEach((k) => { row[k] = 0; });
+    const a = p && p.army;
+    if (!a || !a.t || !a.t.length) return row;
+    let i = 0;
+    while (i + 1 < a.t.length && a.t[i + 1] <= t + 0.5) i++;
+    ARMY_CLASSES.forEach((k) => { row[k] = a[k] && a[k][i] ? a[k][i] : 0; });
+    return row;
+  }
+  function addRoster(list, t) {
+    const row = {};
+    ARMY_CLASSES.forEach((k) => { row[k] = 0; });
+    list.forEach((p) => {
+      const one = rosterAt(p, t);
+      ARMY_CLASSES.forEach((k) => { row[k] += one[k]; });
+    });
+    return row;
+  }
+  function coverCount(mine, theirs) {
+    let n = 0;
+    Object.keys(BEATS).forEach((atk) => {
+      const c = mine[atk] || 0;
+      if (!c) return;
+      BEATS[atk].forEach((def) => { n += c * (theirs[def] || 0); });
+    });
+    return n;
+  }
+  function counterLines(mine, theirs) {
+    const lines = [];
+    Object.keys(BEATS).forEach((atk) => {
+      const c = mine[atk] || 0;
+      if (!c) return;
+      const hits = BEATS[atk].filter((def) => (theirs[def] || 0) > 0);
+      if (!hits.length) return;
+      lines.push(CLASS_NAME[atk] + ' ' + c + ' 克 ' + hits.map((def) => CLASS_NAME[def] + ' ' + theirs[def]).join('、'));
+    });
+    return lines;
+  }
+  function renderArmy(m, ps) {
+    const friends = ps.filter((p) => p.side === 'me' || p.side === 'ally');
+    const enemies = ps.filter((p) => p.side === 'opp');
+    const clock = (friends.find((p) => p.army && p.army.t) || ps.find((p) => p.army && p.army.t)).army.t;
+    const points = clock.map((t) => {
+      const mine = addRoster(friends, t);
+      const theirs = addRoster(enemies, t);
+      const myCover = coverCount(mine, theirs);
+      const oppCover = coverCount(theirs, mine);
+      const sum = myCover + oppCover;
+      return { t, mine, theirs, myCover, oppCover, edge: sum ? Math.round((myCover - oppCover) / sum * 100) : 0 };
+    });
+    lineChart($('#mArmyChart'), {
+      label: '軍事克制優劣',
+      series: [{ name: '克制優勢', color: 'var(--me)', width: 2.6, values: points.map((p) => ({ x: p.t, y: p.edge })) }],
+      xMin: 0, xFormat: fmtTime, xTicks: timeTicks, height: 240, snapTol: 15, yFormat: (v) => (v > 0 ? '+' : '') + Math.round(v) + '%',
+      tipTitle: (x) => '第 ' + fmtTime(x),
+      tipValue: (y) => (y > 0 ? '+' : '') + Math.round(y) + '%',
+      tipExtra: (x) => {
+        const p = points.reduce((best, row) => (!best || Math.abs(row.t - x) < Math.abs(best.t - x) ? row : best), null);
+        if (!p) return null;
+        const mineLines = counterLines(p.mine, p.theirs);
+        const oppLines = counterLines(p.theirs, p.mine);
+        return h('div', { class: 'tip-extra' },
+          h('div', null, '我方克制配對 ' + p.myCover + '，對方 ' + p.oppCover),
+          mineLines.length ? h('div', null, '我方：' + mineLines.join('；')) : null,
+          oppLines.length ? h('div', null, '對方：' + oppLines.join('；')) : null);
+      }
+    });
+    $('#mArmyLegend').replaceChildren(
+      h('span', null, h('i', { class: 'sw', style: 'background:var(--me)' }), '高於 0：我方的兵更能克制對方當時的軍隊'),
+      h('span', { class: 'muted' }, '長矛克騎兵與馬弓，弓箭克長矛，輕騎與重騎克遠程和攻城，裝甲步兵克弓箭，弩與火槍克裝甲步兵和重騎，弩砲克攻城。')
+    );
+    const bag = new Map();
+    const addUnits = (list, key) => list.forEach((p) => (p.units || []).forEach((u) => {
+      const row = bag.get(u.id) || { id: u.id, made: 0, lost: 0, oppMade: 0, oppLost: 0 };
+      row[key === 'me' ? 'made' : 'oppMade'] += u.made || 0;
+      row[key === 'me' ? 'lost' : 'oppLost'] += u.lost || 0;
+      bag.set(u.id, row);
+    }));
+    addUnits(friends, 'me');
+    addUnits(enemies, 'opp');
+    const rows = [...bag.values()].sort((a, b) => (b.made + b.oppMade) - (a.made + a.oppMade));
+    const alive = (n, d) => Math.max(0, (n || 0) - (d || 0));
+    $('#mArmyTable').replaceChildren(
+      h('thead', null, h('tr', null, ['兵種', '我方生產', '我方損失', '我方存活', '對手生產', '對手損失', '對手存活'].map((t, i) => h('th', { class: i ? 'n' : '' }, t)))),
+      h('tbody', null, rows.length ? rows.map((r) => h('tr', null,
+        h('td', null, unitName(r.id)),
+        h('td', { class: 'n' }, fmtNum(r.made)), h('td', { class: 'n' }, fmtNum(r.lost)), h('td', { class: 'n' }, fmtNum(alive(r.made, r.lost))),
+        h('td', { class: 'n' }, fmtNum(r.oppMade)), h('td', { class: 'n' }, fmtNum(r.oppLost)), h('td', { class: 'n' }, fmtNum(alive(r.oppMade, r.oppLost)))
+      )) : h('tr', null, h('td', { colspan: '7' }, '這場沒有軍事單位明細')))
+    );
+    $('#mArmyNote').textContent = '曲線是「我方克制配對」與「對方克制配對」的差，除以兩邊合計。+100% 代表只有我方的兵在克制對方，0 代表雙方克制力相同。生產數含升時代後重新登記的單位。';
+  }
+
   // ================== 單場分析 ==================
   function renderMatch() {
     let ms = filtered();
@@ -1228,6 +1358,10 @@ window.AOE4_CONFIG = {
     });
     $('#mLegend').replaceChildren(...ps.map((p) => h('span', null, h('i', { class: 'sw', style: 'background:' + colors.get(p) }), p.name + '・' + civName(p.civ))),
       h('span', { class: 'muted' }, '虛線：升時代的時間點'));
+
+    const hasArmy = ps.some((p) => p.army && p.army.t && p.army.t.length && (p.units || []).length);
+    $('#mArmyCard').hidden = !hasArmy;
+    if (hasArmy) renderArmy(m, ps);
 
     // 時代時間軸
     const dur = Math.max(m.duration || 0, ...ps.map((p) => { const t = p.timeline.t || []; return t[t.length - 1] || 0; })) || 1;
