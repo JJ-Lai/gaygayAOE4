@@ -258,7 +258,7 @@ function pushIfPossible() {
   let remote = '';
   try { remote = git(['remote', 'get-url', 'origin']); } catch (e) { remote = ''; }
   if (!remote) return '資料已存好。還沒有 GitHub 遠端，所以沒有上傳。';
-  git(['add', '--', 'data/local-custom-matches.json']);
+  git(['add', '-f', '--', 'data/local-custom-matches.json']);
   const staged = git(['diff', '--cached', '--name-only']);
   if (!staged) return '本機紀錄沒有新變化，不需要上傳。';
   git(['commit', '-m', '更新本機自訂對局紀錄']);
