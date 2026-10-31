@@ -1,0 +1,7 @@
+aoe4:
+  sync:
+    enabled: false
+
+logging:
+  level:
+    com.aoe4: DEBUG

@@ -1,0 +1,39 @@
+# 一鍵啟動：應用 + Prometheus + Grafana
+# 用法：docker compose -f docker-compose.full.yml up --build
+services:
+  aoe4:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - aoe4-data:/app/data
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.docker.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/alert.rules.yml:/etc/prometheus/alert.rules.yml:ro
+    depends_on:
+      - aoe4
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/aoe4-overview.json:/var/lib/grafana/dashboards/aoe4-overview.json:ro
+    depends_on:
+      - prometheus
+
+volumes:
+  aoe4-data:

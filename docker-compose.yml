@@ -1,0 +1,13 @@
+services:
+  aoe4:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - aoe4-data:/app/data
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    restart: unless-stopped
+
+volumes:
+  aoe4-data:

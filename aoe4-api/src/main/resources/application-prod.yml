@@ -1,0 +1,18 @@
+spring:
+  h2:
+    console:
+      enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+
+aoe4:
+  frontend:
+    spa-enabled: true
+
+logging:
+  level:
+    com.aoe4: INFO
