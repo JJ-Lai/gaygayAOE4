@@ -1,0 +1,703 @@
+﻿{
+    "filters":  {
+                    "profile_ids":  [
+                                        10861747
+                                    ]
+                },
+    "game_id":  242171403,
+    "started_at":  "2026-07-10T14:15:33.000Z",
+    "updated_at":  "2026-07-10T16:20:12.022Z",
+    "duration":  2406,
+    "map":  "Dry Arabia",
+    "kind":  "custom",
+    "leaderboard":  "custom",
+    "mmr_leaderboard":  "custom",
+    "season":  0,
+    "server":  "none",
+    "patch":  10884,
+    "average_rating":  1004,
+    "average_rating_deviation":  9,
+    "average_mmr":  1004,
+    "average_mmr_deviation":  9,
+    "ongoing":  false,
+    "just_finished":  false,
+    "teams":  [
+                  [
+                      {
+                          "result":  "loss",
+                          "civilization":  "english",
+                          "civilization_randomized":  false,
+                          "rating":  991,
+                          "rating_diff":  0,
+                          "mmr":  991,
+                          "mmr_diff":  0,
+                          "input_type":  "keyboard",
+                          "name":  "jerryjoshku",
+                          "profile_id":  10857013,
+                          "steam_id":  "76561198178323489",
+                          "site_url":  "http://aoe4world.com/players/10857013",
+                          "avatars":  {
+                                          "small":  null,
+                                          "medium":  null,
+                                          "full":  null
+                                      },
+                          "country":  "tw",
+                          "social":  {
+
+                                     },
+                          "modes":  {
+
+                                    }
+                      },
+                      {
+                          "result":  "loss",
+                          "civilization":  "rus",
+                          "civilization_randomized":  false,
+                          "rating":  1009,
+                          "rating_diff":  0,
+                          "mmr":  1009,
+                          "mmr_diff":  0,
+                          "input_type":  "keyboard",
+                          "name":  "Intolerant",
+                          "profile_id":  10853087,
+                          "steam_id":  "76561198386838279",
+                          "site_url":  "http://aoe4world.com/players/10853087",
+                          "avatars":  {
+                                          "small":  "https://avatars.akamai.steamstatic.com/3f5e9daea59216d7fe13df4e031d3537580e5e21.jpg",
+                                          "medium":  "https://avatars.akamai.steamstatic.com/3f5e9daea59216d7fe13df4e031d3537580e5e21_medium.jpg",
+                                          "full":  "https://avatars.akamai.steamstatic.com/3f5e9daea59216d7fe13df4e031d3537580e5e21_full.jpg"
+                                      },
+                          "country":  "tw",
+                          "social":  {
+
+                                     },
+                          "modes":  {
+                                        "rm_solo":  {
+                                                        "rank_level":  "unranked",
+                                                        "streak":  0,
+                                                        "games_count":  0,
+                                                        "wins_count":  0,
+                                                        "losses_count":  0,
+                                                        "season":  13,
+                                                        "previous_seasons":  [
+                                                                                 {
+                                                                                     "rating":  686,
+                                                                                     "rank":  42683,
+                                                                                     "rank_level":  "silver_3",
+                                                                                     "streak":  1,
+                                                                                     "games_count":  9,
+                                                                                     "wins_count":  4,
+                                                                                     "losses_count":  5,
+                                                                                     "disputes_count":  0,
+                                                                                     "drops_count":  0,
+                                                                                     "last_game_at":  "2024-05-26T17:52:41.000Z",
+                                                                                     "win_rate":  44.4,
+                                                                                     "season":  7
+                                                                                 },
+                                                                                 {
+                                                                                     "rating":  662,
+                                                                                     "rank":  45382,
+                                                                                     "rank_level":  "silver_3",
+                                                                                     "streak":  1,
+                                                                                     "games_count":  14,
+                                                                                     "wins_count":  5,
+                                                                                     "losses_count":  9,
+                                                                                     "disputes_count":  0,
+                                                                                     "drops_count":  0,
+                                                                                     "last_game_at":  "2023-12-18T15:00:47.000Z",
+                                                                                     "win_rate":  35.7,
+                                                                                     "season":  6
+                                                                                 }
+                                                                             ]
+                                                    },
+                                        "rm_1v1_elo":  {
+                                                           "rating":  918,
+                                                           "max_rating":  1079,
+                                                           "max_rating_7d":  918,
+                                                           "max_rating_1m":  918,
+                                                           "rank":  null,
+                                                           "rank_level":  null,
+                                                           "streak":  1,
+                                                           "games_count":  26,
+                                                           "wins_count":  11,
+                                                           "losses_count":  15,
+                                                           "disputes_count":  0,
+                                                           "drops_count":  0,
+                                                           "last_game_at":  "2024-05-26T17:52:42.000Z",
+                                                           "win_rate":  42.3,
+                                                           "rating_history":  {
+                                                                                  "1702910670":  {
+                                                                                                     "rating":  918,
+                                                                                                     "streak":  -5,
+                                                                                                     "wins_count":  6,
+                                                                                                     "drops_count":  0,
+                                                                                                     "disputes_count":  0,
+                                                                                                     "games_count":  16
+                                                                                                 },
+                                                                                  "1702911647":  {
+                                                                                                     "rating":  938,
+                                                                                                     "streak":  1,
+                                                                                                     "wins_count":  7,
+                                                                                                     "drops_count":  0,
+                                                                                                     "disputes_count":  0,
+                                                                                                     "games_count":  17
+                                                                                                 },
+                                                                                  "1716469709":  {
+                                                                                                     "rating":  919,
+                                                                                                     "streak":  -1,
+                                                                                                     "wins_count":  7,
+                                                                                                     "drops_count":  0,
+                                                                                                     "disputes_count":  0,
+                                                                                                     "games_count":  18
+                                                                                                 },
+                                                                                  "1716471958":  {
+                                                                                                     "rating":  884,
+                                                                                                     "streak":  -3,
+                                                                                                     "wins_count":  7,
+                                                                                                     "drops_count":  0,
+                                                                                                     "disputes_count":  0,
+                                                                                                     "games_count":  20
+                                                                                                 },
+                                                                                  "1716473447":  {
+                                                                                                     "rating":  899,
+                                                                                                     "streak":  1,
+                                                                                                     "wins_count":  8,
+                                                                                                     "drops_count":  0,
+                                                                                                     "disputes_count":  0,
+                                                                                                     "games_count":  21
+                                                                                                 },
+                                                                                  "1716614699":  {
+                                                                                                     "rating":  915,
+                                                                                                     "streak":  2,
+                                                                                                     "wins_count":  9,
+                                                                                                     "drops_count":  0,
+                                                                                                     "disputes_count":  0,
+                                                                                                     "games_count":  22
+                                                                                                 },
+                                                                                  "1716705252":  {
+                                                                                                     "rating":  931,
+                                                                                                     "streak":  3,
+                                                                                                     "wins_count":  10,
+                                                                                                     "drops_count":  0,
+                                                                                                     "disputes_count":  0,
+                                                                                                     "games_count":  23
+                                                                                                 },
+                                                                                  "1716741121":  {
+                                                                                                     "rating":  918,
+                                                                                                     "streak":  -1,
+                                                                                                     "wins_count":  10,
+                                                                                                     "drops_count":  0,
+                                                                                                     "disputes_count":  0,
+                                                                                                     "games_count":  24
+                                                                                                 },
+                                                                                  "1716743080":  {
+                                                                                                     "rating":  902,
+                                                                                                     "streak":  -2,
+                                                                                                     "wins_count":  10,
+                                                                                                     "drops_count":  0,
+                                                                                                     "disputes_count":  0,
+                                                                                                     "games_count":  25
+                                                                                                 },
+                                                                                  "1716745962":  {
+                                                                                                     "rating":  918,
+                                                                                                     "streak":  1,
+                                                                                                     "wins_count":  11,
+                                                                                                     "drops_count":  0,
+                                                                                                     "disputes_count":  0,
+                                                                                                     "games_count":  26
+                                                                                                 }
+                                                                              }
+                                                       },
+                                        "qm_1v1":  {
+                                                       "rating":  1144,
+                                                       "max_rating":  1198,
+                                                       "max_rating_7d":  1144,
+                                                       "max_rating_1m":  1144,
+                                                       "rank":  15997,
+                                                       "rank_level":  null,
+                                                       "streak":  3,
+                                                       "games_count":  50,
+                                                       "wins_count":  27,
+                                                       "losses_count":  23,
+                                                       "disputes_count":  0,
+                                                       "drops_count":  0,
+                                                       "last_game_at":  "2025-04-02T16:36:46.000Z",
+                                                       "win_rate":  54.0,
+                                                       "rating_history":  {
+                                                                              "1743336150":  {
+                                                                                                 "rating":  1150,
+                                                                                                 "streak":  -2,
+                                                                                                 "wins_count":  22,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  40
+                                                                                             },
+                                                                              "1743338581":  {
+                                                                                                 "rating":  1134,
+                                                                                                 "streak":  -3,
+                                                                                                 "wins_count":  22,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  41
+                                                                                             },
+                                                                              "1743340810":  {
+                                                                                                 "rating":  1117,
+                                                                                                 "streak":  -4,
+                                                                                                 "wins_count":  22,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  42
+                                                                                             },
+                                                                              "1743342510":  {
+                                                                                                 "rating":  1103,
+                                                                                                 "streak":  -5,
+                                                                                                 "wins_count":  22,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  43
+                                                                                             },
+                                                                              "1743342925":  {
+                                                                                                 "rating":  1118,
+                                                                                                 "streak":  1,
+                                                                                                 "wins_count":  23,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  44
+                                                                                             },
+                                                                              "1743443482":  {
+                                                                                                 "rating":  1105,
+                                                                                                 "streak":  -1,
+                                                                                                 "wins_count":  23,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  45
+                                                                                             },
+                                                                              "1743445148":  {
+                                                                                                 "rating":  1120,
+                                                                                                 "streak":  1,
+                                                                                                 "wins_count":  24,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  46
+                                                                                             },
+                                                                              "1743519975":  {
+                                                                                                 "rating":  1106,
+                                                                                                 "streak":  -1,
+                                                                                                 "wins_count":  24,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  47
+                                                                                             },
+                                                                              "1743521353":  {
+                                                                                                 "rating":  1121,
+                                                                                                 "streak":  1,
+                                                                                                 "wins_count":  25,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  48
+                                                                                             },
+                                                                              "1743582629":  {
+                                                                                                 "rating":  1131,
+                                                                                                 "streak":  2,
+                                                                                                 "wins_count":  26,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  49
+                                                                                             },
+                                                                              "1743611806":  {
+                                                                                                 "rating":  1144,
+                                                                                                 "streak":  3,
+                                                                                                 "wins_count":  27,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  50
+                                                                                             }
+                                                                          }
+                                                   },
+                                        "qm_2v2":  {
+                                                       "rating":  1105,
+                                                       "max_rating":  1138,
+                                                       "max_rating_7d":  1105,
+                                                       "max_rating_1m":  1105,
+                                                       "rank":  29807,
+                                                       "rank_level":  null,
+                                                       "streak":  -3,
+                                                       "games_count":  32,
+                                                       "wins_count":  18,
+                                                       "losses_count":  14,
+                                                       "disputes_count":  0,
+                                                       "drops_count":  0,
+                                                       "last_game_at":  "2025-03-17T12:02:53.000Z",
+                                                       "win_rate":  56.3,
+                                                       "rating_history":  {
+                                                                              "1738389583":  {
+                                                                                                 "rating":  1062,
+                                                                                                 "streak":  -2,
+                                                                                                 "wins_count":  12,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  22
+                                                                                             },
+                                                                              "1738390872":  {
+                                                                                                 "rating":  1052,
+                                                                                                 "streak":  -3,
+                                                                                                 "wins_count":  12,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  23
+                                                                                             },
+                                                                              "1738392736":  {
+                                                                                                 "rating":  1065,
+                                                                                                 "streak":  1,
+                                                                                                 "wins_count":  13,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  24
+                                                                                             },
+                                                                              "1738394718":  {
+                                                                                                 "rating":  1081,
+                                                                                                 "streak":  2,
+                                                                                                 "wins_count":  14,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  25
+                                                                                             },
+                                                                              "1738396547":  {
+                                                                                                 "rating":  1098,
+                                                                                                 "streak":  3,
+                                                                                                 "wins_count":  15,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  26
+                                                                                             },
+                                                                              "1738399165":  {
+                                                                                                 "rating":  1113,
+                                                                                                 "streak":  4,
+                                                                                                 "wins_count":  16,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  27
+                                                                                             },
+                                                                              "1738425500":  {
+                                                                                                 "rating":  1124,
+                                                                                                 "streak":  5,
+                                                                                                 "wins_count":  17,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  28
+                                                                                             },
+                                                                              "1738595615":  {
+                                                                                                 "rating":  1138,
+                                                                                                 "streak":  6,
+                                                                                                 "wins_count":  18,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  29
+                                                                                             },
+                                                                              "1738596806":  {
+                                                                                                 "rating":  1134,
+                                                                                                 "streak":  -1,
+                                                                                                 "wins_count":  18,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  30
+                                                                                             },
+                                                                              "1738599052":  {
+                                                                                                 "rating":  1119,
+                                                                                                 "streak":  -2,
+                                                                                                 "wins_count":  18,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  31
+                                                                                             },
+                                                                              "1742212973":  {
+                                                                                                 "rating":  1105,
+                                                                                                 "streak":  -3,
+                                                                                                 "wins_count":  18,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  32
+                                                                                             }
+                                                                          }
+                                                   },
+                                        "rm_1v1":  {
+                                                       "_notice_":  "Deprecated entry, rm_1v1 will be removed later, please use rm_solo instead",
+                                                       "rank_level":  "unranked",
+                                                       "streak":  0,
+                                                       "games_count":  0,
+                                                       "wins_count":  0,
+                                                       "losses_count":  0,
+                                                       "season":  13,
+                                                       "previous_seasons":  [
+                                                                                {
+                                                                                    "rating":  686,
+                                                                                    "rank":  42683,
+                                                                                    "rank_level":  "silver_3",
+                                                                                    "streak":  1,
+                                                                                    "games_count":  9,
+                                                                                    "wins_count":  4,
+                                                                                    "losses_count":  5,
+                                                                                    "disputes_count":  0,
+                                                                                    "drops_count":  0,
+                                                                                    "last_game_at":  "2024-05-26T17:52:41.000Z",
+                                                                                    "win_rate":  44.4,
+                                                                                    "season":  7
+                                                                                },
+                                                                                {
+                                                                                    "rating":  662,
+                                                                                    "rank":  45382,
+                                                                                    "rank_level":  "silver_3",
+                                                                                    "streak":  1,
+                                                                                    "games_count":  14,
+                                                                                    "wins_count":  5,
+                                                                                    "losses_count":  9,
+                                                                                    "disputes_count":  0,
+                                                                                    "drops_count":  0,
+                                                                                    "last_game_at":  "2023-12-18T15:00:47.000Z",
+                                                                                    "win_rate":  35.7,
+                                                                                    "season":  6
+                                                                                }
+                                                                            ]
+                                                   }
+                                    }
+                      },
+                      {
+                          "result":  "loss",
+                          "civilization":  "byzantines",
+                          "civilization_randomized":  false,
+                          "rating":  1013,
+                          "rating_diff":  0,
+                          "mmr":  1013,
+                          "mmr_diff":  0,
+                          "input_type":  "keyboard",
+                          "name":  "李侑玲",
+                          "profile_id":  10861747,
+                          "steam_id":  "76561198429263657",
+                          "site_url":  "http://aoe4world.com/players/10861747",
+                          "avatars":  {
+                                          "small":  "https://avatars.akamai.steamstatic.com/3ef2e330c916fffb72b072ed1eceadd2ff8132ee.jpg",
+                                          "medium":  "https://avatars.akamai.steamstatic.com/3ef2e330c916fffb72b072ed1eceadd2ff8132ee_medium.jpg",
+                                          "full":  "https://avatars.akamai.steamstatic.com/3ef2e330c916fffb72b072ed1eceadd2ff8132ee_full.jpg"
+                                      },
+                          "country":  "tw",
+                          "social":  {
+
+                                     },
+                          "modes":  {
+                                        "qm_1v1":  {
+                                                       "rating":  1104,
+                                                       "max_rating":  1152,
+                                                       "max_rating_7d":  1104,
+                                                       "max_rating_1m":  1104,
+                                                       "rank":  20247,
+                                                       "rank_level":  null,
+                                                       "streak":  -2,
+                                                       "games_count":  15,
+                                                       "wins_count":  9,
+                                                       "losses_count":  6,
+                                                       "disputes_count":  0,
+                                                       "drops_count":  0,
+                                                       "last_game_at":  "2025-04-12T16:55:38.000Z",
+                                                       "win_rate":  60.0,
+                                                       "rating_history":  {
+                                                                              "1716564124":  {
+                                                                                                 "rating":  1026,
+                                                                                                 "streak":  -1,
+                                                                                                 "wins_count":  3,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  5
+                                                                                             },
+                                                                              "1716566458":  {
+                                                                                                 "rating":  1062,
+                                                                                                 "streak":  1,
+                                                                                                 "wins_count":  4,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  6
+                                                                                             },
+                                                                              "1716572007":  {
+                                                                                                 "rating":  1097,
+                                                                                                 "streak":  2,
+                                                                                                 "wins_count":  5,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  7
+                                                                                             },
+                                                                              "1716574612":  {
+                                                                                                 "rating":  1059,
+                                                                                                 "streak":  -1,
+                                                                                                 "wins_count":  5,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  8
+                                                                                             },
+                                                                              "1716644206":  {
+                                                                                                 "rating":  1022,
+                                                                                                 "streak":  -2,
+                                                                                                 "wins_count":  5,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  9
+                                                                                             },
+                                                                              "1717944635":  {
+                                                                                                 "rating":  1056,
+                                                                                                 "streak":  1,
+                                                                                                 "wins_count":  6,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  10
+                                                                                             },
+                                                                              "1737905760":  {
+                                                                                                 "rating":  1088,
+                                                                                                 "streak":  2,
+                                                                                                 "wins_count":  7,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  11
+                                                                                             },
+                                                                              "1738683897":  {
+                                                                                                 "rating":  1122,
+                                                                                                 "streak":  3,
+                                                                                                 "wins_count":  8,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  12
+                                                                                             },
+                                                                              "1740673082":  {
+                                                                                                 "rating":  1152,
+                                                                                                 "streak":  4,
+                                                                                                 "wins_count":  9,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  13
+                                                                                             },
+                                                                              "1741454980":  {
+                                                                                                 "rating":  1130,
+                                                                                                 "streak":  -1,
+                                                                                                 "wins_count":  9,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  14
+                                                                                             },
+                                                                              "1744476938":  {
+                                                                                                 "rating":  1104,
+                                                                                                 "streak":  -2,
+                                                                                                 "wins_count":  9,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  15
+                                                                                             }
+                                                                          }
+                                                   },
+                                        "qm_2v2":  {
+                                                       "rating":  1119,
+                                                       "max_rating":  1138,
+                                                       "max_rating_7d":  1119,
+                                                       "max_rating_1m":  1119,
+                                                       "rank":  26852,
+                                                       "rank_level":  null,
+                                                       "streak":  -2,
+                                                       "games_count":  31,
+                                                       "wins_count":  18,
+                                                       "losses_count":  13,
+                                                       "disputes_count":  0,
+                                                       "drops_count":  0,
+                                                       "last_game_at":  "2025-02-03T16:10:52.000Z",
+                                                       "win_rate":  58.1,
+                                                       "rating_history":  {
+                                                                              "1717995391":  {
+                                                                                                 "rating":  1077,
+                                                                                                 "streak":  -1,
+                                                                                                 "wins_count":  12,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  21
+                                                                                             },
+                                                                              "1738389583":  {
+                                                                                                 "rating":  1062,
+                                                                                                 "streak":  -2,
+                                                                                                 "wins_count":  12,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  22
+                                                                                             },
+                                                                              "1738390872":  {
+                                                                                                 "rating":  1052,
+                                                                                                 "streak":  -3,
+                                                                                                 "wins_count":  12,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  23
+                                                                                             },
+                                                                              "1738392736":  {
+                                                                                                 "rating":  1065,
+                                                                                                 "streak":  1,
+                                                                                                 "wins_count":  13,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  24
+                                                                                             },
+                                                                              "1738394718":  {
+                                                                                                 "rating":  1081,
+                                                                                                 "streak":  2,
+                                                                                                 "wins_count":  14,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  25
+                                                                                             },
+                                                                              "1738396547":  {
+                                                                                                 "rating":  1098,
+                                                                                                 "streak":  3,
+                                                                                                 "wins_count":  15,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  26
+                                                                                             },
+                                                                              "1738399165":  {
+                                                                                                 "rating":  1113,
+                                                                                                 "streak":  4,
+                                                                                                 "wins_count":  16,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  27
+                                                                                             },
+                                                                              "1738425500":  {
+                                                                                                 "rating":  1124,
+                                                                                                 "streak":  5,
+                                                                                                 "wins_count":  17,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  28
+                                                                                             },
+                                                                              "1738595615":  {
+                                                                                                 "rating":  1138,
+                                                                                                 "streak":  6,
+                                                                                                 "wins_count":  18,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  29
+                                                                                             },
+                                                                              "1738596806":  {
+                                                                                                 "rating":  1134,
+                                                                                                 "streak":  -1,
+                                                                                                 "wins_count":  18,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  30
+                                                                                             },
+                                                                              "1738599052":  {
+                                                                                                 "rating":  1119,
+                                                                                                 "streak":  -2,
+                                                                                                 "wins_count":  18,
+                                                                                                 "drops_count":  0,
+                                                                                                 "disputes_count":  0,
+                                                                                                 "games_count":  31
+                                                                                             }
+                                                                          }
+                                                   }
+                                    }
+                      }
+                  ]
+              ]
+}

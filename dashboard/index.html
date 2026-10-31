@@ -1,0 +1,1329 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AoE4 戰績儀表板</title>
+<style>
+:root {
+  /* 版面：頂部玩家列 → 分頁與模式篩選 → 自動換行的卡片網格；窄螢幕時單欄 */
+  --bg: #edf0f4;
+  --panel: #ffffff;
+  --panel-2: #f4f6f9;
+  --line: #d6dde6;
+  --fg: #17212c;
+  --muted: #5d6977;
+  --accent: #946414;
+  --accent-soft: rgba(148, 100, 20, .12);
+  --me: #1f6fd1;
+  --ally: #13866f;
+  --opp: #cc3a2e;
+  --opp2: #c0680f;
+  --opp3: #9442b0;
+  --opp4: #6f5a45;
+  --win: #1c8746;
+  --loss: #c5352c;
+  --neutral: #8b929b;
+  --grid: rgba(23, 33, 44, .08);
+  --axis: rgba(23, 33, 44, .35);
+  --shadow: 0 1px 2px rgba(16, 24, 40, .06);
+  --font-ui: "Noto Sans TC", "Microsoft JhengHei UI", "Microsoft JhengHei", "PingFang TC", "Heiti TC", system-ui, sans-serif;
+  --font-num: "Bahnschrift", "DIN Alternate", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Bahnschrift SemiCondensed", "Bahnschrift", "Segoe UI", "Microsoft JhengHei UI", sans-serif;
+  --r: 10px;
+  --gap: 14px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f141a;
+    --panel: #171e26;
+    --panel-2: #1d2630;
+    --line: #2a3542;
+    --fg: #e7e3d8;
+    --muted: #94a0ad;
+    --accent: #e2b25c;
+    --accent-soft: rgba(226, 178, 92, .14);
+    --me: #5cb1ff;
+    --ally: #5fd0b5;
+    --opp: #ff6d61;
+    --opp2: #ffaa5c;
+    --opp3: #d38cf0;
+    --opp4: #c9a47e;
+    --win: #5cc983;
+    --loss: #ff6b63;
+    --neutral: #7d8792;
+    --grid: rgba(231, 227, 216, .08);
+    --axis: rgba(231, 227, 216, .3);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3);
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--fg); font: 14px/1.55 var(--font-ui); -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1360px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+[hidden] { display: none !important; }
+.muted { color: var(--muted); }
+.small { font-size: 12px; }
+.num { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+a { color: var(--me); }
+button, select, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* 頂部 */
+.top { background: var(--panel); border-bottom: 1px solid var(--line); }
+.top-in { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; padding-block: 18px 12px; }
+.eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--accent); font-weight: 600; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 30px; line-height: 1.15; margin: 2px 0 8px; text-wrap: balance; }
+.ratings { display: flex; flex-wrap: wrap; gap: 8px; }
+.rating-chip { display: inline-flex; align-items: baseline; gap: 6px; padding: 4px 10px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.rating-chip b { font-family: var(--font-num); font-size: 16px; color: var(--fg); font-weight: 600; }
+.src { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; min-width: 0; }
+.src-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); cursor: pointer; font-size: 13px; }
+.btn:hover { border-color: var(--accent); }
+.btn:disabled { opacity: .45; cursor: default; }
+.tabs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 2px; }
+.tab { border: 0; background: none; padding: 10px 14px; cursor: pointer; font-size: 14px; color: var(--muted); border-bottom: 2px solid transparent; }
+.tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); font-weight: 600; }
+.tab:hover { color: var(--fg); }
+.mode-filter { margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding-block: 6px; font-size: 13px; color: var(--muted); }
+.mode-filter label { display: inline-flex; align-items: center; gap: 8px; }
+.mode-filter select { max-width: 16rem; }
+select { padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); max-width: 100%; }
+
+.banner { margin-top: 12px; }
+.banner > div { padding: 10px 14px; border-radius: var(--r); border: 1px solid var(--line); background: var(--accent-soft); }
+main { padding-block: 18px 48px; }
+.view { display: flex; flex-direction: column; gap: var(--gap); }
+.takeaway { font-size: 16px; margin: 0; max-width: 80ch; text-wrap: pretty; }
+.takeaway b { font-family: var(--font-num); }
+
+/* 卡片 */
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--gap); }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; box-shadow: var(--shadow); min-width: 0; }
+.card > header { margin-bottom: 12px; }
+.card h2 { font-size: 15px; font-weight: 600; margin: 0; }
+.card header p { margin: 2px 0 0; color: var(--muted); font-size: 12.5px; }
+.span-all { grid-column: 1 / -1; }
+.empty { color: var(--muted); font-size: 13px; padding: 24px 0; text-align: center; margin: 0; }
+.notice { color: var(--muted); }
+
+/* 數字卡 */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr)); gap: var(--gap); }
+.tile { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; min-width: 0; }
+.tile .k { font-size: 12px; color: var(--muted); }
+.tile .v { font-family: var(--font-num); font-size: 28px; font-weight: 500; line-height: 1.2; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.tile .s { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.good { color: var(--win); }
+.bad { color: var(--loss); }
+
+/* 圖表 */
+.chart { position: relative; min-height: 120px; }
+.chart svg { display: block; overflow: visible; }
+.chart .grid { stroke: var(--grid); stroke-width: 1; }
+.chart .axis { stroke: var(--axis); stroke-width: 1; }
+.chart .tick { fill: var(--muted); font-size: 11px; font-family: var(--font-num); }
+.chart .line { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.chart .rule { stroke: var(--axis); stroke-width: 1; stroke-dasharray: 3 3; }
+.chart .marker { stroke-width: 1; stroke-dasharray: 2 4; opacity: .7; }
+.chart .hdot { stroke: var(--panel); stroke-width: 2; }
+.chart .dot { stroke: var(--panel); stroke-width: 1.5; }
+.tip { position: absolute; z-index: 5; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.18); padding: 6px 10px; font-size: 12px; min-width: 140px; max-width: 280px; }
+.tip-title { color: var(--muted); margin-bottom: 2px; }
+.tip-row { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+.tip-row span { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.tip-row b { font-family: var(--font-num); font-weight: 600; }
+.sw { display: inline-block; width: 10px; height: 3px; border-radius: 2px; flex: none; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 8px; font-size: 12.5px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+/* 勝率長條 */
+.wbars { display: flex; flex-direction: column; gap: 8px; }
+.wbar { display: grid; grid-template-columns: minmax(6rem, 9rem) 1fr auto; align-items: center; gap: 10px; }
+.wbar-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+.wbar-track { display: flex; height: 12px; border-radius: 3px; background: var(--panel-2); overflow: hidden; }
+.wbar-fill.win { background: var(--win); }
+.wbar-fill.loss { background: var(--loss); opacity: .75; }
+.wbar-val { font-size: 12px; color: var(--muted); white-space: nowrap; text-align: right; min-width: 7.5rem; font-variant-numeric: tabular-nums; }
+.wbar-val b { color: var(--fg); font-family: var(--font-num); font-size: 13px; margin-right: 4px; }
+.more { margin-top: 8px; }
+
+/* 最近戰績 */
+.form { display: flex; flex-wrap: wrap; gap: 4px; }
+.form button { width: 26px; height: 26px; border-radius: 5px; border: 0; cursor: pointer; font-size: 12px; font-weight: 600; color: #fff; }
+.form .w { background: var(--win); }
+.form .l { background: var(--loss); }
+.form .u { background: var(--neutral); }
+.form-legend { margin-top: 8px; font-size: 12px; color: var(--muted); }
+
+/* 表格 */
+.table-wrap { overflow-x: auto; }
+.table-wrap.tall { max-height: 70vh; overflow: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-weight: 600; color: var(--muted); font-size: 12px; background: var(--panel); position: sticky; top: 0; z-index: 1; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--font-num); }
+tbody tr.click { cursor: pointer; }
+tbody tr.click:hover { background: var(--panel-2); }
+th button { all: unset; cursor: pointer; }
+th button:focus-visible { outline: 2px solid var(--accent); }
+th[aria-sort="ascending"] button::after { content: " ▲"; font-size: 9px; }
+th[aria-sort="descending"] button::after { content: " ▼"; font-size: 9px; }
+.pill { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.pill.w { background: color-mix(in srgb, var(--win) 16%, transparent); color: var(--win); }
+.pill.l { background: color-mix(in srgb, var(--loss) 16%, transparent); color: var(--loss); }
+.pill.u { background: var(--panel-2); color: var(--muted); }
+.pill.lead { background: color-mix(in srgb, var(--win) 14%, transparent); color: var(--win); }
+.pill.trail { background: color-mix(in srgb, var(--loss) 14%, transparent); color: var(--loss); }
+.pill.even { background: var(--panel-2); color: var(--muted); }
+.pdot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+
+/* 單場分析 */
+.match-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.match-bar select { flex: 1 1 18rem; min-width: 0; }
+.match-head { display: flex; flex-wrap: wrap; gap: 8px 28px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; }
+.match-result { font-family: var(--font-display); font-size: 34px; font-weight: 600; line-height: 1; }
+.match-meta { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 13px; color: var(--muted); }
+.match-meta b { color: var(--fg); font-weight: 600; }
+.vs { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; width: 100%; }
+.vs .side { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
+.vs .label { color: var(--muted); font-size: 12px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-bottom: 10px; }
+.chip-group { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.chip-group > span { font-size: 11px; color: var(--muted); margin-right: 2px; }
+.chip { border: 1px solid var(--line); background: var(--panel-2); border-radius: 999px; padding: 3px 10px; font-size: 12.5px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--fg); color: var(--panel); border-color: var(--fg); }
+.ages { display: flex; flex-direction: column; gap: 6px; margin-top: 14px; }
+.age-row { display: grid; grid-template-columns: minmax(5rem, 9rem) 1fr; gap: 10px; align-items: center; font-size: 12.5px; }
+.age-row .who { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.age-track { position: relative; height: 22px; border-radius: 4px; background: var(--panel-2); }
+.age-mark { position: absolute; top: 2px; transform: translateX(-50%); font-size: 10.5px; font-family: var(--font-num); padding: 1px 4px; border-radius: 4px; color: #fff; white-space: nowrap; }
+.cell-vs { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+.cell-vs small { color: var(--muted); }
+.pair { display: grid; grid-template-columns: minmax(5.5rem, 7.5rem) 1fr; gap: 4px 10px; align-items: center; font-size: 12.5px; margin-bottom: 8px; }
+.pair-bars { display: flex; flex-direction: column; gap: 2px; }
+.pair-bar { display: flex; align-items: center; gap: 6px; }
+.pair-bar i { display: block; height: 8px; border-radius: 2px; min-width: 2px; }
+.pair-bar span { font-family: var(--font-num); font-size: 12px; font-variant-numeric: tabular-nums; }
+.flist { display: flex; flex-direction: column; }
+.frow { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+.frow:last-child { border-bottom: 0; }
+.frow .vals { font-family: var(--font-num); font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12.5px; text-align: right; }
+.frow .vals b { color: var(--fg); }
+
+/* 勝負關鍵 */
+.dumb { display: flex; flex-direction: column; }
+.dumb-row { display: grid; grid-template-columns: minmax(8rem, 13rem) 1fr minmax(5rem, auto); gap: 12px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+.dumb-row:last-child { border-bottom: 0; }
+.dumb-name small { display: block; color: var(--muted); font-size: 11.5px; }
+.dumb-track { position: relative; height: 22px; }
+.dumb-track::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px dashed var(--line); }
+.dumb-mid { position: absolute; top: 2px; bottom: 2px; border-left: 1px solid var(--axis); }
+.dumb-bar { position: absolute; top: 50%; height: 3px; transform: translateY(-50%); background: var(--muted); opacity: .45; border-radius: 2px; }
+.dumb-dot { position: absolute; top: 50%; width: 12px; height: 12px; border-radius: 50%; transform: translate(-50%, -50%); border: 2px solid var(--panel); }
+.dumb-dot.lead { background: var(--win); }
+.dumb-dot.trail { background: var(--loss); }
+.dumb-gap { text-align: right; font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+.dumb-axis { display: grid; grid-template-columns: minmax(8rem, 13rem) 1fr minmax(5rem, auto); gap: 12px; font-size: 11px; color: var(--muted); }
+.dumb-axis div:nth-child(2) { display: flex; justify-content: space-between; }
+.factor-card h3 { font-size: 15px; margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.tag { font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--line); color: var(--muted); }
+.tag.strong { color: var(--accent); border-color: var(--accent); }
+.factor-card p { margin: 6px 0; font-size: 13px; max-width: 70ch; }
+.factor-card .stat-line { font-size: 13px; margin: 8px 0 4px; }
+.factor-card .stat-line b { font-family: var(--font-num); }
+.factor-card details { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+.factor-card details summary { cursor: pointer; }
+.factor-card ul { margin: 4px 0 0; padding-left: 18px; }
+.avg-table { font-size: 12.5px; margin-top: 6px; }
+.avg-table td, .avg-table th { padding: 4px 8px; }
+.list-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.list-tools input { flex: 1 1 16rem; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); min-width: 0; }
+.dropzone { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--bg) 80%, transparent); border: 3px dashed var(--accent); font-size: 18px; }
+@media (max-width: 560px) {
+  h1 { font-size: 24px; }
+  .src { align-items: flex-start; text-align: left; }
+  .wbar { grid-template-columns: 5.5rem 1fr; }
+  .wbar-val { grid-column: 2; text-align: left; min-width: 0; }
+  .dumb-row, .dumb-axis { grid-template-columns: 7rem 1fr 3.5rem; gap: 8px; }
+  .mode-filter { margin-left: 0; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .view:not([hidden]) { animation: fade .18s ease-out; }
+  @keyframes fade { from { opacity: .4; } to { opacity: 1; } }
+}
+</style>
+</head>
+<body>
+
+<!--
+  ===== 資料來源設定 =====
+  預設讀取同資料夾的 data/aoe4-data.js（內容為 window.AOE4_DATA = {...}）。
+  之後若寫了 API 接收程式，可以：
+    1) 直接覆寫 data/aoe4-data.js，重新整理網頁即可；或
+    2) 把下方 dataUrl 設成 API 網址（回傳 JSON，格式見 資料格式.md），
+       refreshMinutes 設定每幾分鐘自動重新抓取（0 = 不自動）。
+  也可以用右上角「匯入資料」選擇 .json / .js 檔，或直接把檔案拖進視窗。
+-->
+<script>
+window.AOE4_CONFIG = {
+  dataUrl: '',
+  refreshMinutes: 0
+};
+</script>
+
+<header class="top">
+  <div class="wrap top-in">
+    <div class="who">
+      <div class="eyebrow">AGE OF EMPIRES IV · 個人戰績</div>
+      <h1 id="playerName">AoE4 戰績儀表板</h1>
+      <div class="ratings" id="ratings"></div>
+    </div>
+    <div class="src">
+      <div id="sourceInfo" class="muted small">尚未載入資料</div>
+      <div class="src-actions">
+        <button type="button" id="reloadBtn" class="btn" hidden>重新抓取</button>
+        <label class="btn" for="importFile">匯入資料<input type="file" id="importFile" class="sr-only" accept=".json,.js,application/json,text/javascript"></label>
+      </div>
+    </div>
+  </div>
+  <nav class="wrap tabs" role="tablist" aria-label="頁面">
+    <button type="button" class="tab" role="tab" data-view="overview" id="tab-overview">總覽</button>
+    <button type="button" class="tab" role="tab" data-view="match" id="tab-match">單場分析</button>
+    <button type="button" class="tab" role="tab" data-view="factors" id="tab-factors">勝負關鍵</button>
+    <button type="button" class="tab" role="tab" data-view="list" id="tab-list">對局列表</button>
+    <div class="mode-filter">
+      <label for="modeSel">模式<select id="modeSel"></select></label>
+      <label for="oppSel">對手<select id="oppSel"></select></label>
+    </div>
+  </nav>
+</header>
+
+<div id="banner" class="wrap banner" hidden></div>
+
+<main class="wrap">
+  <section id="view-overview" class="view" role="tabpanel" aria-labelledby="tab-overview">
+    <p class="takeaway" id="ovTakeaway"></p>
+    <div class="tiles" id="ovTiles"></div>
+    <div class="grid">
+      <article class="card span-all">
+        <header><h2>分數走勢</h2><p>每場結束後的分數，依模式分線；點的顏色代表勝負，點一下可看該場分析。</p></header>
+        <div class="chart" id="ovRating"></div>
+        <div class="legend" id="ovRatingLegend"></div>
+      </article>
+      <article class="card">
+        <header><h2>最近戰績</h2><p>由舊到新，點一格看該場分析。</p></header>
+        <div id="ovForm"></div>
+      </article>
+      <article class="card">
+        <header><h2>對局時長</h2><p>不同長度對局的勝率，看你是前期還是後期比較強。</p></header>
+        <div id="ovDur"></div>
+      </article>
+      <article class="card">
+        <header><h2>我使用的文明</h2><p>長條長度是場數，綠色是勝場、紅色是敗場。</p></header>
+        <div id="ovCiv"></div>
+      </article>
+      <article class="card">
+        <header><h2>對上的文明</h2><p>對手使用各文明時你的勝率（組隊時每位對手各算一次）。</p></header>
+        <div id="ovOppCiv"></div>
+      </article>
+      <article class="card">
+        <header><h2>地圖</h2><p>各地圖的場數與勝率。</p></header>
+        <div id="ovMap"></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="view-match" class="view" role="tabpanel" aria-labelledby="tab-match" hidden>
+    <div class="match-bar">
+      <button type="button" class="btn" id="mPrev">← 上一場</button>
+      <select id="mSel" aria-label="選擇對局"></select>
+      <button type="button" class="btn" id="mNext">下一場 →</button>
+    </div>
+    <div id="mHead" class="match-head"></div>
+    <div id="mNoDetail" class="card notice" hidden>這場沒有逐時數據（aoe4world 沒有提供這場的詳細摘要，自訂對局通常沒有），只能顯示基本資訊。</div>
+    <div id="mDetail" class="view">
+      <article class="card">
+        <header><h2>隨時間變化</h2><p id="mChartNote">選一個指標，比較你和對手在整場中的變化。</p></header>
+        <div id="mChips" class="chips"></div>
+        <div class="chart" id="mChart"></div>
+        <div class="legend" id="mLegend"></div>
+        <div class="ages" id="mAges"></div>
+      </article>
+      <div class="grid">
+        <article class="card">
+          <header><h2>勝負關鍵指標</h2><p>這場在各項指標上你是領先還是落後（組隊時對手取平均）。</p></header>
+          <div id="mFactors"></div>
+        </article>
+        <article class="card">
+          <header><h2>整場統計</h2><p>我（藍）與對手（紅，組隊時為平均）。</p></header>
+          <div id="mTotals"></div>
+        </article>
+      </div>
+      <article class="card">
+        <header><h2>關鍵時間點</h2><p>每格是「我 / 對手」，顏色代表誰佔優。</p></header>
+        <div class="table-wrap"><table id="mCheckpoints"></table></div>
+      </article>
+      <article class="card">
+        <header><h2>玩家</h2></header>
+        <div class="table-wrap"><table id="mPlayers"></table></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="view-factors" class="view" role="tabpanel" aria-labelledby="tab-factors" hidden>
+    <p class="takeaway" id="fTakeaway"></p>
+    <article class="card">
+      <header><h2>領先時與落後時的勝率</h2><p>每一列是一個指標：綠點是你在該指標領先對手時的勝率，紅點是落後時的勝率。兩點距離越遠，這個指標越能決定你的勝負。</p></header>
+      <div id="fSummary"></div>
+    </article>
+    <div class="grid" id="fCards"></div>
+    <p class="muted small" id="fMethod">比較方式：1v1 直接和對手比；組隊時和所有對手的平均比。對局在檢查時間點之前就結束的場次，不列入該項。分數（總分、軍事分等）是遊戲內建的計分。</p>
+  </section>
+
+  <section id="view-list" class="view" role="tabpanel" aria-labelledby="tab-list" hidden>
+    <div class="list-tools">
+      <label class="sr-only" for="lSearch">搜尋對局</label>
+      <input id="lSearch" type="search" placeholder="搜尋地圖、文明、對手名稱…">
+      <span id="lCount" class="muted small"></span>
+    </div>
+    <div class="card"><div class="table-wrap tall"><table id="lTable"></table></div></div>
+  </section>
+</main>
+
+<div id="dropzone" class="dropzone" hidden>放開以匯入對局資料</div>
+
+<script src="data/aoe4-data.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // ================== 設定與對照表 ==================
+  const CFG = Object.assign({ dataUrl: '', refreshMinutes: 0 }, window.AOE4_CONFIG || {});
+
+  const CIV = {
+    english: '英格蘭', french: '法蘭西', holy_roman_empire: '神聖羅馬帝國', rus: '羅斯', mongols: '蒙古',
+    chinese: '中國', delhi_sultanate: '德里蘇丹國', abbasid_dynasty: '阿拔斯王朝', ottomans: '鄂圖曼',
+    malians: '馬利', byzantines: '拜占庭', japanese: '日本', ayyubids: '阿尤布王朝', jeanne_darc: '聖女貞德',
+    order_of_the_dragon: '龍之騎士團', zhu_xis_legacy: '朱熹的遺產', house_of_lancaster: '蘭開斯特家族',
+    knights_templar: '聖殿騎士團', golden_horde: '金帳汗國', jin_dynasty: '金朝', macedonian_dynasty: '馬其頓王朝',
+    sengoku_daimyo: '戰國大名', tughlaq_dynasty: '圖格魯克王朝'
+  };
+  const MODE = {
+    qm_1v1: '快速 1v1', qm_2v2: '快速 2v2', qm_3v3: '快速 3v3', qm_4v4: '快速 4v4', qm_ffa: '快速 混戰',
+    rm_solo: '排位 1v1', rm_1v1: '排位 1v1', rm_team: '排位組隊', rm_2v2: '排位 2v2', rm_3v3: '排位 3v3', rm_4v4: '排位 4v4',
+    custom: '自訂'
+  };
+  const GROUPS = [['all', '全部'], ['custom', '自訂'], ['1v1', '1v1'], ['2v2', '2v2'], ['team', '3v3 以上'], ['other', '其他']];
+  const OPP_COLORS = ['var(--opp)', 'var(--opp2)', 'var(--opp3)', 'var(--opp4)'];
+  const RESULT = { win: '勝', loss: '敗' };
+
+  const RATE = ['foodRate', 'woodRate', 'goldRate', 'stoneRate', 'oliveoilRate'];
+  const GATH = ['foodGathered', 'woodGathered', 'goldGathered', 'stoneGathered', 'oliveoilGathered'];
+  const STOCK = ['food', 'wood', 'gold', 'stone', 'oliveoil'];
+
+  // ================== 勝負關鍵指標（可在這裡增修） ==================
+  // dir: higher = 越高越好、lower = 越低越好、earlier = 越早越好
+  // get(p): 由單一玩家的資料算出數值；回傳 null 代表這場不適用
+  const FACTORS = [
+    { id: 'vill10', name: '10 分鐘村民數', cat: '經濟', dir: 'higher', unit: '人', get: (p) => tlAt(p, 'villagers', 600),
+      def: '第 10 分鐘時還活著的村民數量。' },
+    { id: 'vill15', name: '15 分鐘村民數', cat: '經濟', dir: 'higher', unit: '人', get: (p) => tlAt(p, 'villagers', 900),
+      def: '第 15 分鐘時還活著的村民數量。' },
+    { id: 'rate10', name: '10 分鐘採集速率', cat: '經濟', dir: 'higher', unit: '/分', get: (p) => tlSumAt(p, RATE, 600),
+      def: '第 10 分鐘時每分鐘採集的資源總量（食物＋木材＋黃金＋石頭＋橄欖油）。' },
+    { id: 'gath15', name: '15 分鐘累積採集', cat: '經濟', dir: 'higher', unit: '', get: (p) => tlSumAt(p, GATH, 900),
+      def: '開局到第 15 分鐘總共採集的資源量。' },
+    { id: 'feudal', name: '進入封建時代', cat: '科技', dir: 'earlier', unit: '', fmt: fmtTime, get: (p) => p.ages && p.ages.feudal,
+      def: '升上第二時代（封建）的時間，越早越好；沒升上視為落後。' },
+    { id: 'castle', name: '進入城堡時代', cat: '科技', dir: 'earlier', unit: '', fmt: fmtTime, get: (p) => p.ages && p.ages.castle,
+      def: '升上第三時代（城堡）的時間，越早越好；沒升上視為落後。' },
+    { id: 'score10', name: '10 分鐘總分', cat: '綜合', dir: 'higher', unit: '', get: (p) => tlAt(p, 'score', 600),
+      def: '遊戲內建總分（軍事＋經濟＋科技＋社會）在第 10 分鐘的數值。' },
+    { id: 'mil15', name: '15 分鐘軍事分', cat: '軍事', dir: 'higher', unit: '', get: (p) => tlAt(p, 'military', 900),
+      def: '遊戲內建軍事分在第 15 分鐘的數值，大致反映軍隊規模與戰果。' },
+    { id: 'float', name: '前 15 分鐘囤積資源', cat: '經濟', dir: 'lower', unit: '', get: (p) => tlMeanSum(p, STOCK, 0, 900, 300),
+      def: '前 15 分鐘手上未花費資源的平均值，越低代表資源越快轉成村民、軍隊或科技。' },
+    { id: 'kd', name: '擊殺／陣亡比', cat: '軍事', dir: 'higher', unit: '', fmt: (v) => fmtNum(v, 2),
+      get: (p) => (p.stats && p.stats.kills != null ? p.stats.kills / Math.max(1, p.stats.deaths || 0) : null),
+      def: '整場擊殺敵方單位數 ÷ 自己陣亡單位數，反映交戰的效率。' },
+    { id: 'villLost', name: '村民陣亡數', cat: '軍事', dir: 'lower', unit: '人', get: (p) => (p.villagersLost != null ? p.villagersLost : null),
+      def: '整場被殺掉的村民數量，越少代表防守和騷擾應對越好。' },
+    { id: 'apm', name: 'APM', cat: '操作', dir: 'higher', unit: '', get: (p) => (p.apm || null),
+      def: '每分鐘操作次數。' }
+  ];
+
+  // 單場圖表可選的指標
+  const SERIES = [
+    { group: '經濟', id: 'villagers', name: '村民數', get: (tl) => tl.villagers },
+    { group: '經濟', id: 'rate', name: '總採集速率', unit: '每分鐘', get: (tl) => sumArr(tl, RATE) },
+    { group: '經濟', id: 'foodRate', name: '食物', unit: '每分鐘', get: (tl) => tl.foodRate },
+    { group: '經濟', id: 'woodRate', name: '木材', unit: '每分鐘', get: (tl) => tl.woodRate },
+    { group: '經濟', id: 'goldRate', name: '黃金', unit: '每分鐘', get: (tl) => tl.goldRate },
+    { group: '經濟', id: 'stoneRate', name: '石頭', unit: '每分鐘', get: (tl) => tl.stoneRate },
+    { group: '經濟', id: 'oliveoilRate', name: '橄欖油', unit: '每分鐘', get: (tl) => tl.oliveoilRate, onlyIf: (ps) => ps.some((p) => (p.timeline.oliveoilRate || []).some((v) => v > 0)) },
+    { group: '經濟', id: 'gathered', name: '累積採集', get: (tl) => sumArr(tl, GATH) },
+    { group: '經濟', id: 'float', name: '囤積資源', get: (tl) => sumArr(tl, STOCK) },
+    { group: '軍事', id: 'army', name: '軍隊單位數（估計）', get: (tl) => tl.army },
+    { group: '軍事', id: 'military', name: '軍事分', get: (tl) => tl.military },
+    { group: '分數', id: 'score', name: '總分', get: (tl) => tl.score },
+    { group: '分數', id: 'economy', name: '經濟分', get: (tl) => tl.economy },
+    { group: '分數', id: 'technology', name: '科技分', get: (tl) => tl.technology },
+    { group: '分數', id: 'society', name: '社會分', get: (tl) => tl.society }
+  ];
+  const SERIES_NOTE = {
+    rate: '每分鐘採集的資源總量（食物＋木材＋黃金＋石頭＋橄欖油）。',
+    float: '手上還沒花掉的資源總量。長時間偏高代表生產跟不上收入。',
+    army: '依生產與陣亡紀錄估算的存活軍事單位數（不含村民、偵察兵、僧侶、商人與漁船）。',
+    gathered: '開局到該時間點累積採集的資源總量。'
+  };
+
+  // ================== 小工具 ==================
+  const $ = (s) => document.querySelector(s);
+  function h(tag, props) {
+    const el = document.createElement(tag);
+    if (props) for (const k in props) {
+      const v = props[k];
+      if (v == null || v === false) continue;
+      if (k === 'class') el.className = v;
+      else if (k === 'style') el.style.cssText = v;
+      else if (k === 'text') el.textContent = v;
+      else if (k.slice(0, 2) === 'on') el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v === true ? '' : v);
+    }
+    for (let i = 2; i < arguments.length; i++) append(el, arguments[i]);
+    return el;
+  }
+  function append(el, c) {
+    if (c == null || c === false) return;
+    if (Array.isArray(c)) { c.forEach((x) => append(el, x)); return; }
+    el.append(c instanceof Node ? c : document.createTextNode(String(c)));
+  }
+  function S(tag, attrs, text) {
+    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    if (attrs) for (const k in attrs) if (attrs[k] != null) el.setAttribute(k, attrs[k]);
+    if (text != null) el.textContent = text;
+    return el;
+  }
+  const isNum = (v) => typeof v === 'number' && isFinite(v);
+  const mean = (arr) => { const a = arr.filter(isNum); return a.length ? a.reduce((s, v) => s + v, 0) / a.length : null; };
+  const civName = (c) => CIV[c] || (c ? String(c).replace(/_/g, ' ').replace(/\b\w/g, (x) => x.toUpperCase()) : '—');
+  const modeName = (m) => MODE[m] || m || '—';
+  const modeGroup = (m) => {
+    const mode = m || '';
+    if (mode === 'custom') return 'custom';
+    if (/1v1|solo/.test(mode)) return '1v1';
+    if (/2v2/.test(mode)) return '2v2';
+    if (/3v3|4v4|team/.test(mode)) return 'team';
+    return 'other';
+  };
+  function fmtTime(s) {
+    if (!isNum(s)) return '—';
+    s = Math.round(s);
+    return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  }
+  const fmtNum = (v, d) => (isNum(v) ? v.toLocaleString('zh-TW', { maximumFractionDigits: d || 0, minimumFractionDigits: d || 0 }) : '—');
+  const fmtPct = (v) => (isNum(v) ? Math.round(v * 100) + '%' : '—');
+  const fmtShort = (v) => (!isNum(v) ? '—' : Math.abs(v) >= 10000 ? (v / 10000).toLocaleString('zh-TW', { maximumFractionDigits: 1 }) + '萬' : Math.round(v).toLocaleString('zh-TW'));
+  const fmtSigned = (v) => (!isNum(v) ? '—' : (v > 0 ? '+' : v < 0 ? '−' : '±') + Math.abs(v));
+  function fmtDate(iso, withTime) {
+    const d = new Date(iso);
+    if (isNaN(d)) return '—';
+    const base = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate();
+    return withTime ? base + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') : base;
+  }
+  const fmtMin = (s) => (isNum(s) ? Math.round(s / 60) + ' 分鐘' : '—');
+  const textW = (s) => String(s).length * 7 + 4;
+  const ratingAfter = (m) => (isNum(m.rating) ? m.rating + (isNum(m.ratingChange) ? m.ratingChange : 0) : null);
+
+  function tIndex(p, sec) {
+    const t = p && p.timeline && p.timeline.t;
+    if (!t || !t.length || t[t.length - 1] < sec - 20) return -1;
+    let lo = 0, hi = t.length - 1;
+    while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (t[mid] <= sec) lo = mid; else hi = mid - 1; }
+    return lo;
+  }
+  function tlAt(p, key, sec) { const i = tIndex(p, sec); const a = p && p.timeline && p.timeline[key]; return i < 0 || !Array.isArray(a) || !isNum(a[i]) ? null : a[i]; }
+  // 加總多個欄位在第 i 筆的值；欄位都不存在時回傳 null（例如舊資料沒有某項）
+  function sumAt(tl, keys, i) {
+    let any = false, s = 0;
+    keys.forEach((k) => { const a = tl[k]; if (Array.isArray(a) && isNum(a[i])) { any = true; s += a[i]; } });
+    return any ? s : null;
+  }
+  function tlSumAt(p, keys, sec) { const i = tIndex(p, sec); return i < 0 ? null : sumAt(p.timeline, keys, i); }
+  function tlMeanSum(p, keys, from, to, minSpan) {
+    const t = p && p.timeline && p.timeline.t;
+    if (!t || !t.length || t[t.length - 1] < (minSpan || 0)) return null;
+    const vals = [];
+    for (let i = 0; i < t.length; i++) if (t[i] > from && t[i] <= to) vals.push(sumAt(p.timeline, keys, i));
+    return mean(vals);
+  }
+  function sumArr(tl, keys) {
+    if (!keys.some((k) => Array.isArray(tl[k]))) return null;
+    return (tl.t || []).map((_, i) => sumAt(tl, keys, i));
+  }
+
+  const meOf = (m) => (m.detail && m.detail.players ? m.detail.players.find((p) => p.side === 'me') : null);
+  const oppsOf = (m) => (m.detail && m.detail.players ? m.detail.players.filter((p) => p.side === 'opp') : []);
+  const oppPlayers = (m) => (m.players || []).filter((p) => p.side === 'opp');
+  const oppCivs = (m) => oppPlayers(m).map((p) => civName(p.civ));
+  const oppLabel = (m) => {
+    const opps = oppPlayers(m);
+    if (!opps.length) return '未列出對手';
+    return opps.map((p) => (p.name || '未知') + '（' + civName(p.civ) + '）').join('、');
+  };
+  function orderPlayers(ps) {
+    const rank = { me: 0, ally: 1, opp: 2 };
+    return ps.slice().sort((a, b) => (rank[a.side] - rank[b.side]));
+  }
+  function colorMap(ps) {
+    const map = new Map();
+    let oi = 0;
+    orderPlayers(ps).forEach((p) => map.set(p, p.side === 'me' ? 'var(--me)' : p.side === 'ally' ? 'var(--ally)' : OPP_COLORS[oi++ % OPP_COLORS.length]));
+    return map;
+  }
+  function resultPill(r) { return h('span', { class: 'pill ' + (r === 'win' ? 'w' : r === 'loss' ? 'l' : 'u') }, RESULT[r] || '—'); }
+
+  // ================== 狀態 ==================
+  const state = { data: null, source: '', mode: 'all', opponent: 'all', view: 'overview', matchId: null, series: 'villagers', sortKey: 'date', sortDir: -1, search: '' };
+  let factorCache = null;
+
+  // ================== 載入資料 ==================
+  function validate(d) {
+    if (!d || typeof d !== 'object') throw new Error('資料不是 JSON 物件');
+    if (!Array.isArray(d.matches)) throw new Error('資料缺少 matches 陣列');
+    if (d.version !== 1) throw new Error('資料版本不是 1（目前是 ' + d.version + '）');
+    return d;
+  }
+  function load(d, source) {
+    state.data = validate(d);
+    state.data.matches.sort((a, b) => Date.parse(a.startedAt) - Date.parse(b.startedAt));
+    state.source = source;
+    factorCache = null;
+    renderHeader();
+    buildFilters();
+    route();
+  }
+  function banner(msg) {
+    const b = $('#banner');
+    if (!msg) { b.hidden = true; b.replaceChildren(); return; }
+    b.replaceChildren(h('div', null, msg));
+    b.hidden = false;
+  }
+  async function fetchFromUrl() {
+    const res = await fetch(CFG.dataUrl, { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  }
+  async function boot() {
+    if (CFG.dataUrl) {
+      $('#reloadBtn').hidden = false;
+      try { load(await fetchFromUrl(), 'API：' + CFG.dataUrl); banner(''); }
+      catch (e) {
+        if (window.AOE4_DATA) { load(window.AOE4_DATA, '本機檔案 data/aoe4-data.js'); }
+        banner('無法從 ' + CFG.dataUrl + ' 取得資料（' + e.message + '），目前顯示本機檔案。若 API 在別的網址，伺服器需要允許跨來源請求（CORS）。');
+      }
+      if (CFG.refreshMinutes > 0) setInterval(reloadFromUrl, CFG.refreshMinutes * 60000);
+    } else if (window.AOE4_DATA) {
+      try { load(window.AOE4_DATA, '本機檔案 data/aoe4-data.js'); } catch (e) { banner('data/aoe4-data.js 的格式有誤：' + e.message); }
+    } else {
+      banner('找不到資料：請確認 data/aoe4-data.js 和這個網頁放在一起，或按右上角「匯入資料」選擇資料檔。');
+      renderHeader();
+    }
+  }
+  async function reloadFromUrl() {
+    const btn = $('#reloadBtn');
+    btn.disabled = true;
+    try { load(await fetchFromUrl(), 'API：' + CFG.dataUrl); banner(''); }
+    catch (e) { banner('重新抓取失敗（' + e.message + '），保留目前的資料。'); }
+    finally { btn.disabled = false; }
+  }
+  function importText(text, name) {
+    let t = text.trim();
+    const eq = t.indexOf('=');
+    if (!t.startsWith('{') && eq > -1) t = t.slice(eq + 1).trim().replace(/;\s*$/, '');
+    try { load(JSON.parse(t), '匯入的檔案 ' + name); banner(''); }
+    catch (e) { banner('無法匯入 ' + name + '：' + e.message); }
+  }
+  function readFile(file) {
+    if (!file) return;
+    const r = new FileReader();
+    r.onload = () => importText(String(r.result), file.name);
+    r.onerror = () => banner('讀取 ' + file.name + ' 失敗。');
+    r.readAsText(file, 'utf-8');
+  }
+  $('#importFile').addEventListener('change', (e) => { readFile(e.target.files[0]); e.target.value = ''; });
+  $('#reloadBtn').addEventListener('click', reloadFromUrl);
+  let dragDepth = 0;
+  window.addEventListener('dragenter', (e) => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) { dragDepth++; $('#dropzone').hidden = false; } });
+  window.addEventListener('dragleave', () => { dragDepth = Math.max(0, dragDepth - 1); if (!dragDepth) $('#dropzone').hidden = true; });
+  window.addEventListener('dragover', (e) => e.preventDefault());
+  window.addEventListener('drop', (e) => { e.preventDefault(); dragDepth = 0; $('#dropzone').hidden = true; readFile(e.dataTransfer.files[0]); });
+
+  // 給之後的 API 程式使用：window.AOE4Dashboard.load(資料物件)
+  window.AOE4Dashboard = { load: (d) => load(d, '程式推送'), reload: reloadFromUrl };
+
+  // ================== 頁首與篩選 ==================
+  function renderHeader() {
+    const d = state.data;
+    const p = (d && d.player) || {};
+    $('#playerName').textContent = p.name ? p.name + ' 的戰績' : 'AoE4 戰績儀表板';
+    document.title = p.name ? p.name + ' · AoE4 戰績' : 'AoE4 戰績儀表板';
+    const chips = [];
+    const r = p.ratings || {};
+    Object.keys(r).filter((k) => r[k] && isNum(r[k].rating)).sort().forEach((k) => {
+      chips.push(h('span', { class: 'rating-chip', title: (r[k].maxRating ? '最高 ' + r[k].maxRating : '') }, modeName(k), h('b', null, r[k].rating),
+        isNum(r[k].rank) ? h('span', null, '#' + r[k].rank.toLocaleString('zh-TW')) : null));
+    });
+    $('#ratings').replaceChildren(...chips);
+    $('#sourceInfo').textContent = d ? '資料：' + state.source + (d.generatedAt ? ' · 更新於 ' + fmtDate(d.generatedAt, true) : '') : '尚未載入資料';
+  }
+  const passesMode = (m) => state.mode === 'all' || modeGroup(m.mode) === state.mode;
+  const passesOpp = (m) => {
+    if (state.opponent === 'all') return true;
+    const names = oppPlayers(m).map((p) => p.name).filter(Boolean);
+    if (state.opponent === '__none__') return names.length === 0;
+    return names.indexOf(state.opponent) !== -1;
+  };
+  function buildModeSelect() {
+    const sel = $('#modeSel');
+    const base = state.data.matches.filter(passesOpp);
+    const present = new Set(base.map((m) => modeGroup(m.mode)));
+    sel.replaceChildren(...GROUPS.filter(([k]) => k === 'all' || present.has(k)).map(([k, label]) => {
+      const n = k === 'all' ? base.length : base.filter((m) => modeGroup(m.mode) === k).length;
+      return h('option', { value: k }, label + '（' + n + '）');
+    }));
+    if (![...sel.options].some((o) => o.value === state.mode)) state.mode = 'all';
+    sel.value = state.mode;
+  }
+  function buildOpponentSelect() {
+    const sel = $('#oppSel');
+    const base = state.data.matches.filter(passesMode);
+    const counts = new Map();
+    let none = 0;
+    base.forEach((m) => {
+      const names = [...new Set(oppPlayers(m).map((p) => p.name).filter(Boolean))];
+      if (!names.length) none++;
+      names.forEach((name) => counts.set(name, (counts.get(name) || 0) + 1));
+    });
+    const options = [h('option', { value: 'all' }, '全部對手（' + base.length + '）')];
+    [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'zh-Hant')).forEach(([name, n]) => {
+      options.push(h('option', { value: name }, name + '（' + n + '）'));
+    });
+    if (none) options.push(h('option', { value: '__none__' }, '未列出對手（' + none + '）'));
+    sel.replaceChildren(...options);
+    const kept = [...sel.options].some((o) => o.value === state.opponent);
+    if (!kept) state.opponent = 'all';
+    sel.value = state.opponent;
+    return kept;
+  }
+  function buildFilters() { buildModeSelect(); buildOpponentSelect(); }
+  $('#modeSel').addEventListener('change', (e) => {
+    state.mode = e.target.value;
+    factorCache = null;
+    if (!buildOpponentSelect()) buildModeSelect();
+    renderView();
+  });
+  $('#oppSel').addEventListener('change', (e) => { state.opponent = e.target.value; factorCache = null; buildModeSelect(); renderView(); });
+  const filtered = () => (state.data ? state.data.matches.filter((m) => passesMode(m) && passesOpp(m)) : []);
+  const decided = (ms) => ms.filter((m) => m.result === 'win' || m.result === 'loss');
+  function wl(ms) { const w = ms.filter((m) => m.result === 'win').length; const l = ms.filter((m) => m.result === 'loss').length; return { w, l, n: w + l, rate: w + l ? w / (w + l) : null }; }
+
+  // ================== 分頁 ==================
+  function route() {
+    const hash = decodeURIComponent(location.hash.slice(1));
+    const mm = /^match-(\d+)$/.exec(hash);
+    if (mm) { state.view = 'match'; state.matchId = Number(mm[1]); }
+    else if (['overview', 'match', 'factors', 'list'].includes(hash)) state.view = hash;
+    renderView();
+  }
+  function go(view, matchId) {
+    const target = matchId ? 'match-' + matchId : view;
+    if (location.hash.slice(1) === target) route(); else location.hash = target;
+  }
+  window.addEventListener('hashchange', route);
+  document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => go(t.dataset.view, t.dataset.view === 'match' ? state.matchId : null)));
+
+  function renderView() {
+    document.querySelectorAll('.tab').forEach((t) => t.setAttribute('aria-selected', String(t.dataset.view === state.view)));
+    ['overview', 'match', 'factors', 'list'].forEach((v) => { $('#view-' + v).hidden = v !== state.view; });
+    if (!state.data) return;
+    if (state.view === 'overview') renderOverview();
+    else if (state.view === 'match') renderMatch();
+    else if (state.view === 'factors') renderFactors();
+    else renderList();
+  }
+
+  // ================== 折線圖 ==================
+  function niceTicks(min, max, count) {
+    const span = max - min || 1;
+    let step = Math.pow(10, Math.floor(Math.log10(span / Math.max(1, count))));
+    const err = span / Math.max(1, count) / step;
+    if (err >= 7.5) step *= 10; else if (err >= 3.5) step *= 5; else if (err >= 1.5) step *= 2;
+    const lo = Math.floor(min / step) * step, hi = Math.ceil(max / step) * step;
+    const ticks = [];
+    for (let v = lo; v <= hi + step * 1e-9; v += step) ticks.push(+v.toFixed(10));
+    return { min: lo, max: hi, ticks };
+  }
+  function timeTicks(x0, x1, iw) {
+    const steps = [60, 120, 180, 300, 600, 900, 1200, 1800, 3600];
+    const step = steps.find((s) => (x1 - x0) / s <= Math.max(2, iw / 70)) || 3600;
+    const out = [];
+    for (let v = Math.ceil(x0 / step) * step; v <= x1; v += step) out.push(v);
+    return out;
+  }
+  function lineChart(box, o) {
+    box._draw = () => drawLine(box, o);
+    if (!box._ro && window.ResizeObserver) {
+      box._ro = new ResizeObserver(() => { const w = box.clientWidth; if (w && w !== box._w) { box._w = w; if (box._draw) box._draw(); } });
+      box._ro.observe(box);
+    }
+    box._w = box.clientWidth;
+    box._draw();
+  }
+  function drawLine(box, o) {
+    box.replaceChildren();
+    const series = o.series.filter((s) => s.values.some((v) => isNum(v.y)));
+    if (!series.length) { box.append(h('p', { class: 'empty' }, o.empty || '沒有資料')); return; }
+    const W = Math.max(260, box.clientWidth || 600), H = o.height || 260;
+    const xs = [], ys = [];
+    series.forEach((s) => s.values.forEach((v) => { if (isNum(v.y)) { xs.push(v.x); ys.push(v.y); } }));
+    let x0 = isNum(o.xMin) ? o.xMin : Math.min.apply(null, xs), x1 = isNum(o.xMax) ? o.xMax : Math.max.apply(null, xs);
+    if (x1 === x0) { x0 -= 1; x1 += 1; }
+    let y0 = o.yFromData ? Math.min.apply(null, ys) : Math.min(0, Math.min.apply(null, ys));
+    let y1 = Math.max.apply(null, ys);
+    if (o.yFromData) { const pad = (y1 - y0) * 0.08 || 10; y0 -= pad; y1 += pad; }
+    if (y1 === y0) y1 = y0 + 1;
+    const yt = niceTicks(y0, y1, Math.max(3, Math.round(H / 55)));
+    y0 = yt.min; y1 = yt.max;
+    const yFmt = o.yFormat || fmtShort;
+    const yLabels = yt.ticks.map(yFmt);
+    const ml = Math.max(30, Math.max.apply(null, yLabels.map(textW)) + 10), mr = 14, mt = 10, mb = 26;
+    const iw = W - ml - mr, ih = H - mt - mb;
+    const X = (v) => ml + (v - x0) / (x1 - x0) * iw;
+    const Y = (v) => mt + ih - (v - y0) / (y1 - y0) * ih;
+    const svg = S('svg', { width: '100%', height: H, viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': o.label || '圖表' });
+    yt.ticks.forEach((t, i) => {
+      svg.append(S('line', { x1: ml, x2: W - mr, y1: Y(t), y2: Y(t), class: 'grid' }));
+      svg.append(S('text', { x: ml - 8, y: Y(t), class: 'tick', 'text-anchor': 'end', 'dominant-baseline': 'middle' }, yLabels[i]));
+    });
+    const xticks = o.xTicks ? o.xTicks(x0, x1, iw) : niceTicks(x0, x1, Math.max(2, Math.floor(iw / 90))).ticks;
+    const xFmt = o.xFormat || String;
+    let lastRight = -Infinity, lastLabel = null;
+    xticks.forEach((t) => {
+      if (t < x0 || t > x1) return;
+      const label = xFmt(t), w = textW(label), cx = Math.min(Math.max(X(t), ml + w / 2), W - mr - w / 2);
+      if (cx - w / 2 < lastRight + 6 || label === lastLabel) return;
+      lastRight = cx + w / 2;
+      lastLabel = label;
+      svg.append(S('line', { x1: X(t), x2: X(t), y1: mt + ih, y2: mt + ih + 4, class: 'axis' }));
+      svg.append(S('text', { x: cx, y: H - 6, class: 'tick', 'text-anchor': 'middle' }, label));
+    });
+    svg.append(S('line', { x1: ml, x2: W - mr, y1: mt + ih, y2: mt + ih, class: 'axis' }));
+    (o.markers || []).forEach((mk) => {
+      if (mk.x < x0 || mk.x > x1) return;
+      svg.append(S('line', { x1: X(mk.x), x2: X(mk.x), y1: mt, y2: mt + ih, class: 'marker', style: 'stroke:' + mk.color }));
+    });
+    series.forEach((s) => {
+      let d = '', pen = false;
+      s.values.forEach((v) => {
+        if (!isNum(v.y)) { pen = false; return; }
+        d += (pen ? 'L' : 'M') + X(v.x).toFixed(1) + ',' + Y(v.y).toFixed(1);
+        pen = true;
+      });
+      svg.append(S('path', { d: d, class: 'line', style: 'stroke:' + s.color + ';stroke-width:' + (s.width || 2) + 'px;' + (s.dash ? 'stroke-dasharray:' + s.dash + ';' : '') }));
+      if (s.dots) s.values.forEach((v) => { if (isNum(v.y)) svg.append(S('circle', { cx: X(v.x), cy: Y(v.y), r: s.r || 3.2, class: 'dot', style: 'fill:' + (s.dotColor ? s.dotColor(v) : s.color) })); });
+    });
+    const allX = Array.from(new Set(xs)).sort((a, b) => a - b);
+    const rule = S('line', { y1: mt, y2: mt + ih, class: 'rule', visibility: 'hidden' });
+    const hov = S('g');
+    const overlay = S('rect', { x: ml, y: mt, width: iw, height: ih, fill: 'transparent', style: o.onClick ? 'cursor:pointer' : '' });
+    svg.append(rule, hov, overlay);
+    const tip = h('div', { class: 'tip', hidden: true });
+    box.append(svg, tip);
+    const nearestX = (ev) => {
+      const r = svg.getBoundingClientRect();
+      const xv = x0 + ((ev.clientX - r.left) * (W / r.width) - ml) / iw * (x1 - x0);
+      let lo = 0, hi = allX.length - 1;
+      while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (allX[mid] < xv) lo = mid; else hi = mid; }
+      return Math.abs(allX[lo] - xv) <= Math.abs(allX[hi] - xv) ? allX[lo] : allX[hi];
+    };
+    const valAt = (s, x) => {
+      if (o.snapExact) return s.values.find((v) => v.x === x && isNum(v.y)) || null;
+      let best = null;
+      s.values.forEach((v) => { if (isNum(v.y) && (!best || Math.abs(v.x - x) < Math.abs(best.x - x))) best = v; });
+      return best && Math.abs(best.x - x) <= (o.snapTol || 30) ? best : null;
+    };
+    overlay.addEventListener('pointermove', (ev) => {
+      const x = nearestX(ev);
+      rule.setAttribute('x1', X(x)); rule.setAttribute('x2', X(x)); rule.setAttribute('visibility', 'visible');
+      hov.replaceChildren();
+      const rows = [];
+      series.forEach((s) => { const v = valAt(s, x); if (!v) return; hov.append(S('circle', { cx: X(v.x), cy: Y(v.y), r: 4.5, class: 'hdot', style: 'fill:' + s.color })); rows.push({ s: s, v: v }); });
+      tip.replaceChildren(
+        h('div', { class: 'tip-title' }, (o.tipTitle || xFmt)(x, rows)),
+        rows.map((r) => h('div', { class: 'tip-row' }, h('i', { class: 'sw', style: 'background:' + r.s.color }), h('span', null, r.s.name), h('b', null, (o.tipValue || yFmt)(r.v.y, r.v)))),
+        o.tipExtra ? o.tipExtra(x, rows) : null
+      );
+      tip.hidden = false;
+      const bx = box.getBoundingClientRect();
+      const tx = ev.clientX - bx.left, ty = ev.clientY - bx.top;
+      let left = tx + 14;
+      if (left + tip.offsetWidth > bx.width) left = tx - tip.offsetWidth - 14;
+      let top = ty - tip.offsetHeight - 10;
+      if (top < 0) top = ty + 16;
+      tip.style.left = Math.max(0, left) + 'px';
+      tip.style.top = top + 'px';
+    });
+    overlay.addEventListener('pointerleave', () => { tip.hidden = true; rule.setAttribute('visibility', 'hidden'); hov.replaceChildren(); });
+    if (o.onClick) overlay.addEventListener('click', (ev) => o.onClick(nearestX(ev)));
+  }
+
+  // ================== 勝率長條 ==================
+  function winBars(rows, limit) {
+    if (!rows.length) return h('p', { class: 'empty' }, '沒有資料');
+    rows.sort((a, b) => (b.w + b.l) - (a.w + a.l) || (b.w - a.w));
+    const max = Math.max.apply(null, rows.map((r) => r.w + r.l));
+    const make = (list) => list.map((r) => {
+      const n = r.w + r.l, rate = n ? r.w / n : 0;
+      return h('div', { class: 'wbar' },
+        h('div', { class: 'wbar-label', title: r.label }, r.label),
+        h('div', { class: 'wbar-track', 'aria-hidden': 'true' },
+          h('div', { class: 'wbar-fill win', style: 'width:' + (n / max * rate * 100) + '%' }),
+          h('div', { class: 'wbar-fill loss', style: 'width:' + (n / max * (1 - rate) * 100) + '%' })),
+        h('div', { class: 'wbar-val' }, h('b', null, fmtPct(n ? rate : null)), r.w + ' 勝 ' + r.l + ' 敗'));
+    });
+    const wrap = h('div', { class: 'wbars' }, make(rows.slice(0, limit || rows.length)));
+    if (limit && rows.length > limit) {
+      const btn = h('button', { type: 'button', class: 'btn more' }, '顯示全部 ' + rows.length + ' 項');
+      btn.addEventListener('click', () => { wrap.replaceChildren(...make(rows)); btn.remove(); });
+      return h('div', null, wrap, btn);
+    }
+    return wrap;
+  }
+  function groupWL(ms, keyFn) {
+    const map = new Map();
+    ms.forEach((m) => {
+      if (m.result !== 'win' && m.result !== 'loss') return;
+      [].concat(keyFn(m)).forEach((k) => {
+        if (!k) return;
+        const r = map.get(k) || { label: k, w: 0, l: 0 };
+        if (m.result === 'win') r.w++; else r.l++;
+        map.set(k, r);
+      });
+    });
+    return [...map.values()];
+  }
+
+  // ================== 總覽 ==================
+  function tile(k, v, s, cls) { return h('div', { class: 'tile' }, h('div', { class: 'k' }, k), h('div', { class: 'v ' + (cls || '') }, v), s ? h('div', { class: 's' }, s) : null); }
+
+  function renderOverview() {
+    const ms = filtered();
+    const all = wl(ms);
+    const last10 = wl(decided(ms).slice(-10));
+    const durW = mean(ms.filter((m) => m.result === 'win').map((m) => m.duration));
+    const durL = mean(ms.filter((m) => m.result === 'loss').map((m) => m.duration));
+    const withDetail = ms.filter((m) => meOf(m));
+    const apm = mean(withDetail.map((m) => meOf(m).apm));
+    const v10me = mean(withDetail.map((m) => tlAt(meOf(m), 'villagers', 600)));
+    const v10op = mean(withDetail.map((m) => mean(oppsOf(m).map((p) => tlAt(p, 'villagers', 600)))));
+
+    const fs = computeFactors();
+    const top = fs.filter((f) => isNum(f.gap) && f.leadN >= 3 && f.trailN >= 3).sort((a, b) => b.gap - a.gap)[0];
+    const parts = [];
+    if (!ms.length) parts.push('這個篩選沒有對局。');
+    else {
+      const who = state.opponent === 'all' ? '' : state.opponent === '__none__' ? '、未列出對手' : '、對手 ' + state.opponent;
+      parts.push(h('span', null, GROUPS.find((g) => g[0] === state.mode)[1] + who + '共 ', h('b', null, ms.length), ' 場，', h('b', null, all.w), ' 勝 ', h('b', null, all.l), ' 敗（勝率 ', h('b', null, fmtPct(all.rate)), '）。'));
+      if (isNum(durW) && isNum(durL)) parts.push(h('span', null, '勝場平均 ', h('b', null, fmtMin(durW)), '，敗場平均 ', h('b', null, fmtMin(durL)), '。'));
+      if (top) parts.push(h('span', null, '最能決定勝負的是「' + top.name + '」：你領先時勝率 ', h('b', null, fmtPct(top.leadRate)), '，落後時只有 ', h('b', null, fmtPct(top.trailRate)), '。'));
+    }
+    $('#ovTakeaway').replaceChildren(...parts);
+
+    $('#ovTiles').replaceChildren(
+      tile('勝率', fmtPct(all.rate), all.w + ' 勝 ' + all.l + ' 敗', all.rate != null ? (all.rate >= 0.5 ? 'good' : 'bad') : ''),
+      tile('對局數', fmtNum(ms.length), withDetail.length + ' 場有逐時數據'),
+      tile('最近 10 場', last10.n ? last10.w + '–' + last10.l : '—', last10.n ? '勝率 ' + fmtPct(last10.rate) : ''),
+      tile('平均對局時長', isNum(mean(ms.map((m) => m.duration))) ? fmtTime(mean(ms.map((m) => m.duration))) : '—', '分:秒'),
+      tile('平均 APM', fmtNum(apm), '每分鐘操作次數'),
+      tile('10 分鐘村民', isNum(v10me) ? fmtNum(v10me, 1) : '—', isNum(v10op) ? '對手平均 ' + fmtNum(v10op, 1) : '', isNum(v10me) && isNum(v10op) ? (v10me >= v10op ? 'good' : 'bad') : '')
+    );
+
+    // 分數走勢（以場次順序為 x 軸，避免長時間沒玩時的空白）
+    const rated = ms.filter((m) => isNum(ratingAfter(m)));
+    const byMode = new Map();
+    rated.forEach((m, i) => { const k = m.mode; if (!byMode.has(k)) byMode.set(k, []); byMode.get(k).push({ x: i, y: ratingAfter(m), m: m }); });
+    const palette = ['var(--accent)', 'var(--me)', 'var(--ally)', 'var(--opp3)', 'var(--opp2)'];
+    const series = [...byMode.entries()].map(([k, vals], i) => ({ name: modeName(k), color: palette[i % palette.length], values: vals, dots: true, r: 3.6,
+      dotColor: (v) => (v.m.result === 'win' ? 'var(--win)' : v.m.result === 'loss' ? 'var(--loss)' : 'var(--neutral)') }));
+    lineChart($('#ovRating'), {
+      series: series, height: 240, yFromData: true, snapExact: true, label: '分數走勢', empty: '這個模式沒有計分資料',
+      xTicks: (x0, x1, iw) => { const n = Math.max(2, Math.floor(iw / 120)); const out = []; for (let i = 0; i < n; i++) out.push(Math.round(x0 + (x1 - x0) * i / (n - 1))); return out; },
+      xFormat: (i) => (rated[i] ? fmtDate(rated[i].startedAt) : ''),
+      yFormat: (v) => String(Math.round(v)),
+      tipTitle: (i) => (rated[i] ? fmtDate(rated[i].startedAt) + ' · ' + rated[i].map : ''),
+      tipValue: (y, v) => Math.round(y) + '（' + fmtSigned(v.m.ratingChange) + '）',
+      tipExtra: (i) => (rated[i] ? h('div', { class: 'tip-row' }, h('span', null, civName(rated[i].civ) + ' vs ' + oppCivs(rated[i]).join('、')), resultPill(rated[i].result)) : null),
+      onClick: (i) => { if (rated[i]) go('match', rated[i].id); }
+    });
+    $('#ovRatingLegend').replaceChildren(...series.map((s) => h('span', null, h('i', { class: 'sw', style: 'background:' + s.color }), s.name)),
+      h('span', null, h('i', { class: 'pdot', style: 'background:var(--win)' }), '勝'), h('span', null, h('i', { class: 'pdot', style: 'background:var(--loss)' }), '敗'));
+
+    // 最近戰績
+    const recent = ms.slice(-40);
+    $('#ovForm').replaceChildren(
+      recent.length ? h('div', { class: 'form' }, recent.map((m) => h('button', {
+        type: 'button', class: m.result === 'win' ? 'w' : m.result === 'loss' ? 'l' : 'u',
+        title: fmtDate(m.startedAt) + ' · ' + modeName(m.mode) + ' · ' + m.map + ' · ' + civName(m.civ) + ' vs ' + oppCivs(m).join('、'),
+        'aria-label': fmtDate(m.startedAt) + ' ' + (RESULT[m.result] || '未知'), onclick: () => go('match', m.id)
+      }, RESULT[m.result] || '?'))) : h('p', { class: 'empty' }, '沒有對局'),
+      recent.length ? h('div', { class: 'form-legend' }, '共顯示最近 ' + recent.length + ' 場') : null
+    );
+
+    // 對局時長
+    const buckets = [['15 分鐘以內', 0, 900], ['15–25 分鐘', 900, 1500], ['25–35 分鐘', 1500, 2100], ['35 分鐘以上', 2100, Infinity]];
+    const durRows = buckets.map(([label, a, b]) => { const r = wl(ms.filter((m) => isNum(m.duration) && m.duration >= a && m.duration < b)); return { label: label, w: r.w, l: r.l }; }).filter((r) => r.w + r.l);
+    const durBox = $('#ovDur');
+    durBox.replaceChildren(durRows.length ? winBars(durRows.slice()) : h('p', { class: 'empty' }, '沒有資料'));
+    // 保持時長由短到長的順序
+    if (durRows.length) {
+      const max = Math.max.apply(null, durRows.map((r) => r.w + r.l));
+      durBox.replaceChildren(h('div', { class: 'wbars' }, durRows.map((r) => {
+        const n = r.w + r.l, rate = r.w / n;
+        return h('div', { class: 'wbar' }, h('div', { class: 'wbar-label' }, r.label),
+          h('div', { class: 'wbar-track', 'aria-hidden': 'true' }, h('div', { class: 'wbar-fill win', style: 'width:' + (n / max * rate * 100) + '%' }), h('div', { class: 'wbar-fill loss', style: 'width:' + (n / max * (1 - rate) * 100) + '%' })),
+          h('div', { class: 'wbar-val' }, h('b', null, fmtPct(rate)), r.w + ' 勝 ' + r.l + ' 敗'));
+      })));
+    }
+
+    $('#ovCiv').replaceChildren(winBars(groupWL(ms, (m) => civName(m.civ)), 8));
+    $('#ovOppCiv').replaceChildren(winBars(groupWL(ms, (m) => oppCivs(m)), 8));
+    $('#ovMap').replaceChildren(winBars(groupWL(ms, (m) => m.map), 8));
+  }
+
+  // ================== 勝負關鍵計算 ==================
+  function factorRows(f, ms) {
+    const rows = [];
+    ms.forEach((m) => {
+      if (m.result !== 'win' && m.result !== 'loss') return;
+      const me = meOf(m), opps = oppsOf(m);
+      if (!me || !opps.length) return;
+      const a = f.get(me, m);
+      const ov = opps.map((p) => f.get(p, m));
+      let b, adv, lead;
+      if (f.dir === 'earlier') {
+        const reached = ov.filter(isNum);
+        b = reached.length ? mean(reached) : null;
+        if (!isNum(a) && !isNum(b)) return;
+        if (!isNum(a)) { lead = -1; adv = null; }
+        else if (!isNum(b)) { lead = 1; adv = null; }
+        else { adv = b - a; lead = Math.sign(adv); }
+      } else {
+        b = mean(ov);
+        if (!isNum(a) || !isNum(b)) return;
+        adv = f.dir === 'lower' ? b - a : a - b;
+        lead = Math.abs(adv) < 1e-9 ? 0 : Math.sign(adv);
+      }
+      rows.push({ m: m, a: isNum(a) ? a : null, b: isNum(b) ? b : null, adv: adv, lead: lead, win: m.result === 'win' });
+    });
+    return rows;
+  }
+  function computeFactors() {
+    if (factorCache && factorCache.mode === state.mode && factorCache.opponent === state.opponent) return factorCache.list;
+    const ms = filtered();
+    const list = FACTORS.map((f) => {
+      const rows = factorRows(f, ms);
+      const lead = rows.filter((r) => r.lead > 0), trail = rows.filter((r) => r.lead < 0);
+      const leadRate = lead.length ? lead.filter((r) => r.win).length / lead.length : null;
+      const trailRate = trail.length ? trail.filter((r) => r.win).length / trail.length : null;
+      return Object.assign({}, f, {
+        rows: rows, n: rows.length, leadN: lead.length, trailN: trail.length, tieN: rows.length - lead.length - trail.length,
+        leadWins: lead.filter((r) => r.win).length, trailWins: trail.filter((r) => r.win).length,
+        leadRate: leadRate, trailRate: trailRate,
+        gap: isNum(leadRate) && isNum(trailRate) ? leadRate - trailRate : null,
+        leadShare: lead.length + trail.length ? lead.length / (lead.length + trail.length) : null,
+        avg: {
+          winMe: mean(rows.filter((r) => r.win).map((r) => r.a)), winOpp: mean(rows.filter((r) => r.win).map((r) => r.b)),
+          lossMe: mean(rows.filter((r) => !r.win).map((r) => r.a)), lossOpp: mean(rows.filter((r) => !r.win).map((r) => r.b))
+        }
+      });
+    });
+    factorCache = { mode: state.mode, opponent: state.opponent, list: list };
+    return list;
+  }
+  const fval = (f, v) => (!isNum(v) ? '—' : (f.fmt ? f.fmt(v) : fmtNum(v, Math.abs(v) < 10 && v % 1 ? 1 : 0)) + (f.unit && !f.fmt ? (f.unit === '/分' ? '/分' : ' ' + f.unit) : ''));
+  function fadv(f, v) {
+    if (!isNum(v)) return '';
+    if (f.dir === 'earlier') return (v >= 0 ? '早 ' : '晚 ') + fmtTime(Math.abs(v));
+    const s = f.fmt ? f.fmt(Math.abs(v)) : fmtNum(Math.abs(v), Math.abs(v) < 10 && v % 1 ? 1 : 0);
+    return (v >= 0 ? '優 ' : '劣 ') + s;
+  }
+
+  // ================== 勝負關鍵頁 ==================
+  function renderFactors() {
+    const fs = computeFactors();
+    const usable = fs.filter((f) => f.n > 0);
+    const ranked = usable.filter((f) => isNum(f.gap)).sort((a, b) => b.gap - a.gap);
+    const nGames = filtered().filter((m) => meOf(m) && (m.result === 'win' || m.result === 'loss')).length;
+    const weak = usable.filter((f) => f.trailN >= 3 && isNum(f.gap) && f.gap > 0)
+      .map((f) => ({ f: f, score: (f.trailN / (f.leadN + f.trailN)) * f.gap })).sort((a, b) => b.score - a.score).slice(0, 2);
+    const parts = [];
+    if (!nGames) parts.push('這個模式沒有含逐時數據的對局，無法計算。');
+    else {
+      parts.push(h('span', null, '根據 ', h('b', null, nGames), ' 場有逐時數據的對局。'));
+      if (ranked[0]) parts.push(h('span', null, '影響最大的是「' + ranked[0].name + '」（領先時勝率 ', h('b', null, fmtPct(ranked[0].leadRate)), '，落後時 ', h('b', null, fmtPct(ranked[0].trailRate)), '）。'));
+      if (weak.length) parts.push(h('span', null, '最值得改善：' + weak.map((w) => '「' + w.f.name + '」（' + w.f.trailN + ' 場落後）').join('、') + '。'));
+      if (nGames < 15) parts.push(h('span', { class: 'muted' }, '場數還少，結果僅供參考。'));
+    }
+    $('#fTakeaway').replaceChildren(...parts);
+
+    // 啞鈴圖
+    const order = ranked.concat(usable.filter((f) => !isNum(f.gap)));
+    $('#fSummary').replaceChildren(order.length ? h('div', { class: 'dumb' },
+      h('div', { class: 'dumb-axis' }, h('div', null, '指標（領先場次）'), h('div', null, h('span', null, '0%'), h('span', null, '50%'), h('span', null, '100%')), h('div', { style: 'text-align:right' }, '差距')),
+      order.map((f) => {
+        const L = f.leadRate, T = f.trailRate;
+        const track = h('div', { class: 'dumb-track', title: '領先 ' + f.leadN + ' 場，勝率 ' + fmtPct(L) + '；落後 ' + f.trailN + ' 場，勝率 ' + fmtPct(T) },
+          h('div', { class: 'dumb-mid', style: 'left:50%' }),
+          isNum(L) && isNum(T) ? h('div', { class: 'dumb-bar', style: 'left:' + Math.min(L, T) * 100 + '%;width:' + Math.abs(L - T) * 100 + '%' }) : null,
+          isNum(T) ? h('div', { class: 'dumb-dot trail', style: 'left:' + T * 100 + '%' }) : null,
+          isNum(L) ? h('div', { class: 'dumb-dot lead', style: 'left:' + L * 100 + '%' }) : null);
+        return h('div', { class: 'dumb-row' },
+          h('div', { class: 'dumb-name' }, f.name, h('small', null, '領先 ' + f.leadN + ' / 落後 ' + f.trailN + ' 場')),
+          track,
+          h('div', { class: 'dumb-gap ' + (isNum(f.gap) ? (f.gap > 0 ? 'good' : 'bad') : '') }, isNum(f.gap) ? (f.gap > 0 ? '+' : '') + Math.round(f.gap * 100) + ' 點' : '—'));
+      }),
+      h('div', { class: 'legend' }, h('span', null, h('i', { class: 'pdot', style: 'background:var(--win)' }), '領先時勝率'), h('span', null, h('i', { class: 'pdot', style: 'background:var(--loss)' }), '落後時勝率'))
+    ) : h('p', { class: 'empty' }, '沒有可計算的對局'));
+
+    // 每個指標的卡片
+    $('#fCards').replaceChildren(...usable.map((f) => factorCard(f)));
+  }
+  function factorCard(f) {
+    const card = h('article', { class: 'card factor-card' });
+    card.append(h('h3', null, f.name, h('span', { class: 'tag' }, f.cat), f.strength ? h('span', { class: 'tag' + (f.strength === 'strong' ? ' strong' : '') }, { strong: '證據強', moderate: '證據中等', weak: '證據弱' }[f.strength]) : null));
+    card.append(h('p', null, f.def));
+    if (f.why) card.append(h('p', { class: 'muted' }, f.why));
+    card.append(h('div', { class: 'stat-line' }, '你在 ', h('b', null, f.leadN), ' 場領先、', h('b', null, f.trailN), ' 場落後', f.tieN ? '、' + f.tieN + ' 場持平' : '', '。領先時勝率 ', h('b', { class: 'good' }, fmtPct(f.leadRate)), '，落後時 ', h('b', { class: 'bad' }, fmtPct(f.trailRate)), '。'));
+    card.append(h('table', { class: 'avg-table' },
+      h('thead', null, h('tr', null, h('th', null, ''), h('th', { class: 'n' }, '我'), h('th', { class: 'n' }, '對手'))),
+      h('tbody', null,
+        h('tr', null, h('td', null, '勝場平均'), h('td', { class: 'n' }, fval(f, f.avg.winMe)), h('td', { class: 'n' }, fval(f, f.avg.winOpp))),
+        h('tr', null, h('td', null, '敗場平均'), h('td', { class: 'n' }, fval(f, f.avg.lossMe)), h('td', { class: 'n' }, fval(f, f.avg.lossOpp))))));
+    card.append(stripChart(f));
+    if (f.bench || (f.sources && f.sources.length)) {
+      const det = h('details', null, h('summary', null, '參考標準與來源'));
+      if (f.bench) det.append(h('p', null, f.bench));
+      if (f.sources && f.sources.length) det.append(h('ul', null, f.sources.map((s) => h('li', null, h('a', { href: s.url, target: '_blank', rel: 'noopener' }, s.title)))));
+      card.append(det);
+    }
+    return card;
+  }
+  function stripChart(f) {
+    const rows = f.rows.filter((r) => isNum(r.adv));
+    const box = h('div', { class: 'chart', style: 'min-height:84px;margin-top:8px' });
+    if (!rows.length) { box.append(h('p', { class: 'empty', style: 'padding:8px 0' }, '沒有可比較的數值')); return box; }
+    const draw = () => {
+      box.replaceChildren();
+      const W = Math.max(240, box.clientWidth || 360), H = 84, ml = 30, mr = 10;
+      const maxAbs = Math.max.apply(null, rows.map((r) => Math.abs(r.adv))) || 1;
+      const X = (v) => ml + (v + maxAbs) / (2 * maxAbs) * (W - ml - mr);
+      const svg = S('svg', { width: '100%', height: H, viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': f.name + '：每場與對手的差距' });
+      const rowsY = { win: 20, loss: 48 };
+      svg.append(S('line', { x1: X(0), x2: X(0), y1: 6, y2: 60, class: 'axis' }));
+      svg.append(S('text', { x: 0, y: rowsY.win, class: 'tick', 'dominant-baseline': 'middle' }, '勝'));
+      svg.append(S('text', { x: 0, y: rowsY.loss, class: 'tick', 'dominant-baseline': 'middle' }, '敗'));
+      svg.append(S('text', { x: ml, y: 78, class: 'tick' }, '← 落後'));
+      svg.append(S('text', { x: W - mr, y: 78, class: 'tick', 'text-anchor': 'end' }, '領先 →'));
+      rows.forEach((r, i) => {
+        const y = (r.win ? rowsY.win : rowsY.loss) + ((i % 5) - 2) * 2.5;
+        const c = S('circle', { cx: X(r.adv), cy: y, r: 4.5, class: 'dot', style: 'cursor:pointer;fill:' + (r.win ? 'var(--win)' : 'var(--loss)') + ';fill-opacity:.8' });
+        c.append(S('title', null, fmtDate(r.m.startedAt) + ' ' + r.m.map + '：我 ' + fval(f, r.a) + '，對手 ' + fval(f, r.b)));
+        c.addEventListener('click', () => go('match', r.m.id));
+        svg.append(c);
+      });
+      box.append(svg);
+    };
+    requestAnimationFrame(draw);
+    if (window.ResizeObserver) { let w0 = 0; new ResizeObserver(() => { if (box.clientWidth !== w0) { w0 = box.clientWidth; draw(); } }).observe(box); }
+    return box;
+  }
+
+  // ================== 單場分析 ==================
+  function renderMatch() {
+    let ms = filtered();
+    if (!ms.length) ms = state.data.matches;
+    if (!ms.some((m) => m.id === state.matchId)) {
+      const all = state.data.matches.find((m) => m.id === state.matchId);
+      if (all) ms = state.data.matches;
+      else { const lastDetail = ms.slice().reverse().find((m) => m.detail) || ms[ms.length - 1]; state.matchId = lastDetail ? lastDetail.id : null; }
+    }
+    const idx = ms.findIndex((m) => m.id === state.matchId);
+    const m = ms[idx];
+    const sel = $('#mSel');
+    sel.replaceChildren(...ms.slice().reverse().map((x) => h('option', { value: x.id },
+      fmtDate(x.startedAt) + ' · ' + (RESULT[x.result] || '?') + ' · ' + modeName(x.mode) + ' · ' + x.map + ' · ' + civName(x.civ) + ' vs ' + oppLabel(x) + (x.detail ? '' : '（無逐時數據）'))));
+    if (!m) { $('#mHead').replaceChildren(h('p', { class: 'empty' }, '沒有對局')); $('#mDetail').hidden = true; return; }
+    sel.value = String(m.id);
+    $('#mPrev').disabled = idx <= 0;
+    $('#mNext').disabled = idx >= ms.length - 1;
+    $('#mPrev').onclick = () => go('match', ms[idx - 1].id);
+    $('#mNext').onclick = () => go('match', ms[idx + 1].id);
+    sel.onchange = () => go('match', Number(sel.value));
+
+    // 標頭
+    const side = (s) => (m.players || []).filter((p) => p.side === s || (s === 'ally' && p.side === 'me'));
+    const resCls = m.result === 'win' ? 'good' : m.result === 'loss' ? 'bad' : 'muted';
+    $('#mHead').replaceChildren(
+      h('div', { class: 'match-result ' + resCls }, m.result === 'win' ? '勝利' : m.result === 'loss' ? '落敗' : '未知'),
+      h('div', { class: 'match-meta' },
+        h('span', null, '地圖 ', h('b', null, m.map || '—')),
+        h('span', null, '模式 ', h('b', null, modeName(m.mode))),
+        h('span', null, '時間 ', h('b', null, fmtDate(m.startedAt, true))),
+        h('span', null, '長度 ', h('b', null, fmtTime(m.duration))),
+        m.detail && m.detail.winReason ? h('span', null, '結束方式 ', h('b', null, { Surrender: '投降', Conquest: '征服', Wonder: '奇觀', Relic: '聖物', 'Sacred Sites': '聖地', Culture: '文化', Elimination: '殲滅' }[m.detail.winReason] || m.detail.winReason)) : null,
+        isNum(m.rating) ? h('span', null, '分數 ', h('b', null, m.rating + ' → ' + ratingAfter(m)), ' ', h('span', { class: (m.ratingChange || 0) >= 0 ? 'good' : 'bad' }, '（' + fmtSigned(m.ratingChange) + '）')) : null),
+      h('div', { class: 'vs' },
+        h('div', { class: 'side' }, h('span', { class: 'label' }, '我方'), side('ally').map((p) => h('span', null, h('i', { class: 'pdot', style: 'background:' + (p.side === 'me' ? 'var(--me)' : 'var(--ally)') }), p.name + '（' + civName(p.civ) + (isNum(p.rating) ? '，' + p.rating : '') + '）'))),
+        h('div', { class: 'side' }, h('span', { class: 'label' }, '對手'), side('opp').map((p, i) => h('span', null, h('i', { class: 'pdot', style: 'background:' + OPP_COLORS[i % OPP_COLORS.length] }), p.name + '（' + civName(p.civ) + (isNum(p.rating) ? '，' + p.rating : '') + '）'))))
+    );
+
+    const me = meOf(m);
+    $('#mNoDetail').hidden = !!me;
+    $('#mDetail').hidden = !me;
+    if (!me) return;
+    const ps = orderPlayers(m.detail.players);
+    const colors = colorMap(m.detail.players);
+    const opps = oppsOf(m);
+
+    // 指標按鈕
+    const avail = SERIES.filter((s) => ps.some((p) => { const a = s.get(p.timeline); return Array.isArray(a) && a.some((v) => v > 0); }));
+    if (!avail.some((s) => s.id === state.series)) state.series = 'villagers';
+    const groups = [];
+    avail.forEach((s) => { let g = groups.find((x) => x.name === s.group); if (!g) groups.push(g = { name: s.group, items: [] }); g.items.push(s); });
+    $('#mChips').replaceChildren(...groups.map((g) => h('div', { class: 'chip-group', role: 'group', 'aria-label': g.name }, h('span', null, g.name),
+      g.items.map((s) => h('button', { type: 'button', class: 'chip', 'aria-pressed': String(s.id === state.series), onclick: () => { state.series = s.id; renderMatch(); } }, s.name)))));
+    const sdef = avail.find((s) => s.id === state.series);
+    $('#mChartNote').textContent = (SERIES_NOTE[sdef.id] || (sdef.unit ? sdef.name + '的' + sdef.unit + '採集量。' : '選一個指標，比較你和對手在整場中的變化。')) +
+      (sdef.id === 'gathered' && ps.some((p) => p.gatheredEstimated) ? '這場是舊版資料，累積採集量由採集速率推算（誤差約 ±10%）。' : '');
+
+    const markers = [];
+    ps.forEach((p) => ['feudal', 'castle', 'imperial'].forEach((k) => { if (p.ages && isNum(p.ages[k])) markers.push({ x: p.ages[k], color: colors.get(p) }); }));
+    lineChart($('#mChart'), {
+      label: sdef.name + '隨時間變化',
+      series: ps.map((p) => { const ys = sdef.get(p.timeline) || []; return { name: p.name + (p.side === 'me' ? '（我）' : ''), color: colors.get(p), width: p.side === 'me' ? 2.6 : 2, values: (p.timeline.t || []).map((t, i) => ({ x: t, y: ys[i] })) }; }),
+      xMin: 0, xFormat: fmtTime, xTicks: timeTicks, markers: markers, height: 280, snapTol: 15,
+      tipTitle: (x) => '第 ' + fmtTime(x) + (sdef.unit ? '（' + sdef.unit + '）' : ''),
+      tipValue: (y) => fmtNum(y)
+    });
+    $('#mLegend').replaceChildren(...ps.map((p) => h('span', null, h('i', { class: 'sw', style: 'background:' + colors.get(p) }), p.name + '・' + civName(p.civ))),
+      h('span', { class: 'muted' }, '虛線：升時代的時間點'));
+
+    // 時代時間軸
+    const dur = Math.max(m.duration || 0, ...ps.map((p) => { const t = p.timeline.t || []; return t[t.length - 1] || 0; })) || 1;
+    $('#mAges').replaceChildren(h('div', { class: 'small muted' }, '時代進程（II 封建、III 城堡、IV 帝王）'), ...ps.map((p) => h('div', { class: 'age-row' },
+      h('div', { class: 'who', title: p.name }, h('i', { class: 'pdot', style: 'background:' + colors.get(p) }), p.name),
+      h('div', { class: 'age-track' }, [['feudal', 'II'], ['castle', 'III'], ['imperial', 'IV']].map(([k, label]) => (p.ages && isNum(p.ages[k]))
+        ? h('span', { class: 'age-mark', style: 'left:' + Math.min(97, Math.max(3, p.ages[k] / dur * 100)) + '%;background:' + colors.get(p), title: label + ' ' + fmtTime(p.ages[k]) }, label + ' ' + fmtTime(p.ages[k])) : null)))));
+
+    // 這場的勝負關鍵
+    $('#mFactors').replaceChildren(h('div', { class: 'flist' }, FACTORS.map((f) => {
+      const r = factorRows(f, [m])[0];
+      const a = f.get(me, m), b = f.dir === 'earlier' ? mean(opps.map((p) => f.get(p, m)).filter(isNum)) : mean(opps.map((p) => f.get(p, m)));
+      const badge = !r ? h('span', { class: 'pill even' }, '不適用') : r.lead > 0 ? h('span', { class: 'pill lead' }, '領先') : r.lead < 0 ? h('span', { class: 'pill trail' }, '落後') : h('span', { class: 'pill even' }, '持平');
+      return h('div', { class: 'frow' }, h('span', null, f.name), h('span', { class: 'vals' }, h('b', null, fval(f, a)), ' / ' + fval(f, b)), badge);
+    })));
+
+    // 關鍵時間點
+    const cps = [300, 600, 900, 1200, 1500, 1800, 2400].filter((t) => t <= dur + 10);
+    const rowsDef = [
+      ['村民數', (p, t) => tlAt(p, 'villagers', t), 1], ['採集速率', (p, t) => tlSumAt(p, RATE, t), 1], ['累積採集', (p, t) => tlSumAt(p, GATH, t), 1],
+      ['囤積資源', (p, t) => tlSumAt(p, STOCK, t), -1], ['軍隊（估計）', (p, t) => tlAt(p, 'army', t), 1], ['總分', (p, t) => tlAt(p, 'score', t), 1], ['軍事分', (p, t) => tlAt(p, 'military', t), 1]
+    ];
+    $('#mCheckpoints').replaceChildren(
+      h('thead', null, h('tr', null, h('th', null, ''), cps.map((t) => h('th', { class: 'n' }, fmtTime(t))))),
+      h('tbody', null, rowsDef.map(([name, fn, dir]) => h('tr', null, h('td', null, name), cps.map((t) => {
+        const a = fn(me, t), b = mean(opps.map((p) => fn(p, t)));
+        if (!isNum(a) && !isNum(b)) return h('td', { class: 'n muted' }, '—');
+        const better = isNum(a) && isNum(b) ? Math.sign((a - b) * dir) : 0;
+        return h('td', { class: 'n cell-vs' }, h('span', { class: better > 0 ? 'good' : better < 0 ? 'bad' : '' }, fmtShort(a)), h('small', null, ' / ' + fmtShort(b)));
+      }))))
+    );
+
+    // 整場統計
+    const totals = [
+      ['採集總量', (p) => p.gathered && p.gathered.total], ['花費總量', (p) => p.spent && p.spent.total], ['擊殺', (p) => p.stats && p.stats.kills],
+      ['陣亡', (p) => p.stats && p.stats.deaths], ['生產單位', (p) => p.stats && p.stats.unitsMade], ['村民生產', (p) => p.villagersMade],
+      ['村民陣亡', (p) => p.villagersLost], ['建築損失', (p) => p.stats && p.stats.buildingsLost], ['完成科技', (p) => p.upgradesDone], ['總分', (p) => p.scores && p.scores.total]
+    ];
+    $('#mTotals').replaceChildren(...totals.map(([name, fn]) => {
+      const a = fn(me), b = mean(opps.map(fn));
+      const max = Math.max(a || 0, b || 0) || 1;
+      return h('div', { class: 'pair' }, h('div', null, name), h('div', { class: 'pair-bars' },
+        h('div', { class: 'pair-bar' }, h('i', { style: 'background:var(--me);width:' + ((a || 0) / max * 75) + '%' }), h('span', null, fmtNum(a))),
+        h('div', { class: 'pair-bar' }, h('i', { style: 'background:var(--opp);width:' + ((b || 0) / max * 75) + '%' }), h('span', null, fmtNum(b)))));
+    }));
+
+    // 玩家表
+    $('#mPlayers').replaceChildren(
+      h('thead', null, h('tr', null, ['玩家', '文明', '結果', 'APM', '總分', '軍事', '經濟', '科技', '社會', '擊殺', '陣亡', '村民 產／亡', '封建', '城堡', '帝王'].map((t, i) => h('th', { class: i > 2 ? 'n' : '' }, t)))),
+      h('tbody', null, ps.map((p) => h('tr', null,
+        h('td', null, h('i', { class: 'pdot', style: 'background:' + colors.get(p) }), p.name + (p.side === 'me' ? '（我）' : '')),
+        h('td', null, civName(p.civ)), h('td', null, resultPill(p.result)), h('td', { class: 'n' }, fmtNum(p.apm)),
+        h('td', { class: 'n' }, fmtNum(p.scores && p.scores.total)), h('td', { class: 'n' }, fmtNum(p.scores && p.scores.military)),
+        h('td', { class: 'n' }, fmtNum(p.scores && p.scores.economy)), h('td', { class: 'n' }, fmtNum(p.scores && p.scores.technology)),
+        h('td', { class: 'n' }, fmtNum(p.scores && p.scores.society)), h('td', { class: 'n' }, fmtNum(p.stats && p.stats.kills)),
+        h('td', { class: 'n' }, fmtNum(p.stats && p.stats.deaths)), h('td', { class: 'n' }, fmtNum(p.villagersMade) + '／' + fmtNum(p.villagersLost)),
+        h('td', { class: 'n' }, fmtTime(p.ages && p.ages.feudal)), h('td', { class: 'n' }, fmtTime(p.ages && p.ages.castle)), h('td', { class: 'n' }, fmtTime(p.ages && p.ages.imperial)))))
+    );
+  }
+
+  // ================== 對局列表 ==================
+  const LIST_COLS = [
+    { key: 'date', label: '日期', val: (m) => Date.parse(m.startedAt), show: (m) => fmtDate(m.startedAt, true) },
+    { key: 'mode', label: '模式', val: (m) => modeName(m.mode), show: (m) => modeName(m.mode) },
+    { key: 'map', label: '地圖', val: (m) => m.map || '', show: (m) => m.map || '—' },
+    { key: 'civ', label: '我的文明', val: (m) => civName(m.civ), show: (m) => civName(m.civ) },
+    { key: 'opp', label: '對手', val: (m) => oppLabel(m), show: (m) => oppLabel(m) },
+    { key: 'result', label: '結果', val: (m) => (m.result === 'win' ? 1 : m.result === 'loss' ? 0 : -1), show: (m) => resultPill(m.result) },
+    { key: 'dur', label: '時長', n: true, val: (m) => m.duration, show: (m) => fmtTime(m.duration) },
+    { key: 'rating', label: '分數變化', n: true, val: (m) => m.ratingChange, show: (m) => (isNum(m.ratingChange) ? h('span', { class: m.ratingChange >= 0 ? 'good' : 'bad' }, fmtSigned(m.ratingChange)) : '—') },
+    { key: 'apm', label: 'APM', n: true, val: (m) => (meOf(m) ? meOf(m).apm : null), show: (m) => fmtNum(meOf(m) ? meOf(m).apm : null) },
+    { key: 'v10', label: '10 分村民 我／敵', n: true, val: (m) => tlAt(meOf(m), 'villagers', 600), show: (m) => vsCell(tlAt(meOf(m), 'villagers', 600), mean(oppsOf(m).map((p) => tlAt(p, 'villagers', 600))), 1) },
+    { key: 'feudal', label: '封建 我／敵', n: true, val: (m) => (meOf(m) ? meOf(m).ages.feudal : null), show: (m) => vsCell(meOf(m) ? meOf(m).ages.feudal : null, mean(oppsOf(m).map((p) => p.ages.feudal)), -1, fmtTime) },
+    { key: 'score', label: '總分 我／敵', n: true, val: (m) => (meOf(m) ? meOf(m).scores.total : null), show: (m) => vsCell(meOf(m) ? meOf(m).scores.total : null, mean(oppsOf(m).map((p) => p.scores.total)), 1) }
+  ];
+  function vsCell(a, b, dir, fmt) {
+    if (!isNum(a) && !isNum(b)) return '—';
+    const f = fmt || ((v) => fmtShort(v));
+    const better = isNum(a) && isNum(b) ? Math.sign((a - b) * dir) : 0;
+    return h('span', { class: 'cell-vs' }, h('span', { class: better > 0 ? 'good' : better < 0 ? 'bad' : '' }, isNum(a) ? f(a) : '—'), h('small', null, ' / ' + (isNum(b) ? f(b) : '—')));
+  }
+  function renderList() {
+    const q = state.search.trim().toLowerCase();
+    let ms = filtered().filter((m) => !q || [m.map, modeName(m.mode), civName(m.civ), oppCivs(m).join(' '), (m.players || []).map((p) => p.name).join(' '), fmtDate(m.startedAt)].join(' ').toLowerCase().includes(q));
+    const col = LIST_COLS.find((c) => c.key === state.sortKey) || LIST_COLS[0];
+    ms = ms.slice().sort((a, b) => {
+      const x = col.val(a), y = col.val(b);
+      if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1;
+      return (typeof x === 'string' ? x.localeCompare(y, 'zh-Hant') : x - y) * state.sortDir;
+    });
+    $('#lCount').textContent = '共 ' + ms.length + ' 場';
+    $('#lTable').replaceChildren(
+      h('thead', null, h('tr', null, LIST_COLS.map((c) => h('th', { class: c.n ? 'n' : '', 'aria-sort': c.key === state.sortKey ? (state.sortDir > 0 ? 'ascending' : 'descending') : 'none' },
+        h('button', { type: 'button', onclick: () => { if (state.sortKey === c.key) state.sortDir *= -1; else { state.sortKey = c.key; state.sortDir = c.key === 'date' || c.n ? -1 : 1; } renderList(); } }, c.label))))),
+      h('tbody', null, ms.map((m) => h('tr', { class: 'click', tabindex: '0', onclick: () => go('match', m.id), onkeydown: (e) => { if (e.key === 'Enter') go('match', m.id); } },
+        LIST_COLS.map((c) => h('td', { class: c.n ? 'n' : '' }, c.show(m))))))
+    );
+  }
+  $('#lSearch').addEventListener('input', (e) => { state.search = e.target.value; renderList(); });
+
+  boot();
+})();
+</script>
+</body>
+</html>

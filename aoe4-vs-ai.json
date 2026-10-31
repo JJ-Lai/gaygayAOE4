@@ -1,0 +1,1041 @@
+{
+  "source": "local network cache S_ files (solo skirmish vs AI)",
+  "profile_id": 10861747,
+  "extracted_at": "2026-10-31T17:21:26.508Z",
+  "count": 103,
+  "wins": 49,
+  "losses": 54,
+  "note": "result comes from whether the stats file records an elimination. Not eliminated is recorded as win. The matchhistory folder has 10 of these games with a fuller parse.",
+  "games": [
+    {
+      "id": 156484973,
+      "startedAt": "2023/11/20 下午 05:18",
+      "uploadedAt": "2023-11-20T10:01:54.000Z",
+      "map": "mountain_pass",
+      "civ": "japanese",
+      "result": "win",
+      "durationSec": 2613,
+      "players": "AI 中等|||L; e1252081|japanese|10861747|W"
+    },
+    {
+      "id": 159540856,
+      "startedAt": null,
+      "uploadedAt": "2023-11-28T16:17:32.000Z",
+      "map": null,
+      "civ": "japanese",
+      "result": "win",
+      "durationSec": 2009,
+      "players": "AI 極難|||L; e1252081|japanese|10861747|W"
+    },
+    {
+      "id": 159773397,
+      "startedAt": "2023/11/29 下午 06:27",
+      "uploadedAt": "2023-11-29T11:31:45.000Z",
+      "map": "dry_arabia",
+      "civ": "japanese",
+      "result": "win",
+      "durationSec": 3852,
+      "players": "e1252081|japanese|10861747|W; AI 極難|||L"
+    },
+    {
+      "id": 160074662,
+      "startedAt": "2023/11/30 下午 06:52",
+      "uploadedAt": "2023-11-30T11:50:34.000Z",
+      "map": "dry_arabia",
+      "civ": "japanese",
+      "result": "win",
+      "durationSec": 3374,
+      "players": "e1252081|japanese|10861747|W; AI 極難|||L"
+    },
+    {
+      "id": 160106687,
+      "startedAt": "2023/11/30 下午 08:59",
+      "uploadedAt": "2023-11-30T13:10:40.000Z",
+      "map": "lipany",
+      "civ": "japanese",
+      "result": "loss",
+      "durationSec": 643,
+      "players": "e1252081|japanese|10861747|L; AI 中等|||W"
+    },
+    {
+      "id": 161993994,
+      "startedAt": "2023/12/6 下午 10:13",
+      "uploadedAt": "2023-12-06T14:34:47.000Z",
+      "map": "dry_arabia",
+      "civ": "japanese",
+      "result": "loss",
+      "durationSec": 1252,
+      "players": "e1252081|japanese|10861747|L; AI 極難|||W"
+    },
+    {
+      "id": 169080722,
+      "startedAt": "2024/1/1 下午 07:30",
+      "uploadedAt": "2024-01-01T11:45:14.000Z",
+      "map": "megarandom",
+      "civ": "japanese",
+      "result": "loss",
+      "durationSec": 896,
+      "players": "AI 極難|||W; e1252081|japanese|10861747|L"
+    },
+    {
+      "id": 173782702,
+      "startedAt": "2024/1/19 下午 05:30",
+      "uploadedAt": "2024-01-19T09:50:50.000Z",
+      "map": "rolling_rivers",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 1182,
+      "players": "AI 中等|||W; e1252081|rus|10861747|L"
+    },
+    {
+      "id": 175855421,
+      "startedAt": "2024/1/28 下午 08:27",
+      "uploadedAt": "2024-01-28T12:57:24.000Z",
+      "map": "megarandom",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 1794,
+      "players": "AI 可笑|||W; e1252081|rus|10861747|L"
+    },
+    {
+      "id": 177946282,
+      "startedAt": "2024/2/7 下午 11:14",
+      "uploadedAt": "2024-02-07T15:36:49.000Z",
+      "map": "megarandom",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 1316,
+      "players": "AI 可笑|||W; e1252081|rus|10861747|L"
+    },
+    {
+      "id": 178033902,
+      "startedAt": "2024/2/8 上午 11:22",
+      "uploadedAt": "2024-02-08T03:56:56.000Z",
+      "map": "megarandom",
+      "civ": "rus",
+      "result": "win",
+      "durationSec": 2020,
+      "players": "e1252081|rus|10861747|W; AI 極難|||L"
+    },
+    {
+      "id": 178044888,
+      "startedAt": "2024/2/8 下午 01:03",
+      "uploadedAt": "2024-02-08T05:51:32.000Z",
+      "map": "megarandom",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 2784,
+      "players": "e1252081|rus|10861747|L; AI 極難|||W"
+    },
+    {
+      "id": 178060232,
+      "startedAt": "2024/2/8 下午 03:34",
+      "uploadedAt": "2024-02-08T07:55:00.000Z",
+      "map": "dry_arabia",
+      "civ": "rus",
+      "result": "win",
+      "durationSec": 1249,
+      "players": "e1252081|rus|10861747|W; AI 中等|||L"
+    },
+    {
+      "id": 178063049,
+      "startedAt": "2024/2/8 下午 03:59",
+      "uploadedAt": "2024-02-08T08:29:31.000Z",
+      "map": "dry_arabia",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 1802,
+      "players": "AI 極難|||W; e1252081|rus|10861747|L"
+    },
+    {
+      "id": 179518827,
+      "startedAt": "2024/2/15 下午 08:36",
+      "uploadedAt": "2024-02-15T13:20:40.000Z",
+      "map": "megarandom",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 2609,
+      "players": "e1252081|rus|10861747|L; AI 極難|||W"
+    },
+    {
+      "id": 179535807,
+      "startedAt": "2024/2/15 下午 10:22",
+      "uploadedAt": "2024-02-15T14:48:26.000Z",
+      "map": "megarandom",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 1526,
+      "players": "e1252081|rus|10861747|L; AI 極難|||W"
+    },
+    {
+      "id": 179554308,
+      "startedAt": "2024/2/16 上午 12:14",
+      "uploadedAt": "2024-02-15T16:44:42.000Z",
+      "map": "megarandom",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 1781,
+      "players": "AI 極難|||W; e1252081|rus|10861747|L"
+    },
+    {
+      "id": 179763526,
+      "startedAt": "2024/2/17 上午 01:52",
+      "uploadedAt": "2024-02-16T18:45:14.000Z",
+      "map": "megarandom",
+      "civ": "rus",
+      "result": "win",
+      "durationSec": 3132,
+      "players": "e1252081|rus|10861747|W; AI 極難|||L"
+    },
+    {
+      "id": 179834903,
+      "startedAt": "2024/2/17 上午 10:21",
+      "uploadedAt": "2024-02-17T02:50:24.000Z",
+      "map": "megarandom",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 1715,
+      "players": "AI 極難|||W; e1252081|rus|10861747|L"
+    },
+    {
+      "id": 179851176,
+      "startedAt": "2024/2/17 下午 12:22",
+      "uploadedAt": "2024-02-17T04:55:28.000Z",
+      "map": "megarandom",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 1941,
+      "players": "AI 極難|||W; e1252081|rus|10861747|L"
+    },
+    {
+      "id": 179894441,
+      "startedAt": "2024/2/17 下午 05:33",
+      "uploadedAt": "2024-02-17T10:14:35.000Z",
+      "map": "megarandom",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 2421,
+      "players": "e1252081|rus|10861747|L; AI 極難|||W"
+    },
+    {
+      "id": 179946324,
+      "startedAt": "2024/2/17 下午 10:12",
+      "uploadedAt": "2024-02-17T14:55:05.000Z",
+      "map": "megarandom",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 2513,
+      "players": "e1252081|rus|10861747|L; AI 極難|||W"
+    },
+    {
+      "id": 179977874,
+      "startedAt": "2024/2/18 上午 12:39",
+      "uploadedAt": "2024-02-17T17:23:48.000Z",
+      "map": "dry_arabia",
+      "civ": "rus",
+      "result": "win",
+      "durationSec": 2210,
+      "players": "AI 極難|||L; e1252081|rus|10861747|W"
+    },
+    {
+      "id": 190074241,
+      "startedAt": "2024/4/7 下午 06:34",
+      "uploadedAt": "2024-04-07T11:34:11.000Z",
+      "map": "dry_arabia",
+      "civ": "rus",
+      "result": "win",
+      "durationSec": 2107,
+      "players": "e1252081|rus|10861747|W; 2 AI 可笑 |||L"
+    },
+    {
+      "id": 190086780,
+      "startedAt": "2024/4/7 下午 07:50",
+      "uploadedAt": "2024-04-07T12:35:18.000Z",
+      "map": "dry_arabia",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 2698,
+      "players": "2 AI 可笑 |||W; e1252081|rus|10861747|L"
+    },
+    {
+      "id": 190302399,
+      "startedAt": "2024/4/8 下午 10:31",
+      "uploadedAt": "2024-04-08T15:03:45.000Z",
+      "map": "dry_arabia",
+      "civ": "rus",
+      "result": "win",
+      "durationSec": 1867,
+      "players": "2 AI 可笑 |||L; e1252081|rus|10861747|W"
+    },
+    {
+      "id": 190759234,
+      "startedAt": "2024/4/11 下午 08:56",
+      "uploadedAt": "2024-04-11T13:39:19.000Z",
+      "map": "dry_arabia",
+      "civ": "rus",
+      "result": "win",
+      "durationSec": 2551,
+      "players": "2 AI 可笑 |||L; e1252081|rus|10861747|W"
+    },
+    {
+      "id": 190772236,
+      "startedAt": "2024/4/11 下午 10:24",
+      "uploadedAt": "2024-04-11T15:16:47.000Z",
+      "map": "dry_arabia",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 3126,
+      "players": "2 AI 可笑 |||W; e1252081|rus|10861747|L"
+    },
+    {
+      "id": 192064406,
+      "startedAt": null,
+      "uploadedAt": "2024-04-19T11:29:16.000Z",
+      "map": null,
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 1669,
+      "players": "e1252081|rus|10861747|L; 2 AI 可笑 |||W"
+    },
+    {
+      "id": 192420724,
+      "startedAt": "2024/4/21 上午 10:41",
+      "uploadedAt": "2024-04-21T03:28:56.000Z",
+      "map": "canal",
+      "civ": "japanese",
+      "result": "loss",
+      "durationSec": 2808,
+      "players": "e1252081|japanese|10861747|L; 2 AI 可笑 |||W"
+    },
+    {
+      "id": 192702276,
+      "startedAt": "2024/4/22 下午 07:03",
+      "uploadedAt": "2024-04-22T11:17:49.000Z",
+      "map": "lipany",
+      "civ": "japanese",
+      "result": "loss",
+      "durationSec": 868,
+      "players": "2 AI 可笑 |||W; e1252081|japanese|10861747|L"
+    },
+    {
+      "id": 192705468,
+      "startedAt": "2024/4/22 下午 07:27",
+      "uploadedAt": "2024-04-22T12:03:13.000Z",
+      "map": "lipany",
+      "civ": "japanese",
+      "result": "loss",
+      "durationSec": 2112,
+      "players": "e1252081|japanese|10861747|L; 2 AI 可笑 |||W"
+    },
+    {
+      "id": 192727000,
+      "startedAt": "2024/4/22 下午 09:48",
+      "uploadedAt": "2024-04-22T14:13:18.000Z",
+      "map": "hill_and_dale",
+      "civ": "japanese",
+      "result": "loss",
+      "durationSec": 1478,
+      "players": "2 AI 可笑 |||W; e1252081|japanese|10861747|L"
+    },
+    {
+      "id": 192881075,
+      "startedAt": "2024/4/23 下午 08:05",
+      "uploadedAt": "2024-04-23T12:42:06.000Z",
+      "map": "hill_and_dale",
+      "civ": "japanese",
+      "result": "loss",
+      "durationSec": 2175,
+      "players": "2 AI 極難 |||W; e1252081|japanese|10861747|L"
+    },
+    {
+      "id": 193056647,
+      "startedAt": "2024/4/24 下午 09:11",
+      "uploadedAt": "2024-04-24T13:31:33.000Z",
+      "map": "megarandom",
+      "civ": "japanese",
+      "result": "loss",
+      "durationSec": 1186,
+      "players": "e1252081|japanese|10861747|L; 2 AI 可笑 |||W"
+    },
+    {
+      "id": 193060971,
+      "startedAt": "2024/4/24 下午 09:37",
+      "uploadedAt": "2024-04-24T14:20:49.000Z",
+      "map": "land_megarandom",
+      "civ": "japanese",
+      "result": "win",
+      "durationSec": 2612,
+      "players": "2 AI 極難 |||L; e1252081|japanese|10861747|W"
+    },
+    {
+      "id": 193080382,
+      "startedAt": "2024/4/24 下午 11:28",
+      "uploadedAt": "2024-04-24T15:49:46.000Z",
+      "map": "land_megarandom",
+      "civ": "japanese",
+      "result": "win",
+      "durationSec": 1240,
+      "players": "e1252081|japanese|10861747|W; 2 AI 極難 |||L"
+    },
+    {
+      "id": 193084744,
+      "startedAt": "2024/4/24 下午 11:55",
+      "uploadedAt": "2024-04-24T16:26:29.000Z",
+      "map": "land_megarandom",
+      "civ": "japanese",
+      "result": "win",
+      "durationSec": 1859,
+      "players": "2 AI 極難 |||L; e1252081|japanese|10861747|W"
+    },
+    {
+      "id": 193558054,
+      "startedAt": "2024/4/27 下午 06:05",
+      "uploadedAt": "2024-04-27T10:37:15.000Z",
+      "map": "land_megarandom",
+      "civ": "malian",
+      "result": "loss",
+      "durationSec": 1886,
+      "players": "2 AI 極難 |||W; e1252081|malian|10861747|L"
+    },
+    {
+      "id": 193605513,
+      "startedAt": "2024/4/27 下午 10:27",
+      "uploadedAt": "2024-04-27T14:57:41.000Z",
+      "map": "dry_arabia",
+      "civ": "malian",
+      "result": "loss",
+      "durationSec": 1788,
+      "players": "2 AI 可笑 |||W; e1252081|malian|10861747|L"
+    },
+    {
+      "id": 194187003,
+      "startedAt": "2024/4/30 下午 11:39",
+      "uploadedAt": "2024-04-30T16:19:20.000Z",
+      "map": "dry_arabia",
+      "civ": "malian",
+      "result": "loss",
+      "durationSec": 2350,
+      "players": "e1252081|malian|10861747|L; 2 AI 極難 |||W"
+    },
+    {
+      "id": 197217286,
+      "startedAt": "2024/5/18 下午 06:39",
+      "uploadedAt": "2024-05-18T11:21:15.000Z",
+      "map": "rolling_rivers",
+      "civ": "malian",
+      "result": "loss",
+      "durationSec": 2513,
+      "players": "2 AI 可笑 |||W; e1252081|malian|10861747|L"
+    },
+    {
+      "id": 198169996,
+      "startedAt": "2024/5/24 下午 10:14",
+      "uploadedAt": "2024-05-24T14:48:35.000Z",
+      "map": "dry_arabia",
+      "civ": "malian",
+      "result": "win",
+      "durationSec": 2011,
+      "players": "e1252081|malian|10861747|W; 2 AI 可笑 |||L"
+    },
+    {
+      "id": 198948293,
+      "startedAt": "2024/5/29 下午 07:59",
+      "uploadedAt": "2024-05-29T12:12:25.000Z",
+      "map": "dry_arabia",
+      "civ": "malian",
+      "result": "loss",
+      "durationSec": 780,
+      "players": "e1252081|malian|10861747|L; 2 AI 可笑 |||W"
+    },
+    {
+      "id": 198951165,
+      "startedAt": "2024/5/29 下午 08:24",
+      "uploadedAt": "2024-05-29T12:41:50.000Z",
+      "map": "dry_arabia",
+      "civ": "malian",
+      "result": "loss",
+      "durationSec": 1047,
+      "players": "e1252081|malian|10861747|L; 2 AI 荒謬 |||W"
+    },
+    {
+      "id": 199079634,
+      "startedAt": null,
+      "uploadedAt": "2024-05-30T11:12:11.000Z",
+      "map": null,
+      "civ": "malian",
+      "result": "loss",
+      "durationSec": 588,
+      "players": "2 AI 中等 |||W; e1252081|malian|10861747|L"
+    },
+    {
+      "id": 199081005,
+      "startedAt": "2024/5/30 下午 07:14",
+      "uploadedAt": "2024-05-30T11:42:59.000Z",
+      "map": "dry_arabia",
+      "civ": "malian",
+      "result": "win",
+      "durationSec": 1672,
+      "players": "2 AI 可笑 |||L; e1252081|malian|10861747|W"
+    },
+    {
+      "id": 199086805,
+      "startedAt": "2024/5/30 下午 08:07",
+      "uploadedAt": "2024-05-30T12:40:57.000Z",
+      "map": "ancient_spires",
+      "civ": "malian",
+      "result": "win",
+      "durationSec": 2016,
+      "players": "2 AI 可笑 |||L; e1252081|malian|10861747|W"
+    },
+    {
+      "id": 199593023,
+      "startedAt": "2024/6/2 下午 10:00",
+      "uploadedAt": "2024-06-02T14:32:58.000Z",
+      "map": "dry_arabia",
+      "civ": "ottoman",
+      "result": "win",
+      "durationSec": 1930,
+      "players": "e1252081|ottoman|10861747|W; 2 AI 可笑 |||L"
+    },
+    {
+      "id": 199734440,
+      "startedAt": "2024/6/3 下午 08:04",
+      "uploadedAt": "2024-06-03T12:39:08.000Z",
+      "map": "dry_arabia",
+      "civ": "ottoman",
+      "result": "win",
+      "durationSec": 2084,
+      "players": "e1252081|ottoman|10861747|W; 2 AI 可笑 |||L"
+    },
+    {
+      "id": 199882059,
+      "startedAt": "2024/6/4 下午 09:57",
+      "uploadedAt": "2024-06-04T14:29:37.000Z",
+      "map": "dry_arabia",
+      "civ": "ottoman",
+      "result": "loss",
+      "durationSec": 1881,
+      "players": "2 AI 離譜 |||W; e1252081|ottoman|10861747|L"
+    },
+    {
+      "id": 200597251,
+      "startedAt": "2024/6/9 下午 07:14",
+      "uploadedAt": "2024-06-09T11:41:23.000Z",
+      "map": "dry_arabia",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 1572,
+      "players": "e1252081|rus|10861747|L; 2 AI 離譜 |||W"
+    },
+    {
+      "id": 200616535,
+      "startedAt": "2024/6/9 下午 09:18",
+      "uploadedAt": "2024-06-09T13:55:57.000Z",
+      "map": "dry_arabia",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 2210,
+      "players": "e1252081|rus|10861747|L; 2 AI 離譜 |||W"
+    },
+    {
+      "id": 200796974,
+      "startedAt": "2024/6/10 下午 10:25",
+      "uploadedAt": "2024-06-10T15:03:52.000Z",
+      "map": "dry_arabia",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 2276,
+      "players": "e1252081|rus|10861747|L; 2 AI 可笑 |||W"
+    },
+    {
+      "id": 200944516,
+      "startedAt": "2024/6/11 下午 11:20",
+      "uploadedAt": "2024-06-11T15:41:59.000Z",
+      "map": "dry_arabia",
+      "civ": "rus",
+      "result": "win",
+      "durationSec": 1249,
+      "players": "2 AI 極難 |||L; e1252081|rus|10861747|W"
+    },
+    {
+      "id": 201061940,
+      "startedAt": "2024/6/12 下午 08:42",
+      "uploadedAt": "2024-06-12T13:45:08.000Z",
+      "map": "dry_arabia",
+      "civ": "rus",
+      "result": "win",
+      "durationSec": 3732,
+      "players": "2 AI 可笑 |||L; e1252081|rus|10861747|W"
+    },
+    {
+      "id": 201191740,
+      "startedAt": "2024/6/13 下午 07:54",
+      "uploadedAt": "2024-06-13T12:23:34.000Z",
+      "map": "dry_arabia",
+      "civ": "rus",
+      "result": "win",
+      "durationSec": 1764,
+      "players": "e1252081|rus|10861747|W; 2 AI 可笑 |||L"
+    },
+    {
+      "id": 201431861,
+      "startedAt": "2024/6/15 上午 11:24",
+      "uploadedAt": "2024-06-15T04:26:09.000Z",
+      "map": "dry_arabia",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 3668,
+      "players": "e1252081|rus|10861747|L; 2 AI 可笑 |||W"
+    },
+    {
+      "id": 207753151,
+      "startedAt": "2024/7/25 下午 08:14",
+      "uploadedAt": "2024-07-25T12:42:08.000Z",
+      "map": "dry_arabia",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 1650,
+      "players": "e1252081|rus|10861747|L; 2 AI 可笑|||W"
+    },
+    {
+      "id": 208599032,
+      "startedAt": "2024/7/30 下午 07:45",
+      "uploadedAt": "2024-07-30T12:16:39.000Z",
+      "map": "dry_arabia",
+      "civ": "rus",
+      "result": "loss",
+      "durationSec": 1831,
+      "players": "2 AI 可笑|||W; e1252081|rus|10861747|L"
+    },
+    {
+      "id": 224825074,
+      "startedAt": null,
+      "uploadedAt": "2024-11-15T17:00:28.000Z",
+      "map": null,
+      "civ": "japanese",
+      "result": "loss",
+      "durationSec": 1564,
+      "players": "e1252081|japanese|10861747|L; 2 AI 可笑|||W"
+    },
+    {
+      "id": 224828980,
+      "startedAt": "2024/11/16 上午 01:04",
+      "uploadedAt": "2024-11-15T17:32:07.000Z",
+      "map": "dry_arabia",
+      "civ": "japanese",
+      "result": "loss",
+      "durationSec": 1656,
+      "players": "e1252081|japanese|10861747|L; 2 AI 可笑|||W"
+    },
+    {
+      "id": 225003346,
+      "startedAt": "2024/11/17 上午 01:28",
+      "uploadedAt": "2024-11-16T17:51:30.000Z",
+      "map": "dry_arabia",
+      "civ": "malian",
+      "result": "loss",
+      "durationSec": 1369,
+      "players": "e1252081|malian|10861747|L; 2 AI 可笑|||W"
+    },
+    {
+      "id": 225119883,
+      "startedAt": "2024/11/17 下午 06:03",
+      "uploadedAt": "2024-11-17T10:36:59.000Z",
+      "map": "dry_arabia",
+      "civ": "malian",
+      "result": "win",
+      "durationSec": 2003,
+      "players": "2 AI 可笑|||L; e1252081|malian|10861747|W"
+    },
+    {
+      "id": 228369238,
+      "startedAt": "2024/12/8 下午 01:02",
+      "uploadedAt": "2024-12-08T05:37:27.000Z",
+      "map": "lipany",
+      "civ": "rus",
+      "result": "win",
+      "durationSec": 2060,
+      "players": "2 AI 極難|||L; e1252081|rus|10861747|W"
+    },
+    {
+      "id": 234005933,
+      "startedAt": "2025/1/11 上午 10:58",
+      "uploadedAt": "2025-01-11T04:06:05.000Z",
+      "map": "dry_arabia",
+      "civ": "hre",
+      "result": "loss",
+      "durationSec": 4008,
+      "players": "e1252081|hre|10861747|L; 2 AI 可笑|||W"
+    },
+    {
+      "id": 236804773,
+      "startedAt": "2025/1/27 下午 09:06",
+      "uploadedAt": "2025-01-27T14:03:33.000Z",
+      "map": "dry_arabia",
+      "civ": "hre",
+      "result": "win",
+      "durationSec": 3407,
+      "players": "e1252081|hre|10861747|W; 2 AI 極難|||L"
+    },
+    {
+      "id": 237172912,
+      "startedAt": "2025/1/29 下午 11:24",
+      "uploadedAt": "2025-01-29T16:24:57.000Z",
+      "map": "dry_arabia",
+      "civ": "hre",
+      "result": "win",
+      "durationSec": 2427,
+      "players": "e1252081|hre|10861747|W; 2 AI 極難|||L"
+    },
+    {
+      "id": 237339101,
+      "startedAt": "2025/1/30 下午 11:53",
+      "uploadedAt": "2025-01-30T16:36:08.000Z",
+      "map": "dry_arabia",
+      "civ": "hre",
+      "result": "win",
+      "durationSec": 2563,
+      "players": "2 AI 極難|||L; e1252081|hre|10861747|W"
+    },
+    {
+      "id": 237496037,
+      "startedAt": "2025/1/31 下午 11:05",
+      "uploadedAt": "2025-01-31T15:45:53.000Z",
+      "map": "dry_arabia",
+      "civ": "hre",
+      "result": "win",
+      "durationSec": 2395,
+      "players": "2 AI 極難|||L; e1252081|hre|10861747|W"
+    },
+    {
+      "id": 237506097,
+      "startedAt": null,
+      "uploadedAt": "2025-01-31T16:32:12.000Z",
+      "map": null,
+      "civ": "hre",
+      "result": "loss",
+      "durationSec": 1174,
+      "players": "e1252081|hre|10861747|L; 2 AI 可笑|||W"
+    },
+    {
+      "id": 237828659,
+      "startedAt": null,
+      "uploadedAt": "2025-02-02T08:47:33.000Z",
+      "map": null,
+      "civ": "hre",
+      "result": "win",
+      "durationSec": 2427,
+      "players": "e1252081|hre|10861747|W; 2 AI 極難|||L"
+    },
+    {
+      "id": 240414557,
+      "startedAt": "2025/2/17 下午 11:23",
+      "uploadedAt": "2025-02-17T15:49:20.000Z",
+      "map": "dry_arabia",
+      "civ": "japanese",
+      "result": "win",
+      "durationSec": 1520,
+      "players": "2 AI 極難|||L; e1252081|japanese|10861747|W"
+    },
+    {
+      "id": 242421205,
+      "startedAt": "2025/3/2 下午 07:45",
+      "uploadedAt": "2025-03-02T12:03:06.000Z",
+      "map": "dry_arabia",
+      "civ": "byzantine",
+      "result": "win",
+      "durationSec": 1044,
+      "players": "e1252081|byzantine|10861747|W; 2 AI 可笑|||L"
+    },
+    {
+      "id": 243014619,
+      "startedAt": null,
+      "uploadedAt": "2025-03-06T15:57:00.000Z",
+      "map": null,
+      "civ": "byzantine",
+      "result": "loss",
+      "durationSec": 1410,
+      "players": "e1252081|byzantine|10861747|L"
+    },
+    {
+      "id": 243158275,
+      "startedAt": "2025/3/8 上午 01:02",
+      "uploadedAt": "2025-03-07T17:45:18.000Z",
+      "map": "dry_arabia",
+      "civ": "byzantine",
+      "result": "win",
+      "durationSec": 2564,
+      "players": "e1252081|byzantine|10861747|W; 2 AI 可笑|||L"
+    },
+    {
+      "id": 243623173,
+      "startedAt": "2025/3/10 下午 09:20",
+      "uploadedAt": "2025-03-10T14:15:09.000Z",
+      "map": "dry_arabia",
+      "civ": "byzantine",
+      "result": "win",
+      "durationSec": 2839,
+      "players": "3 AI 極難|||L; e1252081|byzantine|10861747|W; 2 AI 極難|||L"
+    },
+    {
+      "id": 243639304,
+      "startedAt": "2025/3/10 下午 11:32",
+      "uploadedAt": "2025-03-10T15:55:40.000Z",
+      "map": "dry_arabia",
+      "civ": "byzantine",
+      "result": "win",
+      "durationSec": 1355,
+      "players": "2 AI 可笑|||L; e1252081|byzantine|10861747|W"
+    },
+    {
+      "id": 243761983,
+      "startedAt": null,
+      "uploadedAt": "2025-03-11T14:39:25.000Z",
+      "map": null,
+      "civ": "byzantine",
+      "result": "loss",
+      "durationSec": 1746,
+      "players": "e1252081|byzantine|10861747|L; 2 AI 極難|||W; 3 AI 極難|||W"
+    },
+    {
+      "id": 243766377,
+      "startedAt": null,
+      "uploadedAt": "2025-03-11T15:03:17.000Z",
+      "map": null,
+      "civ": "byzantine",
+      "result": "loss",
+      "durationSec": 1183,
+      "players": "2 AI 極難|||W; 3 AI 極難|||W; e1252081|byzantine|10861747|L"
+    },
+    {
+      "id": 247366964,
+      "startedAt": "2025/4/1 下午 10:45",
+      "uploadedAt": "2025-04-01T15:10:09.000Z",
+      "map": "dry_arabia",
+      "civ": "byzantine",
+      "result": "loss",
+      "durationSec": 1481,
+      "players": "2 AI 極難|||W; 3 AI 極難|||W; e1252081|byzantine|10861747|L"
+    },
+    {
+      "id": 247521293,
+      "startedAt": "2025/4/3 上午 12:40",
+      "uploadedAt": "2025-04-02T17:22:42.000Z",
+      "map": "dry_arabia",
+      "civ": "byzantine",
+      "result": "win",
+      "durationSec": 2475,
+      "players": "e1252081|byzantine|10861747|W; 2 AI 可笑|||L"
+    },
+    {
+      "id": 250795860,
+      "startedAt": "2025/4/20 下午 02:40",
+      "uploadedAt": "2025-04-20T07:40:42.000Z",
+      "map": "relic_river",
+      "civ": "byzantine",
+      "result": "win",
+      "durationSec": 3531,
+      "players": "2 AI 可笑|||L; e1252081|byzantine|10861747|W"
+    },
+    {
+      "id": 250808783,
+      "startedAt": null,
+      "uploadedAt": "2025-04-20T08:40:18.000Z",
+      "map": null,
+      "civ": "byzantine",
+      "result": "win",
+      "durationSec": 1220,
+      "players": "e1252081|byzantine|10861747|W; 2 AI 可笑|||L"
+    },
+    {
+      "id": 250812180,
+      "startedAt": null,
+      "uploadedAt": "2025-04-20T09:04:05.000Z",
+      "map": null,
+      "civ": "byzantine",
+      "result": "win",
+      "durationSec": 1209,
+      "players": "2 AI 可笑|||L; e1252081|byzantine|10861747|W"
+    },
+    {
+      "id": 250815425,
+      "startedAt": "2025/4/20 下午 05:05",
+      "uploadedAt": "2025-04-20T09:25:20.000Z",
+      "map": "underhill",
+      "civ": "byzantine",
+      "result": "win",
+      "durationSec": 1189,
+      "players": "e1252081|byzantine|10861747|W; 2 AI 可笑|||L"
+    },
+    {
+      "id": 250822790,
+      "startedAt": "2025/4/20 下午 05:57",
+      "uploadedAt": "2025-04-20T10:17:03.000Z",
+      "map": "rugged",
+      "civ": "byzantine",
+      "result": "win",
+      "durationSec": 1181,
+      "players": "2 AI 可笑|||L; e1252081|byzantine|10861747|W"
+    },
+    {
+      "id": 250827801,
+      "startedAt": "2025/4/20 下午 06:32",
+      "uploadedAt": "2025-04-20T10:58:45.000Z",
+      "map": "forest_mountain",
+      "civ": "byzantine",
+      "result": "win",
+      "durationSec": 1552,
+      "players": "e1252081|byzantine|10861747|W; 2 AI 可笑|||L"
+    },
+    {
+      "id": 250856067,
+      "startedAt": "2025/4/20 下午 09:29",
+      "uploadedAt": "2025-04-20T14:00:25.000Z",
+      "map": "arid_plains",
+      "civ": "byzantine",
+      "result": "loss",
+      "durationSec": 1829,
+      "players": "e1252081|byzantine|10861747|L; 2 AI 可笑|||W"
+    },
+    {
+      "id": 252702131,
+      "startedAt": null,
+      "uploadedAt": "2025-05-01T11:51:54.000Z",
+      "map": null,
+      "civ": "byzantine",
+      "result": "win",
+      "durationSec": 1323,
+      "players": "e1252081|byzantine|10861747|W; 2 AI 可笑|||L"
+    },
+    {
+      "id": 252705820,
+      "startedAt": "2025/5/1 下午 07:52",
+      "uploadedAt": "2025-05-01T12:22:50.000Z",
+      "map": "forest_mountain",
+      "civ": "byzantine",
+      "result": "loss",
+      "durationSec": 1785,
+      "players": "e1252081|byzantine|10861747|L; 2 AI 可笑|||W"
+    },
+    {
+      "id": 256242544,
+      "startedAt": "2025/5/25 上午 12:17",
+      "uploadedAt": "2025-05-24T16:30:45.000Z",
+      "map": "dry_arabia",
+      "civ": "malian",
+      "result": "loss",
+      "durationSec": 762,
+      "players": "2 AI 可笑|||W; e1252081|malian|10861747|L"
+    },
+    {
+      "id": 259924088,
+      "startedAt": "2025/6/22 下午 10:20",
+      "uploadedAt": "2025-06-22T14:46:38.000Z",
+      "map": "dry_arabia",
+      "civ": "malian",
+      "result": "win",
+      "durationSec": 1546,
+      "players": "2 AI 可笑|||L; e1252081|malian|10861747|W"
+    },
+    {
+      "id": 261446263,
+      "startedAt": "2025/7/5 上午 12:09",
+      "uploadedAt": "2025-07-04T16:45:17.000Z",
+      "map": "dry_arabia",
+      "civ": "malian",
+      "result": "loss",
+      "durationSec": 2145,
+      "players": "2 AI 極難|||W; 3 AI 極難|||W; e1252081|malian|10861747|L"
+    },
+    {
+      "id": 261759147,
+      "startedAt": "2025/7/6 下午 11:08",
+      "uploadedAt": "2025-07-06T15:40:05.000Z",
+      "map": "dry_arabia",
+      "civ": "malian",
+      "result": "win",
+      "durationSec": 1887,
+      "players": "e1252081|malian|10861747|W; 2 AI 可笑|||L"
+    },
+    {
+      "id": 262704398,
+      "startedAt": "2025/7/13 下午 09:36",
+      "uploadedAt": "2025-07-13T13:57:44.000Z",
+      "map": "dry_arabia",
+      "civ": "malian",
+      "result": "win",
+      "durationSec": 1249,
+      "players": "2 AI 可笑|||L; e1252081|malian|10861747|W"
+    },
+    {
+      "id": 290827739,
+      "startedAt": null,
+      "uploadedAt": "2026-02-26T15:55:26.000Z",
+      "map": null,
+      "civ": "rus",
+      "result": "win",
+      "durationSec": 2127,
+      "players": "2 AI 可笑|||L; e1252081|rus|10861747|W"
+    },
+    {
+      "id": 290918497,
+      "startedAt": null,
+      "uploadedAt": "2026-02-27T17:01:28.000Z",
+      "map": null,
+      "civ": "mongol_ha_gol",
+      "result": "win",
+      "durationSec": 1324,
+      "players": "e1252081|mongol_ha_gol|10861747|W; 2 AI 可笑|||L"
+    },
+    {
+      "id": 290970936,
+      "startedAt": "2026/2/28 下午 02:35",
+      "uploadedAt": "2026-02-28T07:06:28.000Z",
+      "map": "dry_arabia",
+      "civ": "mongol_ha_gol",
+      "result": "loss",
+      "durationSec": 1820,
+      "players": "2 AI 離譜|||W; e1252081|mongol_ha_gol|10861747|L"
+    },
+    {
+      "id": 291967751,
+      "startedAt": null,
+      "uploadedAt": "2026-03-11T14:35:02.000Z",
+      "map": null,
+      "civ": "mongol_ha_gol",
+      "result": "loss",
+      "durationSec": 1179,
+      "players": "2 AI 離譜|||W; e1252081|mongol_ha_gol|10861747|L"
+    },
+    {
+      "id": 291969358,
+      "startedAt": "2026/3/11 下午 10:36",
+      "uploadedAt": "2026-03-11T15:32:12.000Z",
+      "map": "dry_arabia",
+      "civ": "mongol_ha_gol",
+      "result": "win",
+      "durationSec": 3325,
+      "players": "2 AI 可笑|||L; e1252081|mongol_ha_gol|10861747|W"
+    },
+    {
+      "id": 311180609,
+      "startedAt": null,
+      "uploadedAt": "2026-09-24T15:05:15.000Z",
+      "map": null,
+      "civ": "sultanate_ha_tug",
+      "result": "win",
+      "durationSec": 1792,
+      "players": "李侑玲|sultanate_ha_tug|10861747|W; 2 AI 可笑|||L"
+    },
+    {
+      "id": 313887362,
+      "startedAt": null,
+      "uploadedAt": "2026-10-27T14:17:33.000Z",
+      "map": null,
+      "civ": "hre",
+      "result": "loss",
+      "durationSec": 1046,
+      "players": "2 AI 離譜|||W; 李侑玲|hre|10861747|L"
+    }
+  ]
+}
