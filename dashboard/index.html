@@ -270,7 +270,7 @@ th[aria-sort="descending"] button::after { content: " ▼"; font-size: 9px; }
 -->
 <script>
 window.AOE4_CONFIG = {
-  dataUrl: '',
+  dataUrl: 'https://raw.githubusercontent.com/JJ-Lai/gaygayAOE4/main/dashboard/data/aoe4-data.json',
   refreshMinutes: 0
 };
 </script>
@@ -415,9 +415,9 @@ window.AOE4_CONFIG = {
   const MODE = {
     qm_1v1: '快速 1v1', qm_2v2: '快速 2v2', qm_3v3: '快速 3v3', qm_4v4: '快速 4v4', qm_ffa: '快速 混戰',
     rm_solo: '排位 1v1', rm_1v1: '排位 1v1', rm_team: '排位組隊', rm_2v2: '排位 2v2', rm_3v3: '排位 3v3', rm_4v4: '排位 4v4',
-    custom: '自訂'
+    custom: '自訂', skirmish: '對電腦'
   };
-  const GROUPS = [['all', '全部'], ['custom', '自訂'], ['1v1', '1v1'], ['2v2', '2v2'], ['team', '3v3 以上'], ['other', '其他']];
+  const GROUPS = [['all', '全部'], ['custom', '自訂'], ['skirmish', '對電腦'], ['1v1', '1v1'], ['2v2', '2v2'], ['team', '3v3 以上'], ['other', '其他']];
   const OPP_COLORS = ['var(--opp)', 'var(--opp2)', 'var(--opp3)', 'var(--opp4)'];
   const RESULT = { win: '勝', loss: '敗' };
 
@@ -515,6 +515,7 @@ window.AOE4_CONFIG = {
   const modeGroup = (m) => {
     const mode = m || '';
     if (mode === 'custom') return 'custom';
+    if (mode === 'skirmish') return 'skirmish';
     if (/1v1|solo/.test(mode)) return '1v1';
     if (/2v2/.test(mode)) return '2v2';
     if (/3v3|4v4|team/.test(mode)) return 'team';
@@ -735,8 +736,12 @@ window.AOE4_CONFIG = {
   // ================== 分頁 ==================
   function route() {
     const hash = decodeURIComponent(location.hash.slice(1));
-    const mm = /^match-(\d+)$/.exec(hash);
-    if (mm) { state.view = 'match'; state.matchId = Number(mm[1]); }
+    const mm = /^match-(.+)$/.exec(hash);
+    if (mm) {
+      const raw = decodeURIComponent(mm[1]);
+      state.view = 'match';
+      state.matchId = /^\d+$/.test(raw) ? Number(raw) : raw;
+    }
     else if (['overview', 'match', 'factors', 'list'].includes(hash)) state.view = hash;
     renderView();
   }
@@ -1173,7 +1178,7 @@ window.AOE4_CONFIG = {
     $('#mNext').disabled = idx >= ms.length - 1;
     $('#mPrev').onclick = () => go('match', ms[idx - 1].id);
     $('#mNext').onclick = () => go('match', ms[idx + 1].id);
-    sel.onchange = () => go('match', Number(sel.value));
+    sel.onchange = () => go('match', /^\d+$/.test(sel.value) ? Number(sel.value) : sel.value);
 
     // 標頭
     const side = (s) => (m.players || []).filter((p) => p.side === s || (s === 'ally' && p.side === 'me'));

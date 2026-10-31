@@ -223,6 +223,101 @@ function scanMatchHistory(gameDir) {
   return matches;
 }
 
+function parseLocalStamp(text, fallbackIso) {
+  const m = /^(\d{4})\/(\d{1,2})\/(\d{1,2})\s+(上午|下午)\s+(\d{1,2}):(\d{2})/.exec(text || '');
+  if (!m) return fallbackIso || null;
+  let hour = Number(m[5]);
+  if (m[4] === '下午' && hour < 12) hour += 12;
+  if (m[4] === '上午' && hour === 12) hour = 0;
+  const pad = (n) => String(n).padStart(2, '0');
+  return m[1] + '-' + pad(m[2]) + '-' + pad(m[3]) + 'T' + pad(hour) + ':' + m[6] + ':00+08:00';
+}
+
+function prettyMap(name) {
+  if (!name || name.includes(' ')) return name || null;
+  return name.split('_').filter(Boolean).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+function toDashboardMatch(local) {
+  const meId = ME.profileId;
+  const players = (local.players || []).map((p, i) => {
+    const mine = p.profileId === meId || ME.names.includes(p.name);
+    return {
+      id: p.profileId || null,
+      name: p.name || (mine ? ME.names[0] : '電腦'),
+      civ: p.civ || null,
+      team: mine ? 0 : 1,
+      side: mine ? 'me' : 'opp',
+      result: p.result || null,
+      rating: null,
+      ratingChange: null,
+      slot: i,
+    };
+  });
+  const me = players.find((p) => p.side === 'me') || {};
+  players.forEach((p) => delete p.slot);
+  const id = local.source === 'network-skirmish' ? 'S' + local.gameId
+    : local.source === 'matchhistory' ? 'H' + local.gameId
+      : local.gameId;
+  return {
+    id,
+    startedAt: parseLocalStamp(local.startedAtLocal, local.cachedAt),
+    duration: local.durationSec || null,
+    map: prettyMap(local.map),
+    mode: local.mode === 'skirmish' ? 'skirmish' : 'custom',
+    server: null,
+    patch: null,
+    state: 'local',
+    averageRating: null,
+    result: me.result || local.result || 'unknown',
+    civ: me.civ || local.civ || null,
+    rating: null,
+    ratingChange: null,
+    players,
+    detail: null,
+  };
+}
+
+function sameLocalGame(a, b) {
+  if (!a.cachedAt || !b.cachedAt || prettyMap(a.map) !== prettyMap(b.map)) return false;
+  return Math.abs(Date.parse(a.cachedAt) - Date.parse(b.cachedAt)) < 3 * 60 * 60 * 1000;
+}
+
+function readDashboard() {
+  const file = path.join(ROOT, 'dashboard', 'data', 'aoe4-data.js');
+  const raw = fs.readFileSync(file, 'utf8');
+  return JSON.parse(raw.replace(/^[\s\S]*?window\.AOE4_DATA\s*=\s*/, '').replace(/;\s*$/, ''));
+}
+
+function writeDashboard(data) {
+  const dir = path.join(ROOT, 'dashboard', 'data');
+  const json = JSON.stringify(data);
+  fs.writeFileSync(path.join(dir, 'aoe4-data.js'), '// AoE4 儀表板資料（格式說明見 資料格式.md）\nwindow.AOE4_DATA = ' + json + ';\n');
+  fs.writeFileSync(path.join(dir, 'aoe4-data.json'), json);
+}
+
+function mergeDashboard(localMatches) {
+  const data = readDashboard();
+  const ids = new Set(data.matches.map((m) => m.id));
+  const skirmish = localMatches.filter((m) => m.source === 'network-skirmish');
+  let added = 0;
+  for (const local of localMatches) {
+    if (local.source === 'network-custom' && ids.has(local.gameId)) continue;
+    if (local.source === 'matchhistory' && skirmish.some((s) => sameLocalGame(s, local))) continue;
+    const match = toDashboardMatch(local);
+    if (ids.has(match.id)) continue;
+    data.matches.push(match);
+    ids.add(match.id);
+    added++;
+  }
+  data.matches.sort((a, b) => Date.parse(a.startedAt) - Date.parse(b.startedAt));
+  if (added === 0) return { added: 0, total: data.matches.length };
+  data.generatedAt = new Date().toISOString();
+  data.source = 'aoe4world.com + local';
+  writeDashboard(data);
+  return { added, total: data.matches.length };
+}
+
 function save(matches, gameDir) {
   matches.sort((a, b) => String(a.cachedAt).localeCompare(String(b.cachedAt)) || String(a.id).localeCompare(String(b.id)));
   const doc = {
@@ -258,7 +353,7 @@ function pushIfPossible() {
   let remote = '';
   try { remote = git(['remote', 'get-url', 'origin']); } catch (e) { remote = ''; }
   if (!remote) return '資料已存好。還沒有 GitHub 遠端，所以沒有上傳。';
-  git(['add', '-f', '--', 'data/local-custom-matches.json']);
+  git(['add', '-f', '--', 'data/local-custom-matches.json', 'dashboard/data/aoe4-data.js', 'dashboard/data/aoe4-data.json']);
   const staged = git(['diff', '--cached', '--name-only']);
   if (!staged) return '本機紀錄沒有新變化，不需要上傳。';
   git(['commit', '-m', '更新本機自訂對局紀錄']);
@@ -270,5 +365,6 @@ const gameDir = findGameDir();
 const online = loadOnlineKinds();
 const matches = scanNetwork(gameDir, online).concat(scanMatchHistory(gameDir));
 const saved = save(matches, gameDir);
+const dashboard = mergeDashboard(matches);
 const upload = pushIfPossible();
-console.log(JSON.stringify({ out: OUT, changed: saved.changed, counts: saved.counts, upload }, null, 2));
+console.log(JSON.stringify({ out: OUT, changed: saved.changed, counts: saved.counts, dashboard, upload }, null, 2));
