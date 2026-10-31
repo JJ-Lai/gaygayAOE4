@@ -512,6 +512,7 @@ window.AOE4_CONFIG = {
   const mean = (arr) => { const a = arr.filter(isNum); return a.length ? a.reduce((s, v) => s + v, 0) / a.length : null; };
   const civName = (c) => CIV[c] || (c ? String(c).replace(/_/g, ' ').replace(/\b\w/g, (x) => x.toUpperCase()) : '—');
   const modeName = (m) => MODE[m] || m || '—';
+  const mapName = (name) => name || '—';
   const modeGroup = (m) => {
     const mode = m || '';
     if (mode === 'custom') return 'custom';
@@ -622,7 +623,7 @@ window.AOE4_CONFIG = {
   async function boot() {
     if (CFG.dataUrl) {
       $('#reloadBtn').hidden = false;
-      try { load(await fetchFromUrl(), 'API：' + CFG.dataUrl); banner(''); }
+      try { load(await fetchFromUrl(), 'GitHub：' + CFG.dataUrl); banner(''); }
       catch (e) {
         if (window.AOE4_DATA) { load(window.AOE4_DATA, '本機檔案 data/aoe4-data.js'); }
         banner('無法從 ' + CFG.dataUrl + ' 取得資料（' + e.message + '），目前顯示本機檔案。若 API 在別的網址，伺服器需要允許跨來源請求（CORS）。');
@@ -638,7 +639,7 @@ window.AOE4_CONFIG = {
   async function reloadFromUrl() {
     const btn = $('#reloadBtn');
     btn.disabled = true;
-    try { load(await fetchFromUrl(), 'API：' + CFG.dataUrl); banner(''); }
+    try { load(await fetchFromUrl(), 'GitHub：' + CFG.dataUrl); banner(''); }
     catch (e) { banner('重新抓取失敗（' + e.message + '），保留目前的資料。'); }
     finally { btn.disabled = false; }
   }
@@ -970,7 +971,7 @@ window.AOE4_CONFIG = {
       xTicks: (x0, x1, iw) => { const n = Math.max(2, Math.floor(iw / 120)); const out = []; for (let i = 0; i < n; i++) out.push(Math.round(x0 + (x1 - x0) * i / (n - 1))); return out; },
       xFormat: (i) => (rated[i] ? fmtDate(rated[i].startedAt) : ''),
       yFormat: (v) => String(Math.round(v)),
-      tipTitle: (i) => (rated[i] ? fmtDate(rated[i].startedAt) + ' · ' + rated[i].map : ''),
+      tipTitle: (i) => (rated[i] ? fmtDate(rated[i].startedAt) + ' · ' + mapName(rated[i].map) : ''),
       tipValue: (y, v) => Math.round(y) + '（' + fmtSigned(v.m.ratingChange) + '）',
       tipExtra: (i) => (rated[i] ? h('div', { class: 'tip-row' }, h('span', null, civName(rated[i].civ) + ' vs ' + oppCivs(rated[i]).join('、')), resultPill(rated[i].result)) : null),
       onClick: (i) => { if (rated[i]) go('match', rated[i].id); }
@@ -983,7 +984,7 @@ window.AOE4_CONFIG = {
     $('#ovForm').replaceChildren(
       recent.length ? h('div', { class: 'form' }, recent.map((m) => h('button', {
         type: 'button', class: m.result === 'win' ? 'w' : m.result === 'loss' ? 'l' : 'u',
-        title: fmtDate(m.startedAt) + ' · ' + modeName(m.mode) + ' · ' + m.map + ' · ' + civName(m.civ) + ' vs ' + oppCivs(m).join('、'),
+        title: fmtDate(m.startedAt) + ' · ' + modeName(m.mode) + ' · ' + mapName(m.map) + ' · ' + civName(m.civ) + ' vs ' + oppCivs(m).join('、'),
         'aria-label': fmtDate(m.startedAt) + ' ' + (RESULT[m.result] || '未知'), onclick: () => go('match', m.id)
       }, RESULT[m.result] || '?'))) : h('p', { class: 'empty' }, '沒有對局'),
       recent.length ? h('div', { class: 'form-legend' }, '共顯示最近 ' + recent.length + ' 場') : null
@@ -1147,7 +1148,7 @@ window.AOE4_CONFIG = {
       rows.forEach((r, i) => {
         const y = (r.win ? rowsY.win : rowsY.loss) + ((i % 5) - 2) * 2.5;
         const c = S('circle', { cx: X(r.adv), cy: y, r: 4.5, class: 'dot', style: 'cursor:pointer;fill:' + (r.win ? 'var(--win)' : 'var(--loss)') + ';fill-opacity:.8' });
-        c.append(S('title', null, fmtDate(r.m.startedAt) + ' ' + r.m.map + '：我 ' + fval(f, r.a) + '，對手 ' + fval(f, r.b)));
+        c.append(S('title', null, fmtDate(r.m.startedAt) + ' ' + mapName(r.m.map) + '：我 ' + fval(f, r.a) + '，對手 ' + fval(f, r.b)));
         c.addEventListener('click', () => go('match', r.m.id));
         svg.append(c);
       });
@@ -1171,7 +1172,7 @@ window.AOE4_CONFIG = {
     const m = ms[idx];
     const sel = $('#mSel');
     sel.replaceChildren(...ms.slice().reverse().map((x) => h('option', { value: x.id },
-      fmtDate(x.startedAt) + ' · ' + (RESULT[x.result] || '?') + ' · ' + modeName(x.mode) + ' · ' + x.map + ' · ' + civName(x.civ) + ' vs ' + oppLabel(x) + (x.detail ? '' : '（無逐時數據）'))));
+      fmtDate(x.startedAt) + ' · ' + (RESULT[x.result] || '?') + ' · ' + modeName(x.mode) + ' · ' + mapName(x.map) + ' · ' + civName(x.civ) + ' vs ' + oppLabel(x) + (x.detail ? '' : '（無逐時數據）'))));
     if (!m) { $('#mHead').replaceChildren(h('p', { class: 'empty' }, '沒有對局')); $('#mDetail').hidden = true; return; }
     sel.value = String(m.id);
     $('#mPrev').disabled = idx <= 0;
