@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
 const { execFileSync } = require('child_process');
+const { attachLocalDetails } = require('./lib/local-detail');
 
 const ROOT = __dirname;
 const OUT = path.join(ROOT, 'data', 'local-custom-matches.json');
@@ -296,7 +297,7 @@ function writeDashboard(data) {
   fs.writeFileSync(path.join(dir, 'aoe4-data.json'), json);
 }
 
-function mergeDashboard(localMatches) {
+function mergeDashboard(localMatches, gameDir) {
   const data = readDashboard();
   const ids = new Set(data.matches.map((m) => m.id));
   const skirmish = localMatches.filter((m) => m.source === 'network-skirmish');
@@ -311,11 +312,12 @@ function mergeDashboard(localMatches) {
     added++;
   }
   data.matches.sort((a, b) => Date.parse(a.startedAt) - Date.parse(b.startedAt));
-  if (added === 0) return { added: 0, total: data.matches.length };
+  const details = attachLocalDetails(data, gameDir, ME.profileId);
+  if (added === 0 && details.filled === 0) return { added: 0, total: data.matches.length, details };
   data.generatedAt = new Date().toISOString();
   data.source = 'aoe4world.com + local';
   writeDashboard(data);
-  return { added, total: data.matches.length };
+  return { added, total: data.matches.length, details };
 }
 
 function save(matches, gameDir) {
@@ -365,6 +367,6 @@ const gameDir = findGameDir();
 const online = loadOnlineKinds();
 const matches = scanNetwork(gameDir, online).concat(scanMatchHistory(gameDir));
 const saved = save(matches, gameDir);
-const dashboard = mergeDashboard(matches);
+const dashboard = mergeDashboard(matches, gameDir);
 const upload = pushIfPossible();
 console.log(JSON.stringify({ out: OUT, changed: saved.changed, counts: saved.counts, dashboard, upload }, null, 2));
