@@ -1,12 +1,12 @@
 {
   "profileId": 10861747,
-  "extractedAt": "2026-10-31T18:39:58.635Z",
+  "extractedAt": "2026-11-03T14:11:29.915Z",
   "gameDir": "C:\\Users\\e1252\\OneDrive\\文件\\My Games\\Age of Empires IV",
   "counts": {
-    "total": 248,
-    "skirmish": 103,
-    "custom": 134,
-    "localOnly": 1,
+    "total": 255,
+    "skirmish": 105,
+    "custom": 135,
+    "localOnly": 5,
     "matchhistory": 10
   },
   "matches": [
@@ -7517,6 +7517,176 @@
           "civ": "byzantine_ha_mac",
           "profileId": 10861747,
           "result": "loss"
+        }
+      ]
+    },
+    {
+      "id": "M258850389",
+      "gameId": 258850389,
+      "source": "network-local-only",
+      "mode": "custom",
+      "startedAtLocal": "2026/11/2 下午 09:55",
+      "cachedAt": "2026-11-02T15:53:33.236Z",
+      "map": "dry_arabia",
+      "durationSec": 1463,
+      "civ": "jin_dynasty",
+      "result": "win",
+      "players": [
+        {
+          "name": "李侑玲",
+          "civ": "jin_dynasty",
+          "profileId": 10861747,
+          "result": "win"
+        },
+        {
+          "name": "Intolerant",
+          "civ": "scots",
+          "profileId": 10853087,
+          "result": "loss"
+        }
+      ]
+    },
+    {
+      "id": "S315088404",
+      "gameId": 315088404,
+      "source": "network-skirmish",
+      "mode": "skirmish",
+      "startedAtLocal": null,
+      "cachedAt": "2026-11-03T14:02:52.149Z",
+      "map": null,
+      "durationSec": 1068,
+      "civ": "jin_dynasty",
+      "result": "loss",
+      "players": [
+        {
+          "name": "李侑玲",
+          "civ": "jin_dynasty",
+          "profileId": 10861747,
+          "result": "loss"
+        }
+      ]
+    },
+    {
+      "id": "M258874010",
+      "gameId": 258874010,
+      "source": "network-local-only",
+      "mode": "custom",
+      "startedAtLocal": null,
+      "cachedAt": "2026-11-03T14:03:22.768Z",
+      "map": null,
+      "durationSec": 1330,
+      "civ": "jin_dynasty",
+      "result": "loss",
+      "players": [
+        {
+          "name": "Intolerant",
+          "civ": "chinese",
+          "profileId": 10853087,
+          "result": "win"
+        },
+        {
+          "name": "李侑玲",
+          "civ": "jin_dynasty",
+          "profileId": 10861747,
+          "result": "loss"
+        }
+      ]
+    },
+    {
+      "id": "M258862337",
+      "gameId": 258862337,
+      "source": "network-local-only",
+      "mode": "custom",
+      "startedAtLocal": null,
+      "cachedAt": "2026-11-03T14:03:26.898Z",
+      "map": null,
+      "durationSec": 1504,
+      "civ": "jin_dynasty",
+      "result": "win",
+      "players": [
+        {
+          "name": "李侑玲",
+          "civ": "jin_dynasty",
+          "profileId": 10861747,
+          "result": "win"
+        },
+        {
+          "name": "Intolerant",
+          "civ": "scots",
+          "profileId": 10853087,
+          "result": "loss"
+        }
+      ]
+    },
+    {
+      "id": "M258855916",
+      "gameId": 258855916,
+      "source": "network-local-only",
+      "mode": "custom",
+      "startedAtLocal": null,
+      "cachedAt": "2026-11-03T14:03:29.899Z",
+      "map": null,
+      "durationSec": 1459,
+      "civ": "jin_dynasty",
+      "result": "win",
+      "players": [
+        {
+          "name": "Intolerant",
+          "civ": "scots",
+          "profileId": 10853087,
+          "result": "loss"
+        },
+        {
+          "name": "李侑玲",
+          "civ": "jin_dynasty",
+          "profileId": 10861747,
+          "result": "win"
+        }
+      ]
+    },
+    {
+      "id": "S315086200",
+      "gameId": 315086200,
+      "source": "network-skirmish",
+      "mode": "skirmish",
+      "startedAtLocal": null,
+      "cachedAt": "2026-11-03T14:03:47.206Z",
+      "map": null,
+      "durationSec": 531,
+      "civ": "jin_dynasty",
+      "result": "loss",
+      "players": [
+        {
+          "name": "李侑玲",
+          "civ": "jin_dynasty",
+          "profileId": 10861747,
+          "result": "loss"
+        }
+      ]
+    },
+    {
+      "id": "M258120459",
+      "gameId": 258120459,
+      "source": "network-custom",
+      "mode": "custom",
+      "startedAtLocal": null,
+      "cachedAt": "2026-11-03T14:10:51.469Z",
+      "map": null,
+      "durationSec": 800,
+      "civ": "byzantine_ha_mac",
+      "result": "loss",
+      "players": [
+        {
+          "name": "李侑玲",
+          "civ": "byzantine_ha_mac",
+          "profileId": 10861747,
+          "result": "loss"
+        },
+        {
+          "name": "Intolerant",
+          "civ": "japanese",
+          "profileId": 10853087,
+          "result": "win"
         }
       ]
     }
