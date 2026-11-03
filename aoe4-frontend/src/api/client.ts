@@ -264,6 +264,10 @@ export async function clearSummaryApiKey(): Promise<void> {
 
 export function getErrorMessage(error: unknown): string {
   if (axios.isAxiosError(error)) {
+    const status = error.response?.status
+    if (status === 502 || status === 503 || status === 504) {
+      return '分析服務沒有啟動（localhost:8080 無回應），所以查不到玩家。戰術模擬不依賴這個服務，可用頂部的「戰術模擬」。'
+    }
     const apiError = error.response?.data as { error?: string } | undefined
     if (apiError?.error) return apiError.error
     return error.message

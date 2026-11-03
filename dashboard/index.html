@@ -651,8 +651,10 @@ window.AOE4_CONFIG = {
     b.replaceChildren(h('div', null, msg));
     b.hidden = false;
   }
-  async function fetchFromUrl() {
-    const res = await fetch(CFG.dataUrl, { cache: 'no-store' });
+  async function fetchFromUrl(bustCache) {
+    const join = CFG.dataUrl.indexOf('?') >= 0 ? '&' : '?';
+    const url = bustCache ? CFG.dataUrl + join + 't=' + Date.now() : CFG.dataUrl;
+    const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     return res.json();
   }
@@ -674,10 +676,26 @@ window.AOE4_CONFIG = {
   }
   async function reloadFromUrl() {
     const btn = $('#reloadBtn');
+    const oldLabel = btn.textContent;
+    const before = state.data && state.data.generatedAt;
     btn.disabled = true;
-    try { load(await fetchFromUrl(), 'GitHub：' + CFG.dataUrl); banner(''); }
-    catch (e) { banner('重新抓取失敗（' + e.message + '），保留目前的資料。'); }
-    finally { btn.disabled = false; }
+    btn.textContent = '抓取中…';
+    banner('正在向 GitHub 重新抓取…');
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    try {
+      const data = await fetchFromUrl(true);
+      load(data, 'GitHub：' + CFG.dataUrl);
+      const when = data.generatedAt ? fmtDate(data.generatedAt, true) : '未知時間';
+      const same = before && data.generatedAt === before;
+      banner(same
+        ? '已重新抓取。GitHub 上的資料仍是 ' + when + '，和畫面上這份相同。沒有逐時數據的場次，是本機已經沒有該場重播。'
+        : '已重新抓取，資料更新於 ' + when + '。');
+    } catch (e) {
+      banner('重新抓取失敗（' + e.message + '），保留目前的資料。');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = oldLabel;
+    }
   }
   function importText(text, name) {
     let t = text.trim();

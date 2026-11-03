@@ -1,4 +1,4 @@
-import { Button, AutoComplete, Input, Space, Tag, Typography } from 'antd'
+import { Button, AutoComplete, Input, Space, Tag, Typography, message } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -82,14 +82,16 @@ export function ProfileSearchBar({ compact = false }: { compact?: boolean }) {
 
       navigate(`/player/${profileId}`)
     } catch (err) {
-      setError(getErrorMessage(err))
+      const text = getErrorMessage(err)
+      setError(text)
+      if (compact) message.error(text)
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <Space direction="vertical" style={{ width: compact ? 360 : '100%' }} size="middle">
+    <Space orientation="vertical" style={{ width: compact ? 360 : '100%' }} size="middle">
       <Space.Compact style={{ width: '100%' }}>
         <AutoComplete
           style={{ flex: 1 }}
@@ -122,7 +124,7 @@ export function ProfileSearchBar({ compact = false }: { compact?: boolean }) {
       )}
 
       {syncStatus && loading && <SyncProgressBar status={syncStatus} />}
-      {error && <ErrorAlert message={error} onRetry={() => void runSearch()} />}
+      {error && !compact && <ErrorAlert message={error} onRetry={() => void runSearch()} />}
     </Space>
   )
 }

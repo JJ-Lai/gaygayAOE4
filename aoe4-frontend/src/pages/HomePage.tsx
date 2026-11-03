@@ -23,6 +23,7 @@ export function HomePage() {
           </Typography.Paragraph>
           <Typography.Paragraph type="secondary">
             不確定 Profile ID？請查看 <Link to="/help">使用說明</Link>。
+            要用官方單位與採集參數試算升代、軍隊時機或村民配置，請開 <Link to="/simulate">戰術模擬</Link>。
           </Typography.Paragraph>
           <ProfileSearchBar />
           <div style={{ marginTop: 16 }}>

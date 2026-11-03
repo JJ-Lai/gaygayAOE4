@@ -10,7 +10,7 @@ export function ErrorAlert({ message, onRetry }: ErrorAlertProps) {
     <Alert
       type="error"
       showIcon
-      message="發生錯誤"
+      title="發生錯誤"
       description={message}
       action={onRetry ? <a onClick={onRetry}>重試</a> : undefined}
     />

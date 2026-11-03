@@ -25,6 +25,7 @@ const GameDetailPage = lazy(() => import('./pages/GameDetailPage').then((m) => (
 const BuildPreferencesPage = lazy(() =>
   import('./pages/BuildPreferencesPage').then((m) => ({ default: m.BuildPreferencesPage })),
 )
+const SimulatePage = lazy(() => import('./pages/SimulatePage').then((m) => ({ default: m.SimulatePage })))
 
 function PageLoader() {
   return (
@@ -44,6 +45,7 @@ export default function App() {
             <Route path="/compare" element={<ComparePage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/help" element={<HelpPage />} />
+            <Route path="/simulate" element={<SimulatePage />} />
             <Route path="/ops" element={<OpsPage />} />
           </Route>
           <Route path="/player/:profileId" element={<PlayerShell />}>

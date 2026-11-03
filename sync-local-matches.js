@@ -338,7 +338,8 @@ function save(matches, gameDir) {
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
   const next = JSON.stringify(doc, null, 2) + '\n';
   const prev = fs.existsSync(OUT) ? fs.readFileSync(OUT, 'utf8') : '';
-  const changed = next !== prev;
+  const stamp = /"extractedAt": "[^"]*"/;
+  const changed = next.replace(stamp, '"extractedAt": ""') !== prev.replace(stamp, '"extractedAt": ""');
   if (changed) fs.writeFileSync(OUT, next);
   return { changed, counts: doc.counts };
 }

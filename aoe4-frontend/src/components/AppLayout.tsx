@@ -11,6 +11,7 @@ import {
   EnvironmentOutlined,
   HistoryOutlined,
   QuestionCircleOutlined,
+  ExperimentOutlined,
   DashboardOutlined,
   TrophyOutlined,
   ThunderboltOutlined,
@@ -71,6 +72,9 @@ export function AppLayout({ showSidebar = false }: { showSidebar?: boolean }) {
           </Button>
           <Button type="text" style={{ color: '#fff' }} icon={<SwapOutlined />} onClick={() => navigate('/compare')}>
             比較
+          </Button>
+          <Button type="text" style={{ color: '#fff' }} icon={<ExperimentOutlined />} onClick={() => navigate('/simulate')}>
+            戰術模擬
           </Button>
           <Button type="text" style={{ color: '#fff' }} icon={<QuestionCircleOutlined />} onClick={() => navigate('/help')}>
             說明
