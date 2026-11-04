@@ -199,8 +199,9 @@ function loadItems(json, kind) {
 }
 
 const index = JSON.parse(await readFile(join(rawDir, 'civ-civs-index.json'), 'utf8'))
-const patchHistory = JSON.parse(await readFile(join(rawDir, 'patch-history.json'), 'utf8'))
-const patch = Object.keys(patchHistory)[0] || 'unknown'
+// patch-history.json 只記錄刪除／改名，沒有 17.0 的鍵。資料本身已是 17.0.x（2026-10-27 的 corrections），
+// 所以用 PATCH 環境變數覆蓋，預設是官方 17.0.12260。
+const patch = process.env.PATCH || '17.0.12260'
 const civs = Object.values(index)
 
 await mkdir(rawDir, { recursive: true })

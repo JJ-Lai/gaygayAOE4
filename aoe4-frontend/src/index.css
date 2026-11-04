@@ -11,3 +11,126 @@ body {
 #root {
   min-height: 100vh;
 }
+
+/* ---------- 戰術目標規劃器 ---------- */
+.planner-hero {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background: linear-gradient(120deg, #fdf6e3 0%, #f3e6c4 60%, #e8d5a8 100%);
+  border: 1px solid #e3d3a8;
+}
+.planner-status {
+  background: rgba(255, 255, 255, 0.75);
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+.planner-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+}
+.planner-kpi {
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px 14px;
+  border: 1px solid #ececec;
+  border-left: 4px solid #9b1c1c;
+}
+.planner-kpi-muted {
+  border-left-color: #2f4f8f;
+}
+.planner-kpi-label {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.35;
+  min-height: 32px;
+}
+.planner-kpi-value {
+  font-size: 26px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.planner-goals {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.planner-goals li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: #fafafa;
+  border: 1px solid #efefef;
+}
+.planner-goal-index {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #2f4f8f;
+  color: #fff;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.planner-goal-text {
+  flex: 1;
+  min-width: 0;
+}
+.planner-goal-time {
+  color: #9b1c1c;
+  font-weight: 600;
+}
+.planner-goal-actions {
+  display: inline-flex;
+  flex: none;
+}
+.planner-add {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px dashed #d9d9d9;
+}
+.planner-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #555;
+}
+.planner-legend i,
+.planner-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  margin-right: 4px;
+}
+.planner-row-strong td {
+  background: #fff8e6 !important;
+  font-weight: 500;
+}
+.planner-notes,
+.planner-model ul {
+  padding-left: 18px;
+  color: #555;
+}
+.planner-notes li,
+.planner-model li {
+  margin-bottom: 4px;
+}

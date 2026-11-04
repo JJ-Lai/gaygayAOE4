@@ -1,535 +1,427 @@
-import {
-  Alert,
-  Button,
-  Card,
-  Col,
-  Collapse,
-  Input,
-  InputNumber,
-  Row,
-  Select,
-  Space,
-  Statistic,
-  Switch,
-  Table,
-  Typography,
-} from 'antd'
-import ReactECharts from 'echarts-for-react'
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
-import { loadCatalog } from '../sim/catalog.ts'
-import { clock, defaultUnit, militaryUnits, optimize } from '../sim/engine.ts'
-import { openingFor } from '../sim/openings.ts'
-import { scenariosFor } from '../sim/scenarios.ts'
-import type { Catalog, CatalogItem, Resources, Scenario, SolveResult } from '../sim/types.ts'
+import { ExperimentOutlined, PauseCircleOutlined, ReloadOutlined, ThunderboltOutlined } from '@ant-design/icons'
+import { Alert, Button, Card, Col, Descriptions, Flex, InputNumber, Progress, Row, Select, Slider, Spin, Table, Tabs, Tag, Tooltip, Typography } from 'antd'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { BuildOrderTable } from '../components/planner/BuildOrderTable'
+import { GoalEditor } from '../components/planner/GoalEditor'
+import { SITE_COLOR, SITE_ZH, clock, describeGoal } from '../components/planner/format'
+import { MiniMap } from '../components/planner/MiniMap'
+import { BankChart, VillagerChart } from '../components/planner/PlannerCharts'
+import { loadCatalog } from '../sim/catalog'
+import { buildCivData, nameOf, type CivData } from '../sim/planner/civData'
+import { CIV_ZH, GLOBAL_BONUSES, type Bonus } from '../sim/planner/civSpec'
+import { MAP_TYPES, generateMap } from '../sim/planner/mapgen'
+import type { StartMessage, WorkerOut } from '../sim/planner/planner.worker'
+import { presetsFor } from '../sim/planner/presets'
+import type { Goal, PlanResult, Policy, Step } from '../sim/planner/types'
+import type { Catalog } from '../sim/types'
 
-const CIV_ZH: Record<string, string> = {
-  ab: '阿拔斯王朝',
-  ay: '阿尤布',
-  by: '拜占庭',
-  ch: '中國',
-  de: '德里蘇丹國',
-  en: '英格蘭',
-  fr: '法蘭西',
-  gol: '金帳汗國',
-  hr: '神聖羅馬帝國',
-  hl: '蘭開斯特',
-  ja: '日本',
-  je: '聖女貞德',
-  jin: '金朝',
-  kt: '聖殿騎士團',
-  mac: '馬其頓王朝',
-  ma: '馬利',
-  mo: '蒙古',
-  od: '龍騎士團',
-  ot: '鄂圖曼',
-  ru: '羅斯',
-  sco: '蘇格蘭',
-  sen: '戰國大名',
-  tug: '圖格魯克',
-  vik: '維京',
-  zx: '朱熹傳承',
+interface Best {
+  result: PlanResult
+  policy: Policy
+  steps: Step[]
 }
 
-const emptyIncome = (): Resources => ({ food: 600, wood: 300, gold: 200, stone: 0 })
+const MODELED: Record<Bonus['modeled'], { label: string; color: string }> = {
+  yes: { label: '已計入', color: 'green' },
+  approx: { label: '近似', color: 'orange' },
+  no: { label: '未建模', color: 'default' },
+}
+
+const BUDGETS = [
+  { value: 8000, label: '8 秒' },
+  { value: 20000, label: '20 秒' },
+  { value: 60000, label: '1 分鐘' },
+]
 
 export function SimulatePage() {
   const [catalog, setCatalog] = useState<Catalog | null>(null)
+  const [names, setNames] = useState<Record<string, string>>({})
   const [error, setError] = useState<string | null>(null)
-  const [civ, setCiv] = useState('en')
-  const [scenarioId, setScenarioId] = useState('age-2')
-  const [unitId, setUnitId] = useState('longbowman')
-  const [unitCount, setUnitCount] = useState(8)
-  const [buildingCount, setBuildingCount] = useState(1)
-  const [foodSource, setFoodSource] = useState('sheep')
-  const [foodAmount, setFoodAmount] = useState(2000)
-  const [walk, setWalk] = useState(false)
-  const [dropoffTiles, setDropoffTiles] = useState(1.5)
-  const english = openingFor('en')
-  const [startFood, setStartFood] = useState(english.food)
-  const [startWood, setStartWood] = useState(english.wood)
-  const [startGold, setStartGold] = useState(english.gold)
-  const [startStone, setStartStone] = useState(english.stone)
-  const [startVillagers, setStartVillagers] = useState(english.villagers)
-  const [incomePerMin, setIncomePerMin] = useState<Resources>(emptyIncome)
-  const [incomeVillagers, setIncomeVillagers] = useState(20)
-  const [incomeMode, setIncomeMode] = useState<Scenario['incomeMode']>('min-villagers')
-  const [result, setResult] = useState<SolveResult | null>(null)
-  const [solving, setSolving] = useState(false)
+  const [civ, setCiv] = useState('ja')
+  const [mapType, setMapType] = useState('dry-arabia')
+  const [seed, setSeed] = useState(7)
+  const [goals, setGoals] = useState<Goal[]>([])
+  const [presetId, setPresetId] = useState<string | undefined>(undefined)
+  const [idleWeight, setIdleWeight] = useState(0.5)
+  const [budget, setBudget] = useState(20000)
+  const [best, setBest] = useState<Best | null>(null)
+  const [status, setStatus] = useState({ evals: 0, elapsed: 0, running: false })
+  const [runToken, setRunToken] = useState(0)
+  const [tab, setTab] = useState('bo')
+  const workerRef = useRef<Worker | null>(null)
+  const runId = useRef(0)
 
   useEffect(() => {
-    void loadCatalog()
-      .then(setCatalog)
-      .catch((err: unknown) => setError(err instanceof Error ? err.message : '載入失敗'))
+    Promise.all([loadCatalog(), fetch('/sim/names-zh.json').then((r) => r.json() as Promise<Record<string, string>>)])
+      .then(([c, n]) => {
+        setCatalog(c)
+        setNames(n)
+      })
+      .catch((e) => setError(String(e)))
   }, [])
 
-  const opening = useMemo(() => openingFor(civ), [civ])
-  const choices = useMemo(() => (catalog ? scenariosFor(catalog, civ) : []), [catalog, civ])
-  const selected = choices.find((choice) => choice.id === scenarioId) ?? choices[0]
-  const units = useMemo(() => (catalog ? militaryUnits(catalog, civ) : []), [catalog, civ])
+  const data: CivData | null = useMemo(() => (catalog ? buildCivData(catalog, civ, names) : null), [catalog, civ, names])
+  const presets = useMemo(() => (data ? presetsFor(data) : []), [data])
+  const map = useMemo(() => generateMap(mapType, seed), [mapType, seed])
+
+  // 換文明時套用第一個預設流程
+  useEffect(() => {
+    if (!presets.length) return
+    setPresetId(presets[0].id)
+    setGoals(presets[0].goals)
+  }, [presets])
 
   useEffect(() => {
-    if (!choices.length) return
-    if (!choices.some((choice) => choice.id === scenarioId)) setScenarioId(choices[0].id)
-  }, [choices, scenarioId])
-
-  useEffect(() => {
-    if (!selected) return
-    setBuildingCount(selected.buildings[0]?.count ?? 1)
-    if (selected.id !== 'custom-army') setUnitCount(selected.units[0]?.count ?? 8)
-  }, [civ, selected])
-
-  useEffect(() => {
-    if (!catalog) return
-    if (!units.some((unit) => unit.id === unitId)) {
-      setUnitId(defaultUnit(catalog, civ) ?? '')
+    const w = new Worker(new URL('../sim/planner/planner.worker.ts', import.meta.url), { type: 'module' })
+    w.onmessage = (e: MessageEvent<WorkerOut>) => {
+      const m = e.data
+      if (m.id !== runId.current) return
+      if (m.type === 'best') setBest({ result: m.result, policy: m.policy, steps: m.steps })
+      else if (m.type === 'progress') setStatus({ evals: m.evals, elapsed: m.elapsed, running: m.running })
+      else setError(m.message)
     }
-  }, [catalog, civ, unitId, units])
+    workerRef.current = w
+    return () => w.terminate()
+  }, [])
 
-  function buildScenario(): Scenario | null {
-    if (!catalog || !selected) return null
-    const custom = selected.id === 'custom-army'
-    const scenarioUnits = custom
-      ? (unitId ? [{ id: unitId, count: unitCount }] : [])
-      : selected.units.map((unit, index) => ({ id: unit.id, count: index === 0 ? unitCount : unit.count }))
-    const buildings = selected.buildings.map((building, index) => ({
-      id: building.id,
-      count: index === 0 ? buildingCount : building.count,
-    }))
-    return {
-      mode: selected.mode,
-      civ,
-      targetAge: selected.targetAge,
-      units: scenarioUnits.filter((unit) => unit.count > 0),
-      buildings: buildings.filter((building) => building.count > 0),
-      horizon: selected.horizon,
-      foodSource,
-      foodAmount,
-      walk,
-      dropoffTiles,
-      gatherMultiplier: 1,
-      startFood,
-      startWood,
-      startGold,
-      startStone,
-      startVillagers,
-      incomePerMin,
-      incomeVillagers,
-      incomeMode,
-      incomeWeights: { food: 1, wood: 1, gold: 2, stone: 1 },
-    }
+  // 設定一改就重新最佳化（稍微延遲，避免連續輸入時一直重跑）
+  useEffect(() => {
+    if (!data || !goals.length || !workerRef.current) return
+    const h = setTimeout(() => {
+      const id = ++runId.current
+      setBest(null)
+      setStatus({ evals: 0, elapsed: 0, running: true })
+      const msg: StartMessage = { type: 'start', id, civ, mapType, seed, goals, idleWeight, budgetMs: budget }
+      workerRef.current!.postMessage(msg)
+    }, 250)
+    return () => clearTimeout(h)
+  }, [data, civ, mapType, seed, goals, idleWeight, budget, runToken])
+
+  const stop = () => {
+    workerRef.current?.postMessage({ type: 'stop' })
+    setStatus((s) => ({ ...s, running: false }))
   }
 
-  function solve() {
-    if (!catalog) return
-    const scenario = buildScenario()
-    if (!scenario) return
-    setSolving(true)
-    window.setTimeout(() => {
-      try {
-        setResult(optimize(catalog, scenario))
-        setError(null)
-      } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : '求解失敗')
-      } finally {
-        setSolving(false)
-      }
-    }, 30)
-  }
+  if (error) return <Alert type="error" showIcon message="模擬器載入失敗" description={error} />
+  if (!catalog || !data) return <Spin size="large" style={{ display: 'block', margin: '80px auto' }} />
 
-  useEffect(() => {
-    if (catalog && !result && !solving) solve()
-    // Initial solve only. Later runs go through the button so slider drags stay responsive.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [catalog])
-
-  const resourceChart = useMemo(() => chartOf(result, 'bank'), [result])
-  const assignChart = useMemo(() => chartOf(result, 'assign'), [result])
+  const result = best?.result
+  const goalTimes = goals.map((_, i) => result?.goals.find((g) => g.goalIndex === i)?.t ?? null)
+  const civOptions = catalog.civilizations
+    .map((c) => ({ value: c.abbr, label: `${CIV_ZH[c.abbr] ?? c.name}　${c.name}` }))
+    .sort((a, b) => a.label.localeCompare(b.label, 'zh-Hant'))
 
   return (
-    <Space orientation="vertical" size={16} style={{ width: '100%' }}>
-      <Card>
-        <Typography.Title level={3} style={{ marginTop: 0 }}>戰術模擬</Typography.Title>
-        <Typography.Paragraph type="secondary">
-          先選文明，再選情境。換文明會帶入該文明的開局資源和工人。城鎮中心不中斷這些工人：付得起就接著生產，並留下下一個的食物和黃金。
-          磨坊、伐木場、採礦場裡會提高村民效率的科技，只在回本且不佔用城鎮中心時才研究。每個時間點會列出有幾個人在採哪種資源。
-        </Typography.Paragraph>
-        {catalog && (
-          <Alert
-            type="info"
-            showIcon
-            title={`已載入 ${catalog.civilizations.length} 個文明，資料版本 ${catalog.patch}`}
-            description="單位花費、訓練時間、移動速度、建築時間來自 AoE4 World 對遊戲檔的解析。採集速率是羊 0.75、野果 0.69、鹿 0.825、野豬 0.9、木金石 0.75（每秒），再乘上該文明的節點修正與已研究科技。這是不含趕羊與碰撞的下界。"
-          />
-        )}
-        {error && <Alert style={{ marginTop: 12 }} type="error" title={error} />}
-      </Card>
+    <div className="planner">
+      <div className="planner-hero">
+        <div>
+          <Typography.Title level={3} style={{ margin: 0 }}>
+            <ExperimentOutlined /> 戰術目標規劃器
+          </Typography.Title>
+          <Typography.Text type="secondary">
+            選文明、排好想達成的目標，系統逐秒模擬並即時搜尋每個時間點該做什麼。資料版本 patch {catalog.patch}（aoe4world 17.0.x 資料）。
+          </Typography.Text>
+        </div>
+        <SearchStatus status={status} result={result} onStop={stop} onRestart={() => setRunToken((x) => x + 1)} />
+      </div>
 
-      <Card title="1. 選擇文明">
-        <Row gutter={[16, 16]}>
-          <Col xs={24} md={8}>
-            <Field label="文明">
-              <Select
-                style={{ width: '100%' }}
-                value={civ}
-                showSearch
-                optionFilterProp="label"
-                options={(catalog?.civilizations ?? []).map((item) => ({
-                  value: item.abbr,
-                  label: `${CIV_ZH[item.abbr] ?? item.name} · ${item.name}`,
-                }))}
-                onChange={(value) => {
-                  const next = openingFor(value)
-                  setCiv(value)
-                  setStartFood(next.food)
-                  setStartWood(next.wood)
-                  setStartGold(next.gold)
-                  setStartStone(next.stone)
-                  setStartVillagers(next.villagers)
-                  setResult(null)
-                }}
-              />
-            </Field>
-          </Col>
-          <Col xs={12} md={4}>
-            <Field label={`起始${opening.workerLabel}`}>
-              <InputNumber min={1} max={30} value={startVillagers} onChange={(value) => setStartVillagers(value ?? 6)} />
-            </Field>
-          </Col>
-          <Col xs={12} md={4}><Num label="起始食物" value={startFood} onChange={setStartFood} /></Col>
-          <Col xs={12} md={4}><Num label="起始木材" value={startWood} onChange={setStartWood} /></Col>
-          <Col xs={12} md={4}><Num label="起始黃金" value={startGold} onChange={setStartGold} /></Col>
-          <Col xs={12} md={4}><Num label="起始石頭" value={startStone} onChange={setStartStone} /></Col>
-          <Col xs={24} md={8}>
-            <Field label="食物來源">
-              <Select
-                style={{ width: '100%' }}
-                value={foodSource}
-                options={(catalog?.gather.sources ?? []).filter((source) => source.resource === 'food').map((source) => ({
-                  value: source.id,
-                  label: `${source.label} · ${((catalog?.gather.civRates[civ]?.[source.id] ?? source.rate) * (source.id === 'farm' ? (opening.farmGather ?? opening.gather) : opening.gather)).toFixed(3)}/秒`,
-                }))}
-                onChange={setFoodSource}
-              />
-            </Field>
-          </Col>
-          <Col xs={12} md={4}>
-            <Num label="地圖食物存量" value={foodAmount} onChange={setFoodAmount} />
-          </Col>
-          <Col xs={12} md={6}>
-            <Field label="計算往返 / 距離（格）">
-              <Space>
-                <Switch checked={walk} onChange={setWalk} />
-                <InputNumber min={0} max={8} step={0.5} disabled={!walk} value={dropoffTiles} onChange={(value) => setDropoffTiles(value ?? 0)} />
-              </Space>
-            </Field>
-          </Col>
-        </Row>
-        <Typography.Paragraph type="secondary" style={{ marginTop: 12, marginBottom: 0 }}>
-          {opening.detail}
-        </Typography.Paragraph>
-      </Card>
-
-      <Card title="2. 選擇情境">
-        <Field label="這個文明做得到的情境">
-          <Select
-            style={{ width: '100%', maxWidth: 520 }}
-            value={selected?.id}
-            disabled={!selected}
-            showSearch
-            optionFilterProp="label"
-            options={choices.map((choice) => ({ value: choice.id, label: choice.label }))}
-            onChange={(value) => {
-              setScenarioId(value)
-              setResult(null)
-            }}
-          />
-        </Field>
-        {selected && (
-          <Typography.Paragraph type="secondary" style={{ marginTop: 12 }}>
-            {selected.detail}
-          </Typography.Paragraph>
-        )}
-        <Space wrap>
-          {selected?.buildings[0] && (
-            <Num
-              label={`${catalog?.items[civ]?.find((item) => item.id === selected.buildings[0].id)?.name ?? '建築'} 數量`}
-              value={buildingCount}
-              onChange={setBuildingCount}
-            />
-          )}
-          {selected && selected.id === 'custom-army' && (
-            <Field label="單位">
-              <Select
-                style={{ width: 280 }}
-                showSearch
-                optionFilterProp="label"
-                value={unitId || undefined}
-                options={units.map((unit) => ({ value: unit.id, label: `${unit.name} · 時代 ${unit.minAge}` }))}
-                onChange={setUnitId}
-              />
-            </Field>
-          )}
-          {selected && selected.units.length > 0 && (
-            <Num
-              label={`${selected.id === 'custom-army' ? (units.find((unit) => unit.id === unitId)?.name ?? '部隊') : (catalog?.items[civ]?.find((item) => item.id === selected.units[0].id)?.name ?? '部隊')} 數量`}
-              value={unitCount}
-              onChange={setUnitCount}
-            />
-          )}
-          {selected?.mode === 'income' && (
-            <>
-              <Field label="目標">
-                <Select
-                  style={{ width: 280 }}
-                  value={incomeMode}
-                  options={[
-                    { value: 'min-villagers', label: '用最少村民達到產量' },
-                    { value: 'max-weight', label: '固定村民、最大化加權收入' },
-                  ]}
-                  onChange={(value) => setIncomeMode(value)}
-                />
-              </Field>
-              {incomeMode === 'min-villagers' ? (
-                <>
-                  <Num label="食物 / 分" value={incomePerMin.food} onChange={(value) => setIncomePerMin({ ...incomePerMin, food: value })} />
-                  <Num label="木材 / 分" value={incomePerMin.wood} onChange={(value) => setIncomePerMin({ ...incomePerMin, wood: value })} />
-                  <Num label="黃金 / 分" value={incomePerMin.gold} onChange={(value) => setIncomePerMin({ ...incomePerMin, gold: value })} />
-                  <Num label="石頭 / 分" value={incomePerMin.stone} onChange={(value) => setIncomePerMin({ ...incomePerMin, stone: value })} />
-                </>
-              ) : (
-                <Num label="村民數" value={incomeVillagers} onChange={setIncomeVillagers} />
-              )}
-            </>
-          )}
-        </Space>
-        <Button type="primary" style={{ marginTop: 16 }} loading={solving} disabled={!catalog || !selected} onClick={solve}>
-          求解
-        </Button>
-      </Card>
-
-      {result && (
-        <>
-          <Row gutter={[16, 16]}>
-            <Col xs={12} md={6}><Card><Statistic title="目標值" value={result.objectiveLabel} /></Card></Col>
-            <Col xs={12} md={6}><Card><Statistic title="結束時代" value={result.age} /></Card></Col>
-            <Col xs={12} md={6}><Card><Statistic title="村民" value={Number(result.villagers.toFixed(1))} /></Card></Col>
-            <Col xs={12} md={6}><Card><Statistic title="搜過的配置" value={result.tried} /></Card></Col>
-          </Row>
-          <Card title={result.feasible ? '求解結果' : '未在時限內完成'}>
-            <Typography.Paragraph>{result.summary}</Typography.Paragraph>
-            {result.notes.map((note) => (
-              <Typography.Paragraph key={note} type="secondary">{note}</Typography.Paragraph>
-            ))}
-            <Typography.Title level={5}>這個時間點的線性式</Typography.Title>
-            <pre style={{ background: '#fafafa', padding: 12, overflow: 'auto' }}>{result.formulation}</pre>
-          </Card>
-          <Card title="每個時間的村民配置">
-            <Table
-              size="small"
-              pagination={{ pageSize: 12 }}
-              rowKey="key"
-              dataSource={assignmentRows(result.timeline)}
-              columns={[
-                { title: '時間', dataIndex: 'time', width: 90 },
-                { title: '村民', dataIndex: 'villagers', width: 80 },
-                { title: '食物', dataIndex: 'food', width: 80 },
-                { title: '木材', dataIndex: 'wood', width: 80 },
-                { title: '黃金', dataIndex: 'gold', width: 80 },
-                { title: '石頭', dataIndex: 'stone', width: 80 },
-                { title: '建造', dataIndex: 'building', width: 80 },
-              ]}
-            />
-          </Card>
-          <Row gutter={[16, 16]}>
-            <Col xs={24} lg={14}>
-              <Card title="資源與村民分配">
-                <ReactECharts style={{ height: 300 }} option={resourceChart} />
-                <ReactECharts style={{ height: 260 }} option={assignChart} />
-              </Card>
-            </Col>
-            <Col xs={24} lg={10}>
-              <Card title="時間軸">
-                <div style={{ maxHeight: 560, overflow: 'auto' }}>
-                  {result.events.map((event, index) => (
-                    <Typography.Paragraph key={`${event.t}-${index}`} style={{ marginBottom: 8 }}>
-                      <Typography.Text code>{clock(event.t)}</Typography.Text> {event.text}
-                    </Typography.Paragraph>
+      <Row gutter={[16, 16]}>
+        <Col xs={24} lg={9} xl={8}>
+          <Flex vertical gap={16}>
+            <Card size="small" title="1. 文明與地圖">
+              <Flex vertical gap={10}>
+                <Select showSearch={{ optionFilterProp: 'label' }} value={civ} onChange={setCiv} options={civOptions} />
+                <Flex gap={8}>
+                  <Select style={{ flex: 1 }} value={mapType} onChange={setMapType} options={MAP_TYPES.map((m) => ({ value: m.id, label: `${m.name}${m.confidence === 'sourced' ? '' : '（質性）'}` }))} />
+                  <InputNumber min={1} max={99999} value={seed} onChange={(v) => setSeed(v ?? 1)} prefix="種子" style={{ width: 130 }} />
+                  <Tooltip title="重抽一張地圖">
+                    <Button icon={<ReloadOutlined />} onClick={() => setSeed(1 + Math.floor(Math.random() * 99999))} />
+                  </Tooltip>
+                </Flex>
+                <MiniMap map={map} />
+                <Flex wrap gap={6} justify="center">
+                  {(['berry', 'deer', 'wood', 'gold', 'stone'] as const).map((k) => (
+                    <span key={k} className="planner-legend">
+                      <i style={{ background: SITE_COLOR[k] }} />
+                      {SITE_ZH[k]}
+                    </span>
                   ))}
+                  <span className="planner-legend">
+                    <i style={{ background: '#fff', border: '1px dashed #9b1c1c' }} />
+                    爭奪區
+                  </span>
+                </Flex>
+              </Flex>
+            </Card>
+
+            <Card size="small" title="2. 目標流程" extra={<Typography.Text type="secondary">由上到下依序達成</Typography.Text>}>
+              <Flex vertical gap={10}>
+                <Select
+                  placeholder="套用預設流程"
+                  value={presetId}
+                  onChange={(id) => {
+                    setPresetId(id)
+                    setGoals(presets.find((p) => p.id === id)?.goals ?? [])
+                  }}
+                  options={presets.map((p) => ({ value: p.id, label: p.label }))}
+                />
+                <GoalEditor
+                  data={data}
+                  goals={goals}
+                  times={result ? goalTimes : undefined}
+                  onChange={(g) => {
+                    setPresetId(undefined)
+                    setGoals(g)
+                  }}
+                />
+              </Flex>
+            </Card>
+
+            <Card size="small" title="3. 最佳化設定">
+              <Flex vertical gap={8}>
+                <div>
+                  <Typography.Text>經濟權重</Typography.Text>
+                  <Tooltip title="城鎮中心每閒置 1 秒，分數加多少秒。0 = 只看完成時間（可能為了快而停產村民）；越高越像職業選手，城鎮中心不停產。">
+                    <Typography.Text type="secondary"> （城鎮中心閒置懲罰）</Typography.Text>
+                  </Tooltip>
+                  <Slider min={0} max={2} step={0.1} value={idleWeight} onChange={setIdleWeight} marks={{ 0: '只求快', 0.5: '預設', 2: '重經濟' }} />
                 </div>
-              </Card>
-            </Col>
-          </Row>
-        </>
-      )}
+                <Flex align="center" gap={8}>
+                  <Typography.Text>每次最多搜尋</Typography.Text>
+                  <Select size="small" style={{ width: 100 }} value={budget} onChange={setBudget} options={BUDGETS} />
+                </Flex>
+              </Flex>
+            </Card>
+          </Flex>
+        </Col>
 
-      {catalog && (
-        <Collapse
-          items={[{
-            key: 'catalog',
-            label: '這個文明的單位、建築與科技參數',
-            children: <CatalogTable items={catalog.items[civ] ?? []} />,
-          }]}
-        />
-      )}
-    </Space>
-  )
-}
+        <Col xs={24} lg={15} xl={16}>
+          <Flex vertical gap={16}>
+            <div className="planner-kpis">
+              {goals.map((g, i) => (
+                <div key={i} className="planner-kpi">
+                  <div className="planner-kpi-label">
+                    {i + 1}. {describeGoal(data, g)}
+                  </div>
+                  <div className="planner-kpi-value">{result ? clock(goalTimes[i]) : <Spin size="small" />}</div>
+                </div>
+              ))}
+              <div className="planner-kpi planner-kpi-muted">
+                <div className="planner-kpi-label">完成時村民</div>
+                <div className="planner-kpi-value">{result ? result.villagers : '—'}</div>
+              </div>
+              <div className="planner-kpi planner-kpi-muted">
+                <div className="planner-kpi-label">城鎮中心閒置</div>
+                <div className="planner-kpi-value">{result ? `${result.tcIdle}s` : '—'}</div>
+              </div>
+            </div>
 
-function Field({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div>
-      <Typography.Text type="secondary">{label}</Typography.Text>
-      <div>{children}</div>
+            {result?.warnings.map((w) => <Alert key={w} type="warning" showIcon message={w} />)}
+
+            <Card size="small" styles={{ body: { paddingTop: 4 } }}>
+              <Tabs
+                activeKey={tab}
+                onChange={setTab}
+                items={[
+                  {
+                    key: 'bo',
+                    label: '建造順序',
+                    children: result && best ? (
+                      <Flex vertical gap={12}>
+                        <StrategySummary data={data} best={best} />
+                        <BuildOrderTable events={result.events} compact />
+                      </Flex>
+                    ) : (
+                      <Waiting />
+                    ),
+                  },
+                  { key: 'vill', label: '村民分配', children: result ? <VillagerChart result={result} /> : <Waiting /> },
+                  { key: 'bank', label: '資源與收入', children: result ? <BankChart result={result} /> : <Waiting /> },
+                  { key: 'civ', label: '文明加成', children: <BonusList data={data} /> },
+                  { key: 'map', label: '地圖', children: <MapDetail map={map} /> },
+                  { key: 'model', label: '模型說明', children: <ModelNotes /> },
+                ]}
+              />
+            </Card>
+          </Flex>
+        </Col>
+      </Row>
     </div>
   )
 }
 
-function Num({ label, value, onChange }: { label: string; value: number; onChange: (value: number) => void }) {
+function Waiting() {
   return (
-    <Field label={label}>
-      <InputNumber min={0} max={5000} value={value} onChange={(next) => onChange(next ?? 0)} />
-    </Field>
+    <Flex justify="center" style={{ padding: 48 }}>
+      <Spin description="正在搜尋第一個可行解…">
+        <div style={{ width: 200, height: 40 }} />
+      </Spin>
+    </Flex>
   )
 }
 
-function assignmentRows(samples: SolveResult['timeline']) {
-  const rows: { key: string; time: string; villagers: number; food: string; wood: string; gold: string; stone: string; building: number }[] = []
-  for (const sample of samples) {
-    const row = {
-      key: `${sample.t}-${rows.length}`,
-      time: clock(sample.t),
-      villagers: sample.villagers,
-      food: String(Math.round(sample.onFood)),
-      wood: String(Math.round(sample.onWood)),
-      gold: String(Math.round(sample.onGold)),
-      stone: String(Math.round(sample.onStone)),
-      building: sample.building,
-    }
-    const previous = rows[rows.length - 1]
-    if (previous && previous.villagers === row.villagers && previous.food === row.food
-      && previous.wood === row.wood && previous.gold === row.gold && previous.stone === row.stone
-      && previous.building === row.building) continue
-    rows.push(row)
-  }
-  return rows
-}
-
-function chartOf(result: SolveResult | null, kind: 'bank' | 'assign') {
-  const rows = result?.timeline ?? []
-  const axis = rows.map((row) => clock(row.t))
-  if (kind === 'bank') {
-    return {
-      tooltip: { trigger: 'axis' },
-      legend: { data: ['食物', '木材', '黃金', '石頭'] },
-      grid: { left: 48, right: 16, top: 32, bottom: 28 },
-      xAxis: { type: 'category', data: axis },
-      yAxis: { type: 'value' },
-      series: [
-        { name: '食物', type: 'line', showSymbol: false, data: rows.map((row) => Math.round(row.food)) },
-        { name: '木材', type: 'line', showSymbol: false, data: rows.map((row) => Math.round(row.wood)) },
-        { name: '黃金', type: 'line', showSymbol: false, data: rows.map((row) => Math.round(row.gold)) },
-        { name: '石頭', type: 'line', showSymbol: false, data: rows.map((row) => Math.round(row.stone)) },
-      ],
-    }
-  }
-  return {
-    tooltip: { trigger: 'axis' },
-    legend: { data: ['食物', '木材', '黃金', '石頭', '建造'] },
-    grid: { left: 48, right: 16, top: 32, bottom: 28 },
-    xAxis: { type: 'category', data: axis },
-    yAxis: { type: 'value' },
-    series: [
-      { name: '食物', type: 'line', stack: 'v', areaStyle: {}, showSymbol: false, data: rows.map((row) => Math.round(row.onFood)) },
-      { name: '木材', type: 'line', stack: 'v', areaStyle: {}, showSymbol: false, data: rows.map((row) => Math.round(row.onWood)) },
-      { name: '黃金', type: 'line', stack: 'v', areaStyle: {}, showSymbol: false, data: rows.map((row) => Math.round(row.onGold)) },
-      { name: '石頭', type: 'line', stack: 'v', areaStyle: {}, showSymbol: false, data: rows.map((row) => Math.round(row.onStone)) },
-      { name: '建造', type: 'line', stack: 'v', areaStyle: {}, showSymbol: false, data: rows.map((row) => row.building) },
-    ],
-  }
-}
-
-function CatalogTable({ items }: { items: CatalogItem[] }) {
-  const [kind, setKind] = useState<CatalogItem['kind'] | 'all'>('unit')
-  const [query, setQuery] = useState('')
-  const rows = items
-    .filter((item) => (kind === 'all' || item.kind === kind) && item.name.toLowerCase().includes(query.toLowerCase()))
-    .map((item) => {
-      const variation = item.variations[0]
-      return {
-        key: `${item.kind}-${item.id}`,
-        name: item.name,
-        age: item.minAge,
-        food: variation?.food ?? 0,
-        wood: variation?.wood ?? 0,
-        gold: variation?.gold ?? 0,
-        stone: variation?.stone ?? 0,
-        time: variation?.time ?? 0,
-        pop: variation?.pop ?? 0,
-        speed: variation?.speed || '—',
-        dps: variation?.dps || '—',
-      }
-    })
+function SearchStatus({ status, result, onStop, onRestart }: { status: { evals: number; elapsed: number; running: boolean }; result?: PlanResult; onStop: () => void; onRestart: () => void }) {
   return (
-    <>
-      <Space style={{ marginBottom: 12 }}>
-        <Select
-          value={kind}
-          style={{ width: 140 }}
-          options={[
-            { value: 'unit', label: '單位' },
-            { value: 'building', label: '建築' },
-            { value: 'technology', label: '科技' },
-            { value: 'upgrade', label: '升級' },
-            { value: 'all', label: '全部' },
-          ]}
-          onChange={setKind}
-        />
-        <Input
-          allowClear
-          placeholder="搜尋名稱"
-          style={{ width: 240 }}
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-        />
-      </Space>
+    <Flex align="center" gap={12} className="planner-status">
+      {status.running ? <Progress type="circle" size={34} percent={99} status="active" showInfo={false} /> : <ThunderboltOutlined style={{ fontSize: 26, color: '#2f4f8f' }} />}
+      <div>
+        <div style={{ fontWeight: 600 }}>{status.running ? '最佳化中…' : result ? '搜尋完成' : '等待中'}</div>
+        <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+          試過 {status.evals.toLocaleString()} 種策略・{(status.elapsed / 1000).toFixed(1)} 秒{result ? `・最佳 ${clock(result.finish)}` : ''}
+        </Typography.Text>
+      </div>
+      {status.running ? (
+        <Button icon={<PauseCircleOutlined />} onClick={onStop}>
+          停止
+        </Button>
+      ) : (
+        <Button type="primary" icon={<ReloadOutlined />} onClick={onRestart}>
+          重新搜尋
+        </Button>
+      )}
+    </Flex>
+  )
+}
+
+function StrategySummary({ data, best }: { data: CivData; best: Best }) {
+  const { policy, steps, result } = best
+  const eco = Object.entries(policy.ecoAt)
+    .filter(([, at]) => at >= 0)
+    .map(([id, at]) => `${nameOf(data, id)}（第 ${at + 1} 步起）`)
+  const lastOfGoal = new Map<number, number>()
+  steps.forEach((s, i) => lastOfGoal.set(s.goalIndex, i))
+  return (
+    <Descriptions
+      size="small"
+      bordered
+      column={{ xs: 1, md: 2 }}
+      items={[
+        {
+          key: 'steps',
+          label: '步驟',
+          span: 2,
+          children: (
+            <Flex wrap gap={6}>
+              {steps.map((s, i) => (
+                <Tag key={i} color={s.implicit ? 'default' : 'blue'}>
+                  {i + 1}. {s.label}
+                  {(s.kind === 'age' || s.forward) && `・${policy.steps[i]?.builders} 人建造`}
+                  {s.kind === 'army' && `・${policy.steps[i]?.producers} 座生產建築`}
+                  {policy.steps[i]?.stopVills && '・暫停村民'}
+                  {lastOfGoal.get(s.goalIndex) === i && ` → ${clock(result.goals.find((g) => g.goalIndex === s.goalIndex)?.t)}`}
+                </Tag>
+              ))}
+            </Flex>
+          ),
+        },
+        { key: 'vills', label: '村民上限', children: `${policy.maxVills} 名（房屋在剩 ${policy.houseBuffer} 格人口時開蓋）` },
+        { key: 'hunt', label: '打鹿', children: policy.hunt ? '要（在鹿群旁蓋磨坊）' : '不打，羊吃完直接野果／農田' },
+        { key: 'eco', label: '經濟科技', span: 2, children: eco.length ? eco.join('、') : '不研究' },
+      ]}
+    />
+  )
+}
+
+function BonusList({ data }: { data: CivData }) {
+  const rows = [...data.spec.bonuses.map((b, i) => ({ ...b, key: `c${i}`, scope: data.spec.zh })), ...GLOBAL_BONUSES.map((b, i) => ({ ...b, key: `g${i}`, scope: '全文明' }))]
+  return (
+    <Flex vertical gap={8}>
+      <Typography.Text type="secondary">{data.spec.startNote}</Typography.Text>
       <Table
         size="small"
+        pagination={false}
         rowKey="key"
-        pagination={{ pageSize: 12 }}
         dataSource={rows}
         columns={[
-          { title: '名稱', dataIndex: 'name' },
-          { title: '時代', dataIndex: 'age', width: 70 },
-          { title: '食物', dataIndex: 'food', width: 70 },
-          { title: '木材', dataIndex: 'wood', width: 70 },
-          { title: '黃金', dataIndex: 'gold', width: 70 },
-          { title: '石頭', dataIndex: 'stone', width: 70 },
-          { title: '時間', dataIndex: 'time', width: 70 },
-          { title: '人口', dataIndex: 'pop', width: 70 },
-          { title: '移速', dataIndex: 'speed', width: 80 },
-          { title: 'DPS', dataIndex: 'dps', width: 80 },
+          { title: '範圍', dataIndex: 'scope', width: 90 },
+          { title: '狀態', dataIndex: 'modeled', width: 80, render: (m: Bonus['modeled']) => <Tag color={MODELED[m].color}>{MODELED[m].label}</Tag> },
+          {
+            title: '加成',
+            dataIndex: 'text',
+            render: (t: string, r) => (
+              <div>
+                <div>{t}</div>
+                {r.note && <Typography.Text type="secondary" style={{ fontSize: 12 }}>{r.note}</Typography.Text>}
+              </div>
+            ),
+          },
+          {
+            title: '來源',
+            dataIndex: 'source',
+            width: 90,
+            render: (s: string) =>
+              s.startsWith('http') ? (
+                <a href={s} target="_blank" rel="noreferrer">
+                  {s.includes('ageofempires.com') ? '官方 17.0' : s.includes('fandom') ? 'Fandom' : 'aoe4world'}
+                </a>
+              ) : (
+                <Tooltip title={s}>
+                  <Typography.Text type="secondary">舊版</Typography.Text>
+                </Tooltip>
+              ),
+          },
         ]}
       />
-    </>
+    </Flex>
+  )
+}
+
+function MapDetail({ map }: { map: ReturnType<typeof generateMap> }) {
+  return (
+    <Row gutter={16}>
+      <Col xs={24} md={10}>
+        <MiniMap map={map} size={340} />
+        <Typography.Paragraph type="secondary" style={{ marginTop: 8, fontSize: 12 }}>
+          附近的羊由斥候牧回：{map.sheepArrivals.map((t) => clock(t)).join('、')}。
+        </Typography.Paragraph>
+      </Col>
+      <Col xs={24} md={14}>
+        <Table
+          size="small"
+          pagination={false}
+          rowKey="id"
+          dataSource={[...map.sites].sort((a, b) => a.dist - b.dist)}
+          columns={[
+            { title: '資源', dataIndex: 'label', render: (l: string, s) => <span><i className="planner-dot" style={{ background: SITE_COLOR[s.kind] }} />{l}</span> },
+            { title: '存量', dataIndex: 'amount', align: 'right', render: (n: number) => n.toLocaleString() },
+            { title: '距離', dataIndex: 'dist', align: 'right', render: (d: number) => `${d} 格` },
+            { title: '', dataIndex: 'contested', render: (c: boolean) => (c ? <Tag color="red">爭奪</Tag> : null) },
+          ]}
+        />
+        <ul className="planner-notes">
+          {map.notes.map((n) => (
+            <li key={n}>{n}</li>
+          ))}
+        </ul>
+      </Col>
+    </Row>
+  )
+}
+
+function ModelNotes() {
+  return (
+    <div className="planner-model">
+      <Typography.Title level={5}>怎麼算的</Typography.Title>
+      <ul>
+        <li>逐秒模擬。村民聚合在各個採集點上，但走路、交資源往返、羊群陸續牧回、採集點耗盡、蓋投放點、蓋農田、房屋人口、生產佇列都照實計算。</li>
+        <li>每趟交資源的有效速率 = 攜帶量 ÷（攜帶量 ÷ 採集速率 + 2 × 到投放點距離 ÷ 移動速度）。砍樹用含砍倒時間的 0.70。</li>
+        <li>多人建造：時間 = 基礎 × 3 ÷ (人數 + 2)。這是 Fandom 的公式；用它重算職業選手「2:10 放地標、4 人蓋、3:50 封建」的建造順序是吻合的。</li>
+        <li>分配：每 8 秒依「目前步驟還缺的資源 ÷ 各資源的有效速率」重新算目標人數，差距夠大才搬人（搬人要走路）。新村民去最缺的資源。</li>
+        <li>最佳化：在 Web Worker 裡做演化式區域搜尋，調整每一步的建造人數、資源偏好、是否暫停村民、生產建築數量、經濟科技時機、地標選擇、村民上限、是否打鹿。每次模擬 1~3 毫秒，一秒能試數百到上千種策略。</li>
+        <li>分數 = 最後目標完成時間 + 0.05 × 各目標完成時間總和 + 經濟權重 × 城鎮中心閒置秒數。</li>
+      </ul>
+      <Typography.Title level={5}>和職業建造順序比較（aoe4guides，Season 13）</Typography.Title>
+      <ul>
+        <li>英格蘭封建：職業約 3:50~4:10、17~19 村民；這裡的「最快封建」約 3:30，因為最佳化會讓更多人蓋地標，職業選手通常只派 3~4 人。</li>
+        <li>日本直城（水鳥居）：職業約 7:45~8:10、約 29 村民；模擬約 7:40、27~28 村民。</li>
+        <li>英格蘭直城：職業 7:55~9:00、30~34 村民；模擬約 7:50~8:10、28~30 村民。</li>
+      </ul>
+      <Typography.Title level={5}>還沒做的</Typography.Title>
+      <ul>
+        <li>戰鬥、騷擾、斥候偵查、引野豬、釣魚、貿易、聖物。</li>
+        <li>建築的影響範圍（光環一律近似為涵蓋所有採集點）。「文明加成」分頁列出每一條是否已計入。</li>
+        <li>地圖格數距離沒有公開資料，全部是假設區間；地圖腳本本身（Content Editor 的 playerresources.lua）不公開。</li>
+      </ul>
+    </div>
   )
 }
