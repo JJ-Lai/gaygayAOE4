@@ -12,6 +12,7 @@ const KIND: Partial<Record<PlanEvent['kind'], { label: string; color: string }>>
   age: { label: '升代', color: 'gold' },
   goal: { label: '目標', color: 'red' },
   deplete: { label: '採完', color: 'default' },
+  note: { label: '階段', color: 'magenta' },
 }
 
 

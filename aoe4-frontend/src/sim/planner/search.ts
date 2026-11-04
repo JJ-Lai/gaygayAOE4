@@ -4,15 +4,22 @@
 import { resolveGoals, type CivData } from './civData.ts'
 import { simulate } from './engine.ts'
 import { rng } from './mapgen.ts'
-import { RES, type GameMap, type Goal, type PlanResult, type Policy, type Step, type StepParams } from './types.ts'
+import { RES, type GameMap, type Goal, type PlanResult, type Policy, type PostArmy, type Step, type StepParams } from './types.ts'
 
 const MAX_T = 60 * 60
+
+export interface SearchOptions {
+  idleWeight?: number
+  /** 目標後全力出兵；預設 30 兵 + 2 項升級 */
+  post?: PostArmy
+}
+
+export const DEFAULT_POST: PostArmy = { units: 30, upgrades: 2 }
 
 export function defaultStepParams(st: Step): StepParams {
   return {
     builders: st.kind === 'age' ? 4 : st.forward ? 2 : 1,
     bias: { food: 0, wood: 0, gold: 0, stone: 0 },
-    stopVills: false,
     producers: st.kind === 'army' ? 2 : 1,
   }
 }
@@ -26,11 +33,11 @@ export function defaultPolicy(data: CivData, goals: Goal[]): Policy {
   const { steps } = resolveGoals(data, goals, landmarkPick)
   return {
     steps: steps.map(defaultStepParams),
-    maxVills: 100,
-    houseBuffer: 3,
+    houseBuffer: 0,
     hunt: true,
     ecoAt: {},
     landmarkPick,
+    postProducers: 3,
   }
 }
 
@@ -46,13 +53,27 @@ function fit(policy: Policy, steps: Step[]): Policy {
   return { ...policy, steps: out }
 }
 
-export function evaluate(data: CivData, map: GameMap, goals: Goal[], policy: Policy, bound: number, record: boolean, idleWeight = 0.5): Evaluated | null {
+export function evaluate(
+  data: CivData,
+  map: GameMap,
+  goals: Goal[],
+  policy: Policy,
+  bound: number,
+  record: boolean,
+  opts: SearchOptions & { postBound?: number } = {},
+): Evaluated | null {
   const { steps, errors } = resolveGoals(data, goals, policy.landmarkPick)
   if (errors.length && !steps.length) return null
   const p = fit(policy, steps)
-  const result = simulate(data, map, steps, p, { record, bound, idleWeight })
+  const result = simulate(data, map, steps, p, { record, bound, idleWeight: opts.idleWeight ?? 60, post: opts.post ?? DEFAULT_POST, postBound: opts.postBound })
   for (const e of errors) result.warnings.push(e)
   return { policy: p, steps, result }
+}
+
+/** 硬性規則：先比城鎮中心中斷秒數，再比分數 */
+function better(a: PlanResult, b: PlanResult) {
+  if (a.tcIdle !== b.tcIdle) return a.tcIdle < b.tcIdle
+  return a.score < b.score - 1e-6
 }
 
 const clone = (p: Policy): Policy => ({
@@ -75,10 +96,10 @@ function mutate(p: Policy, r: () => number, data: CivData, goals: Goal[]): Polic
     else if (which < 0.5 && s) {
       const res = pick(RES)
       s.bias[res] = clamp(s.bias[res] + (r() - 0.5) * 0.2, -0.35, 0.35)
-    } else if (which < 0.57 && s) s.stopVills = !s.stopVills
+    }
     else if (which < 0.64 && s) s.producers = clamp(s.producers + pick([-1, 1]), 1, 8)
-    else if (which < 0.72) q.maxVills = clamp(q.maxVills + pick([-15, -8, -4, 4, 8, 15]), 8, 130)
-    else if (which < 0.77) q.houseBuffer = clamp(q.houseBuffer + pick([-1, 1]), 1, 8)
+    else if (which < 0.72) q.postProducers = clamp(q.postProducers + pick([-2, -1, 1, 2]), 1, 9)
+    else if (which < 0.77) q.houseBuffer = clamp(q.houseBuffer + pick([-1, 1]), 0, 6)
     else if (which < 0.81) q.hunt = !q.hunt
     else if (which < 0.93 && data.ecoTechs.length) {
       const id = pick(data.ecoTechs)
@@ -104,10 +125,10 @@ export class Searcher {
   private data: CivData
   private map: GameMap
   private goals: Goal[]
-  private idleWeight: number
+  private opts: SearchOptions
 
-  constructor(data: CivData, map: GameMap, goals: Goal[], seed = 1, idleWeight = 0.5) {
-    this.idleWeight = idleWeight
+  constructor(data: CivData, map: GameMap, goals: Goal[], seed = 1, opts: SearchOptions = {}) {
+    this.opts = opts
     this.data = data
     this.map = map
     this.goals = goals
@@ -143,12 +164,15 @@ export class Searcher {
     let improved = false
     while (performance.now() - start < ms) {
       const policy = this.seeds.length ? this.seeds.shift()! : this.next()
-      const bound = this.best && this.best.result.ok ? Math.min(MAX_T, this.best.result.finish + 90) : MAX_T
-      const ev = evaluate(this.data, this.map, this.goals, policy, bound, false, this.idleWeight)
+      const b = this.best?.result
+      // 剪枝：目標比目前最佳晚太多、或全力出兵比最佳慢太多，就提早結束
+      const bound = b && b.ok ? Math.min(MAX_T, b.finish + (b.armyAt != null ? 180 : 90)) : MAX_T
+      const postBound = b && b.armyAt != null && Number.isFinite(b.armyAt) ? b.armyAt + 60 : undefined
+      const ev = evaluate(this.data, this.map, this.goals, policy, bound, false, { ...this.opts, postBound })
       this.evals++
       if (!ev) continue
       this.insert(ev)
-      if (!this.best || ev.result.score < this.best.result.score - 1e-6) {
+      if (!this.best || better(ev.result, this.best.result)) {
         this.best = ev
         improved = true
       }
@@ -165,13 +189,13 @@ export class Searcher {
 
   private insert(ev: Evaluated) {
     this.elite.push(ev)
-    this.elite.sort((a, b) => a.result.score - b.result.score)
+    this.elite.sort((a, b) => a.result.tcIdle - b.result.tcIdle || a.result.score - b.result.score)
     if (this.elite.length > 8) this.elite.length = 8
   }
 
   /** 用目前最佳策略重跑一次並記錄完整事件 */
   bestDetailed(): Evaluated | null {
     if (!this.best) return null
-    return evaluate(this.data, this.map, this.goals, this.best.policy, MAX_T, true, this.idleWeight)
+    return evaluate(this.data, this.map, this.goals, this.best.policy, MAX_T, true, this.opts)
   }
 }

@@ -34,7 +34,22 @@ export interface GameMap {
   sheepArrivals: number[]
   /** 自家城鎮中心到對手城鎮中心的格數 */
   enemyDist: number
+  /** 從自家城鎮中心看向對手的方位角（弧度，與 Site.angle 同一座標系） */
+  enemyAngle: number
+  /** 全地圖邊長（格），座標原點在左上 */
+  size: number
+  home: Point
+  enemy: Point
+  /** 對手的起始資源：自家資源對地圖中心點對稱（17.0 起 1v1 出生點鏡像對稱） */
+  enemySites: Site[]
+  /** 中立資源（示意） */
+  neutral: { kind: SiteKind; label: string; p: Point }[]
   notes: string[]
+}
+
+export interface Point {
+  x: number
+  y: number
 }
 
 // ---------- 目標 ----------
@@ -65,17 +80,13 @@ export interface StepParams {
   builders: number
   /** 對四種資源的分配偏好，-0.3 ~ 0.3，加在需求比例上 */
   bias: Bundle
-  /** 這一步期間暫停生產村民 */
-  stopVills: boolean
   /** 軍隊步驟：生產建築的數量 */
   producers: number
 }
 
 export interface Policy {
   steps: StepParams[]
-  /** 村民上限（到了就停產） */
-  maxVills: number
-  /** 剩幾格人口時開始蓋房 */
+  /** 蓋房的額外緩衝人口（基本緩衝依生產速度自動算） */
   houseBuffer: number
   /** 是否去打鹿（要在鹿群旁蓋磨坊） */
   hunt: boolean
@@ -83,6 +94,16 @@ export interface Policy {
   ecoAt: Record<string, number>
   /** 沒有指定地標的升代步驟：時代 -> 地標/科技 id */
   landmarkPick: Record<number, string>
+  /** 目標達成後全力出兵：同時運作的生產建築數 */
+  postProducers: number
+}
+
+/** 目標達成後的「全力出兵」設定 */
+export interface PostArmy {
+  /** 目標後要訓練的軍隊數（0 = 不模擬） */
+  units: number
+  /** 目標後要完成的鐵匠舖升級數 */
+  upgrades: number
 }
 
 // ---------- 輸出 ----------
@@ -121,6 +142,21 @@ export interface Sample {
   age: number
   army: number
   income: Bundle
+  /** 各採集點此刻的人數與剩餘量（sheep、farm 也在內） */
+  sites: { id: string; workers: number; left: number }[]
+  farms: number
+}
+
+/** 建築的位置與時間（畫地圖時間軸用） */
+export interface BuildingTrack {
+  uid: number
+  item: string
+  role: string
+  /** 相對自家城鎮中心的距離與方位角 */
+  at: number
+  angle: number
+  placed: number
+  done: number | null
 }
 
 export interface GoalResult {
@@ -133,6 +169,17 @@ export interface PlanResult {
   ok: boolean
   /** 最後一個目標完成的秒數；做不到時是 Infinity */
   finish: number
+  /** 目標後全力出兵：達成兵數與升級的時間（沒有設定時是 null，做不到時是 Infinity） */
+  armyAt: number | null
+  postUnits: number
+  postUpgrades: number
+  /** 全力出兵階段訓練的單位 id -> 數量 */
+  postMix: Record<string, number>
+  /** 全力出兵階段完成的升級 */
+  postTechs: string[]
+  /** 目標完成那一刻的村民數 */
+  villagersAtGoal: number
+  buildings: BuildingTrack[]
   score: number
   goals: GoalResult[]
   steps: Step[]
@@ -140,7 +187,9 @@ export interface PlanResult {
   samples: Sample[]
   ageTimes: Record<number, number>
   villagers: number
-  /** 目標完成前城鎮中心閒置的秒數（多座相加） */
+  /** 城鎮中心違反「不中斷村民生產」的秒數（多座相加；人口 200 不算） */
   tcIdle: number
+  /** 城鎮中心閒置的原因與秒數（含不算違規的人口 200） */
+  tcIdleReasons: Record<string, number>
   warnings: string[]
 }

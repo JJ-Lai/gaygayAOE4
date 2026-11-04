@@ -98,12 +98,32 @@ export function nameOf(data: CivData, id: string) {
   return data.names[id] ?? data.items.get(id)?.name ?? id
 }
 
-/** 能被村民蓋、不是地標的生產建築 */
+/** 目錄標成城鎮中心的建築（含英格蘭王宮、士瓦本宮這類兼城鎮中心的地標） */
+export function isTownCenter(data: CivData, id: string) {
+  if (id === 'town-center' || id === 'capital-town-center') return true
+  const it = data.items.get(id)
+  return !!it && it.kind === 'building' && it.variations.some((v) => v.tags.includes('tc'))
+}
+
+/** 村民蓋得出來、不是地標的建築 */
+export function isBuildable(data: CivData, id: string) {
+  const b = data.items.get(id)
+  if (!b || b.kind !== 'building') return false
+  const bv = variationAt(b, 4)
+  if (bv.tags.some((t) => t.startsWith('toAge'))) return false
+  return bv.producedBy.includes(data.spec.worker) || bv.producedBy.includes('villager')
+}
+
+/**
+ * 找生產建築：優先用已擁有或可蓋的「非城鎮中心」建築，
+ * 只有別處都做不了時才用城鎮中心（城鎮中心要一直出村民）。
+ */
 function buildableProducer(data: CivData, unit: CatalogItem, age: number, owned: Set<string>) {
   const v = variationAt(unit, 4)
   const worker = data.spec.worker
-  for (const p of v.producedBy) if (owned.has(p)) return { id: p, needBuild: false }
+  for (const p of v.producedBy) if (owned.has(p) && !isTownCenter(data, p)) return { id: p, needBuild: false }
   for (const p of v.producedBy) {
+    if (isTownCenter(data, p)) continue
     const b = data.items.get(p)
     if (!b || b.kind !== 'building') continue
     const bv = variationAt(b, 4)
@@ -112,6 +132,7 @@ function buildableProducer(data: CivData, unit: CatalogItem, age: number, owned:
     if (minAge(b) > Math.max(age, minAge(unit))) continue
     return { id: p, needBuild: true }
   }
+  for (const p of v.producedBy) if (owned.has(p)) return { id: p, needBuild: false }
   return null
 }
 
@@ -187,9 +208,35 @@ export function resolveGoals(data: CivData, goals: Goal[], landmarkPick: Record<
       return
     }
     // army / tech 需要生產建築
-    const prod = buildableProducer(data, item, age, owned)
+    let prod = buildableProducer(data, item, age, owned)
     if (!prod) {
-      errors.push(`第 ${gi + 1} 個目標：找不到能生產 ${name(id)} 的建築`)
+      // 只有地標能生產：升代時改選那座地標（之前的升代沒指定地標時改掉它，還沒升到就補一步）
+      const lv = variationAt(item, 4)
+      for (const p of lv.producedBy) {
+        for (const a of [2, 3, 4]) {
+          const opt = (data.ageOptions[a] ?? []).find((o) => o.id === p && o.mode === 'building')
+          if (!opt) continue
+          if (a > age) {
+            if (!pushAge(gi, a, p, true)) return
+            prod = { id: p, needBuild: false }
+            break
+          }
+          const si = steps.findIndex((s) => s.kind === 'age' && s.age === a)
+          const g = si >= 0 ? goals[steps[si].goalIndex] : null
+          const explicit = g?.kind === 'age' && g.age === a && !!g.via
+          if (si >= 0 && !explicit) {
+            if (steps[si].item) owned.delete(steps[si].item)
+            steps[si] = { ...steps[si], item: p, label: `${['', '黑暗', '封建', '城堡', '帝王'][a]}時代（${opt.name}）` }
+            owned.add(p)
+            prod = { id: p, needBuild: false }
+            break
+          }
+        }
+        if (prod) break
+      }
+    }
+    if (!prod) {
+      errors.push(`第 ${gi + 1} 個目標：找不到能生產 ${name(id)} 的建築（可能要在前面指定生產它的地標）`)
       return
     }
     if (prod.needBuild) {

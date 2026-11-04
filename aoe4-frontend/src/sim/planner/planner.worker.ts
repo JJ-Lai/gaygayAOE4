@@ -4,7 +4,7 @@ import type { Catalog } from '../types.ts'
 import { buildCivData } from './civData.ts'
 import { generateMap } from './mapgen.ts'
 import { Searcher } from './search.ts'
-import type { Goal, PlanResult, Policy, Step } from './types.ts'
+import type { Goal, PlanResult, Policy, PostArmy, Step } from './types.ts'
 
 export interface StartMessage {
   type: 'start'
@@ -13,7 +13,8 @@ export interface StartMessage {
   mapType: string
   seed: number
   goals: Goal[]
-  idleWeight: number
+  /** 目標後全力出兵的兵數與升級數 */
+  post: PostArmy
   /** 最多跑多久（毫秒） */
   budgetMs: number
 }
@@ -49,7 +50,7 @@ async function start(m: StartMessage) {
   if (current !== m.id) return
   const data = buildCivData(catalog!, m.civ, names)
   const map = generateMap(m.mapType, m.seed)
-  const searcher = new Searcher(data, map, m.goals, m.seed + 11, m.idleWeight)
+  const searcher = new Searcher(data, map, m.goals, m.seed + 11, { post: m.post })
   const t0 = performance.now()
   let lastGain = t0
   let lastPost = 0

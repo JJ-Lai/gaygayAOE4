@@ -1,4 +1,4 @@
-import { minAge, variationAt, type CivData } from './civData.ts'
+import { isBuildable, minAge, variationAt, type CivData } from './civData.ts'
 import type { Goal } from './types.ts'
 
 export interface Preset {
@@ -43,8 +43,8 @@ export function presetsFor(data: CivData): Preset[] {
       ],
     })
   }
-  // 城堡時代的招牌單位
-  const castleUnit = [...data.items.values()].find((i) => i.unique && i.military && minAge(i) === 3 && variationAt(i, 3).producedBy.length > 0)
+  // 由一般生產建築（非地標）訓練的城堡時代招牌單位
+  const castleUnit = [...data.items.values()].find((i) => i.unique && i.military && minAge(i) === 3 && variationAt(i, 3).producedBy.some((p) => isBuildable(data, p)))
   if (castleUnit) {
     out.push({ id: 'castle-unique', label: `直城 → 15 ${data.names[castleUnit.id] ?? castleUnit.name}`, goals: [{ kind: 'age', age: 3 }, { kind: 'army', unit: castleUnit.id, count: 15 }] })
   }

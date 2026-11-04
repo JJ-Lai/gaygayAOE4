@@ -1,5 +1,5 @@
 import { nameOf, type CivData } from '../../sim/planner/civData'
-import type { Goal, PlanEvent, SiteKind } from '../../sim/planner/types'
+import type { Goal, PlanEvent, Sample, SiteKind } from '../../sim/planner/types'
 
 export const AGE_ZH = ['', '黑暗', '封建', '城堡', '帝王']
 
@@ -80,4 +80,17 @@ export function compress(events: PlanEvent[]): Row[] {
     rows.push({ key: i, t: e.t, pop: e.pop, kind: e.kind, text: e.text, split: e.split })
   }
   return rows
+}
+
+/** 二分搜尋：t 秒時最後一筆取樣 */
+export function sampleAt(samples: Sample[], t: number): Sample | null {
+  if (!samples.length) return null
+  let lo = 0
+  let hi = samples.length - 1
+  while (lo < hi) {
+    const mid = (lo + hi + 1) >> 1
+    if (samples[mid].t <= t) lo = mid
+    else hi = mid - 1
+  }
+  return samples[lo].t <= t ? samples[lo] : samples[0]
 }

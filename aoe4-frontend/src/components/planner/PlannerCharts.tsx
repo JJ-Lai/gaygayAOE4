@@ -8,6 +8,7 @@ function markLines(result: PlanResult) {
     if (Number(a) > 1) lines.push({ xAxis: t, name: ['', '', '封建', '城堡', '帝王'][Number(a)], color: '#2f4f8f' })
   }
   for (const g of result.goals) if (g.t != null) lines.push({ xAxis: g.t, name: `目標 ${g.goalIndex + 1}`, color: '#9b1c1c' })
+  if (result.armyAt != null && Number.isFinite(result.armyAt)) lines.push({ xAxis: result.armyAt, name: '出兵完成', color: '#d4380d' })
   return {
     symbol: 'none',
     silent: true,

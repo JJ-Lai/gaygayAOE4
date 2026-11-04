@@ -50,19 +50,26 @@ for (const c of CASES) {
   if (only && c.civ !== only) continue
   const data = buildCivData(catalog, c.civ, names)
   const map = generateMap('dry-arabia', 7)
-  const s = new Searcher(data, map, c.goals, 3)
+  // 基準區間比的是「只看目標」的時間；另外跑一次含目標後全力出兵（30 兵 + 2 升級）的版本對照
+  const s = new Searcher(data, map, c.goals, 3, { post: { units: 0, upgrades: 0 } })
   const t0 = performance.now()
   s.run(Number(process.env.MS ?? 2500))
   const d = s.bestDetailed()!
   const r = d.result
+  const sp = new Searcher(data, map, c.goals, 3)
+  sp.run(Number(process.env.MS ?? 2500))
+  const rp = sp.bestDetailed()!.result
   const ms = performance.now() - t0
   const inBand = !c.band || (r.finish >= c.band[0] && r.finish <= c.band[1])
   if (!inBand) bad++
-  console.log(`\n${inBand ? 'ok ' : 'BAD'} ${c.label}: ${clock(r.finish)}  村民 ${r.villagers}  TC 閒置 ${r.tcIdle}s  評估 ${s.evals} 次 / ${Math.round(ms)} ms${c.band ? `  基準 ${clock(c.band[0])}~${clock(c.band[1])}` : ''}`)
+  console.log(`\n${inBand ? 'ok ' : 'BAD'} ${c.label}: ${clock(r.finish)}  村民 ${r.villagers}  TC 中斷 ${r.tcIdle}s  評估 ${s.evals} 次 / ${Math.round(ms)} ms${c.band ? `  基準 ${clock(c.band[0])}~${clock(c.band[1])}` : ''}`)
   for (const g of r.goals) console.log(`    ${g.label}: ${clock(g.t ?? Infinity)}`)
+  console.log(`    含全力出兵：目標 ${clock(rp.finish)}（${rp.villagersAtGoal} 村民）、30 兵 + 2 升級 ${clock(rp.armyAt ?? Infinity)}、TC 中斷 ${rp.tcIdle}s`)
+  if (rp.tcIdle > 0) bad++
   const p = d.policy
-  console.log(`    策略：村民上限 ${p.maxVills}、房屋緩衝 ${p.houseBuffer}、打鹿 ${p.hunt}、經濟 ${JSON.stringify(p.ecoAt)}、地標 ${JSON.stringify(p.landmarkPick)}`)
-  console.log(`    步驟參數：${p.steps.map((x, i) => `${d.steps[i].label}[建${x.builders}${x.stopVills ? ' 停' : ''} 產${x.producers}]`).join('、')}`)
+  console.log(`    中斷原因：${JSON.stringify(r.tcIdleReasons)}`)
+  console.log(`    策略：房屋緩衝 ${p.houseBuffer}、打鹿 ${p.hunt}、經濟 ${JSON.stringify(p.ecoAt)}、地標 ${JSON.stringify(p.landmarkPick)}`)
+  console.log(`    步驟參數：${p.steps.map((x, i) => `${d.steps[i].label}[建${x.builders} 產${x.producers}]`).join('、')}`)
   if (process.env.V) for (const e of r.events.filter((e) => e.kind !== 'villager').slice(0, 60)) console.log(`      ${clock(e.t)} ${String(e.pop).padStart(3)}  ${e.text}  [${e.split.food}/${e.split.wood}/${e.split.gold}/${e.split.stone}]`)
   for (const w of r.warnings) console.log(`    警告：${w}`)
 }

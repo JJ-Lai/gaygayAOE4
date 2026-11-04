@@ -1,10 +1,11 @@
 import { ExperimentOutlined, PauseCircleOutlined, ReloadOutlined, ThunderboltOutlined } from '@ant-design/icons'
-import { Alert, Button, Card, Col, Descriptions, Flex, InputNumber, Progress, Row, Select, Slider, Spin, Table, Tabs, Tag, Tooltip, Typography } from 'antd'
+import { Alert, Button, Card, Col, Descriptions, Flex, InputNumber, Progress, Row, Select, Spin, Table, Tabs, Tag, Tooltip, Typography } from 'antd'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BuildOrderTable } from '../components/planner/BuildOrderTable'
 import { GoalEditor } from '../components/planner/GoalEditor'
 import { SITE_COLOR, SITE_ZH, clock, describeGoal } from '../components/planner/format'
-import { MiniMap } from '../components/planner/MiniMap'
+import { FullMap } from '../components/planner/FullMap'
+import { MapTimeline } from '../components/planner/MapTimeline'
 import { BankChart, VillagerChart } from '../components/planner/PlannerCharts'
 import { loadCatalog } from '../sim/catalog'
 import { buildCivData, nameOf, type CivData } from '../sim/planner/civData'
@@ -12,7 +13,7 @@ import { CIV_ZH, GLOBAL_BONUSES, type Bonus } from '../sim/planner/civSpec'
 import { MAP_TYPES, generateMap } from '../sim/planner/mapgen'
 import type { StartMessage, WorkerOut } from '../sim/planner/planner.worker'
 import { presetsFor } from '../sim/planner/presets'
-import type { Goal, PlanResult, Policy, Step } from '../sim/planner/types'
+import type { Goal, PlanResult, Policy, PostArmy, Step } from '../sim/planner/types'
 import type { Catalog } from '../sim/types'
 
 interface Best {
@@ -42,8 +43,8 @@ export function SimulatePage() {
   const [seed, setSeed] = useState(7)
   const [goals, setGoals] = useState<Goal[]>([])
   const [presetId, setPresetId] = useState<string | undefined>(undefined)
-  const [idleWeight, setIdleWeight] = useState(0.5)
   const [budget, setBudget] = useState(20000)
+  const [post, setPost] = useState<PostArmy>({ units: 30, upgrades: 2 })
   const [best, setBest] = useState<Best | null>(null)
   const [status, setStatus] = useState({ evals: 0, elapsed: 0, running: false })
   const [runToken, setRunToken] = useState(0)
@@ -91,11 +92,11 @@ export function SimulatePage() {
       const id = ++runId.current
       setBest(null)
       setStatus({ evals: 0, elapsed: 0, running: true })
-      const msg: StartMessage = { type: 'start', id, civ, mapType, seed, goals, idleWeight, budgetMs: budget }
+      const msg: StartMessage = { type: 'start', id, civ, mapType, seed, goals, post, budgetMs: budget }
       workerRef.current!.postMessage(msg)
     }, 250)
     return () => clearTimeout(h)
-  }, [data, civ, mapType, seed, goals, idleWeight, budget, runToken])
+  }, [data, civ, mapType, seed, goals, post, budget, runToken])
 
   const stop = () => {
     workerRef.current?.postMessage({ type: 'stop' })
@@ -138,7 +139,7 @@ export function SimulatePage() {
                     <Button icon={<ReloadOutlined />} onClick={() => setSeed(1 + Math.floor(Math.random() * 99999))} />
                   </Tooltip>
                 </Flex>
-                <MiniMap map={map} />
+                <FullMap map={map} />
                 <Flex wrap gap={6} justify="center">
                   {(['berry', 'deer', 'wood', 'gold', 'stone'] as const).map((k) => (
                     <span key={k} className="planner-legend">
@@ -150,42 +151,61 @@ export function SimulatePage() {
                     <i style={{ background: '#fff', border: '1px dashed #9b1c1c' }} />
                     爭奪區
                   </span>
+                  <span className="planner-legend">
+                    <i style={{ background: '#1d39c4', borderRadius: 2 }} />你
+                  </span>
+                  <span className="planner-legend">
+                    <i style={{ background: '#b42318', borderRadius: 2 }} />對手
+                  </span>
                 </Flex>
               </Flex>
             </Card>
 
             <Card size="small" title="2. 目標流程" extra={<Typography.Text type="secondary">由上到下依序達成</Typography.Text>}>
-              <Flex vertical gap={10}>
-                <Select
-                  placeholder="套用預設流程"
-                  value={presetId}
-                  onChange={(id) => {
-                    setPresetId(id)
-                    setGoals(presets.find((p) => p.id === id)?.goals ?? [])
-                  }}
-                  options={presets.map((p) => ({ value: p.id, label: p.label }))}
-                />
-                <GoalEditor
-                  data={data}
-                  goals={goals}
-                  times={result ? goalTimes : undefined}
-                  onChange={(g) => {
-                    setPresetId(undefined)
-                    setGoals(g)
-                  }}
-                />
+              <GoalEditor
+                data={data}
+                goals={goals}
+                times={result ? goalTimes : undefined}
+                presets={presets}
+                presetId={presetId}
+                onPreset={(p) => {
+                  setPresetId(p.id)
+                  setGoals(p.goals)
+                }}
+                onChange={(g) => {
+                  setPresetId(undefined)
+                  setGoals(g)
+                }}
+              />
+            </Card>
+
+            <Card size="small" title="3. 目標達成之後">
+              <Flex vertical gap={8}>
+                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                  遊戲不會停在目標：達成後繼續模擬「全力出兵」，同時蓋兵營、靶場、馬廄出步兵、弓兵、騎兵（各取最便宜的，求數量），並在鐵匠舖研究升級。最佳化會同時考慮目標時間與之後的出兵速度，所以不會為了目標把村民全拉去蓋地標。
+                </Typography.Text>
+                <Flex align="center" gap={8} wrap>
+                  <Typography.Text>出兵目標</Typography.Text>
+                  <Select
+                    size="small"
+                    style={{ width: 110 }}
+                    value={post.units}
+                    onChange={(units) => setPost((p) => ({ ...p, units }))}
+                    options={[0, 15, 30, 50, 80].map((n) => ({ value: n, label: n ? `${n} 名軍隊` : '不模擬' }))}
+                  />
+                  <Select
+                    size="small"
+                    style={{ width: 110 }}
+                    value={post.upgrades}
+                    onChange={(upgrades) => setPost((p) => ({ ...p, upgrades }))}
+                    options={[0, 1, 2, 3, 4].map((n) => ({ value: n, label: n ? `${n} 項升級` : '不升級' }))}
+                  />
+                </Flex>
               </Flex>
             </Card>
 
-            <Card size="small" title="3. 最佳化設定">
+            <Card size="small" title="4. 搜尋">
               <Flex vertical gap={8}>
-                <div>
-                  <Typography.Text>經濟權重</Typography.Text>
-                  <Tooltip title="城鎮中心每閒置 1 秒，分數加多少秒。0 = 只看完成時間（可能為了快而停產村民）；越高越像職業選手，城鎮中心不停產。">
-                    <Typography.Text type="secondary"> （城鎮中心閒置懲罰）</Typography.Text>
-                  </Tooltip>
-                  <Slider min={0} max={2} step={0.1} value={idleWeight} onChange={setIdleWeight} marks={{ 0: '只求快', 0.5: '預設', 2: '重經濟' }} />
-                </div>
                 <Flex align="center" gap={8}>
                   <Typography.Text>每次最多搜尋</Typography.Text>
                   <Select size="small" style={{ width: 100 }} value={budget} onChange={setBudget} options={BUDGETS} />
@@ -206,13 +226,27 @@ export function SimulatePage() {
                   <div className="planner-kpi-value">{result ? clock(goalTimes[i]) : <Spin size="small" />}</div>
                 </div>
               ))}
+              {result?.armyAt != null && (
+                <div className="planner-kpi planner-kpi-army">
+                  <div className="planner-kpi-label">
+                    目標後全力出兵：{post.units} 兵{result.postUpgrades || post.upgrades ? ` + ${post.upgrades} 升級` : ''}
+                  </div>
+                  <Tooltip title={armyText(result, (id) => nameOf(data, id))}>
+                    <div className="planner-kpi-value">{clock(result.armyAt)}</div>
+                  </Tooltip>
+                </div>
+              )}
               <div className="planner-kpi planner-kpi-muted">
-                <div className="planner-kpi-label">完成時村民</div>
-                <div className="planner-kpi-value">{result ? result.villagers : '—'}</div>
+                <div className="planner-kpi-label">目標達成時村民</div>
+                <div className="planner-kpi-value">{result ? result.villagersAtGoal : '—'}</div>
               </div>
               <div className="planner-kpi planner-kpi-muted">
-                <div className="planner-kpi-label">城鎮中心閒置</div>
-                <div className="planner-kpi-value">{result ? `${result.tcIdle}s` : '—'}</div>
+                <div className="planner-kpi-label">城鎮中心中斷村民</div>
+                <Tooltip title={result ? idleText(result) : null}>
+                  <div className="planner-kpi-value" style={{ color: result && result.tcIdle > 0 ? '#cf1322' : undefined }}>
+                    {result ? `${result.tcIdle}s` : '—'}
+                  </div>
+                </Tooltip>
               </div>
             </div>
 
@@ -238,7 +272,16 @@ export function SimulatePage() {
                   { key: 'vill', label: '村民分配', children: result ? <VillagerChart result={result} /> : <Waiting /> },
                   { key: 'bank', label: '資源與收入', children: result ? <BankChart result={result} /> : <Waiting /> },
                   { key: 'civ', label: '文明加成', children: <BonusList data={data} /> },
-                  { key: 'map', label: '地圖', children: <MapDetail map={map} /> },
+                  {
+                    key: 'map',
+                    label: '地圖時間軸',
+                    children: (
+                      <Flex vertical gap={16}>
+                        {result ? <MapTimeline map={map} result={result} nameOf={(id) => nameOf(data, id)} /> : <Waiting />}
+                        <MapDetail map={map} />
+                      </Flex>
+                    ),
+                  },
                   { key: 'model', label: '模型說明', children: <ModelNotes /> },
                 ]}
               />
@@ -248,6 +291,19 @@ export function SimulatePage() {
       </Row>
     </div>
   )
+}
+
+function armyText(r: PlanResult, name: (id: string) => string) {
+  const mix = Object.entries(r.postMix)
+    .map(([id, n]) => `${name(id)} ${n}`)
+    .join('、')
+  const techs = r.postTechs.map(name).join('、')
+  return `${mix || '沒有出兵'}${techs ? `；升級：${techs}` : ''}`
+}
+
+function idleText(r: PlanResult) {
+  const parts = Object.entries(r.tcIdleReasons).map(([k, v]) => `${k} ${v} 秒`)
+  return parts.length ? `原因：${parts.join('、')}` : '城鎮中心全程不中斷'
 }
 
 function Waiting() {
@@ -267,7 +323,7 @@ function SearchStatus({ status, result, onStop, onRestart }: { status: { evals: 
       <div>
         <div style={{ fontWeight: 600 }}>{status.running ? '最佳化中…' : result ? '搜尋完成' : '等待中'}</div>
         <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-          試過 {status.evals.toLocaleString()} 種策略・{(status.elapsed / 1000).toFixed(1)} 秒{result ? `・最佳 ${clock(result.finish)}` : ''}
+          試過 {status.evals.toLocaleString()} 種策略・{(status.elapsed / 1000).toFixed(1)} 秒{result ? `・目標 ${clock(result.finish)}${result.armyAt != null ? `・出兵 ${clock(result.armyAt)}` : ''}` : ''}
         </Typography.Text>
       </div>
       {status.running ? (
@@ -299,7 +355,7 @@ function StrategySummary({ data, best }: { data: CivData; best: Best }) {
         {
           key: 'steps',
           label: '步驟',
-          span: 2,
+          span: 'filled',
           children: (
             <Flex wrap gap={6}>
               {steps.map((s, i) => (
@@ -307,16 +363,15 @@ function StrategySummary({ data, best }: { data: CivData; best: Best }) {
                   {i + 1}. {s.label}
                   {(s.kind === 'age' || s.forward) && `・${policy.steps[i]?.builders} 人建造`}
                   {s.kind === 'army' && `・${policy.steps[i]?.producers} 座生產建築`}
-                  {policy.steps[i]?.stopVills && '・暫停村民'}
                   {lastOfGoal.get(s.goalIndex) === i && ` → ${clock(result.goals.find((g) => g.goalIndex === s.goalIndex)?.t)}`}
                 </Tag>
               ))}
             </Flex>
           ),
         },
-        { key: 'vills', label: '村民上限', children: `${policy.maxVills} 名（房屋在剩 ${policy.houseBuffer} 格人口時開蓋）` },
+        { key: 'vills', label: '村民生產', children: `所有城鎮中心不中斷（硬性規則）；房屋依生產速度提前蓋，另加 ${policy.houseBuffer} 格緩衝` },
         { key: 'hunt', label: '打鹿', children: policy.hunt ? '要（在鹿群旁蓋磨坊）' : '不打，羊吃完直接野果／農田' },
-        { key: 'eco', label: '經濟科技', span: 2, children: eco.length ? eco.join('、') : '不研究' },
+        { key: 'eco', label: '經濟科技', span: 'filled', children: eco.length ? eco.join('、') : '不研究' },
       ]}
     />
   )
@@ -369,26 +424,37 @@ function BonusList({ data }: { data: CivData }) {
 function MapDetail({ map }: { map: ReturnType<typeof generateMap> }) {
   return (
     <Row gutter={16}>
-      <Col xs={24} md={10}>
-        <MiniMap map={map} size={340} />
-        <Typography.Paragraph type="secondary" style={{ marginTop: 8, fontSize: 12 }}>
-          附近的羊由斥候牧回：{map.sheepArrivals.map((t) => clock(t)).join('、')}。
-        </Typography.Paragraph>
-      </Col>
       <Col xs={24} md={14}>
+        <Typography.Title level={5}>自家起始資源</Typography.Title>
         <Table
           size="small"
           pagination={false}
           rowKey="id"
           dataSource={[...map.sites].sort((a, b) => a.dist - b.dist)}
           columns={[
-            { title: '資源', dataIndex: 'label', render: (l: string, s) => <span><i className="planner-dot" style={{ background: SITE_COLOR[s.kind] }} />{l}</span> },
+            {
+              title: '資源',
+              dataIndex: 'label',
+              render: (l: string, s) => (
+                <span>
+                  <i className="planner-dot" style={{ background: SITE_COLOR[s.kind] }} />
+                  {l}
+                </span>
+              ),
+            },
             { title: '存量', dataIndex: 'amount', align: 'right', render: (n: number) => n.toLocaleString() },
             { title: '距離', dataIndex: 'dist', align: 'right', render: (d: number) => `${d} 格` },
             { title: '', dataIndex: 'contested', render: (c: boolean) => (c ? <Tag color="red">爭奪</Tag> : null) },
           ]}
         />
+      </Col>
+      <Col xs={24} md={10}>
+        <Typography.Title level={5}>地圖設定</Typography.Title>
         <ul className="planner-notes">
+          <li>
+            全圖約 {map.size}×{map.size} 格，兩座城鎮中心相距 {map.enemyDist} 格，對手的資源是自家資源對地圖中心點的鏡像。
+          </li>
+          <li>附近的羊由斥候牧回：{map.sheepArrivals.map((t) => clock(t)).join('、')}。</li>
           {map.notes.map((n) => (
             <li key={n}>{n}</li>
           ))}
@@ -407,8 +473,13 @@ function ModelNotes() {
         <li>每趟交資源的有效速率 = 攜帶量 ÷（攜帶量 ÷ 採集速率 + 2 × 到投放點距離 ÷ 移動速度）。砍樹用含砍倒時間的 0.70。</li>
         <li>多人建造：時間 = 基礎 × 3 ÷ (人數 + 2)。這是 Fandom 的公式；用它重算職業選手「2:10 放地標、4 人蓋、3:50 封建」的建造順序是吻合的。</li>
         <li>分配：每 8 秒依「目前步驟還缺的資源 ÷ 各資源的有效速率」重新算目標人數，差距夠大才搬人（搬人要走路）。新村民去最缺的資源。</li>
-        <li>最佳化：在 Web Worker 裡做演化式區域搜尋，調整每一步的建造人數、資源偏好、是否暫停村民、生產建築數量、經濟科技時機、地標選擇、村民上限、是否打鹿。每次模擬 1~3 毫秒，一秒能試數百到上千種策略。</li>
-        <li>分數 = 最後目標完成時間 + 0.05 × 各目標完成時間總和 + 經濟權重 × 城鎮中心閒置秒數。</li>
+        <li>最佳化：在 Web Worker 裡做演化式區域搜尋，調整每一步的建造人數、資源偏好、生產建築數量、經濟科技時機、地標選擇、房屋緩衝、是否打鹿。每次模擬 1~3 毫秒，一秒能試數百到上千種策略。</li>
+        <li>硬性規則：所有城鎮中心不中斷村民生產。其他花費一律先留下一批村民的費用；房屋依生產速度提前蓋；軍隊不能佔掉下一名村民的人口；城鎮中心不拿來訓練軍隊或研究經濟科技。只有人口 200 不算中斷。</li>
+        <li>聖殿騎士團等「在城鎮中心研究升代」的文明，研究期間城鎮中心不能出村民，這段會照實記為中斷，並在「城鎮中心中斷村民」顯示原因。</li>
+        <li>目標達成後的「全力出兵」：照「3. 目標達成之後」的設定，同時運作的兵營、靶場、馬廄數量由最佳化決定，每座都訓練該時代最便宜的單位，鐵匠舖（日本、戰國是鍛造場）由便宜到貴研究升級；維京、馬其頓沒有鐵匠舖，不計升級。</li>
+        <li>有出兵目標時，分數 = 達成出兵目標的時間 + 0.5 × 最後目標完成時間（目標仍要快，但會為了之後的經濟稍微讓步）；沒有出兵目標時，分數 = 最後目標完成時間。</li>
+        <li>地圖：兩座城鎮中心沿對角線相對，對手資源是自家資源對地圖中心的鏡像（17.0 起 1v1 出生點鏡像對稱）；中央大金礦、野豬放在中間地帶。地圖腳本本身不公開，距離與地圖大小都是假設。</li>
+        <li>分數（細項）= 上面的時間 + 0.05 × 各目標完成時間總和 + 60 × 中斷秒數（每中斷 1 秒等於慢 1 分鐘，所以搜尋只會在真的無法避免時接受中斷）。</li>
       </ul>
       <Typography.Title level={5}>和職業建造順序比較（aoe4guides，Season 13）</Typography.Title>
       <ul>

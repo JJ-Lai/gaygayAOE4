@@ -8,7 +8,7 @@
 // 所以這裡的做法是：數量用有來源的地圖說明（Dry Arabia 來自 Fandom 資訊欄），
 // 距離用「環」的區間加上種子抖動，並明確標示為假設值。
 
-import type { GameMap, Site, SiteKind } from './types.ts'
+import type { GameMap, Point, Site, SiteKind } from './types.ts'
 
 export function rng(seed: number) {
   let a = seed >>> 0
@@ -158,20 +158,48 @@ export function generateMap(typeId: string, seed: number): GameMap {
   const type = MAP_TYPES.find((m) => m.id === typeId) ?? MAP_TYPES[0]
   const r = rng(seed * 7919 + type.id.length)
   const between = ([a, b]: [number, number]) => a + (b - a) * r()
+
+  // 全地圖：兩座城鎮中心沿對角線，相對地圖中心點對稱
+  const enemyDist = Math.round(85 + r() * 25)
+  const size = Math.round(enemyDist * 1.5)
+  const c = size / 2
+  // SVG 座標 y 向下：-45° 是右上方
+  const enemyAngle = -Math.PI / 4 + (r() - 0.5) * 0.5
+  const ux = Math.cos(enemyAngle)
+  const uy = Math.sin(enemyAngle)
+  const home: Point = { x: c - (ux * enemyDist) / 2, y: c - (uy * enemyDist) / 2 }
+  const enemy: Point = { x: c + (ux * enemyDist) / 2, y: c + (uy * enemyDist) / 2 }
+  const inside = (dist: number, angle: number) => {
+    const x = home.x + Math.cos(angle) * dist
+    const y = home.y + Math.sin(angle) * dist
+    // 離邊界留 4 格，也不能比對手更靠近對手（越過中線太多）
+    const toEnemy = Math.hypot(x - enemy.x, y - enemy.y)
+    return x > 4 && y > 4 && x < size - 4 && y < size - 4 && toEnemy > dist * 0.95
+  }
+
   const sites: Site[] = []
   type.rules.forEach((rule, i) => {
     if (rule.chance != null && r() > rule.chance) return
-    sites.push({
-      id: `${rule.kind}-${i}`,
-      kind: rule.kind,
-      label: rule.label,
-      amount: rule.amountEach,
-      units: rule.units,
-      dist: Math.round(between(rule.dist) * 10) / 10,
-      angle: r() * Math.PI * 2,
-      contested: !!rule.contested,
-    })
+    const dist = Math.round(between(rule.dist) * 10) / 10
+    // 爭奪資源（中央大金礦、野豬）偏向地圖中央；其餘任意方向，但要在地圖內
+    let angle = 0
+    for (let k = 0; k < 40; k++) {
+      angle = rule.contested && rule.kind !== 'stone' ? enemyAngle + (r() - 0.5) * 1.6 : r() * Math.PI * 2
+      if (inside(dist, angle)) break
+    }
+    sites.push({ id: `${rule.kind}-${i}`, kind: rule.kind, label: rule.label, amount: rule.amountEach, units: rule.units, dist, angle, contested: !!rule.contested })
   })
+  // 對手：點對稱鏡像（距離不變、方位轉 180°，以對手城鎮中心為基準）
+  const enemySites = sites.map((x) => ({ ...x, id: `enemy-${x.id}`, angle: x.angle + Math.PI }))
+
+  // 中立的單隻羊（示意位置，Fandom 只給全圖數量）
+  const neutral: GameMap['neutral'] = []
+  for (let k = 0; k < 6; k++) {
+    const along = (r() - 0.5) * enemyDist * 0.5
+    const side = (r() - 0.5) * enemyDist * 0.9
+    neutral.push({ kind: 'sheep', label: '中立羊', p: { x: c + ux * along - uy * side, y: c + uy * along + ux * side } })
+  }
+
   // 牧羊：斥候第一次帶羊約 25 秒回來，之後每 15~30 秒帶回 1~2 隻。
   const arrivals: number[] = []
   let t = 22 + r() * 8
@@ -186,12 +214,23 @@ export function generateMap(typeId: string, seed: number): GameMap {
     seed,
     sites,
     sheepArrivals: arrivals,
-    enemyDist: Math.round(85 + r() * 25),
+    enemyDist,
+    enemyAngle,
+    size,
+    home,
+    enemy,
+    enemySites,
+    neutral,
     notes: [
       ...type.notes,
-      '牧羊時間（斥候第一隻約 25 秒，之後每 15~30 秒）與兩城距離（85~110 格）是假設。',
+      '牧羊時間（斥候第一隻約 25 秒，之後每 15~30 秒）、兩城距離（85~110 格）、地圖大小與中立羊位置都是假設；對手資源是自家資源對地圖中心的鏡像。',
     ],
   }
+}
+
+/** 相對某座城鎮中心的極座標 → 地圖座標 */
+export function toMap(origin: Point, dist: number, angle: number): Point {
+  return { x: origin.x + Math.cos(angle) * dist, y: origin.y + Math.sin(angle) * dist }
 }
 
 export function siteDistance(a: Site | null, b: Site | null) {
