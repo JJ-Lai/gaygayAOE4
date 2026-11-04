@@ -1,7 +1,7 @@
 // 參數搜尋：先試一組啟發式的起點，之後在最好的幾個策略附近隨機突變（演化式區域搜尋）。
 // 每次模擬只要 1~3 毫秒，所以可以在 Web Worker 裡一秒跑幾百次，邊跑邊回報目前最佳。
 
-import { resolveGoals, type CivData } from './civData.ts'
+import { isTownCenter, resolveGoals, type CivData } from './civData.ts'
 import { simulate } from './engine.ts'
 import { rng } from './mapgen.ts'
 import { RES, type GameMap, type Goal, type PlanResult, type Policy, type PostArmy, type Step, type StepParams } from './types.ts'
@@ -38,7 +38,16 @@ export function defaultPolicy(data: CivData, goals: Goal[]): Policy {
     ecoAt: {},
     landmarkPick,
     postProducers: 3,
+    trickle: {},
   }
+}
+
+/** 村民要另外蓋的被動收入建築（地標只在升代時蓋，不算） */
+function buildTrickles(data: CivData) {
+  return data.spec.trickles.filter((tr) => {
+    const it = data.items.get(tr.building)
+    return !!it && (it.kind === 'building' || tr.as === 'building') && !isTownCenter(data, it.id) && !it.variations.some((v) => v.tags.some((x) => x.startsWith('toAge')))
+  })
 }
 
 export interface Evaluated {
@@ -81,6 +90,7 @@ const clone = (p: Policy): Policy => ({
   steps: p.steps.map((s) => ({ ...s, bias: { ...s.bias } })),
   ecoAt: { ...p.ecoAt },
   landmarkPick: { ...p.landmarkPick },
+  trickle: Object.fromEntries(Object.entries(p.trickle ?? {}).map(([k, v]) => [k, { ...v }])),
 })
 
 function mutate(p: Policy, r: () => number, data: CivData, goals: Goal[]): Policy {
@@ -101,6 +111,14 @@ function mutate(p: Policy, r: () => number, data: CivData, goals: Goal[]): Polic
     else if (which < 0.72) q.postProducers = clamp(q.postProducers + pick([-2, -1, 1, 2]), 1, 9)
     else if (which < 0.77) q.houseBuffer = clamp(q.houseBuffer + pick([-1, 1]), 0, 6)
     else if (which < 0.81) q.hunt = !q.hunt
+    else if (which < 0.86 && buildTrickles(data).length) {
+      // 被動收入建築：改數量或開始的步驟
+      const tr = pick(buildTrickles(data))
+      const cur = q.trickle[tr.building] ?? { at: 0, count: 0 }
+      if (r() < 0.6) cur.count = clamp(cur.count + pick([-1, 1, 2]), 0, tr.max)
+      else cur.at = Math.floor(r() * Math.max(1, q.steps.length))
+      q.trickle[tr.building] = cur
+    }
     else if (which < 0.93 && data.ecoTechs.length) {
       const id = pick(data.ecoTechs)
       q.ecoAt[id] = r() < 0.35 ? -1 : Math.floor(r() * Math.max(1, q.steps.length))
@@ -146,8 +164,15 @@ export class Searcher {
     noHunt.hunt = false
     variants.push(noHunt)
     const eco = clone(base)
-    for (const id of ['wheelbarrow', 'double-broadax', 'horticulture', 'specialized-pick']) if (data.ecoTechs.includes(id)) eco.ecoAt[id] = Math.min(1, eco.steps.length - 1)
+    for (const id of ['wheelbarrow', 'double-broadax', 'horticulture', 'specialized-pick', 'tawara', 'mohe-ancestry']) if (data.ecoTechs.includes(id)) eco.ecoAt[id] = Math.min(1, eco.steps.length - 1)
     variants.push(eco)
+    for (const tr of buildTrickles(data)) {
+      for (const count of [1, Math.min(tr.max, 3)]) {
+        const p = clone(base)
+        p.trickle[tr.building] = { at: 0, count }
+        variants.push(p)
+      }
+    }
     for (const a of [2, 3, 4]) {
       for (const o of data.ageOptions[a] ?? []) {
         const p = clone(base)

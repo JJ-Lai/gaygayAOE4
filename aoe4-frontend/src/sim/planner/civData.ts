@@ -14,6 +14,8 @@ export interface AgeOption {
   /** 研究升代科技的建築（任一座即可） */
   producers: string[]
   cost: Bundle
+  /** 特殊資源花費 */
+  other: Record<string, number> | null
   time: number
 }
 
@@ -43,10 +45,45 @@ export const ECO_TECHS = [
   'cupellation',
   'takezaiku',
   'fudasashi',
+  // 日本、戰國：俵（黑暗時代）；金朝：狩獵與伐木專屬科技
+  'tawara',
+  'mohe-ancestry',
+  'hunting-tradition',
+  'draft-horses',
 ]
 
 export function costOf(v: Variation): Bundle {
   return { food: v.food, wood: v.wood, gold: v.gold, stone: v.stone }
+}
+
+/** 特殊資源花費（橄欖油、白銀、維齊爾點數、集結次數）；沒有時是 null */
+export function otherOf(v: Variation): Record<string, number> | null {
+  if (!v.other) return null
+  const out: Record<string, number> = {}
+  for (const [k, x] of Object.entries(v.other)) if (x > 0) out[k] = x
+  return Object.keys(out).length ? out : null
+}
+
+/** 套用 civSpec 的目錄修正：花費、時間覆蓋與「不是軍隊」標記 */
+function patchItem(spec: CivSpec, item: CatalogItem): CatalogItem {
+  const fix = spec.costOverride[item.id]
+  const notMil = spec.notMilitary.includes(item.id)
+  const ageFix = spec.minAgeOverride[item.id]
+  if (!fix && !notMil && ageFix == null) return item
+  const first = Math.min(...item.variations.map((v) => v.age))
+  const variations = item.variations.map((v) => {
+    // 時代標錯：把最早的變體改到正確時代
+    const base = ageFix != null && v.age === first ? { ...v, age: ageFix } : v
+    if (!fix) return base
+    const out: Variation = { ...base, other: base.other ? { ...base.other } : undefined }
+    for (const [k, x] of Object.entries(fix)) {
+      if (x == null) continue
+      if (k === 'food' || k === 'wood' || k === 'gold' || k === 'stone' || k === 'time') out[k] = x
+      else out.other = { ...(out.other ?? {}), [k]: x }
+    }
+    return out
+  })
+  return { ...item, military: notMil ? false : item.military, minAge: ageFix ?? item.minAge, variations }
 }
 
 export function minAge(item: CatalogItem) {
@@ -62,7 +99,7 @@ export function variationAt(item: CatalogItem, age: number): Variation {
 
 export function buildCivData(catalog: Catalog, abbr: string, names: Record<string, string>): CivData {
   const spec = civSpec(abbr)
-  const list = catalog.items[abbr] ?? []
+  const list = (catalog.items[abbr] ?? []).map((i) => patchItem(spec, i))
   const items = new Map(list.map((i) => [i.id, i]))
   const houseId = spec.popModel === 'max' ? null : (['house', 'farmhouse', 'longhouse'].find((id) => items.has(id)) ?? null)
 
@@ -81,6 +118,7 @@ export function buildCivData(catalog: Catalog, abbr: string, names: Record<strin
         mode,
         producers: mode === 'tech' ? v.producedBy : [],
         cost,
+        other: otherOf(v),
         time: v.time,
       })
     }

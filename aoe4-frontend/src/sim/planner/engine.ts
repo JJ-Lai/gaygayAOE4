@@ -10,8 +10,9 @@
 //  - 例外只有遊戲機制：在城鎮中心研究的升代科技或目標科技、人口 200。
 //  - 仍然發生的閒置（例如食物真的不夠）會分原因記錄，並重罰。
 
-import type { CatalogItem } from '../types.ts'
-import { costOf, isBuildable, isTownCenter, minAge, nameOf, variationAt, type AgeOption, type CivData } from './civData.ts'
+import type { CatalogItem, Variation } from '../types.ts'
+import { costOf, isBuildable, isTownCenter, minAge, nameOf, otherOf, variationAt, type AgeOption, type CivData } from './civData.ts'
+import type { Gather } from './civSpec.ts'
 import { siteDistance } from './mapgen.ts'
 import {
   RES,
@@ -127,8 +128,12 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   let t = 0
   let age = 1
   const bank: Bundle = { ...spec.start }
-  let villagers = spec.villagers
-  let mounted = 0
+  /** 特殊資源（橄欖油、白銀、維齊爾點數…） */
+  const other: Record<string, number> = { ...spec.startOther } as Record<string, number>
+  /** 各種工人的人數（金朝鄉騎 / 村民） */
+  const workerCount = new Map<string, number>(Object.entries(spec.startWorkers))
+  const startVillagers = [...workerCount.values()].reduce((a, b) => a + b, 0)
+  let villagers = startVillagers
   let armyPop = 0
   let armyCount = 0
   const trained = new Map<string, number>()
@@ -150,7 +155,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   const sheep: SiteSt = {
     s: { id: 'sheep', kind: 'sheep', label: '羊', amount: 0, units: 0, dist: 3, angle: 0, contested: false },
     res: 'food',
-    left: 200 * spec.ownedSheep,
+    left: 200 * spec.ownedSheep + spec.startFood,
     camp: 2,
     workers: 0,
     chopped: 0,
@@ -160,6 +165,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   sites.push(farm)
   const siteById = new Map(sites.map((x) => [x.s.id, x]))
   let farmsBuilt = 0
+  /** 農田（或橄欖園、畜欄、牧場）可容納的村民數 */
+  const farmSlots = () => farmsBuilt * spec.farm.slots
   let sheepIdx = 0
 
   const blds: Bld[] = []
@@ -173,36 +180,63 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
 
   const walkers: Walker[] = []
   // 開局村民全部在城鎮中心旁
-  const free: { from: string }[] = Array.from({ length: spec.villagers }, () => ({ from: 'tc' }))
+  const free: { from: string }[] = Array.from({ length: startVillagers }, () => ({ from: 'tc' }))
 
   // ---------- 修正量 ----------
-  const mods = { carry: spec.carry, speed: 1, food: 1, hunt: 1, berry: 1, wood: 1, gold: 1, stone: 1, forestry: 1 }
+  const mods = { carry: 0, speed: 1, food: 1, hunt: 1, berry: 1, wood: 1, gold: 1, stone: 1, forestry: 1 }
   const auras: Partial<Record<Res | 'all', number>> = {}
 
   const owned = (id: string) => blds.some((b) => b.done && b.item === id)
   const houses = () => (data.houseId ? blds.filter((b) => b.done && b.item === data.houseId).length : 0)
   const tcs = () => blds.filter((b) => b.done && (b.item === 'town-center' || b.item === 'capital-town-center')).length
-  const popCap = () => (spec.popModel === 'max' ? 200 : Math.min(200, 10 * tcs() + spec.housePop * houses()))
+  const popExtra = () => {
+    let n = 0
+    for (const [id, p] of Object.entries(spec.popBuildings)) n += p * blds.filter((b) => b.done && b.item === id).length
+    return n
+  }
+  const popCap = () => (spec.popModel === 'max' ? 200 : Math.min(200, 10 * tcs() + spec.housePop * houses() + popExtra()))
   const pop = () => villagers + spec.extraPop + armyPop
   const vilCap = () => (spec.freeVillagers ? spec.freeVillagers.base + spec.freeVillagers.perHouse * houses() : Infinity)
 
   const workerItem = (): CatalogItem | undefined => {
     const inTraining = blds.reduce((n, b) => n + (b.job?.kind === 'vill' && b.job.item === spec.worker ? b.job.count : 0), 0)
-    if (spec.fallbackWorker && mounted + inTraining >= spec.workerCap) return items.get(spec.fallbackWorker)
+    if (spec.fallbackWorker && (workerCount.get(spec.worker) ?? 0) + inTraining >= spec.workerCap) return items.get(spec.fallbackWorker)
     return items.get(spec.worker) ?? items.get('villager')
   }
 
+  // 工人組成：各採集類別的平均倍率與平均攜帶量（假設各種工人平均分布在採集點上）
+  const GATHER_KEYS: (keyof Gather)[] = ['sheep', 'berry', 'hunt', 'farm', 'wood', 'gold', 'stone']
+  let wmul: Record<keyof Gather, number> = { all: 1, sheep: 1, berry: 1, hunt: 1, farm: 1, wood: 1, gold: 1, stone: 1 }
+  let baseCarry = spec.carry
+  const refreshWorkers = () => {
+    const total = Math.max(1, villagers)
+    const out = { all: 1, sheep: 0, berry: 0, hunt: 0, farm: 0, wood: 0, gold: 0, stone: 0 }
+    let carry = 0
+    let counted = 0
+    for (const [id, n] of workerCount) {
+      if (n <= 0) continue
+      const ws = spec.workerSpecs[id]
+      for (const k of GATHER_KEYS) out[k] += n * (ws?.gather?.all ?? 1) * (ws?.gather?.[k] ?? 1)
+      carry += n * (ws?.carry ?? spec.carry)
+      counted += n
+    }
+    // 還沒記到工人種類的（理論上不會有）用普通村民
+    const rest = Math.max(0, total - counted)
+    for (const k of GATHER_KEYS) out[k] = (out[k] + rest) / Math.max(1, counted + rest)
+    wmul = out
+    baseCarry = (carry + rest * spec.carry) / Math.max(1, counted + rest)
+  }
+  refreshWorkers()
+  const carryNow = () => baseCarry + mods.carry
+
   const goldenMul = () => {
     if (!spec.goldenAge) return 1
-    const n = blds.filter((b) => b.done && b.role !== 'farm').length
+    // 黃金時代要先有智慧宮；只算家附近的建築（不含農田與遠處的投放點）
+    if (items.has('house-of-wisdom') && !owned('house-of-wisdom')) return 1
+    const n = blds.filter((b) => b.done && b.role !== 'farm' && !(b.role === 'camp' && b.at > 12)).length
     let m = 1
     for (const tier of spec.goldenAge) if (n >= tier.buildings) m = tier.mul
     return m
-  }
-
-  const workerMul = () => {
-    if (!mounted) return 1
-    return (mounted * spec.workerGather + (villagers - mounted)) / Math.max(1, villagers)
   }
 
   const inspireMul = (n: number) => (spec.inspire && n > 0 ? 1 + ((spec.inspire.mul - 1) * Math.min(spec.inspire.villagers, n)) / n : 1)
@@ -215,28 +249,28 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     let r: number
     switch (x.s.kind) {
       case 'sheep':
-        r = 0.75 * g.sheep * mods.food
+        r = 0.75 * g.sheep * mods.food * wmul.sheep
         break
       case 'berry':
         if (x === farm) {
           const farmAge = spec.farmByAge && (owned('mill') || owned('farmhouse')) ? spec.farmByAge[age - 1] : 1
-          r = 0.75 * g.farm * farmAge * mods.food
-        } else r = 0.69 * g.berry * mods.berry * mods.food
+          r = 0.75 * g.farm * farmAge * mods.food * wmul.farm
+        } else r = 0.69 * g.berry * mods.berry * mods.food * wmul.berry
         break
       case 'deer':
-        r = 0.825 * g.hunt * mods.hunt
+        r = 0.825 * g.hunt * mods.hunt * wmul.hunt
         break
       case 'boar':
-        r = 0.9 * g.hunt * mods.hunt
+        r = 0.9 * g.hunt * mods.hunt * wmul.hunt
         break
       case 'wood':
-        r = spec.woodAtTree * mods.forestry * g.wood * (spec.woodByAge?.[age - 1] ?? 1) * mods.wood
+        r = spec.woodAtTree * mods.forestry * g.wood * (spec.woodByAge?.[age - 1] ?? 1) * mods.wood * wmul.wood
         break
       case 'gold':
-        r = 0.75 * g.gold * mods.gold
+        r = 0.75 * g.gold * mods.gold * wmul.gold
         break
       default:
-        r = 0.75 * g.stone * mods.stone
+        r = 0.75 * g.stone * mods.stone * wmul.stone
     }
     return r * g.all * globalMul * (auras[x.res] ?? 1) * (auras.all ?? 1)
   }
@@ -252,7 +286,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     const raw = rawRate(x)
     if (x.res === 'wood' && spec.woodInstant) return raw
     const hunt = x.s.kind === 'deer' || x.s.kind === 'boar'
-    const carry = hunt ? Math.max(HUNT_CARRY, mods.carry) : mods.carry + (x.s.kind === 'berry' && x !== farm ? spec.berryCarry : 0)
+    const c = carryNow()
+    const carry = hunt ? Math.max(HUNT_CARRY, c) : c + (x.s.kind === 'berry' && x !== farm ? spec.berryCarry : 0)
     const d = assumeCamp && x.camp !== 2 ? (x.res === 'wood' ? 2 : 1.5) : dropDist(x)
     return carry / (carry / raw + (2 * d) / (SPEED * mods.speed))
   }
@@ -260,7 +295,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   const slots = (x: SiteSt) => {
     if (x.left <= 0) return 0
     if (x === sheep) return Math.min(10, 2 * Math.ceil(x.left / 200))
-    if (x === farm) return farmsBuilt
+    if (x === farm) return farmSlots()
     if (x.res === 'wood') return 24
     return x.s.units
   }
@@ -306,14 +341,17 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     const it = campItem(x.res)
     if (!it) return false
     const v = variationAt(it, age)
-    const cost = costOf(v)
+    // 開局送的投放點（圖格魯克的工作象）不用錢
+    const isFree = freeDropUsed < spec.freeDropoffs
+    const cost = isFree ? zero() : costOf(v)
     // 伐木場會讓房屋木材更快湊齊，所以可以動用房屋預留的木材
     if (!affordable(cost, x.res === 'wood')) return false
+    if (isFree) freeDropUsed++
     pay(cost)
     x.camp = 1
     if (it.kind === 'unit') {
       // 圖格魯克工作象：城鎮中心訓練後走過去，不用村民
-      const b = addBld({ item: it.id, step: -1, role: 'camp', done: false, progress: 0, total: v.time + x.s.dist / SPEED, builders: 1, at: x.s.dist, angle: x.s.angle, siteId: x.s.id, job: null })
+      const b = addBld({ item: it.id, step: -1, role: 'camp', done: false, progress: 0, total: (isFree ? 0 : v.time) + x.s.dist / SPEED, builders: 1, at: x.s.dist, angle: x.s.angle, siteId: x.s.id, job: null })
       b.builders = 0
       autoBuild.push(b)
       log('place', `訓練${name(it.id)}送到${x.s.label}`, it.id)
@@ -325,6 +363,11 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     return true
   }
   const autoBuild: Bld[] = []
+  let freeDropUsed = 0
+  /** 地標（升代建築）只會在升代步驟蓋；當被動收入來源時，蓋好才開始算 */
+  const isLandmark = (it: CatalogItem) => it.variations.some((v) => v.tags.some((x) => x.startsWith('toAge')))
+  /** 被動收入來源要村民另外蓋的才放：地標、城鎮中心（蘇格蘭開局送的牛）、科技（維京蜂箱）都不放 */
+  const trickleBuildable = (it: CatalogItem, tr?: { as?: 'building' }) => (it.kind === 'building' || tr?.as === 'building') && !isLandmark(it) && !isTC(it.id)
 
   // ---------- 資源 ----------
   /** 一般花費：扣掉之後仍要留下村民生產的費用，以及快要蓋的房屋木材 */
@@ -336,8 +379,17 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   /** 房屋（長屋）快要需要時先保留木材 */
   const houseWoodSoon = () => (data.houseId && houseNeeded(2) ? costOf(variationAt(items.get(data.houseId)!, age)).wood : 0)
   const affordableRaw = (c: Bundle) => RES.every((r) => bank[r] >= c[r] - 1e-9)
+  const addRes = (k: string, amt: number) => {
+    if ((RES as string[]).includes(k)) bank[k as Res] += amt
+    else other[k] = (other[k] ?? 0) + amt
+  }
   const pay = (c: Bundle) => {
     for (const r of RES) bank[r] -= c[r]
+  }
+  /** 特殊資源（橄欖油、白銀…）不預留，夠就能花 */
+  const hasOther = (o: Record<string, number> | null, n = 1) => !o || Object.entries(o).every(([k, x]) => (other[k] ?? 0) >= x * n - 1e-9)
+  const payOther = (o: Record<string, number> | null, n = 1) => {
+    if (o) for (const [k, x] of Object.entries(o)) other[k] = (other[k] ?? 0) - x * n
   }
 
   // ---------- 選採集點 ----------
@@ -354,7 +406,16 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     let bestScore = -1
     for (const x of sites) {
       if (x.res !== res || x === farm || !usable(x) || room(x) <= 0) continue
-      // 羊在城鎮中心旁，一律先採
+      // 特殊資源要靠採野果（拜占庭橄欖油）時，野果排在羊前面
+      if (preferBerry && x.s.kind === 'berry') {
+        const sc = 100 + effRate(x, !!campItem(res))
+        if (sc > bestScore) {
+          best = x
+          bestScore = sc
+        }
+        continue
+      }
+      // 羊在城鎮中心旁，一律先採（試過讓有野果加成的文明先採野果，蓋磨坊與走路的成本反而更慢）
       const score = x === sheep ? 99 : effRate(x, !!campItem(res)) - x.s.dist * 0.002
       if (score > bestScore) {
         best = x
@@ -379,6 +440,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
 
   // ---------- 分配 ----------
   let target: Bundle = { food: 1, wood: 0, gold: 0, stone: 0 }
+  /** need() 發現特殊資源要靠野果時設成 true */
+  let preferBerry = false
 
   const sendTo = (from: string, res: Res): boolean => {
     const x = bestSite(res)
@@ -388,15 +451,27 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       return true
     }
     if (res === 'food') {
+      // 蓋造中的多人農田（畜欄 4 人、牧場 2 人）還有空位：先去幫忙蓋，完成後直接採
+      if (spec.farm.slots > 1) {
+        for (const b of blds) {
+          if (b.done || b.role !== 'farm') continue
+          const tgt = `b:${b.uid}`
+          const coming = b.builders + walkers.filter((w) => w.to === tgt).length
+          if (coming < spec.farm.slots) {
+            walkers.push({ to: tgt, eta: t + walkTime(from, 'farm'), res: null })
+            return true
+          }
+        }
+      }
       // 沒有天然食物：蓋農田
-      const it = items.get('farm')
+      const it = items.get(spec.farm.id)
       if (!it) return false
       const cost = costOf(variationAt(it, age))
       if (!affordable(cost)) return false
       pay(cost)
-      const b = addBld({ item: 'farm', step: -1, role: 'farm', done: false, progress: 0, total: variationAt(it, age).time, builders: 0, at: 5, angle: 0.3 + farmsBuilt * 0.2, job: null })
+      const b = addBld({ item: spec.farm.id, step: -1, role: 'farm', done: false, progress: 0, total: variationAt(it, age).time, builders: 0, at: 5, angle: 0.3 + farmsBuilt * 0.2, job: null })
       walkers.push({ to: `b:${b.uid}`, eta: t + walkTime(from, 'farm'), res: null })
-      log('place', `蓋農田（第 ${farmsBuilt + 1} 塊）`, 'farm')
+      log('place', `蓋${name(spec.farm.id)}（第 ${farmsBuilt + 1} 座）`, spec.farm.id)
       return true
     }
     return false
@@ -476,8 +551,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     const it = workerItem()
     if (!it || spec.freeVillagers) return zero()
     const c = costOf(variationAt(it, age))
-    const batch = data.abbr === 'gol' ? 2 : 1
-    for (const r of RES) c[r] *= batch
+    for (const r of RES) c[r] *= spec.villagerBatch
     return c
   }
   const trainTime = () => {
@@ -488,7 +562,12 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   const isTC = (id: string) => tcIds.has(id)
   /** 會訓練村民的城鎮中心（含兼城鎮中心的地標） */
   const tcList = () => blds.filter((b) => b.done && isTC(b.item))
-  const batchSize = data.abbr === 'gol' ? 2 : 1
+  const batchSize = spec.villagerBatch
+  /** 軍隊每次生產的單位數與整批時間（拜占庭長弓兵 4 隻一批） */
+  const unitBatch = (id: string, v: Variation) => {
+    const b = spec.batches[id] ?? spec.batches['*']
+    return { size: b?.size ?? 1, time: b?.time ?? v.time }
+  }
   /** 正在城鎮中心訓練中的村民（已經付錢、佔人口） */
   const training = () => blds.reduce((n, b) => n + (b.job?.kind === 'vill' ? b.job.count : 0), 0)
   /** 已承諾的人口：現有 + 訓練中的村民 */
@@ -527,6 +606,29 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     if (st) {
       const c = stepCost(st)
       for (const r of RES) n[r] += c[r]
+      // 特殊資源不夠：換算成要多採的來源資源（例如橄欖油來自採野果）。看所有還沒做的步驟，才會提早去採。
+      const want: Record<string, number> = {}
+      preferBerry = false
+      for (let i = cur; i < steps.length; i++) {
+        const sx = steps[i]
+        if (sx.kind !== 'army' && sx.kind !== 'tech') continue
+        const it = items.get(sx.item)
+        if (!it) continue
+        const v = variationAt(it, Math.max(age, minAge(it)))
+        const o = otherOf(v)
+        if (!o) continue
+        const left = sx.kind === 'army' ? Math.max(0, sx.count - (queued.get(i) ?? 0)) : researched.has(sx.item) || researching.has(sx.item) ? 0 : 1
+        for (const [key, x] of Object.entries(o)) want[key] = (want[key] ?? 0) + x * left
+      }
+      for (const [key, x] of Object.entries(want)) {
+        const deficit = x - (other[key] ?? 0)
+        const bp = spec.byproducts.filter((p) => p.to === key).sort((p, q) => q.ratio - p.ratio)[0]
+        if (deficit <= 0 || !bp) continue
+        const from: Res[] = bp.from === 'all' ? RES : bp.from === 'hunt' || bp.from === 'berry' || bp.from === 'farm' ? ['food'] : [bp.from]
+        // 只算接下來約 2 分鐘的量，避免一次把所有人拉去採
+        for (const r of from) n[r] += Math.min(deficit, 600) / bp.ratio / from.length
+        if (bp.from === 'berry') preferBerry = true
+      }
       // 軍隊步驟還缺的生產建築
       if (st.kind === 'army') {
         const p = producerFor(st.item)
@@ -545,6 +647,14 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       const c = costOf(variationAt(it, age))
       for (const r of RES) n[r] += c[r]
     }
+    for (const tr of spec.trickles) {
+      const p = policy.trickle?.[tr.building]
+      if (!p || p.count <= 0 || p.at > cur) continue
+      const it = items.get(tr.building)
+      if (!it || minAge(it) > age || !trickleBuildable(it, tr) || blds.filter((b) => b.item === tr.building).length >= Math.min(tr.max, p.count)) continue
+      const c = costOf(variationAt(it, age))
+      for (const r of RES) n[r] += c[r]
+    }
     if (producingVills()) {
       const c = villCost()
       const k = (45 / trainTime()) * tcs()
@@ -555,8 +665,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     const natural = naturalFood().reduce((s, x) => s + x.left, 0)
     const foodWorkers = counts().food
     if (natural < foodWorkers * 0.6 * 90) {
-      const it = items.get('farm')
-      if (it) n.wood += costOf(variationAt(it, age)).wood * Math.min(6, Math.max(1, foodWorkers - farmsBuilt))
+      const it = items.get(spec.farm.id)
+      if (it) n.wood += costOf(variationAt(it, age)).wood * Math.min(6, Math.max(1, Math.ceil((foodWorkers - farmSlots()) / spec.farm.slots)))
     }
     return n
   }
@@ -789,6 +899,12 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   const postOn = () => post.units > 0 || upgradeTarget() > 0
   const postTypes = () => POST_TYPES.filter((id) => items.has(id) && minAge(items.get(id)!) <= age)
   const unitCache = new Map<string, CatalogItem | null>()
+  /** 這個特殊資源有沒有收入來源 */
+  const specialSource = (k: string) =>
+    spec.byproducts.some((b) => b.to === k) ||
+    spec.trickles.some((x) => (x.perMin as Record<string, number>)[k] > 0) ||
+    Object.values(spec.grants).some((g) => (g as Record<string, number>)[k] > 0) ||
+    ((spec.startOther as Record<string, number>)[k] ?? 0) > 0
   /** 這座生產建築在這個時代最便宜的軍事單位（求「數量多」） */
   const postUnit = (type: string): CatalogItem | null => {
     const key = `${type}@${age}`
@@ -799,7 +915,10 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       if (u.kind !== 'unit' || !u.military || u.id === 'scout' || minAge(u) > age) continue
       const v = variationAt(u, age)
       if (v.pop <= 0 || !v.producedBy.includes(type)) continue
-      const tot = v.food + v.wood + v.gold + v.stone
+      const o = otherOf(v)
+      // 要特殊資源、但這個文明拿不到的單位不選（例如沒有橄欖油收入時的傭兵）
+      if (o && !Object.keys(o).every(specialSource)) continue
+      const tot = v.food + v.wood + v.gold + v.stone + (o ? Object.values(o).reduce((a, b) => a + b, 0) : 0)
       if (tot < bestCost) {
         best = u
         bestCost = tot
@@ -907,15 +1026,17 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       const u = postUnit(b.item)
       if (!u) continue
       const v = variationAt(u, age)
+      const ub = unitBatch(u.id, v)
       const c = costOf(v)
-      for (const r of RES) c[r] *= batchSize
+      for (const r of RES) c[r] *= ub.size
       const withUp = zero()
       for (const r of RES) withUp[r] = c[r] + keepUp[r]
-      if (!affordable(withUp) || cpop() + v.pop * batchSize + villRoom > popCap()) continue
+      if (!affordable(withUp) || !hasOther(otherOf(v), ub.size) || cpop() + v.pop * ub.size + villRoom > popCap()) continue
       pay(c)
-      postQueued += batchSize
-      b.job = { kind: 'unit', item: u.id, end: t + v.time, count: batchSize, step: -2, pop: v.pop * batchSize, dur: v.time }
-      armyPop += v.pop * batchSize
+      payOther(otherOf(v), ub.size)
+      postQueued += ub.size
+      b.job = { kind: 'unit', item: u.id, end: t + ub.time, count: ub.size, step: -2, pop: v.pop * ub.size, dur: ub.time }
+      armyPop += v.pop * ub.size
       log('train', `訓練${name(u.id)}`, u.id)
     }
   }
@@ -947,8 +1068,9 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
           }
         } else {
           const ps = idleProducers(o.producers)
-          if (ps.length && affordable(o.cost)) {
+          if (ps.length && affordable(o.cost) && hasOther(o.other)) {
             pay(o.cost)
+            payOther(o.other)
             ps[0].job = { kind: 'tech', item: o.id, end: t + o.time, count: 1, step: cur }
             researching.add(o.id)
             log('research', `研究${o.name}（升代）`, o.id)
@@ -983,7 +1105,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
           if (affordable(c)) place(p, 'prod', cur, 1, 10)
         }
         const v = variationAt(it, age)
-        const batch = batchSize
+        const ub = unitBatch(st.item, v)
+        const batch = ub.size
         // 留給村民的人口：每座城鎮中心一批（訓練中的村民已經算在 cpop 裡）
         const villRoom = producingVills() ? tcList().length * batchSize : 0
         for (const b of idleProducers(nonTC(v.producedBy))) {
@@ -991,9 +1114,10 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
           if (q >= st.count) break
           const c = costOf(v)
           for (const r of RES) c[r] *= batch
-          if (!affordable(c) || cpop() + v.pop * batch + villRoom > popCap()) break
+          if (!affordable(c) || !hasOther(otherOf(v), batch) || cpop() + v.pop * batch + villRoom > popCap()) break
           pay(c)
-          b.job = { kind: 'unit', item: st.item, end: t + v.time, count: batch, step: cur, pop: v.pop * batch, dur: v.time }
+          payOther(otherOf(v), batch)
+          b.job = { kind: 'unit', item: st.item, end: t + ub.time, count: batch, step: cur, pop: v.pop * batch, dur: ub.time }
           armyPop += v.pop * batch
           queued.set(cur, q + batch)
           log('train', `訓練${name(st.item)}`, st.item)
@@ -1004,8 +1128,9 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         if (minAge(it) > age) break
         const v = variationAt(it, age)
         const ps = idleProducers(nonTC(v.producedBy))
-        if (ps.length && affordable(costOf(v))) {
+        if (ps.length && affordable(costOf(v)) && hasOther(otherOf(v))) {
           pay(costOf(v))
+          payOther(otherOf(v))
           ps[0].job = { kind: 'tech', item: st.item, end: t + v.time, count: 1, step: cur }
           researching.add(st.item)
           log('research', `研究${name(st.item)}`, st.item)
@@ -1028,6 +1153,20 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       if (it && affordable(costOf(variationAt(it, age)))) place(spec.cistern.id, 'econ', -1, 1, 6)
     }
 
+    // 3b. 被動收入建築：搜尋決定從第幾步開始、蓋幾座
+    for (const tr of spec.trickles) {
+      const want = Math.min(tr.max, policy.trickle?.[tr.building]?.count ?? 0)
+      if (want <= 0 || (policy.trickle[tr.building].at ?? 0) > cur) continue
+      const it = items.get(tr.building)
+      if (!it || minAge(it) > age || !trickleBuildable(it, tr)) continue
+      if (blds.filter((b) => b.item === tr.building).length >= want) continue
+      const v = variationAt(it, age)
+      if (affordable(costOf(v)) && hasOther(otherOf(v))) {
+        payOther(otherOf(v))
+        place(tr.building, 'econ', -1, 1, 8)
+      }
+    }
+
     // 4. 經濟科技
     for (const [id, at] of Object.entries(policy.ecoAt)) {
       if (at < 0 || at > cur || researched.has(id) || researching.has(id)) continue
@@ -1035,15 +1174,16 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       if (!it || minAge(it) > age) continue
       const v = variationAt(it, age)
       const ps = idleProducers(v.producedBy.filter((p) => !isTC(p)))
-      if (!ps.length || !affordable(costOf(v))) continue
+      if (!ps.length || !affordable(costOf(v)) || !hasOther(otherOf(v))) continue
       pay(costOf(v))
+      payOther(otherOf(v))
       ps[0].job = { kind: 'tech', item: id, end: t + v.time, count: 1, step: -1 }
       researching.add(id)
       log('research', `研究${name(id)}`, id)
     }
 
     // 5. 村民生產：上一名一完成就接著排（保留小數秒）
-    if (producingVills()) {
+    if (producingVills() && t >= spec.tcStartDelay) {
       for (const b of idleProducers([...tcIds])) {
         const cp = cpop()
         if (cp + batchSize > popCap() || cp + batchSize > villagerPopLimit() || villagers + training() + batchSize > vilCap()) break
@@ -1095,7 +1235,10 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       let why: string
       let exempt = false
       const cp = cpop()
-      if (cp + batchSize > 200) {
+      if (t < spec.tcStartDelay) {
+        why = '城鎮中心展開中（遊戲機制）'
+        exempt = true
+      } else if (cp + batchSize > 200) {
         why = '人口 200'
         exempt = true
       } else if (cp + batchSize > villagerPopLimit()) {
@@ -1119,7 +1262,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     if (!it) return
     const v = variationAt(it, age)
     for (const e of v.effects ?? []) {
-      if (e.ids && !e.ids.some((x) => x === 'villager' || x === spec.worker)) continue
+      if (e.ids && !e.ids.some((x) => x === 'villager' || x === spec.worker || x === spec.fallbackWorker || workerCount.has(x))) continue
       const mul = e.effect === 'multiply'
       switch (e.property) {
         case 'foodGatherRate':
@@ -1177,6 +1320,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         if (x.s.kind === 'berry' && spec.orchardBush > 250) x.left += (spec.orchardBush - 250) * x.s.units
       }
     }
+    // 蓋好就給的資源（蘇格蘭集結大廳 1 次集結）
+    for (const [k, x] of Object.entries(spec.grants[b.item] ?? {})) addRes(k, x ?? 0)
     for (const a of spec.landmarkAura ?? []) if (a.building === b.item) auras[a.res] = (auras[a.res] ?? 1) * a.mul
     if (spec.cistern && b.item === spec.cistern.id) auras.all = (auras.all ?? 1) * spec.cistern.mul
     if (b.ageTo) reachAge(b.ageTo, b.item)
@@ -1206,7 +1351,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       }
       const x = siteById.get(w.to)
       if (!x) continue
-      if (x === farm ? x.workers < farmsBuilt : x.left > 0) x.workers++
+      if (x === farm ? x.workers < farmSlots() : x.left > 0) x.workers++
       else free.push({ from: w.to })
     }
 
@@ -1218,7 +1363,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       b.lastEnd = j.end
       if (j.kind === 'vill') {
         villagers += j.count
-        if (j.item !== 'villager' && spec.workerGather !== 1) mounted += j.count
+        workerCount.set(j.item, (workerCount.get(j.item) ?? 0) + j.count)
+        refreshWorkers()
         for (let k = 0; k < j.count; k++) free.push({ from: 'tc' })
         if (rec) {
           for (let k = 0; k < j.count; k++) {
@@ -1262,22 +1408,45 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
 
     // 採集
     gatherersCache = sites.reduce((n, x) => n + x.workers, 0)
-    globalMul = workerMul() * inspireMul(gatherersCache) * goldenMul()
+    globalMul = inspireMul(gatherersCache) * goldenMul()
     for (const x of sites) {
       if (x.workers <= 0) continue
-      if (x === farm && x.workers > farmsBuilt) x.workers = farmsBuilt
+      if (x === farm && x.workers > farmSlots()) x.workers = farmSlots()
       let amt = effRate(x) * x.workers
       if (amt > x.left) amt = x.left
       x.left -= amt
       if (x.res === 'wood') x.chopped += amt
       bank[x.res] += amt
       incomeAcc[x.res] += amt
-      for (const bp of spec.byproducts) if (bp.from === x.res) bank[bp.to] += amt * bp.ratio
+      const isHunt = x.s.kind === 'deer' || x.s.kind === 'boar' || x === sheep
+      for (const bp of spec.byproducts) {
+        const hit =
+          bp.from === x.res ||
+          bp.from === 'all' ||
+          (bp.from === 'hunt' && isHunt) ||
+          (bp.from === 'berry' && x.s.kind === 'berry' && x !== farm) ||
+          (bp.from === 'farm' && x === farm)
+        if (!hit) continue
+        if (bp.requires && !owned(bp.requires)) continue
+        addRes(bp.to, amt * bp.ratio)
+      }
+      if (spec.depositBonus && spec.depositBonus.res.includes(x.res)) bank[x.res] += amt * (spec.depositBonus.mul - 1)
       if ((x.s.kind === 'deer' || x.s.kind === 'boar' || x === sheep) && spec.huntGold) bank.gold += amt * spec.huntGold
       if (x.left <= 0 && x !== farm) {
         for (let k = 0; k < x.workers; k++) free.push({ from: x.s.id })
         x.workers = 0
         if (x !== sheep) log('deplete', `${x.s.label}採完`)
+      }
+    }
+
+    // 被動收入建築（莊園、坑礦、屋台…）
+    for (const tr of spec.trickles) {
+      const n = Math.min(tr.max, blds.filter((b) => b.done && b.item === tr.building).length + (researched.has(tr.building) ? 1 : 0))
+      if (!n) continue
+      for (const [k, perMin] of Object.entries(tr.perMin)) {
+        const amt = ((perMin ?? 0) * n) / 60
+        addRes(k, amt)
+        if ((RES as string[]).includes(k)) incomeAcc[k as Res] += amt
       }
     }
 
@@ -1327,6 +1496,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       samples.push({
         t,
         bank: { ...bank },
+        other: { ...other },
         split: sp,
         building: blds.reduce((n, b) => n + (b.done ? 0 : b.builders), 0) + walkers.filter((w) => w.to.startsWith('b:')).length,
         walking: walkers.length,

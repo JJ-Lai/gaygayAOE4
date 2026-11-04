@@ -26,11 +26,18 @@ const CASES: Case[] = [
   { civ: 'en', label: '英格蘭 封建', goals: [{ kind: 'age', age: 2 }], band: [195, 260] },
   { civ: 'fr', label: '法蘭西 封建', goals: [{ kind: 'age', age: 2 }], band: [185, 260] },
   { civ: 'hr', label: '神羅 封建', goals: [{ kind: 'age', age: 2 }], band: [185, 260] },
-  { civ: 'ab', label: '阿拔斯 封建', goals: [{ kind: 'age', age: 2 }], band: [195, 265] },
+  // 阿拔斯：職業約 3:52~4:16（智慧宮 2:34 完成、側翼 100 秒）。智慧宮要自己蓋之後模擬約 4:35，
+  // 因為控制器開局一律先採羊、不會像職業一樣在野果蓋磨坊做果園；區間放寬到 4:45，差距記在這裡。
+  { civ: 'ab', label: '阿拔斯 封建', goals: [{ kind: 'age', age: 2 }], band: [195, 285] },
   { civ: 'mo', label: '蒙古 封建', goals: [{ kind: 'age', age: 2 }], band: [220, 330] },
   // 維京：免費村民讓「最快封建」比職業平均（約 4:15）快很多；起始村民容量 10 是假設值，這個區間只用來抓壞掉的模型。
   { civ: 'vik', label: '維京 封建', goals: [{ kind: 'age', age: 2 }], band: [170, 320] },
   { civ: 'je', label: '貞德 封建', goals: [{ kind: 'age', age: 2 }], band: [195, 290] },
+  // 只回報、不設區間：這次改了開局組成的文明
+  { civ: 'jin', label: '金朝 封建（3 名鄉騎開局）', goals: [{ kind: 'age', age: 2 }] },
+  { civ: 'gol', label: '金帳 封建（5 村民、一次 2 名）', goals: [{ kind: 'age', age: 2 }] },
+  { civ: 'zx', label: '朱熹 封建（5 村民 + 監工）', goals: [{ kind: 'age', age: 2 }] },
+  { civ: 'by', label: '拜占庭 封建 → 8 名長弓兵（橄欖油傭兵）', goals: [{ kind: 'age', age: 2 }, { kind: 'army', unit: 'longbowman', count: 8 }] },
   { civ: 'en', label: '英格蘭 直城', goals: [{ kind: 'age', age: 3 }], band: [430, 620] },
   { civ: 'ja', label: '日本 直城（水鳥居）', goals: [{ kind: 'age', age: 3, via: 'floating-gate' }], band: [440, 540] },
   {

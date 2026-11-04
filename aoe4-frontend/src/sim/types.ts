@@ -24,6 +24,8 @@ export interface Variation {
   speed?: number
   dps?: number
   effects?: Effect[]
+  /** 食物、木材、黃金、石頭以外的花費：oliveoil、silver、vizier、muster */
+  other?: Record<string, number>
 }
 
 export interface VenueCost {
@@ -34,6 +36,7 @@ export interface VenueCost {
   stone: number
   time: number
   pop: number
+  other?: Record<string, number>
 }
 
 export interface CatalogItem {

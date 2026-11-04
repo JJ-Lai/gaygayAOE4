@@ -1,6 +1,7 @@
 import { CaretRightOutlined, PauseOutlined } from '@ant-design/icons'
 import { Button, Col, Flex, Row, Segmented, Slider, Table, Tag, Typography } from 'antd'
 import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { SPECIAL_ZH } from '../../sim/planner/civSpec'
 import type { GameMap, PlanResult } from '../../sim/planner/types'
 import { FullMap } from './FullMap'
 import { AGE_ZH, RES_COLOR, RES_LABEL, SITE_COLOR, clock, sampleAt } from './format'
@@ -81,6 +82,11 @@ export function MapTimeline({ map, result, nameOf }: { map: GameMap; result: Pla
               </Tag>
               <Tag color="volcano">軍隊 {s.army}</Tag>
               {s.farms > 0 && <Tag>農田 {s.farms}</Tag>}
+              {Object.entries(s.other ?? {}).map(([k, v]) => (
+                <Tag key={k} color="purple">
+                  {SPECIAL_ZH[k] ?? k} {Math.round(v)}
+                </Tag>
+              ))}
             </Flex>
             <div className="planner-bank">
               {(['food', 'wood', 'gold', 'stone'] as const).map((r) => (

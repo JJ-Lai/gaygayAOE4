@@ -96,6 +96,8 @@ export interface Policy {
   landmarkPick: Record<number, string>
   /** 目標達成後全力出兵：同時運作的生產建築數 */
   postProducers: number
+  /** 被動收入建築（莊園、坑礦、屋台）：id -> 從第幾步開始蓋、蓋幾座 */
+  trickle: Record<string, { at: number; count: number }>
 }
 
 /** 目標達成後的「全力出兵」設定 */
@@ -132,6 +134,8 @@ export interface PlanEvent {
 export interface Sample {
   t: number
   bank: Bundle
+  /** 特殊資源庫存（橄欖油、白銀…） */
+  other: Record<string, number>
   split: Bundle
   building: number
   walking: number

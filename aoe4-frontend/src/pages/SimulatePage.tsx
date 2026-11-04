@@ -372,6 +372,21 @@ function StrategySummary({ data, best }: { data: CivData; best: Best }) {
         { key: 'vills', label: '村民生產', children: `所有城鎮中心不中斷（硬性規則）；房屋依生產速度提前蓋，另加 ${policy.houseBuffer} 格緩衝` },
         { key: 'hunt', label: '打鹿', children: policy.hunt ? '要（在鹿群旁蓋磨坊）' : '不打，羊吃完直接野果／農田' },
         { key: 'eco', label: '經濟科技', span: 'filled', children: eco.length ? eco.join('、') : '不研究' },
+        ...(data.spec.trickles.length
+          ? [
+              {
+                key: 'trickle',
+                label: '加蓋的被動收入建築',
+                span: 'filled' as const,
+                children:
+                  data.spec.trickles
+                    .map((tr) => ({ tr, p: policy.trickle?.[tr.building] }))
+                    .filter((x) => x.p && x.p.count > 0)
+                    .map((x) => `${nameOf(data, x.tr.building)} × ${Math.min(x.tr.max, x.p!.count)}（第 ${x.p!.at + 1} 步起）`)
+                    .join('、') || '不蓋',
+              },
+            ]
+          : []),
       ]}
     />
   )

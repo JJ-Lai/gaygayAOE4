@@ -135,6 +135,14 @@ function unionClasses(...lists) {
   return out
 }
 
+/** 食物、木材、黃金、石頭以外的花費（拜占庭橄欖油、馬其頓白銀、鄂圖曼維齊爾點數、蘇格蘭集結次數） */
+const OTHER_COST = { oliveoil: 'oliveoil', silver: 'silver', vizier: 'vizier', muster_charge: 'muster' }
+function otherOf(costs) {
+  const out = {}
+  for (const [raw, key] of Object.entries(OTHER_COST)) if (costs?.[raw]) out[key] = costs[raw]
+  return Object.keys(out).length ? out : undefined
+}
+
 function compactItem(entry, kind) {
   const variations = (entry.variations || []).map((v) => {
     const shared = entry.shared?.[v.id] || {}
@@ -158,6 +166,8 @@ function compactItem(entry, kind) {
       tags: tagsOf(classes, entry.id, age),
       cls: clsOf(classes),
     }
+    const other = otherOf(costs)
+    if (other) row.other = other
     if (kind === 'unit') {
       row.hp = hitpoints
       row.speed = movement?.speed || 0
@@ -170,7 +180,13 @@ function compactItem(entry, kind) {
     return row
   })
   if (!variations.length) return null
+  const allClasses = unionClasses(entry.classes, ...(entry.variations || []).map((v) => v.classes))
+  // 商人、官員、使者、非戰鬥的宗教單位不算軍隊（「N 名軍隊」與全力出兵不該挑它們）
+  const support =
+    ['trade_cart', 'official', 'emissary'].some((c) => allClasses.includes(c))
+    || (allClasses.includes('monk') && !allClasses.includes('combat_monk') && !allClasses.includes('infantry'))
   const military = kind === 'unit'
+    && !support
     && !variations.some((v) => v.tags.includes('villager') || v.tags.includes('naval'))
     && variations.some((v) => v.pop > 0 && v.producedBy.length > 0)
   const venues = (entry.productionVariations || []).map((venue) => ({
@@ -181,6 +197,7 @@ function compactItem(entry, kind) {
     stone: venue.costs?.stone || 0,
     time: venue.costs?.time || 0,
     pop: venue.costs?.popcap || 0,
+    ...(otherOf(venue.costs) ? { other: otherOf(venue.costs) } : {}),
   }))
   return {
     id: entry.id,
@@ -230,6 +247,94 @@ for (const civ of civs) {
   }
   items[civ.abbr] = merged
 }
+
+// ---------- 修正 aoe4world 匯出的已知錯誤（2026-11 各文明研究交叉查證） ----------
+const MILL_ECO = ['wheelbarrow', 'survival-techniques', 'horticulture', 'fertilization', 'precision-cross-breeding']
+/** abbr -> id -> { add, remove, set（生產建築）, minAge, effects（整組取代）, untrainable } */
+const FIX = {
+  // 拜占庭、馬其頓：磨坊經濟科技被匯出成只有大酒莊能研究
+  by: Object.fromEntries(MILL_ECO.map((id) => [id, { add: ['mill'] }])),
+  mac: Object.fromEntries(MILL_ECO.map((id) => [id, { add: ['mill'] }])),
+  // 日本：採礦科技也能在鍛造場研究；竹細工、札差的移動速度應為 +7%（匯出成 ×0.9）；俵沒有效果
+  ja: {
+    'specialized-pick': { add: ['forge'] },
+    'shaft-mining': { add: ['forge'] },
+    cupellation: { add: ['forge'] },
+  },
+  // 金帳：怯薛在馬廄、哈剌沙在黑暗時代兵營
+  gol: {
+    keshik: { set: ['stable'] },
+    kharash: { set: ['barracks'], minAge: 1 },
+  },
+  // 阿拔斯：智慧宮黑暗時代就能蓋
+  ab: { 'house-of-wisdom': { minAge: 1 } },
+  // 金朝：狩獵、伐木專屬科技的效果是空的
+  jin: {
+    'mohe-ancestry': { effects: [{ property: 'huntGatherRate', effect: 'multiply', value: 1.2, ids: ['villager', 'mounted-villager'] }] },
+    'hunting-tradition': { effects: [{ property: 'huntGatherRate', effect: 'multiply', value: 1.2, ids: ['villager', 'mounted-villager'] }] },
+    'draft-horses': { effects: [{ property: 'woodGatherRate', effect: 'multiply', value: 1.15, ids: ['villager', 'mounted-villager'] }] },
+  },
+  // 斯科訥弩兵的黑暗時代變體是地標免費生成的，一般在城堡時代靶場訓練
+  vik: { berserker: { remove: ['sacred-grove', 'gullinn-temple'] }, 'sk-ne-crossbowmen': { dropBefore: 3 } },
+  // 城堡→帝王地標漏了 age3_landmark 類別
+  ch: { 'great-wall-gatehouse': { tags: ['toAge4'] } },
+}
+FIX.jin['pagoda-forest'] = { tags: ['toAge4'] }
+const TAWARA = (n) => [
+  { property: 'carryCapacity', effect: 'change', value: 3, ids: ['villager'] },
+  { property: 'moveSpeed', effect: 'multiply', value: 1.07, ids: ['villager'] },
+  { property: 'berryGatherRate', effect: 'multiply', value: 1.25, ids: ['villager'] },
+].slice(0, n)
+for (const abbr of ['ja', 'sen']) {
+  FIX[abbr] = { ...(FIX[abbr] || {}), tawara: { effects: TAWARA(3) }, takezaiku: { effects: TAWARA(3) }, fudasashi: { effects: TAWARA(3) } }
+}
+/** 地標或特殊建築被匯出成一般生產建築：從所有單位的生產者拿掉（拿掉後沒有生產者就保留） */
+const NOT_PRODUCER = {
+  by: ['golden-horn-tower', 'palatine-school', 'trade-post'],
+  ot: ['military-school', 'mehmed-imperial-armory'],
+  mac: ['golden-horn-tower', 'varangian-warcamp'],
+}
+// 0 秒變體但其實能一般訓練（civSpec.costOverride 補上正確時間）
+const UNTRAINABLE_OK = new Set(['*:worker-elephant', 'jin:horseman', 'jin:iron-pagoda', 'jin:mohe-tribesman', 'jin:scout'])
+
+function applyFixes(abbr, list) {
+  const fix = FIX[abbr] || {}
+  const drop = NOT_PRODUCER[abbr] || []
+  for (const item of list) {
+    const f = fix[item.id]
+    for (const v of item.variations) {
+      if (item.kind === 'unit' && drop.length) {
+        const kept = v.producedBy.filter((p) => !drop.includes(p))
+        if (kept.length) v.producedBy = kept
+      }
+      // 0 秒的單位變體是草場馬、徵召兵這類「技能產生」的版本，不能一般訓練
+      if (item.kind === 'unit' && v.time === 0 && !UNTRAINABLE_OK.has(`*:${item.id}`) && !UNTRAINABLE_OK.has(`${abbr}:${item.id}`) && v.producedBy.length) v.producedBy = []
+      if (!f) continue
+      if (f.set) v.producedBy = [...f.set]
+      if (f.add) v.producedBy = [...new Set([...v.producedBy, ...f.add])]
+      if (f.remove) v.producedBy = v.producedBy.filter((p) => !f.remove.includes(p))
+      if (f.effects) v.effects = f.effects.map((e) => ({ ...e }))
+      if (f.tags) v.tags = [...new Set([...v.tags, ...f.tags])]
+    }
+    if (f?.dropBefore != null) {
+      item.variations = item.variations.filter((v) => v.age >= f.dropBefore)
+      item.minAge = Math.min(...item.variations.map((v) => v.age))
+    }
+    // 拿掉生產者的 0 秒變體：同一單位還有其他可訓練的變體時直接刪掉，最早時代才會正確（伯爵衛隊是城堡時代）
+    if (item.kind === 'unit' && item.variations.some((v) => v.producedBy.length) && item.variations.some((v) => !v.producedBy.length)) {
+      item.variations = item.variations.filter((v) => v.producedBy.length)
+      item.minAge = Math.min(...item.variations.map((v) => v.age))
+    }
+    if (f?.minAge != null) {
+      const first = Math.min(...item.variations.map((v) => v.age))
+      for (const v of item.variations) if (v.age === first) v.age = f.minAge
+      item.minAge = f.minAge
+    }
+    if (item.kind === 'unit' && item.military && !item.variations.some((v) => v.producedBy.length)) item.military = false
+  }
+  return list
+}
+for (const civ of civs) applyFixes(civ.abbr, items[civ.abbr])
 
 const catalog = {
   source: 'https://github.com/aoe4world/data',
