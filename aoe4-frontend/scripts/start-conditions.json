@@ -1,0 +1,2591 @@
+{
+ "fetchedAt": "2026-11-05T15:35:50.055Z",
+ "patch": 12260,
+ "source": "aoe4world.com game summaries",
+ "perCiv": 4,
+ "short": [],
+ "summary": {
+  "abbasid_dynasty": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 200
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "ayyubids": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 200
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "byzantines": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 100,
+     "wood": 150,
+     "oliveoil": 100
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "chinese": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 150
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "delhi_sultanate": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 200
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "english": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 200
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "french": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 150
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "golden_horde": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 150,
+     "stone": 50,
+     "wood": 200
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 5,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "holy_roman_empire": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 0,
+     "stone": 0,
+     "wood": 150
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 6,
+     "Unit:monk": 1,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "house_of_lancaster": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 200
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "japanese": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 150
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "jeanne_darc": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 150
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:jeanne_villager": 1,
+     "Unit:villager": 5,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "jin_dynasty": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 150
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:mounted_villager": 3,
+     "Animal:sheep": 2,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "knights_templar": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 100
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "macedonian_dynasty": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 200
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "malians": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 150
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "mongols": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 150
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:unit_khan_1_mon": 1,
+     "Building:town_centre_capitol": 1,
+     "Building:ger": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "order_of_the_dragon": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 200
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:gilded_villager": 5,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "ottomans": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 50,
+     "wood": 200
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "rus": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 200
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "scots": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 200
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:ghillie_sco": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5,
+     "Unit:highland_cattle": 1,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "sengoku_daimyo": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 150
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "tughlaq_dynasty": {
+   "resources": {
+    "value": {
+     "food": 200,
+     "gold": 100,
+     "stone": 0,
+     "wood": 150
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "vikings": {
+   "resources": {
+    "value": {
+     "food": 0,
+     "gold": 100,
+     "stone": 0,
+     "wood": 200
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 6,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  },
+  "zhu_xis_legacy": {
+   "resources": {
+    "value": {
+     "food": 150,
+     "gold": 50,
+     "stone": 0,
+     "wood": 200
+    },
+    "agree": 4,
+    "of": 4
+   },
+   "entities": {
+    "value": {
+     "Unit:scout": 1,
+     "Unit:villager": 5,
+     "Unit:imperial_official": 1,
+     "Animal:sheep": 5,
+     "Building:town_centre_capitol": 1
+    },
+    "agree": 4,
+    "of": 4
+   }
+  }
+ },
+ "samples": [
+  {
+   "civ": "jeanne_darc",
+   "game": 259397206,
+   "patch": 12260,
+   "kind": "qm_3v3",
+   "map": "Lakeside",
+   "startedAt": "2026-11-05T15:11:56.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:jeanne_villager": 1,
+    "Unit:villager": 5,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "scots",
+   "game": 259397206,
+   "patch": 12260,
+   "kind": "qm_3v3",
+   "map": "Lakeside",
+   "startedAt": "2026-11-05T15:11:56.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:ghillie_sco": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Unit:highland_cattle": 1,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "order_of_the_dragon",
+   "game": 259397206,
+   "patch": 12260,
+   "kind": "qm_3v3",
+   "map": "Lakeside",
+   "startedAt": "2026-11-05T15:11:56.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:gilded_villager": 5,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "scots",
+   "game": 259397206,
+   "patch": 12260,
+   "kind": "qm_3v3",
+   "map": "Lakeside",
+   "startedAt": "2026-11-05T15:11:56.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:ghillie_sco": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Unit:highland_cattle": 1,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "ayyubids",
+   "game": 259397206,
+   "patch": 12260,
+   "kind": "qm_3v3",
+   "map": "Lakeside",
+   "startedAt": "2026-11-05T15:11:56.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "zhu_xis_legacy",
+   "game": 259397206,
+   "patch": 12260,
+   "kind": "qm_3v3",
+   "map": "Lakeside",
+   "startedAt": "2026-11-05T15:11:56.000Z",
+   "resources": {
+    "food": 150,
+    "gold": 50,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 5,
+    "Unit:imperial_official": 1,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "knights_templar",
+   "game": 259397209,
+   "patch": 12260,
+   "kind": "qm_3v3",
+   "map": "Cliffside",
+   "startedAt": "2026-11-05T15:11:51.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 100
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "zhu_xis_legacy",
+   "game": 259397209,
+   "patch": 12260,
+   "kind": "qm_3v3",
+   "map": "Cliffside",
+   "startedAt": "2026-11-05T15:11:51.000Z",
+   "resources": {
+    "food": 150,
+    "gold": 50,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 5,
+    "Unit:imperial_official": 1,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "english",
+   "game": 259397209,
+   "patch": 12260,
+   "kind": "qm_3v3",
+   "map": "Cliffside",
+   "startedAt": "2026-11-05T15:11:51.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "scots",
+   "game": 259397209,
+   "patch": 12260,
+   "kind": "qm_3v3",
+   "map": "Cliffside",
+   "startedAt": "2026-11-05T15:11:51.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:ghillie_sco": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Unit:highland_cattle": 1,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "french",
+   "game": 259397209,
+   "patch": 12260,
+   "kind": "qm_3v3",
+   "map": "Cliffside",
+   "startedAt": "2026-11-05T15:11:51.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "mongols",
+   "game": 259397209,
+   "patch": 12260,
+   "kind": "qm_3v3",
+   "map": "Cliffside",
+   "startedAt": "2026-11-05T15:11:51.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:unit_khan_1_mon": 1,
+    "Building:town_centre_capitol": 1,
+    "Building:ger": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5
+   }
+  },
+  {
+   "civ": "english",
+   "game": 259397119,
+   "patch": 12260,
+   "kind": "qm_1v1",
+   "map": "Altai",
+   "startedAt": "2026-11-05T15:11:19.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "english",
+   "game": 259397119,
+   "patch": 12260,
+   "kind": "qm_1v1",
+   "map": "Altai",
+   "startedAt": "2026-11-05T15:11:19.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "knights_templar",
+   "game": 259396966,
+   "patch": 12260,
+   "kind": "qm_2v2",
+   "map": "Baltic",
+   "startedAt": "2026-11-05T15:10:24.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 100
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "ottomans",
+   "game": 259396966,
+   "patch": 12260,
+   "kind": "qm_2v2",
+   "map": "Baltic",
+   "startedAt": "2026-11-05T15:10:24.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 50,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "abbasid_dynasty",
+   "game": 259396966,
+   "patch": 12260,
+   "kind": "qm_2v2",
+   "map": "Baltic",
+   "startedAt": "2026-11-05T15:10:24.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "vikings",
+   "game": 259396966,
+   "patch": 12260,
+   "kind": "qm_2v2",
+   "map": "Baltic",
+   "startedAt": "2026-11-05T15:10:24.000Z",
+   "resources": {
+    "food": 0,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "delhi_sultanate",
+   "game": 259396960,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Dry Arabia",
+   "startedAt": "2026-11-05T15:10:20.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "vikings",
+   "game": 259396960,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Dry Arabia",
+   "startedAt": "2026-11-05T15:10:20.000Z",
+   "resources": {
+    "food": 0,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "vikings",
+   "game": 259396960,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Dry Arabia",
+   "startedAt": "2026-11-05T15:10:20.000Z",
+   "resources": {
+    "food": 0,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "scots",
+   "game": 259396960,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Dry Arabia",
+   "startedAt": "2026-11-05T15:10:20.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:ghillie_sco": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Unit:highland_cattle": 1,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "sengoku_daimyo",
+   "game": 259396776,
+   "patch": 12260,
+   "kind": "rm_1v1",
+   "map": "Cliffside",
+   "startedAt": "2026-11-05T15:09:01.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "vikings",
+   "game": 259396776,
+   "patch": 12260,
+   "kind": "rm_1v1",
+   "map": "Cliffside",
+   "startedAt": "2026-11-05T15:09:01.000Z",
+   "resources": {
+    "food": 0,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "knights_templar",
+   "game": 259396708,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Dry Arabia",
+   "startedAt": "2026-11-05T15:08:37.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 100
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "delhi_sultanate",
+   "game": 259396708,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Dry Arabia",
+   "startedAt": "2026-11-05T15:08:37.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "jin_dynasty",
+   "game": 259396645,
+   "patch": 12260,
+   "kind": "rm_1v1",
+   "map": "Highwoods",
+   "startedAt": "2026-11-05T15:08:15.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:mounted_villager": 3,
+    "Animal:sheep": 2,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "french",
+   "game": 259396517,
+   "patch": 12260,
+   "kind": "qm_3v3",
+   "map": "Lipany",
+   "startedAt": "2026-11-05T15:07:31.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "golden_horde",
+   "game": 259396517,
+   "patch": 12260,
+   "kind": "qm_3v3",
+   "map": "Lipany",
+   "startedAt": "2026-11-05T15:07:31.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 150,
+    "stone": 50,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 5,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "knights_templar",
+   "game": 259396517,
+   "patch": 12260,
+   "kind": "qm_3v3",
+   "map": "Lipany",
+   "startedAt": "2026-11-05T15:07:31.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 100
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "french",
+   "game": 259396517,
+   "patch": 12260,
+   "kind": "qm_3v3",
+   "map": "Lipany",
+   "startedAt": "2026-11-05T15:07:31.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "delhi_sultanate",
+   "game": 259396456,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Dry Arabia",
+   "startedAt": "2026-11-05T15:07:08.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "zhu_xis_legacy",
+   "game": 259396456,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Dry Arabia",
+   "startedAt": "2026-11-05T15:07:08.000Z",
+   "resources": {
+    "food": 150,
+    "gold": 50,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 5,
+    "Unit:imperial_official": 1,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "english",
+   "game": 259396418,
+   "patch": 12260,
+   "kind": "qm_1v1",
+   "map": "Prairie",
+   "startedAt": "2026-11-05T15:06:48.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "mongols",
+   "game": 259396418,
+   "patch": 12260,
+   "kind": "qm_1v1",
+   "map": "Prairie",
+   "startedAt": "2026-11-05T15:06:48.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:unit_khan_1_mon": 1,
+    "Building:town_centre_capitol": 1,
+    "Building:ger": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5
+   }
+  },
+  {
+   "civ": "french",
+   "game": 259396362,
+   "patch": 12260,
+   "kind": "qm_2v2",
+   "map": "Hideout",
+   "startedAt": "2026-11-05T15:06:26.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "holy_roman_empire",
+   "game": 259396355,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Fangs",
+   "startedAt": "2026-11-05T15:06:23.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 0,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Unit:monk": 1,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "chinese",
+   "game": 259396355,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Fangs",
+   "startedAt": "2026-11-05T15:06:23.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "delhi_sultanate",
+   "game": 259396355,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Fangs",
+   "startedAt": "2026-11-05T15:06:23.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "malians",
+   "game": 259396355,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Fangs",
+   "startedAt": "2026-11-05T15:06:23.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "ottomans",
+   "game": 259396355,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Fangs",
+   "startedAt": "2026-11-05T15:06:23.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 50,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "house_of_lancaster",
+   "game": 259396355,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Fangs",
+   "startedAt": "2026-11-05T15:06:23.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "zhu_xis_legacy",
+   "game": 259396179,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Sunkenlands",
+   "startedAt": "2026-11-05T15:05:32.000Z",
+   "resources": {
+    "food": 150,
+    "gold": 50,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 5,
+    "Unit:imperial_official": 1,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "jeanne_darc",
+   "game": 259396179,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Sunkenlands",
+   "startedAt": "2026-11-05T15:05:32.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:jeanne_villager": 1,
+    "Unit:villager": 5,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "holy_roman_empire",
+   "game": 259396179,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Sunkenlands",
+   "startedAt": "2026-11-05T15:05:32.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 0,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Unit:monk": 1,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "jeanne_darc",
+   "game": 259396168,
+   "patch": 12260,
+   "kind": "rm_1v1",
+   "map": "Waterholes",
+   "startedAt": "2026-11-05T15:05:21.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:jeanne_villager": 1,
+    "Unit:villager": 5,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "ayyubids",
+   "game": 259396148,
+   "patch": 12260,
+   "kind": "rm_1v1",
+   "map": "Highwoods",
+   "startedAt": "2026-11-05T15:05:15.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "chinese",
+   "game": 259396085,
+   "patch": 12260,
+   "kind": "rm_1v1",
+   "map": "Fangs",
+   "startedAt": "2026-11-05T15:04:55.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "mongols",
+   "game": 259396021,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Fangs",
+   "startedAt": "2026-11-05T15:04:37.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:unit_khan_1_mon": 1,
+    "Building:town_centre_capitol": 1,
+    "Building:ger": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5
+   }
+  },
+  {
+   "civ": "house_of_lancaster",
+   "game": 259396021,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Fangs",
+   "startedAt": "2026-11-05T15:04:37.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "order_of_the_dragon",
+   "game": 259395938,
+   "patch": 12260,
+   "kind": "qm_1v1",
+   "map": "Danube River",
+   "startedAt": "2026-11-05T15:04:03.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:gilded_villager": 5,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "mongols",
+   "game": 259395938,
+   "patch": 12260,
+   "kind": "qm_1v1",
+   "map": "Danube River",
+   "startedAt": "2026-11-05T15:04:03.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:unit_khan_1_mon": 1,
+    "Building:town_centre_capitol": 1,
+    "Building:ger": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5
+   }
+  },
+  {
+   "civ": "tughlaq_dynasty",
+   "game": 259395936,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Hill and Dale",
+   "startedAt": "2026-11-05T15:04:00.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "abbasid_dynasty",
+   "game": 259395936,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Hill and Dale",
+   "startedAt": "2026-11-05T15:04:00.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "holy_roman_empire",
+   "game": 259395888,
+   "patch": 12260,
+   "kind": "rm_1v1",
+   "map": "Marshland",
+   "startedAt": "2026-11-05T15:03:36.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 0,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Unit:monk": 1,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "golden_horde",
+   "game": 259395868,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Sunkenlands",
+   "startedAt": "2026-11-05T15:03:36.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 150,
+    "stone": 50,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 5,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "jin_dynasty",
+   "game": 259395858,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Relic River",
+   "startedAt": "2026-11-05T15:03:26.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:mounted_villager": 3,
+    "Animal:sheep": 2,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "japanese",
+   "game": 259395858,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Relic River",
+   "startedAt": "2026-11-05T15:03:26.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "abbasid_dynasty",
+   "game": 259395808,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Hill and Dale",
+   "startedAt": "2026-11-05T15:03:10.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "chinese",
+   "game": 259395808,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Hill and Dale",
+   "startedAt": "2026-11-05T15:03:10.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "order_of_the_dragon",
+   "game": 259395808,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Hill and Dale",
+   "startedAt": "2026-11-05T15:03:10.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:gilded_villager": 5,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "holy_roman_empire",
+   "game": 259395789,
+   "patch": 12260,
+   "kind": "qm_2v2",
+   "map": "Lipany",
+   "startedAt": "2026-11-05T15:02:59.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 0,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Unit:monk": 1,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "ayyubids",
+   "game": 259395749,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Flankwoods",
+   "startedAt": "2026-11-05T15:02:41.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "order_of_the_dragon",
+   "game": 259395749,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Flankwoods",
+   "startedAt": "2026-11-05T15:02:41.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:gilded_villager": 5,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "ayyubids",
+   "game": 259395749,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Flankwoods",
+   "startedAt": "2026-11-05T15:02:41.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "abbasid_dynasty",
+   "game": 259395684,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Fangs",
+   "startedAt": "2026-11-05T15:02:18.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "ottomans",
+   "game": 259395684,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Fangs",
+   "startedAt": "2026-11-05T15:02:18.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 50,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "macedonian_dynasty",
+   "game": 259395669,
+   "patch": 12260,
+   "kind": "rm_1v1",
+   "map": "Highwoods",
+   "startedAt": "2026-11-05T15:02:17.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "macedonian_dynasty",
+   "game": 259395661,
+   "patch": 12260,
+   "kind": "rm_1v1",
+   "map": "Marshland",
+   "startedAt": "2026-11-05T15:02:12.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "japanese",
+   "game": 259395571,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Sunkenlands",
+   "startedAt": "2026-11-05T15:01:46.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "jin_dynasty",
+   "game": 259395500,
+   "patch": 12260,
+   "kind": "qm_2v2",
+   "map": "Lakeside",
+   "startedAt": "2026-11-05T15:01:12.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:mounted_villager": 3,
+    "Animal:sheep": 2,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "japanese",
+   "game": 259395497,
+   "patch": 12260,
+   "kind": "qm_3v3",
+   "map": "Relic River",
+   "startedAt": "2026-11-05T15:01:12.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "house_of_lancaster",
+   "game": 259395501,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Hill and Dale",
+   "startedAt": "2026-11-05T15:01:09.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "malians",
+   "game": 259395501,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "Hill and Dale",
+   "startedAt": "2026-11-05T15:01:09.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "rus",
+   "game": 259395344,
+   "patch": 12260,
+   "kind": "qm_2v2",
+   "map": "Turtle Ridge",
+   "startedAt": "2026-11-05T15:01:08.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "japanese",
+   "game": 259395449,
+   "patch": 12260,
+   "kind": "qm_2v2",
+   "map": "Shadow Lake",
+   "startedAt": "2026-11-05T15:01:00.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "chinese",
+   "game": 259395447,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Fangs",
+   "startedAt": "2026-11-05T15:00:53.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "tughlaq_dynasty",
+   "game": 259395447,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Fangs",
+   "startedAt": "2026-11-05T15:00:53.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "sengoku_daimyo",
+   "game": 259395360,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Snake River",
+   "startedAt": "2026-11-05T15:00:45.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "byzantines",
+   "game": 259395360,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Snake River",
+   "startedAt": "2026-11-05T15:00:45.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 100,
+    "wood": 150,
+    "oliveoil": 100
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "jin_dynasty",
+   "game": 259395360,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Snake River",
+   "startedAt": "2026-11-05T15:00:45.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:mounted_villager": 3,
+    "Animal:sheep": 2,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "rus",
+   "game": 259395389,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Hill and Dale",
+   "startedAt": "2026-11-05T15:00:36.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "golden_horde",
+   "game": 259395388,
+   "patch": 12260,
+   "kind": "qm_4v4",
+   "map": "Rocky River",
+   "startedAt": "2026-11-05T15:00:30.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 150,
+    "stone": 50,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 5,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "rus",
+   "game": 259395388,
+   "patch": 12260,
+   "kind": "qm_4v4",
+   "map": "Rocky River",
+   "startedAt": "2026-11-05T15:00:30.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "jeanne_darc",
+   "game": 259395367,
+   "patch": 12260,
+   "kind": "qm_3v3",
+   "map": "Mountain Pass",
+   "startedAt": "2026-11-05T15:00:26.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:jeanne_villager": 1,
+    "Unit:villager": 5,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "rus",
+   "game": 259395236,
+   "patch": 12260,
+   "kind": "qm_4v4",
+   "map": "Mountain Clearing",
+   "startedAt": "2026-11-05T15:00:17.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "macedonian_dynasty",
+   "game": 259395329,
+   "patch": 12260,
+   "kind": "rm_1v1",
+   "map": "Golden Pit",
+   "startedAt": "2026-11-05T15:00:09.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "byzantines",
+   "game": 259395292,
+   "patch": 12260,
+   "kind": "rm_1v1",
+   "map": "Fangs",
+   "startedAt": "2026-11-05T15:00:02.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 100,
+    "wood": 150,
+    "oliveoil": 100
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "malians",
+   "game": 259395226,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Sunkenlands",
+   "startedAt": "2026-11-05T14:59:36.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "tughlaq_dynasty",
+   "game": 259250672,
+   "patch": 12260,
+   "kind": "rm_1v1",
+   "map": "Cliffside",
+   "startedAt": "2026-11-04T17:17:50.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "tughlaq_dynasty",
+   "game": 259250161,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Dry Arabia",
+   "startedAt": "2026-11-04T17:14:28.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "house_of_lancaster",
+   "game": 259184192,
+   "patch": 12260,
+   "kind": "rm_1v1",
+   "map": "Fangs",
+   "startedAt": "2026-11-04T10:34:22.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "byzantines",
+   "game": 259177313,
+   "patch": 12260,
+   "kind": "rm_1v1",
+   "map": "Marshland",
+   "startedAt": "2026-11-04T09:25:51.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 100,
+    "wood": 150,
+    "oliveoil": 100
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "ottomans",
+   "game": 259122445,
+   "patch": 12260,
+   "kind": "rm_4v4",
+   "map": "Relic River",
+   "startedAt": "2026-11-03T23:30:58.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 50,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "macedonian_dynasty",
+   "game": 259388178,
+   "patch": 12260,
+   "kind": "rm_3v3",
+   "map": "Relic River",
+   "startedAt": "2026-11-05T14:20:07.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "byzantines",
+   "game": 259366278,
+   "patch": 12260,
+   "kind": "rm_1v1",
+   "map": "Cliffside",
+   "startedAt": "2026-11-05T12:14:40.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 100,
+    "wood": 150,
+    "oliveoil": 100
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "malians",
+   "game": 259306039,
+   "patch": 12260,
+   "kind": "rm_3v3",
+   "map": "Fangs",
+   "startedAt": "2026-11-05T00:56:54.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "sengoku_daimyo",
+   "game": 259168774,
+   "patch": 12260,
+   "kind": "rm_1v1",
+   "map": "Marshland",
+   "startedAt": "2026-11-04T07:50:10.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "sengoku_daimyo",
+   "game": 259230190,
+   "patch": 12260,
+   "kind": "rm_1v1",
+   "map": "Highwoods",
+   "startedAt": "2026-11-04T15:03:00.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 100,
+    "stone": 0,
+    "wood": 150
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 6,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  },
+  {
+   "civ": "golden_horde",
+   "game": 259333686,
+   "patch": 12260,
+   "kind": "rm_2v2",
+   "map": "King of the Hill",
+   "startedAt": "2026-11-05T06:17:20.000Z",
+   "resources": {
+    "food": 200,
+    "gold": 150,
+    "stone": 50,
+    "wood": 200
+   },
+   "entities": {
+    "Unit:scout": 1,
+    "Unit:villager": 5,
+    "Animal:sheep": 5,
+    "Building:town_centre_capitol": 1
+   }
+  }
+ ]
+}

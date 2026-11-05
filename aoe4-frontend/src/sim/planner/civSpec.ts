@@ -54,6 +54,8 @@ export interface CivSpec {
   startFood: number
   /** 城鎮中心旁可以打獵的動物（金朝的馴鹿）的食物總量；用獵肉速率與獵肉攜帶量，在羊之前採 */
   startHunt: number
+  /** 每座城鎮中心（含首都）旁另外生成的羊（蘭開斯特 4 隻）；中立動物，對局摘要不列在玩家名下 */
+  tcSheep: number
   /** 第一座城鎮中心要等幾秒才能開始訓練（蒙古城鎮中心開局是收起的） */
   tcStartDelay: number
   // ---------- 工人 ----------
@@ -151,6 +153,7 @@ function spec(abbr: string, zh: string, patch: Partial<CivSpec>): CivSpec {
     ownedSheep: 5,
     startFood: 0,
     startHunt: 0,
+    tcSheep: 0,
     tcStartDelay: 0,
     worker: 'villager',
     workerCap: 200,
@@ -510,8 +513,8 @@ const SPECS: Record<string, CivSpec> = {
   }),
   hl: spec('hl', '蘭開斯特', {
     start: { food: 200, wood: 200, gold: 100, stone: 0 },
-    startNote: '開局 200 食物、200 木材、100 黃金、0 石頭，6 村民、1 斥候，城鎮中心旁 9 隻自有羊，人口 7/10（Fandom；木材 200 僅此一來源）。',
-    ownedSheep: 9,
+    startNote: '開局 200 食物、200 木材、100 黃金、0 石頭，6 村民、1 斥候、5 隻自有羊，首都城鎮中心旁另外生成 4 隻羊（共 9 隻），人口 7/10（自有部分：2026-11 AoE4 World 12260 對局摘要 4/4 場一致；城鎮中心的 4 隻是中立羊，摘要不列）。',
+    tcSheep: 4,
     gather: { all: 1, sheep: 1.2, berry: 1, hunt: 1, farm: 1, wood: 1, gold: 1, stone: 1 },
     popBuildings: { manor: 10 },
     dropoff: {
@@ -529,9 +532,9 @@ const SPECS: Record<string, CivSpec> = {
     },
     notMilitary: ['trader', 'monk', 'lord-of-lancaster'],
     bonuses: [
-      { text: '開局 200 食物、200 木材、100 黃金，6 村民、1 斥候、9 隻羊', modeled: 'yes', source: 'https://ageofempires.fandom.com/wiki/House_of_Lancaster', note: '木材 200 只有 Fandom 一個來源，是上市前 3 天把英格蘭模板的佔位文字改成正式內容（信心中低）；組建順序在第一次投木前最多花 150 木，分不出 150 或 200。' },
+      { text: '開局 200 食物、200 木材、100 黃金，6 村民、1 斥候、5 隻自有羊 + 首都城鎮中心旁 4 隻（共 9 隻）', modeled: 'yes', source: 'https://aoe4world.com/games', note: '2026-11 AoE4 World 12260 對局摘要 4/4 場一致：0 秒時 200/200/100/0、6 村民、1 斥候、5 隻自有羊；城鎮中心旁的 4 隻是中立羊，摘要不列在玩家名下。木材 200 也由這批對局確認。' },
       { text: '羊毛產業：採羊 +20%', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/lancaster.json', note: '13.0.4343 由 +25% 改為 +20%。引擎和磨坊食物科技 +10% 相乘（1.32）；遊戲應是相加（1.3），沒有來源寫明。' },
-      { text: '每座城鎮中心蓋好時生出 4 隻羊（開局共 9 隻）', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/lancaster/town-center-1.json', note: '只計入開局 9 隻；第二座城鎮中心完成時的 4 隻羊（800 食物）尚未建模。' },
+      { text: '每座城鎮中心（含首都）旁生成 4 隻羊', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/lancaster/town-center-1.json', note: '首都的 4 隻從開局就算；新城鎮中心完成時再加 4 隻（800 食物）。引擎只有一個羊群，新城鎮中心的羊也當成在首都旁採、投放在城鎮中心。' },
       { text: '莊園：175 木、100 石、45 秒，每座每分鐘 30 食物 + 10 木材、+10 人口、全資源投放點', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/lancaster/manor-2.json', note: '被動產出與人口已計入；投放點只列在磨坊、伐木場、採礦場之後當備用，不會縮短採集點的步行距離。上限固定 3 座（Fandom），精簡土地制度、開放農田制度各 +4 未建模。' },
       { text: '莊園範圍內每名村民每分鐘再 +3 食物、+2 木材（每名村民只算一座）', modeled: 'no', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/lancaster/manor-2.json', note: '16.2 後遊戲說明寫 3 食物，官方 15.1 公告、aoe4world 文明總覽與 Fandom 寫 4，兩者衝突未解；光環 7.5 格只見於 Fandom。' },
       { text: '免役稅（帝王，200 木、500 金）：每座莊園每分鐘再 +30 黃金', modeled: 'no', source: 'https://raw.githubusercontent.com/aoe4world/data/main/technologies/lancaster/scutage-4.json' },
@@ -617,9 +620,10 @@ const SPECS: Record<string, CivSpec> = {
     ],
   }),
   jin: spec('jin', '金朝', {
-    startNote: '開局 200 食物、150 木材、100 黃金，3 名鄉騎、0 名普通村民、1 斥候（人口 4/10），城鎮中心下有 2 頭馴鹿（共 800 食物），5 隻羊沿用標準值（未證實）（Fandom、aoe4guides 職業選手流程）。',
+    startNote: '開局 200 食物、150 木材、100 黃金，3 名鄉騎、0 名普通村民、1 斥候（人口 4/10），只有 2 隻自有羊（其他文明 5 隻），第一座城鎮中心旁另有 2 頭馴鹿（共 800 食物；之後的城鎮中心沒有）（2026-11 AoE4 World 12260 對局摘要 4/4 場一致；馴鹿是中立動物，摘要不列，出自 Fandom 與官方文明頁）。',
+    ownedSheep: 2,
     startWorkers: { 'mounted-villager': 3 },
-    // extraPop 1（斥候）與 ownedSheep 5 都是預設值；5 隻羊未經證實。
+    // extraPop 1（斥候）是預設值。
     // 馴鹿是城鎮中心旁的獵物：獵肉速率 0.825/秒、鄉騎獵肉攜帶 25 + 5 = 30，在羊之前採。
     startHunt: 800,
     worker: 'mounted-villager',
@@ -644,7 +648,7 @@ const SPECS: Record<string, CivSpec> = {
     },
     notMilitary: ['emissary', 'reindeer-trader', 'trader', 'monk'],
     bonuses: [
-      { text: '開局 3 名鄉騎、1 斥候，資源 200 食物 / 150 木材 / 100 黃金', modeled: 'yes', source: 'https://aoe4guides.com/builds/pj6ztHDSiVv9xpo1NsXy', note: '所有 aoe4guides 金朝流程（到 2026-10-27）都從 3 名鄉騎開始；Flip 的流程算帳剛好用完 150 木材與 100 黃金。開局 5 隻羊沒有來源確認，沿用標準值。' },
+      { text: '開局 3 名鄉騎、1 斥候、2 隻羊，資源 200 食物 / 150 木材 / 100 黃金', modeled: 'yes', source: 'https://aoe4world.com/games', note: '2026-11 AoE4 World 12260 對局摘要 4/4 場一致：0 秒時 3 名鄉騎、1 斥候、2 隻羊（標準文明是 5 隻），資源 200/150/100/0。aoe4guides 金朝流程也都從 3 名鄉騎開始。' },
       { text: '城鎮中心下有 2 頭馴鹿，共 800 食物', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Reindeer', note: '2 頭由官方文明頁確認；每頭 400 食物只有 Fandom 寫。引擎當作城鎮中心旁的獵物：獵肉速率 0.825/秒、獵肉攜帶量（鄉騎 30）、吃得到狩獵科技，最多 8 人同時採，在羊之前採。' },
       { text: '鄉騎採集 +120%（農田只有 +90%），攜帶 +5', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Mounted_Villager', note: '倍率與攜帶量只出自 Fandom；論壇實測 1 名無科技鄉騎每分鐘採 81–85 黃金，與 ×2.2 吻合（引擎算出約每分鐘 80）。獵肉攜帶 25 + 5 = 30。17.0 修正後採金科技也套用到鄉騎，引擎的科技本來就對所有工人生效。' },
       { text: '鄉騎上限 20 名（每個朝貢國 +3），之後只能訓普通村民；鄉騎 65 食物 50 黃金、35 秒', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/units/jindynasty/mounted-villager-1.json', note: '朝貢國加上限沒建模。職業選手黃金不夠時會先訓普通村民再換回鄉騎，引擎只在滿 20 後才改訓。' },

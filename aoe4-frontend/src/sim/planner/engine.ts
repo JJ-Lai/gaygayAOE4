@@ -12,7 +12,7 @@
 
 import type { CatalogItem, Variation } from '../types.ts'
 import { costOf, isBuildable, isTownCenter, minAge, nameOf, otherOf, variationAt, type AgeOption, type CivData } from './civData.ts'
-import type { Gather } from './civSpec.ts'
+import { SPECIAL_ZH, type Gather } from './civSpec.ts'
 import { siteDistance } from './mapgen.ts'
 import {
   RES,
@@ -155,7 +155,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   const sheep: SiteSt = {
     s: { id: 'sheep', kind: 'sheep', label: '羊', amount: 0, units: 0, dist: 3, angle: 0, contested: false },
     res: 'food',
-    left: 200 * spec.ownedSheep + spec.startFood,
+    // 自有羊 + 首都城鎮中心旁生成的羊（蘭開斯特 4 隻）
+    left: 200 * (spec.ownedSheep + spec.tcSheep) + spec.startFood,
     camp: 2,
     workers: 0,
     chopped: 0,
@@ -1340,10 +1341,29 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     }
     // 蓋好就給的資源（蘇格蘭集結大廳 1 次集結）
     for (const [k, x] of Object.entries(spec.grants[b.item] ?? {})) addRes(k, x ?? 0)
+    // 新城鎮中心旁生成的羊（蘭開斯特 4 隻）：併進唯一的羊群
+    if (spec.tcSheep > 0 && (b.item === 'town-center' || b.item === 'capital-town-center')) {
+      sheep.left += 200 * spec.tcSheep
+      log('note', `${name(b.item)}旁生成 ${spec.tcSheep} 隻羊`)
+    }
     for (const a of spec.landmarkAura ?? []) if (a.building === b.item) auras[a.res] = (auras[a.res] ?? 1) * a.mul
     if (spec.cistern && b.item === spec.cistern.id) auras.all = (auras.all ?? 1) * spec.cistern.mul
     if (b.ageTo) reachAge(b.ageTo, b.item)
     if (b.role !== 'camp' && b.role !== 'house') log('done', `${name(b.item)}完成`, b.item)
+  }
+
+  // 開局組成寫成第一列，避免把「人口」（含斥候等非工人）看成工人數
+  if (rec) {
+    const workers = [...workerCount].filter(([, n]) => n > 0).map(([id, n]) => `${n} 名${name(id)}`).join('、')
+    const res = (RES as string[]).filter((r) => bank[r as Res] > 0).map((r) => `${RES_ZH[r as Res]} ${bank[r as Res]}`)
+    for (const [k, v] of Object.entries(other)) if (v > 0) res.push(`${SPECIAL_ZH[k] ?? k} ${v}`)
+    const extra = spec.extraPop > 0 ? `，另有 ${spec.extraPop} 名非工人單位（斥候等）佔人口` : ''
+    const food = [
+      spec.ownedSheep > 0 ? `${spec.ownedSheep} 隻羊` : '',
+      spec.tcSheep > 0 ? `城鎮中心旁另生成 ${spec.tcSheep} 隻羊` : '',
+      spec.startHunt > 0 ? `城鎮中心旁獵物 ${spec.startHunt} 食物` : '',
+    ].filter(Boolean).join('、')
+    log('start', `開局：${workers}${extra}；${res.join('、')}${food ? `；${food}` : ''}`)
   }
 
   // ---------- 主迴圈 ----------
