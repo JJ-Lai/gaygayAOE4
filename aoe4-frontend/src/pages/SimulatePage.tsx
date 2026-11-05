@@ -148,14 +148,14 @@ export function SimulatePage() {
                     </span>
                   ))}
                   <span className="planner-legend">
-                    <i style={{ background: '#fff', border: '1px dashed #9b1c1c' }} />
+                    <i style={{ background: 'transparent', border: '1px dashed #e0533f' }} />
                     爭奪區
                   </span>
                   <span className="planner-legend">
-                    <i style={{ background: '#1d39c4', borderRadius: 2 }} />你
+                    <i style={{ background: '#4f9bf0', borderRadius: 2 }} />你
                   </span>
                   <span className="planner-legend">
-                    <i style={{ background: '#b42318', borderRadius: 2 }} />對手
+                    <i style={{ background: '#e0533f', borderRadius: 2 }} />對手
                   </span>
                 </Flex>
               </Flex>
@@ -243,7 +243,7 @@ export function SimulatePage() {
               <div className="planner-kpi planner-kpi-muted">
                 <div className="planner-kpi-label">城鎮中心中斷村民</div>
                 <Tooltip title={result ? idleText(result) : null}>
-                  <div className="planner-kpi-value" style={{ color: result && result.tcIdle > 0 ? '#cf1322' : undefined }}>
+                  <div className="planner-kpi-value" style={{ color: result && result.tcIdle > 0 ? '#e0533f' : undefined }}>
                     {result ? `${result.tcIdle}s` : '—'}
                   </div>
                 </Tooltip>
@@ -319,7 +319,7 @@ function Waiting() {
 function SearchStatus({ status, result, onStop, onRestart }: { status: { evals: number; elapsed: number; running: boolean }; result?: PlanResult; onStop: () => void; onRestart: () => void }) {
   return (
     <Flex align="center" gap={12} className="planner-status">
-      {status.running ? <Progress type="circle" size={34} percent={99} status="active" showInfo={false} /> : <ThunderboltOutlined style={{ fontSize: 26, color: '#2f4f8f' }} />}
+      {status.running ? <Progress type="circle" size={34} percent={99} status="active" showInfo={false} /> : <ThunderboltOutlined style={{ fontSize: 26, color: '#d4aa5f' }} />}
       <div>
         <div style={{ fontWeight: 600 }}>{status.running ? '最佳化中…' : result ? '搜尋完成' : '等待中'}</div>
         <Typography.Text type="secondary" style={{ fontSize: 12 }}>

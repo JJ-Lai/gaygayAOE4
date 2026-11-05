@@ -51,7 +51,7 @@ export function BuildPreferencesPage() {
             onChange={(v) => setMinuteRange(v as [number, number])}
           />
           {topItems.length > 0 ? (
-            <ReactECharts
+            <ReactECharts theme="aoe4"
               style={{ height: 400 }}
               option={{
                 tooltip: { trigger: 'axis' },

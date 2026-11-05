@@ -12,7 +12,7 @@ export function MilitaryDiffChart({ rows, playerCiv }: MilitaryDiffChartProps) {
   const values = sorted.map((r) => r.avgMilitaryDiff ?? 0)
 
   return (
-    <ReactECharts
+    <ReactECharts theme="aoe4"
       style={{ height: 360 }}
       option={{
         title: { text: `${playerCiv} 對各文明平均軍事分差`, left: 'center', textStyle: { fontSize: 14 } },
@@ -25,7 +25,7 @@ export function MilitaryDiffChart({ rows, playerCiv }: MilitaryDiffChartProps) {
             type: 'bar',
             data: values.map((v) => ({
               value: v,
-              itemStyle: { color: v >= 0 ? '#52c41a' : '#ff4d4f' },
+              itemStyle: { color: v >= 0 ? '#6cc36b' : '#e0533f' },
             })),
             label: { show: true, position: 'right', formatter: '{c}' },
           },

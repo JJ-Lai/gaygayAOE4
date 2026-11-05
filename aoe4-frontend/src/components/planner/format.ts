@@ -23,7 +23,7 @@ export const SITE_ZH: Record<SiteKind, string> = {
   stone: '石頭',
 }
 
-export const RES_COLOR = { food: '#e0603a', wood: '#8a5a2b', gold: '#e3b13c', stone: '#8c8c8c' } as const
+export const RES_COLOR = { food: '#e0603a', wood: '#b07a42', gold: '#e3b13c', stone: '#9aa3ab' } as const
 export const RES_LABEL = { food: '食物', wood: '木材', gold: '黃金', stone: '石頭' } as const
 
 export const clock = (s: number | null | undefined) =>

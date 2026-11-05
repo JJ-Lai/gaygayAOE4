@@ -11,7 +11,7 @@ export function WinRateTrendChart({ trend }: WinRateTrendChartProps) {
   const values = reversed.map((t) => (t.result === 'win' ? 1 : t.result === 'loss' ? -1 : 0))
 
   return (
-    <ReactECharts
+    <ReactECharts theme="aoe4"
       style={{ height: 260 }}
       option={{
         tooltip: { trigger: 'axis' },
@@ -29,7 +29,7 @@ export function WinRateTrendChart({ trend }: WinRateTrendChartProps) {
             type: 'bar',
             data: values.map((v) => ({
               value: v,
-              itemStyle: { color: v > 0 ? '#52c41a' : v < 0 ? '#ff4d4f' : '#d9d9d9' },
+              itemStyle: { color: v > 0 ? '#6cc36b' : v < 0 ? '#e0533f' : '#5a6572' },
             })),
           },
         ],
