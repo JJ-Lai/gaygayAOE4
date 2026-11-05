@@ -1485,7 +1485,7 @@ window.AOE4_CONFIG = {
         const cost = c[2] + c[3] + c[4] + c[5] + c[6];
         if (t > 0 && ((code === 0 && c[1] !== 'b') || (code === 1 && c[1] === 'b'))) items.push({ t, cost, time: c[7] || 0, building: c[1] === 'b' });
         // 單位和科技都會佔用生產建築（例如城鎮中心研究獨輪車時不能生村民）
-        if (c[1] !== 'b' && code === 0 && t > 0 && c[8] && c[7] > 0) units.push({ t, prod: /town-center$/.test(c[8]) ? 'town-center' : c[8], time: c[7], name: c[0], cost });
+        if (c[1] !== 'b' && code === 0 && t > 0 && c[8] && c[7] > 0) units.push({ t, prod: /town-center$/.test(c[8]) ? 'town-center' : c[8], time: c[7], name: c[0], cost, unit: c[1] === 'u' });
         if (c[1] === 'b' && (code === 1 || code === 2)) blds.push({ t, base: c[0], d: code === 1 ? 1 : -1, cost });
       });
       a.bigBuilds = blds.filter((b) => b.d > 0 && b.t > 0 && b.cost >= 400);
@@ -1514,7 +1514,8 @@ window.AOE4_CONFIG = {
       });
 
       // 生產建築利用率：每 20 秒一格，生產中的秒數 ÷（建築數 × 20 秒）
-      const allProducers = new Set(MILITARY_PRODUCERS.concat(units.map((u) => u.prod)));
+      // 只看會訓練單位的建築；磨坊、伐木場這類只研究科技的經濟建築不算生產建築
+      const allProducers = new Set(MILITARY_PRODUCERS.concat(units.filter((u) => u.unit).map((u) => u.prod)));
       const countFn = (prod) => {
         const changes = blds.filter((b) => producerMatch(b.base, prod));
         return (t) => Math.max(0, changes.reduce((s, b) => (b.t <= t ? s + b.d : s), 0));
@@ -1564,6 +1565,17 @@ window.AOE4_CONFIG = {
         });
         return Math.min(q, cap);
       });
+      a.queueSource = 'flow';
+      // 有重播檔的生產指令時，改用每個項目實際的排隊時間（下指令 → 開始生產）
+      if (Array.isArray(p.orders) && p.orders.length) {
+        const rq = queueFromOrders(p.orders, events, cat);
+        if (rq.items.length) {
+          a.queueItems = rq.items;
+          a.queueMatched = rq.items.length / Math.max(1, rq.total);
+          a.queue = T.map((t) => rq.items.reduce((s, x) => (x.cmd <= t && t < x.start ? s + x.cost : s), 0));
+          a.queueSource = 'replay';
+        }
+      }
       const rank = (id) => (id === 'town-center' ? 0 : MILITARY_PRODUCERS.indexOf(id) >= 0 ? 1 : 2);
       a.producers.sort((p1, p2) => rank(p1.id) - rank(p2.id) || p2.jobs.length - p1.jobs.length);
     }
@@ -1624,6 +1636,39 @@ window.AOE4_CONFIG = {
     return a;
   }
 
+  // 重播指令 × 完成事件：每個完成的單位／科技，配對到它之前最晚的同種訓練／研究指令。
+  // 從最後完成的開始配，讓總等待時間最小（保守）；錢不夠或被取消的指令不會有完成事件，自然配不到。
+  // 合理性檢查：等待期間同一棟建築要有 70% 以上的時間在生產別的項目，否則丟掉這筆配對。
+  function queueFromOrders(orders, events, cat) {
+    const byBase = {};
+    orders.forEach(([t, id, ent]) => { const c = cat[id]; if (c) (byBase[c[0]] = byBase[c[0]] || []).push({ t, ent, used: false }); });
+    Object.values(byBase).forEach((list) => list.sort((x, y) => x.t - y.t));
+    const fins = events.filter((e) => e[2] === 0 && e[0] > 0 && cat[e[1]] && cat[e[1]][1] !== 'b').map((e) => ({ f: e[0], c: cat[e[1]] })).sort((x, y) => y.f - x.f);
+    let items = [];
+    fins.forEach(({ f, c }) => {
+      const list = byBase[c[0]];
+      if (!list) return;
+      const T = c[7] || 0;
+      for (let k = list.length - 1; k >= 0; k--) {
+        const o = list[k];
+        if (o.used || o.t > f - T * 0.6) continue;
+        o.used = true;
+        const start = f - T;
+        items.push({ base: c[0], prod: /town-center$/.test(c[8] || '') ? 'town-center' : c[8], f, start, cmd: o.t, wait: Math.max(0, start - o.t), cost: c[2] + c[3] + c[4] + c[5] + c[6], ent: o.ent });
+        break;
+      }
+    });
+    const byEnt = {};
+    items.forEach((x) => (byEnt[x.ent] = byEnt[x.ent] || []).push(x));
+    items = items.filter((x) => {
+      if (x.wait < 10) return true;
+      let cov = 0;
+      byEnt[x.ent].forEach((y) => { if (y !== x) cov += Math.max(0, Math.min(y.f, x.start) - Math.max(y.start, x.cmd)); });
+      return cov >= 0.7 * x.wait;
+    });
+    return { items, total: fins.length };
+  }
+
   // 把連續超過門檻的時間點合併成區段
   function spans(T, arr, min, ok) {
     const out = [];
@@ -1678,6 +1723,24 @@ window.AOE4_CONFIG = {
         pr.cells.forEach((c) => { if (c.x0 >= T[s.i0] - 20 && c.x1 <= T[s.i1] + 20) { cells++; if (isNum(c.util) && c.util >= 0.85) full++; cnt = Math.max(cnt, c.cnt); } });
         return { pr, share: cells ? full / cells : 0, cnt };
       }).filter((b) => b.share >= 0.6).sort((b1, b2) => b2.share - b1.share);
+      if (a.queueSource === 'replay') {
+        // 重播：直接列出哪棟建築排了哪些項目、最久等多久
+        const from = T[s.i0], to = T[s.i1];
+        const groups = new Map();
+        a.queueItems.filter((x) => x.wait >= 1 && x.cmd < to + 20 && x.start > from).forEach((x) => {
+          const key = x.prod || x.base;
+          const g = groups.get(key) || { prod: key, ents: new Set(), names: {}, maxWait: 0, cost: 0 };
+          g.ents.add(x.ent); g.names[x.base] = (g.names[x.base] || 0) + 1; g.maxWait = Math.max(g.maxWait, x.wait); g.cost += x.cost;
+          groups.set(key, g);
+        });
+        const list = [...groups.values()].sort((g1, g2) => g2.cost - g1.cost);
+        const text = list.map((g) => itemName(g.prod) + '（' + g.ents.size + ' 棟）：' + Object.keys(g.names).map((k) => itemName(k) + ' ×' + g.names[k]).join('、') + '，最久等了 ' + Math.round(g.maxWait) + ' 秒').join('；');
+        issues.push({ kind: 'queue', from, to, severity: area / 60,
+          title: '佇列中最多 ' + fmtNum(peak) + ' 資源還沒開工',
+          body: (text ? '在排隊的有：' + text + '。' : '') + '這些項目已經付了錢，卻要等前面做完才開始生產。可以多蓋一棟同類建築，或一次少排幾隻，把資源留給經濟。',
+          cost: '約 ' + fmtShort(area / 60) + ' 資源·分鐘', peakT: T[peakI] });
+        return;
+      }
       const who = busy.map((b) => itemName(b.pr.id) + (b.cnt ? '（' + b.cnt + ' 棟）' : '')).join('、');
       const bigBuild = a.bigBuilds.find((b) => b.t >= T[s.i0] && b.t <= T[s.i1] + 300);
       const buildNote = bigBuild ? '另外 ' + fmtTime(bigBuild.t) + ' 蓋好了' + itemName(bigBuild.base) + '（' + fmtNum(bigBuild.cost) + ' 資源），這段期間可能有一部分是它施工中的資源，不一定都是佇列。' : '';
@@ -1860,7 +1923,7 @@ window.AOE4_CONFIG = {
       { name: '平均囤積', note: '手上放了 ' + mins + ' 分鐘還沒用的資源', dir: -1, get: (a) => a.staleAvg, show: (a) => fmtNum(a.staleAvg),
         sub: (a) => (isNum(a.stalePeak) ? '最多 ' + fmtNum(a.stalePeak) + '（' + fmtTime(a.stalePeakT) + '）' : '') },
       { name: '平均佇列呆料', note: '已付款、還在佇列排隊的資源', dir: -1, get: (a) => (a.queue ? a.queueAvg : null), show: (a) => (a.queue ? fmtNum(a.queueAvg) : '—'),
-        sub: (a) => (a.queue ? '' : '沒有建造紀錄') },
+        sub: (a) => (!a.queue ? '沒有建造紀錄' : a.queueSource === 'replay' ? '由重播計算' : '由資源流量推估') },
       { name: '等價 TC 損失產能', note: '平均沒在採集的村民 × 訓練一個村民的 ' + VIL_TIME + ' 秒', dir: -1, get: (a) => a.idleAvg,
         show: (a) => (isNum(a.idleAvg) ? fmtTime(a.idleAvg * VIL_TIME) : '—'),
         sub: (a) => (isNum(a.idleAvg) ? '相當於少了 ' + fmtNum(a.idleAvg, 1) + ' 個村民（佔 ' + fmtPct(a.idleShare) + '）' : '') },
@@ -1984,6 +2047,7 @@ window.AOE4_CONFIG = {
       h('ul', null,
         h('li', null, '囤積：每個時間點手上的資源，扣掉之後 ' + mins + ' 分鐘內實際花掉的量（先存的先花），剩下的就是放了 ' + mins + ' 分鐘都沒用到的資源。之後 ' + mins + ' 分鐘內會花掉的存款，例如存錢升時代，不算囤積。'),
         h('li', null, '佇列呆料：遊戲在單位排進佇列時就扣錢。用「累積花費 − 已完成項目的成本 − 正在生產中的成本」算出付了錢卻還沒開工的資源。真正的佇列會先鼓起來再消掉，所以只算同時高於前後 5 分鐘最低點的部分，藉此去掉免費單位、文明特有花費等對不上成本表的固定誤差。建築的施工時間會隨村民數變動，所以完工前一段時間內（資料表施工時間的 2 倍再加 1 分鐘）鎖住的資源，會先當成施工中的建築。有單位在排隊代表建築一定在生產，所以只在有建築滿載時才計算，而且每棟滿載建築最多算 ' + QUEUE_DEPTH + ' 隻的成本，用來排除進貢、城牆等對不上成本表的花費。一直排滿超過 5 分鐘的佇列會被低估。'),
+        h('li', null, '有重播檔的場次（玩家開啟了分享對戰紀錄、而且重播還沒過期），佇列呆料改用重播裡的訓練與研究指令計算：每個完成的單位或科技，配對到它之前最晚的同種指令，下指令到開始生產之間的時間就是排隊時間，期間的成本算作呆料。錢不夠或被取消的指令沒有完成紀錄，不會被算進去；等待期間同一棟建築沒有在生產別的東西的配對會被丟掉。'),
         h('li', null, '生產建築：每 20 秒一格，看同類建築有幾秒在訓練單位（依單位完成時間往回推訓練時間）。新蓋的生產建築在 ' + mins + ' 分鐘內利用率低於 ' + fmtPct(IDLE_UTIL) + ' 會列為「建築閒置」。'),
         h('li', null, '城鎮中心生產時間：只算到村民數第一次達到整場高峰的 95% 為止。有建造紀錄時，用村民和城鎮中心科技的完成時間往回推訓練時間；沒有時，用村民數每 20 秒的增加推估（每 ' + VIL_TIME + ' 秒多 1 個村民算滿載），村民死亡會讓這個推估偏低。'),
         h('li', null, '等價 TC 損失產能：平均有幾個村民沒在採集，就等於少了幾個村民；乘上訓練一個村民的 ' + VIL_TIME + ' 秒，就是城鎮中心要多花多少時間才能補回這些產能。'),
