@@ -51,7 +51,26 @@ export interface Row {
   kind: PlanEvent['kind']
   text: string
   split: PlanEvent['split']
+  /** 動作前的庫存（村民的錢在排入時就付了，所以就是當下庫存） */
+  have?: PlanEvent['bank']
+  /** 這列動作花掉的資源（合併的列是總和） */
+  cost?: PlanEvent['bank']
+  /** cost 是先前排入時就付掉的 */
+  prepaid?: boolean
 }
+
+type Bundle4 = PlanEvent['bank']
+const RES4 = ['food', 'wood', 'gold', 'stone'] as const
+const addB = (a: Bundle4, b?: Bundle4): Bundle4 => (b ? { food: a.food + b.food, wood: a.wood + b.wood, gold: a.gold + b.gold, stone: a.stone + b.stone } : { ...a })
+/** 動作前的庫存：紀錄裡的庫存已扣掉這次花費，加回來（先付的不加） */
+const haveOf = (e: PlanEvent): Bundle4 | undefined => (!e.bank ? undefined : e.cost && !e.prepaid ? addB(e.bank, e.cost) : { ...e.bank })
+/** 幾筆紀錄的花費總和；都沒有花費就不給 */
+function costSum(list: PlanEvent[]): Bundle4 | undefined {
+  let sum: Bundle4 | undefined
+  for (const e of list) if (e.cost) sum = addB(sum ?? { food: 0, wood: 0, gold: 0, stone: 0 }, e.cost)
+  return sum && RES4.some((r) => sum![r] > 0) ? sum : undefined
+}
+const money = (list: PlanEvent[]) => ({ have: haveOf(list[0]), cost: costSum(list), ...(list.some((e) => e.prepaid) ? { prepaid: true } : {}) })
 
 /** 把連續的「第 n 名村民 → 木材」合併成「村民 7–9 → 木材」，連續訓練同一單位也合併。 */
 export function compress(events: PlanEvent[]): Row[] {
@@ -66,7 +85,7 @@ export function compress(events: PlanEvent[]): Row[] {
         const last = events[j].text.match(/^第 (\d+) 名/)?.[1] ?? m[1]
         // 合併多名時寫出各自的時間範圍，人口用最後一名出來後的值，免得看成同時出了好幾名
         const text = last === m[1] ? `第 ${m[1]} 名工人 → ${m[2]}` : `第 ${m[1]}–${last} 名工人 → ${m[2]}（${clock(e.t)}–${clock(events[j].t)} 陸續出）`
-        rows.push({ key: i, t: e.t, pop: events[j].pop, kind: 'villager', text, split: events[j].split })
+        rows.push({ key: i, t: e.t, pop: events[j].pop, kind: 'villager', text, split: events[j].split, ...money(events.slice(i, j + 1)) })
         i = j
         continue
       }
@@ -75,11 +94,11 @@ export function compress(events: PlanEvent[]): Row[] {
       let j = i
       while (j + 1 < events.length && events[j + 1].kind === 'train' && events[j + 1].text === e.text) j++
       const n = j - i + 1
-      rows.push({ key: i, t: e.t, pop: events[j].pop, kind: 'train', text: n > 1 ? `${e.text} ×${n}（${clock(e.t)}–${clock(events[j].t)}）` : e.text, split: events[j].split })
+      rows.push({ key: i, t: e.t, pop: events[j].pop, kind: 'train', text: n > 1 ? `${e.text} ×${n}（${clock(e.t)}–${clock(events[j].t)}）` : e.text, split: events[j].split, ...money(events.slice(i, j + 1)) })
       i = j
       continue
     }
-    rows.push({ key: i, t: e.t, pop: e.pop, kind: e.kind, text: e.text, split: e.split })
+    rows.push({ key: i, t: e.t, pop: e.pop, kind: e.kind, text: e.text, split: e.split, ...money([e]) })
   }
   return rows
 }

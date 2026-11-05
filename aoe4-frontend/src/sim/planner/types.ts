@@ -130,6 +130,12 @@ export interface PlanEvent {
   pop: number
   villagers: number
   split: Bundle
+  /** 這筆紀錄當下（已扣掉 cost 之後）的庫存 */
+  bank: Bundle
+  /** 這個動作花掉的資源（沒有花費就不給） */
+  cost?: Bundle
+  /** cost 是之前就付掉的（村民在排進城鎮中心時付款，出來時才記錄） */
+  prepaid?: boolean
 }
 
 export interface Sample {
