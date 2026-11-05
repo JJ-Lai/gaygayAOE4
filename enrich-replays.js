@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
 const { get } = require('./lib/catalog');
-const { parseRec, ENTITY_ID_BASE } = require('./lib/rec-parse');
+const { parseRec, ordersFor, replayPlayerFor } = require('./lib/rec-parse');
 const { readDashboard, writeDashboard } = require('./lib/dashboard-data');
 
 const ROOT = __dirname;
@@ -49,14 +49,6 @@ async function loadReplay(gameId, profileId, localFile) {
   return { buf, fetched: true };
 }
 
-// 重播裡的文明代號和 aoe4world 不同（malian／malians），所以先比名字，再比文明前綴
-function replayPlayerFor(rec, p, used) {
-  const free = rec.players.filter((x) => !used.has(x));
-  return free.find((x) => x.name === p.name)
-    || free.find((x) => p.civ && x.civ && (p.civ.startsWith(x.civ.split('_')[0]) || x.civ.startsWith(String(p.civ).split('_')[0])))
-    || null;
-}
-
 async function main() {
   const local = {};
   process.argv.forEach((a, i) => { if (a === '--file') { const [id, f] = String(process.argv[i + 1]).split('='); local[id] = f; } });
@@ -83,11 +75,7 @@ async function main() {
       const rp = replayPlayerFor(rec, p, used);
       if (!rp) continue;
       used.add(rp);
-      // 訓練／研究：[秒（到 0.125 秒）, pbgid, 建築序號]；取消：[秒, 0, 建築序號, 項目序號]
-      // 項目序號是每棟建築的訓練／研究指令依序編號，所以 pbgid 不明的指令也要留著（pbgid 記 0）
-      p.orders = rec.commands
-        .filter((c) => c.pid === rp.pid && c.entity && (c.type === 'train' || c.type === 'research' || (c.type === 'cancel' && c.cancelId)))
-        .map((c) => (c.type === 'cancel' ? [c.t, 0, c.entity - ENTITY_ID_BASE, c.cancelId] : [c.t, c.pbgid || 0, c.entity - ENTITY_ID_BASE]));
+      p.orders = ordersFor(rec, rp.pid);
       any = true;
     }
     if (any) { detail.replayBuild = rec.build; detail.ordersVersion = ORDERS_VERSION; stats.enriched++; }

@@ -2,10 +2,14 @@
   // Cloudflare Workers 專案 gaygayaoe4（監看 main）。dist 由 npm run build:site 產生：
   //   /          → 儀表板（dist/index.html）
   //   /simulate  → 戰術模擬（dist/simulate.html）
+  //   /proxy/*   → worker/index.js：轉接 AoE4 World 單場摘要（「看別人的戰績」用），其他網址都是靜態檔
   "name": "gaygayaoe4",
   "compatibility_date": "2026-11-04",
+  "main": "worker/index.js",
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "single-page-application"
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/proxy/*"]
   }
 }

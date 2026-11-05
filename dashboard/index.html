@@ -270,6 +270,37 @@ th[aria-sort="descending"] button::after { content: " ▼"; font-size: 9px; }
 ::-webkit-scrollbar-track { background: #0d141c; }
 ::-webkit-scrollbar-thumb { background: #2b3746; border: 2px solid #0d141c; border-radius: 6px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent-lo); }
+/* 切換玩家 */
+.btn-gold { background: linear-gradient(180deg, var(--accent-hi) 0%, var(--accent) 45%, var(--accent-lo) 100%); color: #1a1206; border-color: #b08a48; font-weight: 600; }
+.btn-gold:hover { color: #1a1206; filter: brightness(1.08); }
+.dlg { width: min(640px, calc(100vw - 24px)); max-height: calc(100vh - 48px); padding: 0; border: 1px solid var(--trim); border-top: 2px solid var(--accent); border-radius: var(--r); background: linear-gradient(180deg, #18222d 0%, var(--panel) 160px); color: var(--fg); box-shadow: 0 20px 60px rgba(0, 0, 0, .7); }
+.dlg::backdrop { background: rgba(4, 7, 10, .72); }
+.dlg-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 10px; border-bottom: 1px solid var(--trim); margin: 0; }
+.dlg-head h2 { font-family: var(--font-display); color: var(--accent-hi); font-size: 19px; letter-spacing: .04em; margin: 0; }
+.dlg-x { border: 0; background: none; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; padding: 2px 6px; }
+.dlg-x:hover { color: var(--accent-hi); }
+.dlg-sec { padding: 14px 18px; border-bottom: 1px solid var(--line); }
+.dlg-sec:last-child { border-bottom: 0; }
+.dlg-sec h3 { font-family: var(--font-display); font-size: 14.5px; color: var(--accent); letter-spacing: .03em; margin: 0 0 4px; }
+.dlg-sec p { margin: 0 0 10px; }
+.dlg-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.dlg-row input[type=search] { flex: 1 1 14rem; min-width: 0; padding: 7px 10px; border-radius: 3px; border: 1px solid var(--trim); background: #111922; }
+.dlg-row input[type=search]:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 2px var(--accent-soft); }
+.p-results { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow: auto; }
+.p-results:empty { display: none; }
+.p-item { display: grid; grid-template-columns: 32px 1fr auto; gap: 10px; align-items: center; width: 100%; text-align: left; padding: 7px 10px; border: 1px solid var(--line); border-radius: 3px; background: var(--panel-2); cursor: pointer; }
+.p-item:hover { border-color: var(--accent); }
+.p-item img, .p-item .p-ph { width: 32px; height: 32px; border-radius: 3px; background: #0d141c; object-fit: cover; }
+.p-item b { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.p-item small { color: var(--muted); font-size: 12px; }
+.p-item .p-id { color: var(--muted); font-family: var(--font-num); font-size: 12px; }
+.p-msg { color: var(--muted); font-size: 13px; padding: 4px 0; }
+.pbar { margin-top: 12px; }
+.pbar > div { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 9px 14px; border-radius: var(--r); border: 1px solid var(--trim); border-left: 3px solid var(--me); background: rgba(79, 155, 240, .08); font-size: 13px; }
+.pbar .grow { flex: 1 1 18rem; min-width: 0; }
+.pbar progress { width: 140px; accent-color: var(--accent); }
+.nodetail-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+
 @media (max-width: 560px) {
   h1 { font-size: 24px; }
   .src { align-items: flex-start; text-align: left; }
@@ -312,6 +343,7 @@ window.AOE4_CONFIG = {
     <div class="src">
       <div id="sourceInfo" class="muted small">尚未載入資料</div>
       <div class="src-actions">
+        <button type="button" id="playerBtn" class="btn btn-gold">看別人的戰績</button>
         <button type="button" id="reloadBtn" class="btn" hidden>重新抓取</button>
         <label class="btn" for="importFile">匯入資料<input type="file" id="importFile" class="sr-only" accept=".json,.js,application/json,text/javascript"></label>
       </div>
@@ -331,6 +363,7 @@ window.AOE4_CONFIG = {
 </header>
 
 <div id="banner" class="wrap banner" hidden></div>
+<div id="pBar" class="wrap pbar" hidden></div>
 
 <main class="wrap">
   <section id="view-overview" class="view" role="tabpanel" aria-labelledby="tab-overview">
@@ -456,7 +489,35 @@ window.AOE4_CONFIG = {
 
 <div id="dropzone" class="dropzone" hidden>放開以匯入對局資料</div>
 
+<dialog id="playerDlg" class="dlg" aria-labelledby="playerDlgTitle">
+  <form method="dialog" class="dlg-head"><h2 id="playerDlgTitle">看誰的戰績</h2><button class="dlg-x" value="cancel" aria-label="關閉">×</button></form>
+  <section class="dlg-sec">
+    <h3>用 AoE4 World 搜尋</h3>
+    <p class="muted small">輸入遊戲裡的名稱，或 AoE4 World 的玩家 ID（aoe4world.com/players/ 後面的數字）。只有線上配對與排位的場次；資料會存在這個瀏覽器，下次打開不用重抓。</p>
+    <form id="pSearchForm" class="dlg-row">
+      <label class="sr-only" for="pSearch">玩家名稱或 ID</label>
+      <input id="pSearch" type="search" placeholder="玩家名稱或 ID" autocomplete="off" required>
+      <button class="btn btn-gold" type="submit">搜尋</button>
+    </form>
+    <ul id="pResults" class="p-results"></ul>
+  </section>
+  <section class="dlg-sec" id="pRecentSec" hidden>
+    <h3>最近看過</h3>
+    <ul id="pRecent" class="p-results"></ul>
+  </section>
+  <section class="dlg-sec">
+    <h3>其他</h3>
+    <div class="dlg-row">
+      <button type="button" id="pDefault" class="btn">回到預設的戰績</button>
+      <label class="btn" for="importFile">匯入資料檔…</label>
+    </div>
+  </section>
+</dialog>
+
 <script src="data/aoe4-data.js"></script>
+<script src="js/rec-parse.js"></script>
+<script src="js/aoe4world.js"></script>
+<script src="js/player-switch.js"></script>
 <script>
 (function () {
   'use strict';
@@ -470,7 +531,7 @@ window.AOE4_CONFIG = {
     malians: '馬利', byzantines: '拜占庭', japanese: '日本', ayyubids: '阿尤布王朝', jeanne_darc: '聖女貞德',
     order_of_the_dragon: '龍之騎士團', zhu_xis_legacy: '朱熹的遺產', house_of_lancaster: '蘭開斯特家族',
     knights_templar: '聖殿騎士團', golden_horde: '金帳汗國', jin_dynasty: '金朝', macedonian_dynasty: '馬其頓王朝',
-    sengoku_daimyo: '戰國大名', tughlaq_dynasty: '圖格魯克王朝'
+    sengoku_daimyo: '戰國大名', tughlaq_dynasty: '圖格魯克王朝', vikings: '維京', scots: '蘇格蘭'
   };
   const MODE = {
     qm_1v1: '快速 1v1', qm_2v2: '快速 2v2', qm_3v3: '快速 3v3', qm_4v4: '快速 4v4', qm_ffa: '快速 混戰',
@@ -689,7 +750,7 @@ window.AOE4_CONFIG = {
   function resultPill(r) { return h('span', { class: 'pill ' + (r === 'win' ? 'w' : r === 'loss' ? 'l' : 'u') }, RESULT[r] || '—'); }
 
   // ================== 狀態 ==================
-  const state = { data: null, source: '', mode: 'all', opponent: 'all', view: 'overview', matchId: null, series: 'villagers', sortKey: 'date', sortDir: -1, search: '', ecoWin: 180, ecoPlayers: [], ecoFocus: null };
+  const state = { data: null, provider: null, source: '', mode: 'all', opponent: 'all', view: 'overview', matchId: null, series: 'villagers', sortKey: 'date', sortDir: -1, search: '', ecoWin: 180, ecoPlayers: [], ecoFocus: null };
   let factorCache = null;
 
   // ================== 載入資料 ==================
@@ -699,7 +760,9 @@ window.AOE4_CONFIG = {
     if (d.version !== 1) throw new Error('資料版本不是 1（目前是 ' + d.version + '）');
     return d;
   }
-  function load(d, source) {
+  // provider：資料來自線上來源時（切換玩家），提供下載單場詳細數據、重新抓取等功能；預設資料為 null
+  function load(d, source, provider) {
+    state.provider = provider || null;
     state.data = validate(d);
     markSpentField(state.data);
     state.data.matches.sort((a, b) => Date.parse(a.startedAt) - Date.parse(b.startedAt));
@@ -723,6 +786,11 @@ window.AOE4_CONFIG = {
     return res.json();
   }
   async function boot() {
+    // 網址帶 ?player=玩家ID 時顯示該玩家（切換玩家），不載入預設資料
+    if (window.AOE4Player && window.AOE4Player.fromUrl()) { window.AOE4Player.openFromUrl(); return; }
+    await bootDefault();
+  }
+  async function bootDefault() {
     if (CFG.dataUrl) {
       $('#reloadBtn').hidden = false;
       try { load(await fetchFromUrl(), 'GitHub：' + CFG.dataUrl); banner(''); }
@@ -776,7 +844,7 @@ window.AOE4_CONFIG = {
     r.readAsText(file, 'utf-8');
   }
   $('#importFile').addEventListener('change', (e) => { readFile(e.target.files[0]); e.target.value = ''; });
-  $('#reloadBtn').addEventListener('click', reloadFromUrl);
+  $('#reloadBtn').addEventListener('click', () => (state.provider && state.provider.reload ? state.provider.reload() : reloadFromUrl()));
   let dragDepth = 0;
   window.addEventListener('dragenter', (e) => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) { dragDepth++; $('#dropzone').hidden = false; } });
   window.addEventListener('dragleave', () => { dragDepth = Math.max(0, dragDepth - 1); if (!dragDepth) $('#dropzone').hidden = true; });
@@ -784,7 +852,15 @@ window.AOE4_CONFIG = {
   window.addEventListener('drop', (e) => { e.preventDefault(); dragDepth = 0; $('#dropzone').hidden = true; readFile(e.dataTransfer.files[0]); });
 
   // 給之後的 API 程式使用：window.AOE4Dashboard.load(資料物件)
-  window.AOE4Dashboard = { load: (d) => load(d, '程式推送'), reload: reloadFromUrl };
+  // 切換玩家（js/player-switch.js）用：load(資料, 來源說明, provider)、refresh() 在補上單場詳細數據後重畫
+  window.AOE4Dashboard = {
+    load: (d, source, provider) => load(d, source || '程式推送', provider),
+    reload: reloadFromUrl,
+    loadDefault: () => { state.provider = null; banner(''); return bootDefault(); },
+    refresh: () => { if (!state.data) return; markSpentField(state.data); factorCache = null; renderHeader(); renderView(); },
+    banner,
+    current: () => ({ data: state.data, provider: state.provider, view: state.view, matchId: state.matchId }),
+  };
 
   // ================== 頁首與篩選 ==================
   function renderHeader() {
@@ -2191,6 +2267,32 @@ window.AOE4_CONFIG = {
   }
 
   // ================== 單場分析 ==================
+  const NO_DETAIL_TEXT = '這場沒有逐時數據。AOE4 World 的自訂對局沒有這份摘要，本機也沒有留下可讀的重播統計。';
+  function renderNoDetail(m) {
+    const box = $('#mNoDetail');
+    const pv = state.provider;
+    const st = pv && pv.detailStatus ? pv.detailStatus(m) : null;
+    if (!st) { box.replaceChildren(NO_DETAIL_TEXT); return; }
+    const btn = h('button', { type: 'button', class: 'btn btn-gold' }, '下載這場的詳細數據');
+    const msg = h('span', { class: 'muted small' }, st.note || '');
+    btn.disabled = !st.canFetch;
+    btn.onclick = async () => {
+      btn.disabled = true;
+      btn.textContent = '下載中…';
+      msg.textContent = '向 AoE4 World 取摘要，再向官方戰績網站取重播檔（約幾秒）。';
+      try {
+        const got = await pv.fetchDetail(m);
+        if (state.matchId !== m.id) return;
+        if (got) { renderView(); return; }
+        renderNoDetail(m);
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = '再試一次';
+        msg.textContent = '下載失敗：' + (e && e.message ? e.message : e);
+      }
+    };
+    box.replaceChildren(h('div', null, st.text), h('div', { class: 'nodetail-actions' }, st.canFetch ? btn : null, msg));
+  }
   function renderMatch() {
     let ms = filtered();
     if (!ms.length) ms = state.data.matches;
@@ -2232,7 +2334,7 @@ window.AOE4_CONFIG = {
     const me = meOf(m);
     $('#mNoDetail').hidden = !!me;
     $('#mDetail').hidden = !me;
-    if (!me) return;
+    if (!me) { renderNoDetail(m); return; }
     const ps = orderPlayers(m.detail.players);
     const colors = colorMap(m.detail.players);
     const opps = oppsOf(m);

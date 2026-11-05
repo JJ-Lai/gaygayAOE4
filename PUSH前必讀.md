@@ -60,6 +60,8 @@ node sync-local-matches.js
 | `aoe4-frontend/src/components/AppLayout.tsx` | 被 iframe 嵌入時不顯示頂部導覽列 |
 | `aoe4-frontend/package.json`、`scripts/build-site.mjs` | 新增 `npm run build:site`：vite build 後把 React 頁改名成 `simulate.html`、把儀表板複製成 `index.html` |
 | `aoe4-frontend/wrangler.jsonc` | 部署設定；`name` 必須是 `gaygayaoe4` |
+| `aoe4-frontend/worker/index.js` | Worker：`/proxy/summary/*` 轉接 AoE4 World 單場摘要（看別人的戰績用），其他網址照常是靜態檔 |
+| `dashboard/js/*`、`dashboard/catalog.json` | 看別人的戰績（搜尋玩家、組資料、重播解析）與成本表；`build-site.mjs` 會一起複製到網站 |
 
 **沒有動**的檔案：`aoe4-frontend/src/sim/**`、`src/pages/SimulatePage.tsx`、`public/sim/**`、`src/App.tsx`，戰術模擬的開發可以照常進行。戰術模擬維持在 `/simulate`，資料檔仍用 `/sim/...` 絕對路徑，不用改。
 
