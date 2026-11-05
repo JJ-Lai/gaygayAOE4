@@ -1,6 +1,6 @@
 {
   "profileId": 10861747,
-  "extractedAt": "2026-11-05T14:04:36.156Z",
+  "extractedAt": "2026-11-05T14:25:02.033Z",
   "gameDir": "C:\\Users\\e1252\\OneDrive\\文件\\My Games\\Age of Empires IV",
   "counts": {
     "total": 261,
@@ -7749,42 +7749,15 @@
       ]
     },
     {
-      "id": "M259214808",
-      "gameId": 259214808,
+      "id": "M259236949",
+      "gameId": 259236949,
       "source": "network-local-only",
       "mode": "custom",
-      "startedAtLocal": "2026/11/4 下午 09:46",
-      "startedAt": "2026-11-04T13:46:35.000Z",
-      "cachedAt": "2026-11-04T14:23:42.000Z",
+      "startedAtLocal": "2026/11/4 下午 11:44",
+      "startedAt": "2026-11-04T15:43:57.000Z",
+      "cachedAt": "2026-11-05T13:53:48.659Z",
       "map": "dry_arabia",
-      "durationSec": 2227,
-      "civ": "jin_dynasty",
-      "result": "win",
-      "players": [
-        {
-          "name": "李侑玲",
-          "civ": "jin_dynasty",
-          "profileId": 10861747,
-          "result": "win"
-        },
-        {
-          "name": "Intolerant",
-          "civ": "rus",
-          "profileId": 10853087,
-          "result": "loss"
-        }
-      ]
-    },
-    {
-      "id": "M259223407",
-      "gameId": 259223407,
-      "source": "network-local-only",
-      "mode": "custom",
-      "startedAtLocal": "2026/11/4 下午 10:28",
-      "startedAt": "2026-11-04T14:28:19.000Z",
-      "cachedAt": "2026-11-04T14:48:18.000Z",
-      "map": "dry_arabia",
-      "durationSec": 1199,
+      "durationSec": 2405,
       "civ": "jin_dynasty",
       "result": "win",
       "players": [
@@ -7809,9 +7782,9 @@
       "mode": "custom",
       "startedAtLocal": "2026/11/4 下午 10:50",
       "startedAt": "2026-11-04T14:50:03.000Z",
-      "cachedAt": "2026-11-04T15:36:52.000Z",
+      "cachedAt": "2026-11-05T14:23:43.420Z",
       "map": "dry_arabia",
-      "durationSec": 2809,
+      "durationSec": 2781,
       "civ": "jin_dynasty",
       "result": "win",
       "players": [
@@ -7830,15 +7803,15 @@
       ]
     },
     {
-      "id": "M259236949",
-      "gameId": 259236949,
+      "id": "M259223407",
+      "gameId": 259223407,
       "source": "network-local-only",
       "mode": "custom",
-      "startedAtLocal": "2026/11/4 下午 11:44",
-      "startedAt": "2026-11-04T15:43:57.000Z",
-      "cachedAt": "2026-11-05T13:53:48.659Z",
+      "startedAtLocal": "2026/11/4 下午 10:28",
+      "startedAt": "2026-11-04T14:28:19.000Z",
+      "cachedAt": "2026-11-05T14:23:49.821Z",
       "map": "dry_arabia",
-      "durationSec": 2405,
+      "durationSec": 1172,
       "civ": "jin_dynasty",
       "result": "win",
       "players": [
@@ -7853,6 +7826,33 @@
           "civ": "chinese",
           "profileId": 10853087,
           "result": "loss"
+        }
+      ]
+    },
+    {
+      "id": "M259214808",
+      "gameId": 259214808,
+      "source": "network-local-only",
+      "mode": "custom",
+      "startedAtLocal": "2026/11/4 下午 09:46",
+      "startedAt": "2026-11-04T13:46:35.000Z",
+      "cachedAt": "2026-11-05T14:23:55.607Z",
+      "map": "dry_arabia",
+      "durationSec": 2084,
+      "civ": "jin_dynasty",
+      "result": "win",
+      "players": [
+        {
+          "name": "Intolerant",
+          "civ": "rus",
+          "profileId": 10853087,
+          "result": "loss"
+        },
+        {
+          "name": "李侑玲",
+          "civ": "jin_dynasty",
+          "profileId": 10861747,
+          "result": "win"
         }
       ]
     }
