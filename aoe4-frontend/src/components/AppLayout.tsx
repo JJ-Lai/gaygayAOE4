@@ -24,6 +24,10 @@ import { useAppStore } from '../store/useAppStore'
 
 const { Header, Sider, Content } = Layout
 
+// 被儀表板（dashboard/index.html 的「戰術模擬」分頁）用 iframe 嵌入時，不顯示這裡的頂部導覽列：
+// 那些頁面需要後端 API，部署到 Cloudflare 的靜態網站上用不了。
+const embedded = typeof window !== 'undefined' && window.self !== window.top
+
 export function AppLayout({ showSidebar = false }: { showSidebar?: boolean }) {
   const navigate = useNavigate()
   const location = useLocation()
@@ -52,10 +56,11 @@ export function AppLayout({ showSidebar = false }: { showSidebar?: boolean }) {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Header style={{ display: 'flex', alignItems: 'center', gap: 24, background: '#001529' }}>
+      {!embedded && (
+      <Header style={{ display: 'flex', alignItems: 'center', gap: 24, background: 'linear-gradient(180deg, #16202b 0%, #0d141c 100%)', borderBottom: '1px solid #8a6a32', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.5)' }}>
         <Typography.Title
           level={4}
-          style={{ color: '#fff', margin: 0, whiteSpace: 'nowrap', cursor: 'pointer' }}
+          style={{ color: '#f0d08a', margin: 0, whiteSpace: 'nowrap', cursor: 'pointer' }}
           onClick={() => navigate('/')}
         >
           AOE4 Analytics
@@ -67,26 +72,27 @@ export function AppLayout({ showSidebar = false }: { showSidebar?: boolean }) {
           {numericProfileId && (
             <FavoriteToggle profileId={numericProfileId} playerName={player?.name} />
           )}
-          <Button type="text" style={{ color: '#fff' }} icon={<DashboardOutlined />} onClick={() => navigate('/ops')}>
+          <Button type="text" style={{ color: '#ece4d0' }} icon={<DashboardOutlined />} onClick={() => navigate('/ops')}>
             同步
           </Button>
-          <Button type="text" style={{ color: '#fff' }} icon={<SwapOutlined />} onClick={() => navigate('/compare')}>
+          <Button type="text" style={{ color: '#ece4d0' }} icon={<SwapOutlined />} onClick={() => navigate('/compare')}>
             比較
           </Button>
-          <Button type="text" style={{ color: '#fff' }} icon={<ExperimentOutlined />} onClick={() => navigate('/simulate')}>
+          <Button type="text" style={{ color: '#ece4d0' }} icon={<ExperimentOutlined />} onClick={() => navigate('/simulate')}>
             戰術模擬
           </Button>
-          <Button type="text" style={{ color: '#fff' }} icon={<QuestionCircleOutlined />} onClick={() => navigate('/help')}>
+          <Button type="text" style={{ color: '#ece4d0' }} icon={<QuestionCircleOutlined />} onClick={() => navigate('/help')}>
             說明
           </Button>
-          <Button type="text" style={{ color: '#fff' }} icon={<SettingOutlined />} onClick={() => navigate('/settings')}>
+          <Button type="text" style={{ color: '#ece4d0' }} icon={<SettingOutlined />} onClick={() => navigate('/settings')}>
             設定
           </Button>
         </Space>
       </Header>
+      )}
       <Layout>
         {showSidebar && profileId && (
-          <Sider width={200} theme="light" breakpoint="lg" collapsedWidth={0}>
+          <Sider width={200} breakpoint="lg" collapsedWidth={0}>
             <Menu
               mode="inline"
               selectedKeys={[selectedKey]}
@@ -96,7 +102,7 @@ export function AppLayout({ showSidebar = false }: { showSidebar?: boolean }) {
             />
           </Sider>
         )}
-        <Content style={{ padding: 24, background: '#f5f5f5' }}>
+        <Content style={{ padding: embedded ? 16 : 24 }}>
           <Outlet />
         </Content>
       </Layout>

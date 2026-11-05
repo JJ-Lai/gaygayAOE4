@@ -19,7 +19,7 @@ export function MatchupHeatmap({ matchups }: MatchupHeatmapProps) {
   })
 
   return (
-    <ReactECharts
+    <ReactECharts theme="aoe4"
       style={{ height: Math.max(320, playerCivs.length * 36 + 120) }}
       option={{
         tooltip: {
@@ -48,7 +48,7 @@ export function MatchupHeatmap({ matchups }: MatchupHeatmapProps) {
           orient: 'horizontal',
           left: 'center',
           bottom: 0,
-          inRange: { color: ['#ff4d4f', '#fadb14', '#52c41a'] },
+          inRange: { color: ['#e0533f', '#d4aa5f', '#6cc36b'] },
         },
         series: [
           {

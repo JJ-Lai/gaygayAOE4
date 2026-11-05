@@ -5,10 +5,10 @@ import { RES_COLOR, RES_LABEL, clock } from './format'
 function markLines(result: PlanResult) {
   const lines: { xAxis: number; name: string; color: string }[] = []
   for (const [a, t] of Object.entries(result.ageTimes)) {
-    if (Number(a) > 1) lines.push({ xAxis: t, name: ['', '', '封建', '城堡', '帝王'][Number(a)], color: '#2f4f8f' })
+    if (Number(a) > 1) lines.push({ xAxis: t, name: ['', '', '封建', '城堡', '帝王'][Number(a)], color: '#7fb2f0' })
   }
-  for (const g of result.goals) if (g.t != null) lines.push({ xAxis: g.t, name: `目標 ${g.goalIndex + 1}`, color: '#9b1c1c' })
-  if (result.armyAt != null && Number.isFinite(result.armyAt)) lines.push({ xAxis: result.armyAt, name: '出兵完成', color: '#d4380d' })
+  for (const g of result.goals) if (g.t != null) lines.push({ xAxis: g.t, name: `目標 ${g.goalIndex + 1}`, color: '#f0d08a' })
+  if (result.armyAt != null && Number.isFinite(result.armyAt)) lines.push({ xAxis: result.armyAt, name: '出兵完成', color: '#e0533f' })
   return {
     symbol: 'none',
     silent: true,
@@ -53,7 +53,7 @@ export function VillagerChart({ result }: { result: PlanResult }) {
       area('建造／走路', '#7b93c9', (x) => Math.max(0, x.villagers - x.split.food - x.split.wood - x.split.gold - x.split.stone)),
     ],
   }
-  return <ReactECharts option={option} style={{ height: 320 }} notMerge />
+  return <ReactECharts theme="aoe4" option={option} style={{ height: 320 }} notMerge />
 }
 
 export function BankChart({ result }: { result: PlanResult }) {
@@ -90,5 +90,5 @@ export function BankChart({ result }: { result: PlanResult }) {
       line('stone', true, true),
     ],
   }
-  return <ReactECharts option={option} style={{ height: 320 }} notMerge />
+  return <ReactECharts theme="aoe4" option={option} style={{ height: 320 }} notMerge />
 }

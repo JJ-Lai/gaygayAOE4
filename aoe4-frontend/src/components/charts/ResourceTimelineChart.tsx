@@ -2,12 +2,12 @@ import ReactECharts from 'echarts-for-react'
 import type { ResourceTimelinePoint } from '../../api/types'
 
 const COLORS: Record<string, string> = {
-  wood: '#8B5A2B',
+  wood: '#b07a42',
   gold: '#D4AF37',
-  food: '#52c41a',
+  food: '#e0603a',
   stone: '#8c8c8c',
   oliveoil: '#faad14',
-  total: '#1677ff',
+  total: '#4f9bf0',
 }
 
 interface ResourceTimelineChartProps {
@@ -35,7 +35,7 @@ export function ResourceTimelineChart({ points, selectedResources }: ResourceTim
   }))
 
   return (
-    <ReactECharts
+    <ReactECharts theme="aoe4"
       style={{ height: 420 }}
       option={{
         tooltip: { trigger: 'axis' },

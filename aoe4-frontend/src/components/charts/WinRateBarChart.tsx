@@ -18,7 +18,7 @@ export function WinRateBarChart({ items, maxItems = 15 }: WinRateBarChartProps) 
   const games = top.map((item) => item.games)
 
   return (
-    <ReactECharts
+    <ReactECharts theme="aoe4"
       style={{ height: 360 }}
       option={{
         tooltip: {
@@ -49,7 +49,7 @@ export function WinRateBarChart({ items, maxItems = 15 }: WinRateBarChartProps) 
             data: winRates.map((rate, i) => ({
               value: rate,
               itemStyle: {
-                color: games[i] >= 5 ? '#1677ff' : '#91caff',
+                color: games[i] >= 5 ? '#d4aa5f' : '#7a6440',
               },
             })),
             label: {

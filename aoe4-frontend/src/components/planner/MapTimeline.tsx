@@ -37,9 +37,9 @@ export function MapTimeline({ map, result, nameOf }: { map: GameMap; result: Pla
   const s = sampleAt(result.samples, t)
   const marks = useMemo(() => {
     const m: Record<number, { label: string; style?: CSSProperties }> = {}
-    for (const [a, at] of Object.entries(result.ageTimes)) if (Number(a) > 1) m[at] = { label: AGE_ZH[Number(a)], style: { color: '#2f4f8f', fontSize: 11 } }
-    if (Number.isFinite(result.finish)) m[result.finish] = { label: '目標', style: { color: '#9b1c1c', fontSize: 11 } }
-    if (result.armyAt != null && Number.isFinite(result.armyAt)) m[result.armyAt] = { label: '出兵', style: { color: '#d4380d', fontSize: 11 } }
+    for (const [a, at] of Object.entries(result.ageTimes)) if (Number(a) > 1) m[at] = { label: AGE_ZH[Number(a)], style: { color: '#7fb2f0', fontSize: 11 } }
+    if (Number.isFinite(result.finish)) m[result.finish] = { label: '目標', style: { color: '#f0d08a', fontSize: 11 } }
+    if (result.armyAt != null && Number.isFinite(result.armyAt)) m[result.armyAt] = { label: '出兵', style: { color: '#e0533f', fontSize: 11 } }
     return m
   }, [result])
 

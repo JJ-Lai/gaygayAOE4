@@ -37,7 +37,7 @@ function exportChartPng(chart: EChartsType | undefined, filename: string) {
     message.warning('圖表尚未載入')
     return
   }
-  const dataUrl = chart.getDataURL({ type: 'png', pixelRatio: 2, backgroundColor: '#ffffff' })
+  const dataUrl = chart.getDataURL({ type: 'png', pixelRatio: 2, backgroundColor: '#121a23' })
   const link = document.createElement('a')
   link.download = filename
   link.href = dataUrl
@@ -371,7 +371,7 @@ export function GameDetailPage() {
                 實線：我方 · 虛線：{opponentLabel}
               </Typography.Paragraph>
             )}
-            <ReactECharts
+            <ReactECharts theme="aoe4"
               ref={resourceChartRef}
               style={{ height: 360 }}
               option={{
@@ -421,7 +421,7 @@ export function GameDetailPage() {
               </Button>
             }
           >
-            <ReactECharts
+            <ReactECharts theme="aoe4"
               ref={armyChartRef}
               style={{ height: 280 }}
               option={{

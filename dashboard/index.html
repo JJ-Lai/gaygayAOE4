@@ -4,98 +4,88 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AoE4 戰績儀表板</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Noto+Serif+TC:wght@600;700&display=swap">
 <style>
 :root {
-  /* 版面：頂部玩家列 → 分頁與模式篩選 → 自動換行的卡片網格；窄螢幕時單欄 */
-  --bg: #edf0f4;
-  --panel: #ffffff;
-  --panel-2: #f4f6f9;
-  --line: #d6dde6;
-  --fg: #17212c;
-  --muted: #5d6977;
-  --accent: #946414;
-  --accent-soft: rgba(148, 100, 20, .12);
-  --me: #1f6fd1;
-  --ally: #13866f;
-  --opp: #cc3a2e;
-  --opp2: #c0680f;
-  --opp3: #9442b0;
-  --opp4: #6f5a45;
-  --win: #1c8746;
-  --loss: #c5352c;
-  --neutral: #8b929b;
-  --grid: rgba(23, 33, 44, .08);
-  --axis: rgba(23, 33, 44, .35);
-  --shadow: 0 1px 2px rgba(16, 24, 40, .06);
+  /* 版面：頂部玩家列 → 分頁與模式篩選 → 自動換行的卡片網格；窄螢幕時單欄
+     配色仿 AoE4 遊戲介面：深藍黑底、金色描邊、羊皮紙色文字。
+     與 aoe4-frontend/src/theme.ts、index.css 同步。 */
+  --bg: #0a0f15;
+  --panel: #121a23;
+  --panel-2: #1a2430;
+  --line: #2b3746;
+  --trim: #5e4a2a;
+  --fg: #ece4d0;
+  --muted: #98a3ae;
+  --accent: #d4aa5f;
+  --accent-hi: #f0d08a;
+  --accent-lo: #8a6a32;
+  --accent-soft: rgba(212, 170, 95, .13);
+  --me: #4f9bf0;
+  --ally: #5fc8c0;
+  --opp: #e0533f;
+  --opp2: #e8923a;
+  --opp3: #b98ae0;
+  --opp4: #c9a47e;
+  --win: #6cc36b;
+  --loss: #e0533f;
+  --neutral: #6c7682;
+  --grid: rgba(236, 228, 208, .07);
+  --axis: rgba(236, 228, 208, .28);
+  --shadow: inset 0 1px 0 rgba(240, 208, 138, .08), 0 6px 18px rgba(0, 0, 0, .35);
   --font-ui: "Noto Sans TC", "Microsoft JhengHei UI", "Microsoft JhengHei", "PingFang TC", "Heiti TC", system-ui, sans-serif;
   --font-num: "Bahnschrift", "DIN Alternate", "Segoe UI", system-ui, sans-serif;
-  --font-display: "Bahnschrift SemiCondensed", "Bahnschrift", "Segoe UI", "Microsoft JhengHei UI", sans-serif;
-  --r: 10px;
+  --font-display: "Cinzel", "Noto Serif TC", "Source Han Serif TC", "PMingLiU", serif;
+  --r: 4px;
   --gap: 14px;
-  color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f141a;
-    --panel: #171e26;
-    --panel-2: #1d2630;
-    --line: #2a3542;
-    --fg: #e7e3d8;
-    --muted: #94a0ad;
-    --accent: #e2b25c;
-    --accent-soft: rgba(226, 178, 92, .14);
-    --me: #5cb1ff;
-    --ally: #5fd0b5;
-    --opp: #ff6d61;
-    --opp2: #ffaa5c;
-    --opp3: #d38cf0;
-    --opp4: #c9a47e;
-    --win: #5cc983;
-    --loss: #ff6b63;
-    --neutral: #7d8792;
-    --grid: rgba(231, 227, 216, .08);
-    --axis: rgba(231, 227, 216, .3);
-    --shadow: 0 1px 2px rgba(0, 0, 0, .3);
-    color-scheme: dark;
-  }
+  color-scheme: dark;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
-body { background: var(--bg); color: var(--fg); font: 14px/1.55 var(--font-ui); -webkit-font-smoothing: antialiased; }
+body { background: radial-gradient(1400px 520px at 50% -200px, rgba(212, 170, 95, .10), transparent 70%), linear-gradient(180deg, #0e151d 0%, var(--bg) 480px) no-repeat, var(--bg); color: var(--fg); font: 14px/1.55 var(--font-ui); -webkit-font-smoothing: antialiased; min-height: 100vh; }
 .wrap { max-width: 1360px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 [hidden] { display: none !important; }
 .muted { color: var(--muted); }
 .small { font-size: 12px; }
 .num { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
-a { color: var(--me); }
+a { color: var(--accent-hi); }
 button, select, input { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* 頂部 */
-.top { background: var(--panel); border-bottom: 1px solid var(--line); }
+.top { position: relative; background: radial-gradient(700px 200px at 18% 0%, rgba(212, 170, 95, .16), transparent 70%), linear-gradient(180deg, #1a2430 0%, #0f161f 100%); border-bottom: 1px solid var(--accent-lo); box-shadow: 0 2px 16px rgba(0, 0, 0, .55); }
+.top::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 3px; background: linear-gradient(90deg, transparent, rgba(212, 170, 95, .55) 20%, rgba(240, 208, 138, .8) 50%, rgba(212, 170, 95, .55) 80%, transparent); opacity: .5; pointer-events: none; }
 .top-in { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; padding-block: 18px 12px; }
-.eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--accent); font-weight: 600; }
-h1 { font-family: var(--font-display); font-weight: 600; font-size: 30px; line-height: 1.15; margin: 2px 0 8px; text-wrap: balance; }
+.eyebrow { font-family: var(--font-display); font-size: 12px; letter-spacing: .18em; color: var(--accent); font-weight: 600; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: 32px; line-height: 1.15; margin: 2px 0 8px; text-wrap: balance; color: var(--accent-hi); letter-spacing: .03em; text-shadow: 0 2px 12px rgba(0, 0, 0, .7); }
 .ratings { display: flex; flex-wrap: wrap; gap: 8px; }
-.rating-chip { display: inline-flex; align-items: baseline; gap: 6px; padding: 4px 10px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--line); font-size: 12px; color: var(--muted); }
-.rating-chip b { font-family: var(--font-num); font-size: 16px; color: var(--fg); font-weight: 600; }
+.rating-chip { display: inline-flex; align-items: baseline; gap: 6px; padding: 4px 10px; border-radius: 3px; background: rgba(8, 12, 17, .55); border: 1px solid var(--trim); font-size: 12px; color: var(--muted); }
+.rating-chip b { font-family: var(--font-num); font-size: 16px; color: var(--accent-hi); font-weight: 600; }
 .src { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; min-width: 0; }
 .src-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
-.btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); cursor: pointer; font-size: 13px; }
-.btn:hover { border-color: var(--accent); }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 3px; border: 1px solid var(--trim); background: linear-gradient(180deg, #222e3b 0%, #151d27 100%); box-shadow: inset 0 1px 0 rgba(240, 208, 138, .12), 0 1px 3px rgba(0, 0, 0, .4); cursor: pointer; font-size: 13px; color: var(--fg); }
+.btn:hover { border-color: var(--accent); color: var(--accent-hi); box-shadow: inset 0 1px 0 rgba(240, 208, 138, .2), 0 0 10px rgba(212, 170, 95, .2); }
 .btn:disabled { opacity: .45; cursor: default; }
 .tabs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 2px; }
-.tab { border: 0; background: none; padding: 10px 14px; cursor: pointer; font-size: 14px; color: var(--muted); border-bottom: 2px solid transparent; }
-.tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); font-weight: 600; }
-.tab:hover { color: var(--fg); }
+.tab { position: relative; border: 0; background: none; padding: 11px 16px; cursor: pointer; font-family: var(--font-display); font-size: 15px; letter-spacing: .06em; color: var(--muted); border-bottom: 2px solid transparent; }
+.tab[aria-selected="true"] { color: var(--accent-hi); border-bottom-color: var(--accent); font-weight: 700; background: linear-gradient(0deg, rgba(212, 170, 95, .16), transparent 80%); text-shadow: 0 0 12px rgba(240, 208, 138, .35); }
+.tab:hover { color: var(--accent-hi); }
 .mode-filter { margin-left: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding-block: 6px; font-size: 13px; color: var(--muted); }
 .mode-filter label { display: inline-flex; align-items: center; gap: 8px; }
 .mode-filter select { max-width: 16rem; }
-select { padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); max-width: 100%; }
+select { padding: 5px 8px; border-radius: 3px; border: 1px solid var(--trim); background: #111922; max-width: 100%; }
+select:hover { border-color: var(--accent); }
+
+/* 戰術模擬分頁：內嵌 /simulate（aoe4-frontend 的 React 頁），寬度放到滿版 */
+body.sim-mode main.wrap { max-width: none; padding-bottom: 0; }
+body.sim-mode .mode-filter { display: none; }
+.sim-frame { display: block; width: 100%; min-height: 560px; border: 1px solid var(--trim); border-radius: var(--r); background: var(--bg); }
 
 .banner { margin-top: 12px; }
-.banner > div { padding: 10px 14px; border-radius: var(--r); border: 1px solid var(--line); background: var(--accent-soft); }
+.banner > div { padding: 10px 14px; border-radius: var(--r); border: 1px solid var(--trim); border-left: 3px solid var(--accent); background: var(--accent-soft); }
 main { padding-block: 18px 48px; }
 .view { display: flex; flex-direction: column; gap: var(--gap); }
 .takeaway { font-size: 16px; margin: 0; max-width: 80ch; text-wrap: pretty; }
@@ -103,9 +93,9 @@ main { padding-block: 18px 48px; }
 
 /* 卡片 */
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--gap); }
-.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; box-shadow: var(--shadow); min-width: 0; }
-.card > header { margin-bottom: 12px; }
-.card h2 { font-size: 15px; font-weight: 600; margin: 0; }
+.card { background: linear-gradient(180deg, #161f29 0%, var(--panel) 140px); border: 1px solid var(--line); border-top-color: var(--trim); border-radius: var(--r); padding: 16px; box-shadow: var(--shadow); min-width: 0; }
+.card > header { margin: -16px -16px 14px; padding: 12px 16px 10px; border-bottom: 1px solid var(--trim); background: linear-gradient(180deg, rgba(212, 170, 95, .07), transparent); }
+.card h2 { font-family: var(--font-display); font-size: 16px; font-weight: 700; letter-spacing: .04em; color: var(--accent-hi); margin: 0; }
 .card header p { margin: 2px 0 0; color: var(--muted); font-size: 12.5px; }
 .span-all { grid-column: 1 / -1; }
 .empty { color: var(--muted); font-size: 13px; padding: 24px 0; text-align: center; margin: 0; }
@@ -113,7 +103,7 @@ main { padding-block: 18px 48px; }
 
 /* 數字卡 */
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr)); gap: var(--gap); }
-.tile { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; min-width: 0; }
+.tile { background: linear-gradient(180deg, #18212c 0%, var(--panel) 100%); border: 1px solid var(--line); border-top: 2px solid var(--accent); border-radius: var(--r); padding: 12px 14px; min-width: 0; box-shadow: var(--shadow); }
 .tile .k { font-size: 12px; color: var(--muted); }
 .tile .v { font-family: var(--font-num); font-size: 28px; font-weight: 500; line-height: 1.2; margin-top: 2px; font-variant-numeric: tabular-nums; }
 .tile .s { font-size: 12px; color: var(--muted); margin-top: 2px; }
@@ -131,7 +121,7 @@ main { padding-block: 18px 48px; }
 .chart .marker { stroke-width: 1; stroke-dasharray: 2 4; opacity: .7; }
 .chart .hdot { stroke: var(--panel); stroke-width: 2; }
 .chart .dot { stroke: var(--panel); stroke-width: 1.5; }
-.tip { position: absolute; z-index: 5; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.18); padding: 6px 10px; font-size: 12px; min-width: 140px; max-width: 420px; }
+.tip { position: absolute; z-index: 5; pointer-events: none; background: rgba(14, 20, 28, .97); border: 1px solid var(--trim); border-radius: 4px; box-shadow: 0 6px 20px rgba(0,0,0,.18); padding: 6px 10px; font-size: 12px; min-width: 140px; max-width: 420px; }
 .tip-title { color: var(--muted); margin-bottom: 2px; }
 .tip-row { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
 .tip-row span { flex: 1; overflow: hidden; text-overflow: ellipsis; }
@@ -153,7 +143,7 @@ main { padding-block: 18px 48px; }
 
 /* 最近戰績 */
 .form { display: flex; flex-wrap: wrap; gap: 4px; }
-.form button { width: 26px; height: 26px; border-radius: 5px; border: 0; cursor: pointer; font-size: 12px; font-weight: 600; color: #fff; }
+.form button { width: 26px; height: 26px; border-radius: 3px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18); border: 0; cursor: pointer; font-size: 12px; font-weight: 600; color: #fff; }
 .form .w { background: var(--win); }
 .form .l { background: var(--loss); }
 .form .u { background: var(--neutral); }
@@ -164,7 +154,7 @@ main { padding-block: 18px 48px; }
 .table-wrap.tall { max-height: 70vh; overflow: auto; }
 table { border-collapse: collapse; width: 100%; font-size: 13px; }
 th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
-th { font-weight: 600; color: var(--muted); font-size: 12px; background: var(--panel); position: sticky; top: 0; z-index: 1; }
+th { font-weight: 600; color: var(--accent); font-size: 12px; letter-spacing: .03em; background: #161f29; position: sticky; top: 0; z-index: 1; border-bottom-color: var(--trim); }
 td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--font-num); }
 tbody tr.click { cursor: pointer; }
 tbody tr.click:hover { background: var(--panel-2); }
@@ -184,8 +174,8 @@ th[aria-sort="descending"] button::after { content: " ▼"; font-size: 9px; }
 /* 單場分析 */
 .match-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .match-bar select { flex: 1 1 18rem; min-width: 0; }
-.match-head { display: flex; flex-wrap: wrap; gap: 8px 28px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; }
-.match-result { font-family: var(--font-display); font-size: 34px; font-weight: 600; line-height: 1; }
+.match-head { display: flex; flex-wrap: wrap; gap: 8px 28px; align-items: center; background: radial-gradient(500px 140px at 0% 0%, rgba(212, 170, 95, .14), transparent 70%), linear-gradient(180deg, #1a2430 0%, var(--panel) 100%); border: 1px solid var(--trim); border-top: 2px solid var(--accent); border-radius: var(--r); padding: 16px; box-shadow: var(--shadow); }
+.match-result { font-family: var(--font-display); font-size: 36px; font-weight: 700; line-height: 1; letter-spacing: .06em; text-shadow: 0 2px 14px rgba(0, 0, 0, .7); }
 .match-meta { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 13px; color: var(--muted); }
 .match-meta b { color: var(--fg); font-weight: 600; }
 .vs { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; width: 100%; }
@@ -194,8 +184,9 @@ th[aria-sort="descending"] button::after { content: " ▼"; font-size: 9px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-bottom: 10px; }
 .chip-group { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
 .chip-group > span { font-size: 11px; color: var(--muted); margin-right: 2px; }
-.chip { border: 1px solid var(--line); background: var(--panel-2); border-radius: 999px; padding: 3px 10px; font-size: 12.5px; cursor: pointer; }
-.chip[aria-pressed="true"] { background: var(--fg); color: var(--panel); border-color: var(--fg); }
+.chip { border: 1px solid var(--line); background: var(--panel-2); border-radius: 3px; padding: 3px 10px; font-size: 12.5px; cursor: pointer; }
+.chip:hover { border-color: var(--accent); }
+.chip[aria-pressed="true"] { background: linear-gradient(180deg, var(--accent-hi) 0%, var(--accent) 50%, var(--accent-lo) 100%); color: #1a1206; border-color: #b08a48; font-weight: 600; }
 .ages { display: flex; flex-direction: column; gap: 6px; margin-top: 14px; }
 .age-row { display: grid; grid-template-columns: minmax(5rem, 9rem) 1fr; gap: 10px; align-items: center; font-size: 12.5px; }
 .age-row .who { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -229,9 +220,9 @@ th[aria-sort="descending"] button::after { content: " ▼"; font-size: 9px; }
 .dumb-gap { text-align: right; font-family: var(--font-num); font-variant-numeric: tabular-nums; }
 .dumb-axis { display: grid; grid-template-columns: minmax(8rem, 13rem) 1fr minmax(5rem, auto); gap: 12px; font-size: 11px; color: var(--muted); }
 .dumb-axis div:nth-child(2) { display: flex; justify-content: space-between; }
-.factor-card h3 { font-size: 15px; margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.factor-card h3 { font-family: var(--font-display); color: var(--accent-hi); letter-spacing: .03em; font-size: 15px; margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .tag { font-size: 11px; font-weight: 500; padding: 1px 7px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--line); color: var(--muted); }
-.tag.strong { color: var(--accent); border-color: var(--accent); }
+.tag.strong { color: var(--accent-hi); border-color: var(--accent); background: var(--accent-soft); }
 .factor-card p { margin: 6px 0; font-size: 13px; max-width: 70ch; }
 .factor-card .stat-line { font-size: 13px; margin: 8px 0 4px; }
 .factor-card .stat-line b { font-family: var(--font-num); }
@@ -241,8 +232,75 @@ th[aria-sort="descending"] button::after { content: " ▼"; font-size: 9px; }
 .avg-table { font-size: 12.5px; margin-top: 6px; }
 .avg-table td, .avg-table th { padding: 4px 8px; }
 .list-tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-.list-tools input { flex: 1 1 16rem; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); min-width: 0; }
+.list-tools input { flex: 1 1 16rem; padding: 7px 10px; border-radius: 3px; border: 1px solid var(--trim); background: #111922; min-width: 0; }
+.list-tools input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 2px var(--accent-soft); }
 .dropzone { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--bg) 80%, transparent); border: 3px dashed var(--accent); font-size: 18px; }
+
+/* 資源利用 */
+.eco-compare { margin-bottom: 4px; }
+.eco-compare td { white-space: normal; }
+.eco-compare td.n { white-space: nowrap; font-size: 15px; }
+.eco-compare td small { display: block; color: var(--muted); font-size: 11.5px; font-family: var(--font-ui); }
+.eco-compare th.who { text-align: right; }
+.eco-who { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; margin: 12px 0 2px; }
+.itag.idlev { background: var(--me); }
+.chart .lane-label { fill: var(--fg); font-size: 11.5px; }
+.chart .band { fill: var(--accent-soft); }
+.chart .shade { fill: var(--panel-2); opacity: .7; }
+.chart .shade-label { fill: var(--muted); font-size: 11px; }
+.sw.box { height: 10px; }
+.sub { font-family: var(--font-display); font-size: 14px; font-weight: 700; letter-spacing: .03em; color: var(--accent); margin: 18px 0 8px; }
+.issues { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.issue { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 12px; align-items: start; padding: 10px 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel-2); cursor: pointer; text-align: left; width: 100%; font-size: 13px; }
+.issue:hover, .issue[aria-pressed="true"] { border-color: var(--accent); }
+.issue .when { font-family: var(--font-num); font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+.issue .what { min-width: 0; }
+.issue .what b { font-weight: 600; }
+.issue .what p { margin: 2px 0 0; color: var(--muted); font-size: 12.5px; text-wrap: pretty; }
+.issue .cost { font-family: var(--font-num); font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12px; white-space: nowrap; text-align: right; }
+.itag { display: inline-block; font-size: 11px; font-weight: 600; padding: 0 7px; border-radius: 999px; margin-right: 6px; color: #fff; vertical-align: 1px; }
+.itag.hoard { background: var(--loss); }
+.itag.queue { background: var(--opp2); }
+.itag.idle { background: var(--opp3); }
+.method { font-size: 12.5px; color: var(--muted); margin-top: 14px; }
+.method summary { cursor: pointer; }
+.method ul { margin: 6px 0 0; padding-left: 18px; }
+.method li { margin-bottom: 4px; max-width: 90ch; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #0d141c; }
+::-webkit-scrollbar-thumb { background: #2b3746; border: 2px solid #0d141c; border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-lo); }
+/* 切換玩家 */
+.btn-gold { background: linear-gradient(180deg, var(--accent-hi) 0%, var(--accent) 45%, var(--accent-lo) 100%); color: #1a1206; border-color: #b08a48; font-weight: 600; }
+.btn-gold:hover { color: #1a1206; filter: brightness(1.08); }
+.dlg { width: min(640px, calc(100vw - 24px)); max-height: calc(100vh - 48px); padding: 0; border: 1px solid var(--trim); border-top: 2px solid var(--accent); border-radius: var(--r); background: linear-gradient(180deg, #18222d 0%, var(--panel) 160px); color: var(--fg); box-shadow: 0 20px 60px rgba(0, 0, 0, .7); }
+.dlg::backdrop { background: rgba(4, 7, 10, .72); }
+.dlg-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 10px; border-bottom: 1px solid var(--trim); margin: 0; }
+.dlg-head h2 { font-family: var(--font-display); color: var(--accent-hi); font-size: 19px; letter-spacing: .04em; margin: 0; }
+.dlg-x { border: 0; background: none; color: var(--muted); font-size: 22px; line-height: 1; cursor: pointer; padding: 2px 6px; }
+.dlg-x:hover { color: var(--accent-hi); }
+.dlg-sec { padding: 14px 18px; border-bottom: 1px solid var(--line); }
+.dlg-sec:last-child { border-bottom: 0; }
+.dlg-sec h3 { font-family: var(--font-display); font-size: 14.5px; color: var(--accent); letter-spacing: .03em; margin: 0 0 4px; }
+.dlg-sec p { margin: 0 0 10px; }
+.dlg-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.dlg-row input[type=search] { flex: 1 1 14rem; min-width: 0; padding: 7px 10px; border-radius: 3px; border: 1px solid var(--trim); background: #111922; }
+.dlg-row input[type=search]:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 2px var(--accent-soft); }
+.p-results { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow: auto; }
+.p-results:empty { display: none; }
+.p-item { display: grid; grid-template-columns: 32px 1fr auto; gap: 10px; align-items: center; width: 100%; text-align: left; padding: 7px 10px; border: 1px solid var(--line); border-radius: 3px; background: var(--panel-2); cursor: pointer; }
+.p-item:hover { border-color: var(--accent); }
+.p-item img, .p-item .p-ph { width: 32px; height: 32px; border-radius: 3px; background: #0d141c; object-fit: cover; }
+.p-item b { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.p-item small { color: var(--muted); font-size: 12px; }
+.p-item .p-id { color: var(--muted); font-family: var(--font-num); font-size: 12px; }
+.p-msg { color: var(--muted); font-size: 13px; padding: 4px 0; }
+.pbar { margin-top: 12px; }
+.pbar > div { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 9px 14px; border-radius: var(--r); border: 1px solid var(--trim); border-left: 3px solid var(--me); background: rgba(79, 155, 240, .08); font-size: 13px; }
+.pbar .grow { flex: 1 1 18rem; min-width: 0; }
+.pbar progress { width: 140px; accent-color: var(--accent); }
+.nodetail-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+
 @media (max-width: 560px) {
   h1 { font-size: 24px; }
   .src { align-items: flex-start; text-align: left; }
@@ -285,6 +343,7 @@ window.AOE4_CONFIG = {
     <div class="src">
       <div id="sourceInfo" class="muted small">尚未載入資料</div>
       <div class="src-actions">
+        <button type="button" id="playerBtn" class="btn btn-gold">看別人的戰績</button>
         <button type="button" id="reloadBtn" class="btn" hidden>重新抓取</button>
         <label class="btn" for="importFile">匯入資料<input type="file" id="importFile" class="sr-only" accept=".json,.js,application/json,text/javascript"></label>
       </div>
@@ -295,6 +354,7 @@ window.AOE4_CONFIG = {
     <button type="button" class="tab" role="tab" data-view="match" id="tab-match">單場分析</button>
     <button type="button" class="tab" role="tab" data-view="factors" id="tab-factors">勝負關鍵</button>
     <button type="button" class="tab" role="tab" data-view="list" id="tab-list">對局列表</button>
+    <button type="button" class="tab" role="tab" data-view="sim" id="tab-sim">戰術模擬</button>
     <div class="mode-filter">
       <label for="modeSel">模式<select id="modeSel"></select></label>
       <label for="oppSel">對手<select id="oppSel"></select></label>
@@ -303,6 +363,7 @@ window.AOE4_CONFIG = {
 </header>
 
 <div id="banner" class="wrap banner" hidden></div>
+<div id="pBar" class="wrap pbar" hidden></div>
 
 <main class="wrap">
   <section id="view-overview" class="view" role="tabpanel" aria-labelledby="tab-overview">
@@ -353,6 +414,24 @@ window.AOE4_CONFIG = {
         <div class="legend" id="mLegend"></div>
         <div class="ages" id="mAges"></div>
       </article>
+      <article class="card" id="mEcoCard">
+        <header>
+          <h2>資源利用</h2>
+          <p id="mEcoNote">每筆資源都應該在幾分鐘內變成村民、軍隊、建築或科技。這裡找出沒有及時用掉的資源：倉庫裡的囤積、付了錢還在佇列中排隊的單位，以及蓋好卻沒在生產的建築。</p>
+        </header>
+        <div id="mEcoChips" class="chips"></div>
+        <div class="table-wrap"><table id="mEcoCompare" class="eco-compare"></table></div>
+        <h3 class="sub">資源：庫存、囤積與佇列</h3>
+        <div id="mEcoCharts"></div>
+        <div class="legend" id="mEcoLegend"></div>
+        <h3 class="sub">沒在採集的村民（估計）</h3>
+        <p class="muted small" id="mEcoIdleNote"></p>
+        <div class="chart" id="mEcoIdle"></div>
+        <div class="legend" id="mEcoIdleLegend"></div>
+        <h3 class="sub">需要注意的地方</h3>
+        <ol id="mEcoIssues" class="issues"></ol>
+        <details class="method" id="mEcoMethod"></details>
+      </article>
       <article class="card" id="mArmyCard" hidden>
         <header>
           <h2>軍事單位與克制</h2>
@@ -401,11 +480,55 @@ window.AOE4_CONFIG = {
     </div>
     <div class="card"><div class="table-wrap tall"><table id="lTable"></table></div></div>
   </section>
+
+  <section id="view-sim" class="view" role="tabpanel" aria-labelledby="tab-sim" hidden>
+    <p id="simNote" class="muted small" hidden>戰術模擬需要透過網站開啟（直接點開 HTML 檔時無法使用）：在 aoe4-frontend 執行 npm run dev，再開 http://localhost:5173/ 。</p>
+    <iframe id="simFrame" class="sim-frame" title="戰術模擬"></iframe>
+  </section>
 </main>
 
 <div id="dropzone" class="dropzone" hidden>放開以匯入對局資料</div>
 
+<dialog id="playerDlg" class="dlg" aria-labelledby="playerDlgTitle">
+  <form method="dialog" class="dlg-head"><h2 id="playerDlgTitle">看誰的戰績</h2><button class="dlg-x" value="cancel" aria-label="關閉">×</button></form>
+  <section class="dlg-sec">
+    <h3>用 AoE4 World 搜尋</h3>
+    <p class="muted small">輸入遊戲裡的名稱，或 AoE4 World 的玩家 ID（aoe4world.com/players/ 後面的數字）。只有線上配對與排位的場次；資料會存在這個瀏覽器，下次打開不用重抓。</p>
+    <form id="pSearchForm" class="dlg-row">
+      <label class="sr-only" for="pSearch">玩家名稱或 ID</label>
+      <input id="pSearch" type="search" placeholder="玩家名稱或 ID" autocomplete="off" required>
+      <button class="btn btn-gold" type="submit">搜尋</button>
+    </form>
+    <ul id="pResults" class="p-results"></ul>
+  </section>
+  <section class="dlg-sec">
+    <h3>讀取這台電腦的 AoE4 對局</h3>
+    <p class="muted small">選擇 <b>文件 → My Games → Age of Empires IV</b> 資料夾（也可以選上層的「文件」）。自訂、對電腦和在這台電腦打的線上對局都讀得到，含逐時數據；遊戲只保留最近一段時間的檔案。檔案只在你的瀏覽器裡解析，不會上傳。</p>
+    <div class="dlg-row">
+      <button type="button" id="pLocalPick" class="btn btn-gold">選擇 AoE4 資料夾…</button>
+      <button type="button" id="pLocalAgain" class="btn" hidden>重新讀取上次的資料夾</button>
+      <input type="file" id="pLocalInput" class="sr-only" webkitdirectory multiple tabindex="-1" aria-hidden="true">
+    </div>
+    <p id="pLocalMsg" class="p-msg" hidden></p>
+  </section>
+  <section class="dlg-sec" id="pRecentSec" hidden>
+    <h3>最近看過</h3>
+    <ul id="pRecent" class="p-results"></ul>
+  </section>
+  <section class="dlg-sec">
+    <h3>其他</h3>
+    <div class="dlg-row">
+      <button type="button" id="pDefault" class="btn">回到預設的戰績</button>
+      <label class="btn" for="importFile">匯入資料檔…</label>
+    </div>
+  </section>
+</dialog>
+
 <script src="data/aoe4-data.js"></script>
+<script src="js/rec-parse.js"></script>
+<script src="js/aoe4world.js"></script>
+<script src="js/local-stats.js"></script>
+<script src="js/player-switch.js"></script>
 <script>
 (function () {
   'use strict';
@@ -419,7 +542,7 @@ window.AOE4_CONFIG = {
     malians: '馬利', byzantines: '拜占庭', japanese: '日本', ayyubids: '阿尤布王朝', jeanne_darc: '聖女貞德',
     order_of_the_dragon: '龍之騎士團', zhu_xis_legacy: '朱熹的遺產', house_of_lancaster: '蘭開斯特家族',
     knights_templar: '聖殿騎士團', golden_horde: '金帳汗國', jin_dynasty: '金朝', macedonian_dynasty: '馬其頓王朝',
-    sengoku_daimyo: '戰國大名', tughlaq_dynasty: '圖格魯克王朝'
+    sengoku_daimyo: '戰國大名', tughlaq_dynasty: '圖格魯克王朝', vikings: '維京', scots: '蘇格蘭'
   };
   const MODE = {
     qm_1v1: '快速 1v1', qm_2v2: '快速 2v2', qm_3v3: '快速 3v3', qm_4v4: '快速 4v4', qm_ffa: '快速 混戰',
@@ -444,7 +567,7 @@ window.AOE4_CONFIG = {
       def: '第 15 分鐘時還活著的村民數量。' },
     { id: 'rate10', name: '10 分鐘採集速率', cat: '經濟', dir: 'higher', unit: '/分', get: (p) => tlSumAt(p, RATE, 600),
       def: '第 10 分鐘時每分鐘採集的資源總量（食物＋木材＋黃金＋石頭＋橄欖油）。' },
-    { id: 'gath15', name: '15 分鐘累積採集', cat: '經濟', dir: 'higher', unit: '', get: (p) => tlSumAt(p, GATH, 900),
+    { id: 'gath15', name: '15 分鐘累積採集', cat: '經濟', dir: 'higher', unit: '', get: (p) => gatheredAt(p, 900),
       def: '開局到第 15 分鐘總共採集的資源量。' },
     { id: 'feudal', name: '進入封建時代', cat: '科技', dir: 'earlier', unit: '', fmt: fmtTime, get: (p) => p.ages && p.ages.feudal,
       def: '升上第二時代（封建）的時間，越早越好；沒升上視為落後。' },
@@ -456,6 +579,18 @@ window.AOE4_CONFIG = {
       def: '遊戲內建軍事分在第 15 分鐘的數值，大致反映軍隊規模與戰果。' },
     { id: 'float', name: '前 15 分鐘囤積資源', cat: '經濟', dir: 'lower', unit: '', get: (p) => tlMeanSum(p, STOCK, 0, 900, 300),
       def: '前 15 分鐘手上未花費資源的平均值，越低代表資源越快轉成村民、軍隊或科技。' },
+    { id: 'stale15', name: '前 15 分鐘囤積（3 分鐘沒花掉）', cat: '經濟', dir: 'lower', unit: '',
+      get: (p) => { const a = ecoAnalysis(p, 180); return a ? a.stale15 : null; },
+      def: '前 15 分鐘每個時間點手上的資源，有多少在之後 3 分鐘內仍然沒花掉（取平均）。只算真的閒置的部分，馬上要用掉的存款不算。' },
+    { id: 'queue15', name: '前 15 分鐘佇列呆料', cat: '經濟', dir: 'lower', unit: '',
+      get: (p) => { const a = ecoAnalysis(p, 180); return a && a.queue ? a.queue15 : null; },
+      def: '前 15 分鐘平均有多少資源已經付款、但單位還在佇列裡排隊還沒開始生產。有重播檔的場次逐棟模擬，其他場次由資源流量推估。需要建造紀錄，沒有的場次不列入。' },
+    { id: 'queuePer15', name: '前 15 分鐘每棟建築佇列呆料', cat: '經濟', dir: 'lower', unit: '',
+      get: (p) => { const a = ecoAnalysis(p, 180); return a && a.queue ? a.queuePer15 : null; },
+      def: '前 15 分鐘的佇列呆料再除以正在排隊的建築數：建築越多、同時排隊的總量本來就越多，這個值看的是每棟排得多深。有重播檔的場次逐棟模擬，其他場次以滿載的建築數推估。需要建造紀錄，沒有的場次不列入。' },
+    { id: 'idle15', name: '前 15 分鐘村民沒在採集', cat: '經濟', dir: 'lower', unit: '', fmt: (v) => fmtPct(v),
+      get: (p) => { const a = ecoAnalysis(p, 180); return a ? a.idleShare15 : null; },
+      def: '第 2～15 分鐘，村民中沒在採集的比例（估計）：用總採集速率除以各時代的基準效率，換算成有在採集的村民數。包含閒置、走路、蓋建築和逃跑的村民。' },
     { id: 'kd', name: '擊殺／陣亡比', cat: '軍事', dir: 'higher', unit: '', fmt: (v) => fmtNum(v, 2),
       get: (p) => (p.stats && p.stats.kills != null ? p.stats.kills / Math.max(1, p.stats.deaths || 0) : null),
       def: '整場擊殺敵方單位數 ÷ 自己陣亡單位數，反映交戰的效率。' },
@@ -474,7 +609,7 @@ window.AOE4_CONFIG = {
     { group: '經濟', id: 'goldRate', name: '黃金', unit: '每分鐘', get: (tl) => tl.goldRate },
     { group: '經濟', id: 'stoneRate', name: '石頭', unit: '每分鐘', get: (tl) => tl.stoneRate },
     { group: '經濟', id: 'oliveoilRate', name: '橄欖油', unit: '每分鐘', get: (tl) => tl.oliveoilRate, onlyIf: (ps) => ps.some((p) => (p.timeline.oliveoilRate || []).some((v) => v > 0)) },
-    { group: '經濟', id: 'gathered', name: '累積採集', get: (tl) => sumArr(tl, GATH) },
+    { group: '經濟', id: 'gathered', name: '累積採集', get: (tl, p) => gatheredTotal(p) },
     { group: '經濟', id: 'float', name: '囤積資源', get: (tl) => sumArr(tl, STOCK) },
     { group: '軍事', id: 'army', name: '軍隊單位數（估計）', get: (tl) => tl.army },
     { group: '軍事', id: 'military', name: '軍事分', get: (tl) => tl.military },
@@ -546,7 +681,17 @@ window.AOE4_CONFIG = {
   }
   const isNum = (v) => typeof v === 'number' && isFinite(v);
   const mean = (arr) => { const a = arr.filter(isNum); return a.length ? a.reduce((s, v) => s + v, 0) / a.length : null; };
-  const civName = (c) => CIV[c] || (c ? String(c).replace(/_/g, ' ').replace(/\b\w/g, (x) => x.toUpperCase()) : '—');
+  // 本機統計檔、重播用的是遊戲內部代號（hre、malian、mongol_ha_gol…），對照到 aoe4world 的代號
+  const CIV_ALIAS = {
+    hre: 'holy_roman_empire', malian: 'malians', ottoman: 'ottomans', byzantine: 'byzantines', mongol: 'mongols',
+    sultanate: 'delhi_sultanate', abbasid: 'abbasid_dynasty', mongol_ha_gol: 'golden_horde', sultanate_ha_tug: 'tughlaq_dynasty',
+    byzantine_ha_mac: 'macedonian_dynasty', japanese_ha_sen: 'sengoku_daimyo', jin: 'jin_dynasty', viking: 'vikings', scot: 'scots'
+  };
+  function normalizeCivs(d) {
+    const fix = (o) => { if (o && CIV_ALIAS[o.civ]) o.civ = CIV_ALIAS[o.civ]; };
+    (d.matches || []).forEach((m) => { fix(m); (m.players || []).forEach(fix); ((m.detail && m.detail.players) || []).forEach(fix); });
+  }
+  const civName = (c) => CIV[c] || CIV[CIV_ALIAS[c]] || (c ? String(c).replace(/_/g, ' ').replace(/\b\w/g, (x) => x.toUpperCase()) : '—');
   const modeName = (m) => MODE[m] || m || '—';
   const mapName = (name) => name || '—';
   const modeGroup = (m) => {
@@ -626,7 +771,7 @@ window.AOE4_CONFIG = {
   function resultPill(r) { return h('span', { class: 'pill ' + (r === 'win' ? 'w' : r === 'loss' ? 'l' : 'u') }, RESULT[r] || '—'); }
 
   // ================== 狀態 ==================
-  const state = { data: null, source: '', mode: 'all', opponent: 'all', view: 'overview', matchId: null, series: 'villagers', sortKey: 'date', sortDir: -1, search: '' };
+  const state = { data: null, provider: null, source: '', mode: 'all', opponent: 'all', view: 'overview', matchId: null, series: 'villagers', sortKey: 'date', sortDir: -1, search: '', ecoWin: 180, ecoPlayers: [], ecoFocus: null };
   let factorCache = null;
 
   // ================== 載入資料 ==================
@@ -636,8 +781,18 @@ window.AOE4_CONFIG = {
     if (d.version !== 1) throw new Error('資料版本不是 1（目前是 ' + d.version + '）');
     return d;
   }
-  function load(d, source) {
+  // provider：資料來自線上來源時（切換玩家），提供下載單場詳細數據、重新抓取等功能；預設資料為 null
+  // 預設資料（GitHub 上約 13 MB）下載較久：下載期間若訪客已經切換玩家或匯入檔案，晚到的預設資料不能蓋掉畫面。
+  // 每次開始載入預設資料拿一個序號，其他來源載入時把序號往前推，舊的預設下載回來後就丟掉。
+  let defaultSeq = 0;
+  const startDefault = () => ++defaultSeq;
+  const defaultStillWanted = (seq) => seq === defaultSeq;
+  function load(d, source, provider, defaultTicket) {
+    if (defaultTicket == null) defaultSeq++;
+    state.provider = provider || null;
     state.data = validate(d);
+    normalizeCivs(state.data);
+    markSpentField(state.data);
     state.data.matches.sort((a, b) => Date.parse(a.startedAt) - Date.parse(b.startedAt));
     state.source = source;
     factorCache = null;
@@ -659,14 +814,27 @@ window.AOE4_CONFIG = {
     return res.json();
   }
   async function boot() {
+    // 網址帶 ?player=玩家ID 時顯示該玩家（切換玩家），不載入預設資料
+    if (window.AOE4Player && window.AOE4Player.fromUrl()) { window.AOE4Player.openFromUrl(); return; }
+    await bootDefault();
+  }
+  async function bootDefault() {
+    const seq = startDefault();
     if (CFG.dataUrl) {
       $('#reloadBtn').hidden = false;
-      try { load(await fetchFromUrl(), 'GitHub：' + CFG.dataUrl); banner(''); }
+      banner('正在載入預設的戰績資料（約 13 MB，第一次開啟要等幾秒）…想看自己的戰績，可以直接按右上角「看別人的戰績」。');
+      try {
+        const data = await fetchFromUrl();
+        if (!defaultStillWanted(seq)) return;
+        load(data, 'GitHub：' + CFG.dataUrl, null, seq);
+        banner('');
+      }
       catch (e) {
-        if (window.AOE4_DATA) { load(window.AOE4_DATA, '本機檔案 data/aoe4-data.js'); }
+        if (!defaultStillWanted(seq)) return;
+        if (window.AOE4_DATA) { load(window.AOE4_DATA, '本機檔案 data/aoe4-data.js', null, seq); }
         banner('無法從 ' + CFG.dataUrl + ' 取得資料（' + e.message + '），目前顯示本機檔案。若 API 在別的網址，伺服器需要允許跨來源請求（CORS）。');
       }
-      if (CFG.refreshMinutes > 0) setInterval(reloadFromUrl, CFG.refreshMinutes * 60000);
+      if (CFG.refreshMinutes > 0) setInterval(() => { if (!state.provider) reloadFromUrl(); }, CFG.refreshMinutes * 60000);
     } else if (window.AOE4_DATA) {
       try { load(window.AOE4_DATA, '本機檔案 data/aoe4-data.js'); } catch (e) { banner('data/aoe4-data.js 的格式有誤：' + e.message); }
     } else {
@@ -675,6 +843,7 @@ window.AOE4_CONFIG = {
     }
   }
   async function reloadFromUrl() {
+    const seq = startDefault();
     const btn = $('#reloadBtn');
     const oldLabel = btn.textContent;
     const before = state.data && state.data.generatedAt;
@@ -684,7 +853,8 @@ window.AOE4_CONFIG = {
     await new Promise((resolve) => setTimeout(resolve, 30));
     try {
       const data = await fetchFromUrl(true);
-      load(data, 'GitHub：' + CFG.dataUrl);
+      if (!defaultStillWanted(seq)) return;
+      load(data, 'GitHub：' + CFG.dataUrl, null, seq);
       const when = data.generatedAt ? fmtDate(data.generatedAt, true) : '未知時間';
       const same = before && data.generatedAt === before;
       banner(same
@@ -712,7 +882,7 @@ window.AOE4_CONFIG = {
     r.readAsText(file, 'utf-8');
   }
   $('#importFile').addEventListener('change', (e) => { readFile(e.target.files[0]); e.target.value = ''; });
-  $('#reloadBtn').addEventListener('click', reloadFromUrl);
+  $('#reloadBtn').addEventListener('click', () => (state.provider && state.provider.reload ? state.provider.reload() : reloadFromUrl()));
   let dragDepth = 0;
   window.addEventListener('dragenter', (e) => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) { dragDepth++; $('#dropzone').hidden = false; } });
   window.addEventListener('dragleave', () => { dragDepth = Math.max(0, dragDepth - 1); if (!dragDepth) $('#dropzone').hidden = true; });
@@ -720,7 +890,16 @@ window.AOE4_CONFIG = {
   window.addEventListener('drop', (e) => { e.preventDefault(); dragDepth = 0; $('#dropzone').hidden = true; readFile(e.dataTransfer.files[0]); });
 
   // 給之後的 API 程式使用：window.AOE4Dashboard.load(資料物件)
-  window.AOE4Dashboard = { load: (d) => load(d, '程式推送'), reload: reloadFromUrl };
+  // 切換玩家（js/player-switch.js）用：load(資料, 來源說明, provider)、refresh() 在補上單場詳細數據後重畫
+  window.AOE4Dashboard = {
+    load: (d, source, provider) => load(d, source || '程式推送', provider),
+    reload: reloadFromUrl,
+    loadDefault: () => { state.provider = null; banner(''); return bootDefault(); },
+    cancelDefault: () => { defaultSeq++; },
+    refresh: () => { if (!state.data) return; markSpentField(state.data); factorCache = null; renderHeader(); renderView(); },
+    banner,
+    current: () => ({ data: state.data, provider: state.provider, view: state.view, matchId: state.matchId }),
+  };
 
   // ================== 頁首與篩選 ==================
   function renderHeader() {
@@ -789,6 +968,7 @@ window.AOE4_CONFIG = {
   function wl(ms) { const w = ms.filter((m) => m.result === 'win').length; const l = ms.filter((m) => m.result === 'loss').length; return { w, l, n: w + l, rate: w + l ? w / (w + l) : null }; }
 
   // ================== 分頁 ==================
+  const VIEWS = ['overview', 'match', 'factors', 'list', 'sim'];
   function route() {
     const hash = decodeURIComponent(location.hash.slice(1));
     const mm = /^match-(.+)$/.exec(hash);
@@ -797,7 +977,7 @@ window.AOE4_CONFIG = {
       state.view = 'match';
       state.matchId = /^\d+$/.test(raw) ? Number(raw) : raw;
     }
-    else if (['overview', 'match', 'factors', 'list'].includes(hash)) state.view = hash;
+    else if (VIEWS.includes(hash)) state.view = hash;
     renderView();
   }
   function go(view, matchId) {
@@ -809,13 +989,30 @@ window.AOE4_CONFIG = {
 
   function renderView() {
     document.querySelectorAll('.tab').forEach((t) => t.setAttribute('aria-selected', String(t.dataset.view === state.view)));
-    ['overview', 'match', 'factors', 'list'].forEach((v) => { $('#view-' + v).hidden = v !== state.view; });
+    VIEWS.forEach((v) => { $('#view-' + v).hidden = v !== state.view; });
+    document.body.classList.toggle('sim-mode', state.view === 'sim');
+    if (state.view === 'sim') { showSim(); return; }
     if (!state.data) return;
     if (state.view === 'overview') renderOverview();
     else if (state.view === 'match') renderMatch();
     else if (state.view === 'factors') renderFactors();
     else renderList();
   }
+
+  // ================== 戰術模擬（內嵌） ==================
+  // 第一次切到這個分頁才載入 /simulate，之後切走再切回來會保留模擬的狀態。
+  function showSim() {
+    const frame = $('#simFrame');
+    if (location.protocol === 'file:') { $('#simNote').hidden = false; frame.hidden = true; return; }
+    if (!frame.getAttribute('src')) frame.src = '/simulate';
+    fitSim();
+  }
+  function fitSim() {
+    const frame = $('#simFrame');
+    if (frame.hidden || state.view !== 'sim') return;
+    frame.style.height = Math.max(560, window.innerHeight - frame.getBoundingClientRect().top - 12) + 'px';
+  }
+  window.addEventListener('resize', fitSim);
 
   // ================== 折線圖 ==================
   function niceTicks(min, max, count) {
@@ -1307,7 +1504,834 @@ window.AOE4_CONFIG = {
     $('#mArmyNote').textContent = '曲線是「我方克制配對」與「對方克制配對」的差，除以兩邊合計。+100% 代表只有我方的兵在克制對方，0 代表雙方克制力相同。生產數含升時代後重新登記的單位。';
   }
 
+  // ================== 資源利用：花費與採集 ==================
+  // aoe4world 新版摘要的 *Gathered 其實是「累積花費」；舊版摘要與本機重播的 *Gathered 是由採集速率推算的累積採集量。
+  // 這裡統一換算成兩條曲線：累積花費 cumSpent 與累積採集 cumGathered。
+  const RES = ['food', 'wood', 'gold', 'stone', 'oliveoil'];
+  const RES_NAME = { food: '食物', wood: '木材', gold: '黃金', stone: '石頭', oliveoil: '橄欖油' };
+  function markSpentField(d) {
+    (d.matches || []).forEach((m) => ((m.detail && m.detail.players) || []).forEach((p) => {
+      Object.defineProperty(p, '_spentField', { value: m.detail.source !== 'local-replay' && !p.gatheredEstimated, configurable: true, enumerable: false });
+    }));
+  }
+  const num0 = (v) => (isNum(v) ? v : 0);
+  function cumSpent(p, r) {
+    const tl = p.timeline || {}, G = tl[r + 'Gathered'], B = tl[r];
+    if (!Array.isArray(G) || !Array.isArray(B)) return null;
+    const b0 = num0(B[0]);
+    let run = 0;
+    return G.map((g, i) => {
+      const v = p._spentField ? num0(g) : num0(g) - (num0(B[i]) - b0);
+      run = Math.max(run, v);
+      return run;
+    });
+  }
+  function cumGathered(p, r) {
+    const tl = p.timeline || {}, G = tl[r + 'Gathered'], B = tl[r];
+    if (!Array.isArray(G)) return null;
+    if (!p._spentField || !Array.isArray(B)) return G;
+    const b0 = num0(B[0]);
+    return G.map((g, i) => (isNum(g) ? g + num0(B[i]) - b0 : null));
+  }
+  const gatheredCache = new WeakMap();
+  function gatheredTotal(p) {
+    if (!p || !p.timeline) return null;
+    if (gatheredCache.has(p)) return gatheredCache.get(p);
+    const cols = RES.map((r) => cumGathered(p, r)).filter(Boolean);
+    const out = cols.length ? (p.timeline.t || []).map((_, i) => cols.reduce((s, c) => s + num0(c[i]), 0)) : null;
+    gatheredCache.set(p, out);
+    return out;
+  }
+  function gatheredAt(p, sec) { const i = tIndex(p, sec); const a = gatheredTotal(p); return i < 0 || !a ? null : a[i]; }
+  function interpAt(T, A, t) {
+    if (!T.length || t > T[T.length - 1]) return null;
+    let lo = 0, hi = T.length - 1;
+    while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (T[mid] <= t) lo = mid; else hi = mid; }
+    if (t <= T[lo]) return A[lo];
+    const f = (t - T[lo]) / ((T[hi] - T[lo]) || 1);
+    return A[lo] + (A[hi] - A[lo]) * f;
+  }
+
+  // ================== 資源利用：分析 ==================
+  const ECO_WINDOWS = [180, 240, 300];
+  const STALE_MIN = 300;        // 囤積超過這個量才列為問題
+  const QUEUE_MIN = 250;        // 佇列呆料超過這個量才列為問題
+  const QUEUE_LOOKAHEAD = 300;  // 佇列呆料的基準：之後 5 分鐘內「鎖住資源」的最低點
+  const IDLE_UTIL = 0.4;        // 新蓋的生產建築在時限內利用率低於這個值就列為問題
+  const QUEUE_DEPTH = 5;        // 估計佇列呆料時，每棟滿載建築最多算 5 隻
+  // 每個村民每分鐘的基準採集量（依時代）：取本資料集所有對局在各時代的前 10% 效率
+  const VIL_REF = { 1: 39, 2: 42, 3: 47, 4: 57 };
+  const VIL_TIME = 20;          // 訓練一個村民的秒數
+  const IDLE_FROM = 120;        // 開局前 2 分鐘村民還在走位，不列入
+  const IDLE_MIN = 3;           // 沒在採集的村民至少要這麼多人、而且佔 15% 以上才列為問題
+  const MILITARY_PRODUCERS = ['barracks', 'archery-range', 'stable', 'siege-workshop', 'dock'];
+  const ITEM_NAME = {
+    'town-center': '城鎮中心', 'capital-town-center': '首都城鎮中心', barracks: '軍營', 'archery-range': '射箭場', stable: '馬廄',
+    'siege-workshop': '攻城工坊', dock: '船塢', monastery: '修道院', mosque: '清真寺', 'prayer-tent': '祈禱帳篷', 'buddhist-temple': '佛寺',
+    'shinto-shrine': '神社', market: '市場', blacksmith: '鐵匠鋪', forge: '鍛造場', university: '大學', keep: '要塞', outpost: '哨塔',
+    house: '房屋', farm: '農田', farmhouse: '農舍', 'pit-mine': '礦坑', 'mansa-quarry': '曼薩採石場', 'floating-gate': '浮橋門', 'kura-storehouse': '藏倉', 'toll-outpost': '收費哨站', 'cattle-ranch': '牧場', palisade: '木柵', 'palisade-gate': '木柵門', mill: '磨坊', 'lumber-camp': '伐木場', 'mining-camp': '礦場', villager: '村民', scout: '偵察兵',
+    spearman: '長矛兵', archer: '弓箭手', horseman: '輕騎兵', knight: '騎士', 'man-at-arms': '裝甲兵', crossbowman: '弩兵',
+    'horse-archer': '馬弓騎兵', 'hand-cannoneer': '火槍兵', mangonel: '投石車', trebuchet: '投石機', springald: '弩砲', bombard: '火砲',
+    ram: '衝車', 'battering-ram': '衝車', 'siege-tower': '攻城塔', monk: '僧侶', trader: '商人', 'fishing-boat': '漁船',
+    'mounted-samurai': '騎馬武士', samurai: '武士', 'yumi-ashigaru': '弓足輕', 'ozutsu': '大筒', 'onna-musha': '女武者',
+    longbowman: '長弓兵', 'palace-guard': '禁軍', lancer: '槍騎兵', sofa: '索法騎兵', donso: '頓索', 'javelin-thrower': '標槍兵',
+    musofadi: '穆索法迪', 'camel-archer': '駱駝弓兵', 'camel-rider': '駱駝騎兵', ghulam: '古拉姆', janissary: '耶尼切里', sipahi: '西帕希',
+    streltsy: '射擊軍', 'horse-archer-2': '馬弓騎兵', mangudai: '芒古歹', keshik: '怯薛', 'zhuge-nu': '諸葛弩', 'fire-lancer': '火槍騎兵'
+  };
+  const itemName = (id) => ITEM_NAME[id] || (id ? String(id).replace(/-/g, ' ') : '—');
+  const producerMatch = (base, prod) => base === prod || base.endsWith('-' + prod);
+
+  const ecoCache = new WeakMap();
+  function ecoAnalysis(p, W) {
+    if (!p || !p.timeline) return null;
+    let byW = ecoCache.get(p);
+    if (!byW) ecoCache.set(p, byW = new Map());
+    if (!byW.has(W)) byW.set(W, computeEco(p, W));
+    return byW.get(W);
+  }
+
+  function computeEco(p, W) {
+    const tl = p.timeline, T = tl.t || [], n = T.length;
+    if (n < 6) return null;
+    const tEnd = T[n - 1];
+    const res = RES.filter((r) => Array.isArray(tl[r]) && Array.isArray(tl[r + 'Gathered']) && (tl[r].some((v) => v > 0) || tl[r + 'Gathered'].some((v) => v > 0)));
+    if (!res.length) return null;
+    const bank = {}, spent = {}, stale = {};
+    res.forEach((r) => {
+      bank[r] = tl[r].map((v) => Math.max(0, num0(v)));
+      spent[r] = cumSpent(p, r);
+      // 囤積：此刻的庫存扣掉之後 W 秒內花掉的量（先進先出），剩下的就是放了 W 秒都沒用到的資源
+      stale[r] = T.map((t, i) => (t + W > tEnd ? null : Math.max(0, bank[r][i] - (interpAt(T, spent[r], t + W) - spent[r][i]))));
+    });
+    const judged = (i) => T[i] + W <= tEnd;
+    const sumRes = (obj, i) => res.reduce((s, r) => s + num0(obj[r][i]), 0);
+    const bankTot = T.map((_, i) => sumRes(bank, i));
+    const staleTot = T.map((_, i) => (judged(i) ? sumRes(stale, i) : null));
+    const spentTot = T.map((_, i) => sumRes(spent, i));
+    const a = { W, T, tEnd, res, bank, spent, stale, bankTot, staleTot, spentTot, queue: null, producers: [], idle: [], bigBuilds: [], estimated: !p._spentField };
+
+    const cat = (state.data && state.data.catalog) || {};
+    const events = Array.isArray(p.events) ? p.events : null;
+    if (events && events.length && Object.keys(cat).length) {
+      // 佇列呆料：累積花費 − 已交貨的成本 − 正在生產中的成本 = 付了錢卻還沒開工的資源
+      const items = [];
+      const units = [];
+      const blds = [];
+      events.forEach(([t, id, code]) => {
+        const c = cat[id];
+        if (!c) return;
+        const cost = c[2] + c[3] + c[4] + c[5] + c[6];
+        if (t > 0 && ((code === 0 && c[1] !== 'b') || (code === 1 && c[1] === 'b'))) items.push({ t, cost, time: c[7] || 0, building: c[1] === 'b' });
+        // 單位和科技都會佔用生產建築（例如城鎮中心研究獨輪車時不能生村民）
+        if (c[1] !== 'b' && code === 0 && t > 0 && c[8] && c[7] > 0) units.push({ t, prod: /town-center$/.test(c[8]) ? 'town-center' : c[8], time: c[7], name: c[0], cost, unit: c[1] === 'u' });
+        if (c[1] === 'b' && (code === 1 || code === 2)) blds.push({ t, base: c[0], d: code === 1 ? 1 : -1, cost });
+      });
+      a.bigBuilds = blds.filter((b) => b.d > 0 && b.t > 0 && b.cost >= 400);
+      a.builtList = blds.filter((b) => b.d > 0 && b.t > 0 && b.base !== 'palisade' && !/wall/.test(b.base));
+      const x = new Array(n);
+      // 單位與科技一定是先付款才開始生產，可以直接扣掉生產中的成本；
+      // 建築的開工時間不確定（施工時間依村民數而變），只拿來解釋已經鎖住的部分，不讓結果變成負數。
+      for (let i = 0; i < n; i++) {
+        let delivered = 0, wip = 0, wipB = 0;
+        const t = T[i];
+        items.forEach((it) => {
+          if (it.t <= t) delivered += it.cost;
+          else if (it.building) { if (it.t - (it.time * 2 + 60) < t) wipB += it.cost; }
+          else if (it.t - it.time < t) wip += it.cost;
+        });
+        const locked = spentTot[i] - delivered - wip;
+        x[i] = locked - Math.min(wipB, Math.max(0, locked));
+      }
+      // 真正的佇列是「鼓起來又消掉」，所以要同時高於前後 5 分鐘的最低點；
+      // 只往一個方向跳的固定誤差（免費獲得的單位、對不上成本表的文明花費）會被排除。
+      a.queue = T.map((t, i) => {
+        let after = x[i], before = x[i];
+        for (let j = i + 1; j < n && T[j] <= t + QUEUE_LOOKAHEAD; j++) after = Math.min(after, x[j]);
+        for (let j = i - 1; j >= 0 && T[j] >= t - QUEUE_LOOKAHEAD; j--) before = Math.min(before, x[j]);
+        return Math.max(0, x[i] - Math.max(after, before));
+      });
+
+      // 生產建築利用率：每 20 秒一格，生產中的秒數 ÷（建築數 × 20 秒）
+      // 只看會訓練單位的建築；磨坊、伐木場這類只研究科技的經濟建築不算生產建築
+      const allProducers = new Set(MILITARY_PRODUCERS.concat(units.filter((u) => u.unit).map((u) => u.prod)));
+      const countFn = (prod) => {
+        const changes = blds.filter((b) => producerMatch(b.base, prod));
+        return (t) => Math.max(0, changes.reduce((s, b) => (b.t <= t ? s + b.d : s), 0));
+      };
+      const busyIn = (jobs, a0, a1) => jobs.reduce((s, j) => s + Math.max(0, Math.min(j[1], a1) - Math.max(j[0], a0)), 0);
+      [...allProducers].forEach((prod) => {
+        const jobs = units.filter((u) => u.prod === prod).map((u) => [u.t - u.time, u.t, u.name]);
+        const countAt = countFn(prod);
+        const cells = [];
+        let maxCount = 0;
+        for (let i = 0; i < n - 1; i++) {
+          const a0 = T[i], a1 = T[i + 1], len = a1 - a0;
+          const busy = busyIn(jobs, a0, a1);
+          const cnt = countAt((a0 + a1) / 2);
+          maxCount = Math.max(maxCount, cnt);
+          const cap = Math.max(cnt, busy > 0 ? Math.ceil(busy / len - 1e-6) : 0);
+          cells.push({ x0: a0, x1: a1, cnt, busy, util: cap ? Math.min(1, busy / (cap * len)) : null });
+        }
+        if (!jobs.length && !maxCount) return;
+        const own = units.filter((u) => u.prod === prod);
+        const avgCost = own.length ? own.reduce((s, u) => s + u.cost, 0) / own.length : 0;
+        a.producers.push({ id: prod, jobs, cells, maxCount, countAt, avgCost });
+        // 新蓋的生產建築有沒有在時限內兌現
+        if (prod === 'town-center') return;
+        blds.filter((b) => b.d > 0 && b.t > 0 && producerMatch(b.base, prod)).forEach((b) => {
+          const end = Math.min(b.t + W, tEnd);
+          if (end - b.t < 60) return;
+          const cnt = Math.max(1, countAt(b.t + 1));
+          const busy = busyIn(jobs, b.t, end);
+          const util = Math.min(1, busy / (cnt * (end - b.t)));
+          if (util >= IDLE_UTIL) return;
+          const made = jobs.filter((j) => j[1] > b.t && j[1] <= end);
+          const first = jobs.find((j) => j[0] >= b.t - 1);
+          const names = {};
+          made.forEach((j) => { names[j[2]] = (names[j[2]] || 0) + 1; });
+          a.idle.push({ t: b.t, end, prod, base: b.base, cnt, util, made: made.length, names, firstDelay: first ? Math.max(0, first[0] - b.t) : null, cost: b.cost });
+        });
+      });
+      // 有單位在排隊，代表那棟建築一定正在生產：沒有任何建築滿載的時間點不算佇列呆料，
+      // 並以「滿載建築數 × 每棟 QUEUE_DEPTH 隻 × 該建築單位的平均成本」為上限，排除進貢、城牆等對不上的花費。
+      // 推估時不知道是哪幾棟在排隊，用「滿載的建築數」當作排隊的建築數
+      a.queueB = T.map(() => 0);
+      a.queue = a.queue.map((q, i) => {
+        let cap = 0, busyB = 0;
+        a.producers.forEach((pr) => {
+          const cur = pr.cells[Math.min(i, pr.cells.length - 1)], prev = pr.cells[Math.max(0, i - 1)];
+          const u = Math.max((cur && cur.util) || 0, (prev && prev.util) || 0);
+          if (u >= 0.85) { const cnt = Math.max(1, (cur && cur.cnt) || 0); cap += cnt * QUEUE_DEPTH * pr.avgCost; busyB += cnt; }
+        });
+        a.queueB[i] = busyB;
+        return Math.min(q, cap);
+      });
+      a.queueSource = 'flow';
+      // 有重播檔的生產指令時，改用逐棟模擬的佇列（下指令 → 開始生產）
+      if (Array.isArray(p.orders) && p.orders.length) {
+        const rq = queueFromOrders(p.orders, events, cat, tEnd);
+        if (rq.items.length) {
+          a.queueItems = rq.items;
+          a.queueStats = rq.stats;
+          const waitingAt = (t) => rq.items.filter((x) => x.cost > 0 && x.waits.some(([w0, w1]) => w0 <= t && t < w1));
+          a.queue = T.map((t) => waitingAt(t).reduce((s, x) => s + x.cost, 0));
+          a.queueB = T.map((t) => new Set(waitingAt(t).map((x) => x.ent)).size);
+          a.queueSource = 'replay';
+        }
+      }
+      // 每棟建築的佇列呆料：建築越多，同時排隊的總量本來就越多，除以正在排隊的建築數才看得出排得多深
+      a.queuePer = a.queue.map((q, i) => (a.queueB[i] > 0 ? q / a.queueB[i] : 0));
+      const rank = (id) => (id === 'town-center' ? 0 : MILITARY_PRODUCERS.indexOf(id) >= 0 ? 1 : 2);
+      a.producers.sort((p1, p2) => rank(p1.id) - rank(p2.id) || p2.jobs.length - p1.jobs.length);
+    }
+
+    // 沒在採集的村民：村民數 − 總採集速率 ÷ 該時代的基準效率（每個村民每分鐘的採集量）
+    const V = tl.villagers;
+    if (Array.isArray(V) && V.some((v) => v > 0)) {
+      const ages = p.ages || {};
+      const ageAt = (t) => (isNum(ages.imperial) && t >= ages.imperial ? 4 : isNum(ages.castle) && t >= ages.castle ? 3 : isNum(ages.feudal) && t >= ages.feudal ? 2 : 1);
+      a.rateTot = T.map((_, i) => RES.reduce((s, r) => s + Math.max(0, num0((tl[r + 'Rate'] || [])[i])), 0));
+      a.villagers = V;
+      a.idleV = T.map((t, i) => (t < IDLE_FROM || !isNum(V[i]) || V[i] <= 0 ? null : Math.max(0, V[i] - a.rateTot[i] / VIL_REF[ageAt(t)])));
+      let idleSum = 0, vilSum = 0, idleArea = 0, k = 0;
+      for (let i = 0; i < n; i++) {
+        if (!isNum(a.idleV[i])) continue;
+        idleSum += a.idleV[i]; vilSum += V[i]; idleArea += a.idleV[i] * (i + 1 < n ? T[i + 1] - T[i] : 20); k++;
+      }
+      a.idleAvg = k >= 6 ? idleSum / k : null;
+      a.idleShare = vilSum ? idleSum / vilSum : null;
+      a.idleMinutes = k >= 6 ? idleArea / 60 : null;
+      const share15 = (() => { let s = 0, v = 0; for (let i = 0; i < n; i++) if (isNum(a.idleV[i]) && T[i] <= 900) { s += a.idleV[i]; v += V[i]; } return v ? s / v : null; })();
+      a.idleShare15 = T[n - 1] >= 600 ? share15 : null;
+    }
+
+    // 摘要數字（排除開局第一分鐘）
+    const inRange = (i, to) => T[i] >= 60 && T[i] <= to && judged(i);
+    const avgOver = (arr, to) => { const v = []; for (let i = 0; i < n; i++) if (inRange(i, to) && arr && isNum(arr[i])) v.push(arr[i]); return v.length >= 8 ? mean(v) : null; };
+    a.staleAvg = avgOver(staleTot, Infinity);
+    a.stale15 = avgOver(staleTot, 900);
+    a.queueAvg = a.queue ? avgOver(a.queue, Infinity) : null;
+    a.queue15 = a.queue ? avgOver(a.queue, 900) : null;
+    a.queuePerAvg = a.queuePer ? avgOver(a.queuePer, Infinity) : null;
+    a.queuePer15 = a.queuePer ? avgOver(a.queuePer, 900) : null;
+    // 有排隊時平均幾棟在排（只算有排隊的時間點）
+    const qb = a.queueB ? T.map((_, i) => i).filter((i) => T[i] >= 60 && a.queueB[i] > 0) : [];
+    a.queueBAvg = qb.length ? mean(qb.map((i) => a.queueB[i])) : null;
+    let peak = -1, peakT = null;
+    staleTot.forEach((v, i) => { if (isNum(v) && T[i] >= 60 && v > peak) { peak = v; peakT = T[i]; } });
+    a.stalePeak = peak >= 0 ? peak : null;
+    a.stalePeakT = peakT;
+    const utilOf = (list) => { let busy = 0, cap = 0; list.forEach((pr) => pr.cells.forEach((c) => { if (c.cnt > 0 || c.busy > 0) { busy += Math.min(c.busy, Math.max(c.cnt, 1) * (c.x1 - c.x0)); cap += Math.max(c.cnt, c.busy > 0 ? 1 : 0) * (c.x1 - c.x0); } })); return cap ? busy / cap : null; };
+    // 城鎮中心生產時間：只算到村民數第一次達到高峰（95%）為止，之後停生村民是正常的
+    const Vt = tl.villagers;
+    const vMax = Array.isArray(Vt) ? Math.max(0, ...Vt.filter(isNum)) : 0;
+    const peakI = vMax ? Vt.findIndex((v) => isNum(v) && v >= vMax * 0.95) : -1;
+    a.tcUntil = peakI > 0 ? T[peakI] : null;
+    const tc = a.producers.find((pr) => pr.id === 'town-center');
+    if (tc && isNum(a.tcUntil)) {
+      a.tcUtil = utilOf([{ cells: tc.cells.filter((c) => c.x1 <= a.tcUntil) }]);
+      a.tcEstimated = false;
+    } else if (peakI > 1) {
+      // 沒有建造紀錄時，用村民數的增加推估：每 20 秒多 1 個村民 = 城鎮中心滿載。村民死亡會讓結果偏低。
+      let busy = 0, span = 0;
+      for (let i = 0; i < peakI; i++) {
+        const len = T[i + 1] - T[i];
+        busy += Math.min(len, Math.max(0, num0(Vt[i + 1]) - num0(Vt[i])) * VIL_TIME);
+        span += len;
+      }
+      a.tcUtil = span ? busy / span : null;
+      a.tcEstimated = true;
+    }
+    a.issues = ecoIssues(a);
+    return a;
+  }
+
+  // 重播指令逐棟模擬佇列。重播只記錄指令、不記錄佇列狀態，所以照遊戲規則重演一次：
+  //   每個訓練／研究指令 = 排進那棟建築一項（下指令時就扣款）；取消指令照建築內的項目序號移除（退款）；
+  //   同一棟建築先進先出，前一項做完、下一項才開工。
+  // 每一項什麼時候做完：有 aoe4world 的完成時間就用它（自動校正文明與科技的生產加速），
+  //   完成事件要分給「正在做同種項目、而且已經做了至少 1/5 生產時間」的建築（容許最多 5 倍的生產加速），有多棟時給預計完成時間最接近的；
+  //   這個項目完全沒有完成紀錄時，才用成本表的生產時間推算。
+  // 一直等不到完成的項目（人口已滿、建築被拆）會留在佇列裡算到最後；
+  //   但如果它後面排的同種項目已經有新的完成事件、它又早就超過生產時間，就當作這項沒有成立而移除。
+  // 沒有逐隻指令的生產（例如自動連續生產）和一個指令出兩隻的文明，多出來的完成事件會被略過。
+  function queueFromOrders(orders, events, cat, tEnd) {
+    const info = (id) => {
+      const c = cat[id];
+      if (!c) return { base: '#' + id, prod: null, cost: 0, time: 20 };
+      return { base: c[0], prod: /town-center$/.test(c[8] || '') ? 'town-center' : c[8], cost: c[2] + c[3] + c[4] + c[5] + c[6], time: c[7] || 20 };
+    };
+    const finsOf = {};
+    events.forEach(([t, id, code]) => { const c = cat[id]; if (code === 0 && t > 0 && c && c[1] !== 'b') (finsOf[c[0]] = finsOf[c[0]] || []).push(t); });
+    const ents = new Map();
+    const items = [];
+    const ent = (k) => { if (!ents.has(k)) ents.set(k, { id: k, seq: 0, q: [], free: 0 }); return ents.get(k); };
+    // 建築空出來就讓下一項開工；沒有完成紀錄的項目直接排好預計完成時間
+    const advance = (e, t) => {
+      const h = e.q[0];
+      if (!h || h.start != null) return;
+      h.start = Math.max(t, h.cmd, e.free);
+      if (!finsOf[h.base]) h.due = h.start + h.time;
+    };
+    const finish = (e, t, how) => {
+      const h = e.q.shift();
+      h.end = t; h.status = how;
+      e.free = t;
+      advance(e, t);
+    };
+    const cmds = orders.slice().sort((a, b) => a[0] - b[0]);
+    const fins = [];
+    Object.entries(finsOf).forEach(([base, list]) => list.forEach((t) => fins.push({ t, base })));
+    fins.sort((a, b) => a.t - b.t);
+    let ci = 0, fi = 0;
+    for (;;) {
+      // 下一個事件：指令、完成事件、或推算的完成時間，取最早的
+      let dueE = null;
+      ents.forEach((e) => { const h = e.q[0]; if (h && h.due != null && (!dueE || h.due < dueE.q[0].due)) dueE = e; });
+      const tc = ci < cmds.length ? cmds[ci][0] : Infinity, tf = fi < fins.length ? fins[fi].t : Infinity, td = dueE ? dueE.q[0].due : Infinity;
+      const t = Math.min(tc, tf, td);
+      if (t === Infinity || t > tEnd) break;
+      if (td === t) { finish(dueE, t, 'est'); continue; }
+      if (tc === t) {
+        const [, id, k, cancelId] = cmds[ci++];
+        const e = ent(k);
+        if (cancelId != null) {
+          const j = e.q.findIndex((x) => x.id === cancelId);
+          if (j === 0 && e.q[0].start != null) finish(e, t, 'cancel');
+          else if (j >= 0) { const x = e.q.splice(j, 1)[0]; x.end = t; x.status = 'cancel'; if (j === 0) advance(e, t); }
+          continue;
+        }
+        const x = Object.assign({ id: ++e.seq, ent: k, pbgid: id, cmd: t, start: null, end: null, status: null }, info(id));
+        items.push(x);
+        e.q.push(x);
+        if (e.q.length === 1) advance(e, t);
+        continue;
+      }
+      const { base } = fins[fi++];
+      const pick = () => {
+        let best = null, bestD = Infinity;
+        ents.forEach((e) => {
+          const h = e.q[0];
+          if (!h || h.base !== base || h.start == null || h.start > t - 0.2 * h.time) return;
+          const d = Math.abs(h.start + h.time - t);
+          if (d < bestD) { best = e; bestD = d; }
+        });
+        return best;
+      };
+      let e = pick();
+      if (!e) {
+        // 卡住的前一項擋住了後面同種的項目：前一項早就超過生產時間，視為沒有成立
+        ents.forEach((x) => {
+          if (e) return;
+          const j = x.q.findIndex((y) => y.base === base);
+          if (j <= 0) return;
+          const h = x.q[0];
+          if (h.start == null || t - h.start < h.time * 1.5 + 30) return;
+          for (let k = 0; k < j; k++) { const y = x.q.shift(); y.end = y.start != null ? y.start : y.cmd; y.status = 'dropped'; }
+          x.free = Math.max(x.q[0].cmd, t - x.q[0].time);
+          x.q[0].start = null;
+          advance(x, x.free);
+          e = pick();
+        });
+      }
+      if (e) finish(e, t, 'done');
+    }
+    // 結束時還在佇列裡的：已開工的到最後都沒做完，沒開工的一直在等
+    ents.forEach((e) => e.q.forEach((x) => { x.status = x.start != null ? 'stalled' : 'waiting'; }));
+    const live = items.filter((x) => x.status !== 'dropped');
+    // 等待區間：下指令 → 開工（被取消的算到取消為止）；已開工卻超過生產時間 1.5 倍還沒做完，超出的部分也算等待
+    live.forEach((x) => {
+      x.waits = [];
+      const s = x.start != null ? x.start : x.end != null ? x.end : tEnd;
+      if (s > x.cmd) x.waits.push([x.cmd, s]);
+      if (x.start != null) {
+        const over = x.start + x.time * 1.5, stop = x.end != null ? x.end : tEnd;
+        if (stop > over) x.waits.push([over, stop]);
+      }
+      x.wait = x.waits.reduce((w, [a, b]) => w + b - a, 0);
+    });
+    return {
+      items: live,
+      stats: {
+        total: live.length,
+        confirmed: live.filter((x) => x.status === 'done').length,
+        estimated: live.filter((x) => x.status === 'est').length,
+        cancelled: live.filter((x) => x.status === 'cancel').length,
+        stuck: live.filter((x) => x.status === 'stalled' || x.status === 'waiting').length,
+        dropped: items.length - live.length
+      }
+    };
+  }
+
+  // 把連續超過門檻的時間點合併成區段
+  function spans(T, arr, min, ok) {
+    const out = [];
+    let cur = null;
+    for (let i = 0; i < T.length; i++) {
+      const v = arr[i];
+      const hit = isNum(v) && v >= min && (!ok || ok(i));
+      if (hit) {
+        if (!cur) cur = { i0: i, i1: i };
+        else cur.i1 = i;
+      } else if (cur && !(isNum(v) && v >= min * 0.6 && i - cur.i1 <= 1)) { out.push(cur); cur = null; }
+    }
+    if (cur) out.push(cur);
+    return out.filter((s) => s.i1 > s.i0);
+  }
+
+  function ecoIssues(a) {
+    const T = a.T, issues = [];
+    const step = (i) => (i + 1 < T.length ? T[i + 1] - T[i] : 20);
+    const mins = (W) => W / 60 + ' 分鐘';
+    // 1. 倉庫囤積
+    spans(T, a.staleTot, STALE_MIN, (i) => T[i] >= 60).forEach((s) => {
+      let area = 0, peak = 0, peakI = s.i0;
+      const perRes = {};
+      for (let i = s.i0; i <= s.i1; i++) {
+        area += a.staleTot[i] * step(i);
+        if (a.staleTot[i] > peak) { peak = a.staleTot[i]; peakI = i; }
+        a.res.forEach((r) => { perRes[r] = Math.max(perRes[r] || 0, a.stale[r][i] || 0); });
+      }
+      const main = a.res.filter((r) => perRes[r] >= Math.max(100, peak * 0.25)).sort((r1, r2) => perRes[r2] - perRes[r1]);
+      const len = s.i1 - s.i0 + 1;
+      const starved = a.res.filter((r) => main.indexOf(r) < 0 && r !== 'oliveoil' && r !== 'stone').filter((r) => {
+        let low = 0;
+        for (let i = s.i0; i <= s.i1; i++) if (a.bank[r][i] < 80) low++;
+        return low >= len / 2;
+      });
+      const resText = main.map((r) => RES_NAME[r] + ' 最多 ' + fmtNum(perRes[r])).join('、');
+      const advice = starved.length
+        ? '同時 ' + starved.map((r) => RES_NAME[r]).join('、') + ' 幾乎見底，代表村民配置偏了：可以把部分採 ' + main.map((r) => RES_NAME[r]).join('、') + ' 的村民改去採 ' + starved.map((r) => RES_NAME[r]).join('、') + '。'
+        : '其他資源並不缺，代表收入超過了生產能力：可以多蓋生產建築、農田，或提早升級，把這些資源投入。';
+      issues.push({ kind: 'hoard', from: T[s.i0], to: T[s.i1], severity: area / 60,
+        title: '囤積 ' + (resText || fmtNum(peak) + ' 資源'),
+        body: '這段期間手上的資源在之後 ' + mins(a.W) + '內都沒有花掉，最多同時閒置約 ' + fmtNum(peak) + '（' + fmtTime(T[peakI]) + '）。' + advice,
+        cost: '約 ' + fmtShort(area / 60) + ' 資源·分鐘' });
+    });
+    // 2. 佇列呆料：用「每棟建築」的佇列量判斷，建築多、各排一兩隻是正常的連續生產，不算問題
+    if (a.queue) spans(T, a.queuePer, QUEUE_MIN, (i) => T[i] >= 60).forEach((s) => {
+      let area = 0, peak = 0, peakI = s.i0;
+      for (let i = s.i0; i <= s.i1; i++) { area += a.queuePer[i] * step(i); if (a.queuePer[i] > peak) { peak = a.queuePer[i]; peakI = i; } }
+      const peakText = '每棟最多排了 ' + fmtNum(peak) + ' 資源還沒開工';
+      const peakNote = '（' + fmtTime(T[peakI]) + ' 時 ' + a.queueB[peakI] + ' 棟在排、合計 ' + fmtNum(a.queue[peakI]) + '）';
+      const busy = a.producers.map((pr) => {
+        let full = 0, cells = 0, cnt = 0;
+        pr.cells.forEach((c) => { if (c.x0 >= T[s.i0] - 20 && c.x1 <= T[s.i1] + 20) { cells++; if (isNum(c.util) && c.util >= 0.85) full++; cnt = Math.max(cnt, c.cnt); } });
+        return { pr, share: cells ? full / cells : 0, cnt };
+      }).filter((b) => b.share >= 0.6).sort((b1, b2) => b2.share - b1.share);
+      if (a.queueSource === 'replay') {
+        // 重播：直接列出哪棟建築排了哪些項目、最久等多久
+        const from = T[s.i0], to = T[s.i1];
+        const groups = new Map();
+        const inSpan = a.queueItems.filter((x) => x.cost > 0 && x.wait >= 1 && x.waits.some(([w0, w1]) => w0 < to + 20 && w1 > from));
+        inSpan.forEach((x) => {
+          const key = x.prod || x.base;
+          const g = groups.get(key) || { prod: key, ents: new Set(), names: {}, maxWait: 0, cost: 0 };
+          g.ents.add(x.ent); g.names[x.base] = (g.names[x.base] || 0) + 1; g.maxWait = Math.max(g.maxWait, x.wait); g.cost += x.cost;
+          groups.set(key, g);
+        });
+        const list = [...groups.values()].sort((g1, g2) => g2.cost - g1.cost);
+        const text = list.map((g) => itemName(g.prod) + '（' + g.ents.size + ' 棟）：' + Object.keys(g.names).map((k) => itemName(k) + ' ×' + g.names[k]).join('、') + '，最久等了 ' + Math.round(g.maxWait) + ' 秒').join('；');
+        const stuck = inSpan.filter((x) => x.status === 'stalled' || x.status === 'waiting');
+        const cancelled = inSpan.filter((x) => x.status === 'cancel');
+        issues.push({ kind: 'queue', from, to, severity: area / 60,
+          title: peakText,
+          body: peakNote.slice(1, -1) + '。' + (text ? '這段期間排過隊的有：' + text + '。' : '') + '這些項目已經付了錢，卻要等前面做完才開始生產。可以多蓋一棟同類建築，或一次少排幾隻，把資源留給經濟。' +
+            (stuck.length ? '其中 ' + stuck.length + ' 項到對局結束都沒有生產出來，可能是人口已滿或建築被拆：人口滿了就先別排單位，資源拿去升級或蓋房子。' : '') +
+            (cancelled.length ? '另有 ' + cancelled.length + ' 項排了之後又取消。' : ''),
+          cost: '每棟約 ' + fmtShort(area / 60) + ' 資源·分鐘', peakT: T[peakI] });
+        return;
+      }
+      const who = busy.map((b) => itemName(b.pr.id) + (b.cnt ? '（' + b.cnt + ' 棟）' : '')).join('、');
+      const bigBuild = a.bigBuilds.find((b) => b.t >= T[s.i0] && b.t <= T[s.i1] + 300);
+      const buildNote = bigBuild ? '另外 ' + fmtTime(bigBuild.t) + ' 蓋好了' + itemName(bigBuild.base) + '（' + fmtNum(bigBuild.cost) + ' 資源），這段期間可能有一部分是它施工中的資源，不一定都是佇列。' : '';
+      issues.push({ kind: 'queue', from: T[s.i0], to: T[s.i1], severity: area / 60,
+        title: '每棟最多約排了 ' + fmtNum(peak) + ' 資源還沒開工（推估）',
+        body: '以同時滿載的建築數平均' + peakNote + '。' + (busy.length
+          ? '同時段一直滿載的是：' + who + '。排在後面的單位已經付了錢，卻要等前面做完才開始生產。可以多蓋一棟同類建築，或一次少排幾隻，把資源留給經濟。'
+          : '這段期間付出的資源多於完成的項目，但找不到一直滿載的建築，也可能是建築還在施工、或文明特有的花費（例如牛群、礦坑），不一定是佇列。') + buildNote,
+        cost: '每棟約 ' + fmtShort(area / 60) + ' 資源·分鐘', peakT: T[peakI] });
+    });
+    // 3. 蓋好卻沒在用的生產建築
+    a.idle.forEach((d) => {
+      const made = Object.keys(d.names).map((k) => itemName(k) + ' ×' + d.names[k]).join('、');
+      const span = d.end - d.t;
+      issues.push({ kind: 'idle', from: d.t, to: d.end, severity: d.cost * (1 - d.util) * span / 60 / 2,
+        title: '蓋好' + itemName(d.base) + '，之後 ' + Math.round(span / 60) + ' 分鐘利用率 ' + fmtPct(d.util),
+        body: (d.made ? '只生產了 ' + made + '。' : '這段期間完全沒有從' + itemName(d.prod) + '生產單位。') +
+          (isNum(d.firstDelay) && d.firstDelay > 30 ? '第一隻在蓋好 ' + fmtTime(d.firstDelay) + ' 後才開始訓練。' : '') +
+          (d.cnt > 1 ? '（同類建築共 ' + d.cnt + ' 棟，利用率是合計）' : '') +
+          '蓋建築的資源要靠持續生產才能兌現；如果暫時用不到，先把資源投入村民或經濟比較划算。',
+        cost: fmtNum(d.cost) + ' 資源' });
+    });
+    // 4. 沒在採集的村民
+    if (a.idleV) {
+      const flag = a.idleV.map((v, i) => (isNum(v) && v >= Math.max(IDLE_MIN, 0.15 * num0(a.villagers[i])) ? v : null));
+      spans(T, flag, 0.001).forEach((s) => {
+        let area = 0, sum = 0, vil = 0, rate = 0, k = 0, lost = 0;
+        for (let i = s.i0; i <= s.i1; i++) {
+          area += num0(a.idleV[i]) * step(i); sum += num0(a.idleV[i]); vil += num0(a.villagers[i]); rate += a.rateTot[i]; k++;
+          if (i > s.i0 && a.villagers[i] < a.villagers[i - 1]) lost += a.villagers[i - 1] - a.villagers[i];
+        }
+        const avg = sum / k;
+        const built = (a.builtList || []).filter((b) => b.t >= T[s.i0] && b.t <= T[s.i1] + 30);
+        const builtNames = [...new Set(built.map((b) => itemName(b.base)))].slice(0, 4).join('、');
+        const lostResources = area / 60 * VIL_REF[2];
+        issues.push({ kind: 'idlev', from: T[s.i0], to: T[s.i1], severity: lostResources,
+          title: '平均約 ' + fmtNum(avg, avg < 10 ? 1 : 0) + ' 個村民沒在採集（佔 ' + fmtPct(sum / vil) + '）',
+          body: '這段期間總採集速率平均 ' + fmtNum(rate / k) + '/分，以 ' + fmtNum(vil / k) + ' 個村民來說偏低。' +
+            (builtNames ? '期間蓋好了' + builtNames + '，有些村民可能在蓋建築。' : '') +
+            (lost ? '村民減少了 ' + lost + ' 個，可能遭到騷擾。' : '') +
+            '其餘可能是閒置或走太遠：注意閒置村民提示，並把伐木場、礦場、磨坊蓋在資源旁邊。',
+          cost: '少採約 ' + fmtShort(lostResources) + ' 資源' });
+      });
+    }
+    return issues.sort((i1, i2) => i2.severity - i1.severity);
+  }
+
+  // ================== 資源利用：堆疊圖與建築泳道 ==================
+  function autoDraw(box, fn) {
+    box._draw = fn;
+    if (!box._ro && window.ResizeObserver) {
+      box._ro = new ResizeObserver(() => { const w = box.clientWidth; if (w && w !== box._w) { box._w = w; if (box._draw) box._draw(); } });
+      box._ro.observe(box);
+    }
+    box._w = box.clientWidth;
+    fn();
+  }
+  function drawStack(box, o) {
+    box.replaceChildren();
+    const T = o.x, n = T.length;
+    const W = Math.max(280, box.clientWidth || 600), plotH = o.height || 240;
+    const laneH = 14, laneGap = 4, lanes = o.lanes || [];
+    const lanesTop = plotH + 14;
+    const H = lanes.length ? lanesTop + 16 + lanes.length * (laneH + laneGap) : plotH;
+    const tops = [];
+    let acc = T.map(() => 0);
+    o.layers.forEach((L) => { const lo = acc; const hi = acc.map((v, i) => v + num0(L.values[i])); tops.push({ L, lo, hi }); acc = hi; });
+    const ymax = Math.max(1, o.yMax || 0, ...acc);
+    const yt = niceTicks(0, ymax, Math.max(3, Math.round(plotH / 55)));
+    const yLabels = yt.ticks.map(fmtShort);
+    const ml = Math.max(36, ...yLabels.map(textW), ...lanes.map((l) => textW(l.label) + 4)) + 10, mr = 14, mt = 10, mb = 26;
+    const iw = W - ml - mr, ih = plotH - mt - mb;
+    const x0 = 0, x1 = Math.max(o.xMax || 0, T[n - 1] || 1);
+    const X = (v) => ml + (v - x0) / (x1 - x0) * iw;
+    const Y = (v) => mt + ih - (v - yt.min) / (yt.max - yt.min) * ih;
+    const svg = S('svg', { width: '100%', height: H, viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': o.label || '圖表' });
+    if (o.focus) svg.append(S('rect', { x: X(o.focus.from), y: mt, width: Math.max(2, X(o.focus.to) - X(o.focus.from)), height: H - mt, class: 'band' }));
+    if (o.shade && o.shade.from < x1) {
+      svg.append(S('rect', { x: X(o.shade.from), y: mt, width: X(x1) - X(o.shade.from), height: ih, class: 'shade' }));
+      svg.append(S('text', { x: X(x1) - 4, y: mt + 12, class: 'shade-label', 'text-anchor': 'end' }, o.shade.label));
+    }
+    yt.ticks.forEach((t, i) => {
+      svg.append(S('line', { x1: ml, x2: W - mr, y1: Y(t), y2: Y(t), class: 'grid' }));
+      svg.append(S('text', { x: ml - 8, y: Y(t), class: 'tick', 'text-anchor': 'end', 'dominant-baseline': 'middle' }, yLabels[i]));
+    });
+    tops.forEach(({ L, lo, hi }) => {
+      let d = '';
+      for (let i = 0; i < n; i++) d += (i ? 'L' : 'M') + X(T[i]).toFixed(1) + ',' + Y(hi[i]).toFixed(1);
+      for (let i = n - 1; i >= 0; i--) d += 'L' + X(T[i]).toFixed(1) + ',' + Y(lo[i]).toFixed(1);
+      svg.append(S('path', { d: d + 'Z', style: 'fill:' + L.color + ';fill-opacity:' + (L.opacity || 0.85) + ';stroke:none' }));
+    });
+    let lastRight = -Infinity;
+    timeTicks(x0, x1, iw).forEach((t) => {
+      const label = fmtTime(t), w = textW(label), cx = Math.min(Math.max(X(t), ml + w / 2), W - mr - w / 2);
+      if (cx - w / 2 < lastRight + 6) return;
+      lastRight = cx + w / 2;
+      svg.append(S('line', { x1: X(t), x2: X(t), y1: mt + ih, y2: mt + ih + 4, class: 'axis' }));
+      svg.append(S('text', { x: cx, y: plotH - 6, class: 'tick', 'text-anchor': 'middle' }, label));
+    });
+    svg.append(S('line', { x1: ml, x2: W - mr, y1: mt + ih, y2: mt + ih, class: 'axis' }));
+    if (lanes.length) {
+      svg.append(S('text', { x: 0, y: lanesTop + 6, class: 'tick' }, o.lanesTitle || ''));
+      lanes.forEach((lane, k) => {
+        const y = lanesTop + 14 + k * (laneH + laneGap);
+        svg.append(S('text', { x: ml - 8, y: y + laneH / 2, class: 'lane-label', 'text-anchor': 'end', 'dominant-baseline': 'middle' }, lane.label));
+        svg.append(S('rect', { x: ml, y, width: iw, height: laneH, rx: 2, style: 'fill:var(--panel-2)' }));
+        lane.cells.forEach((c) => {
+          if (!c.fill) return;
+          svg.append(S('rect', { x: X(c.x0), y, width: Math.max(1, X(c.x1) - X(c.x0) + 0.4), height: laneH, style: 'fill:' + c.fill }));
+        });
+      });
+    }
+    const rule = S('line', { y1: mt, y2: H, class: 'rule', visibility: 'hidden' });
+    const overlay = S('rect', { x: ml, y: mt, width: iw, height: H - mt, fill: 'transparent' });
+    svg.append(rule, overlay);
+    const tip = h('div', { class: 'tip', hidden: true });
+    box.append(svg, tip);
+    overlay.addEventListener('pointermove', (ev) => {
+      const r = svg.getBoundingClientRect();
+      const xv = x0 + ((ev.clientX - r.left) * (W / r.width) - ml) / iw * (x1 - x0);
+      let i = 0;
+      for (let k = 1; k < n; k++) if (Math.abs(T[k] - xv) < Math.abs(T[i] - xv)) i = k;
+      rule.setAttribute('x1', X(T[i])); rule.setAttribute('x2', X(T[i])); rule.setAttribute('visibility', 'visible');
+      tip.replaceChildren(...o.tip(i));
+      tip.hidden = false;
+      const bx = box.getBoundingClientRect();
+      const tx = ev.clientX - bx.left, ty = ev.clientY - bx.top;
+      let left = tx + 14;
+      if (left + tip.offsetWidth > bx.width) left = tx - tip.offsetWidth - 14;
+      let top = ty - tip.offsetHeight - 10;
+      if (top < 0) top = ty + 16;
+      tip.style.left = Math.max(0, left) + 'px';
+      tip.style.top = top + 'px';
+    });
+    overlay.addEventListener('pointerleave', () => { tip.hidden = true; rule.setAttribute('visibility', 'hidden'); });
+  }
+
+  const UTIL_FILL = (u) => (!isNum(u) ? null : u >= 0.85 ? 'var(--win)' : u >= 0.4 ? 'var(--accent)' : u > 0 ? 'var(--opp2)' : 'color-mix(in srgb, var(--loss) 70%, transparent)');
+
+  // ================== 資源利用：畫面 ==================
+  function renderEco(m, ps, colors) {
+    const card = $('#mEcoCard');
+    const W = state.ecoWin, mins = W / 60;
+    const cands = ps.filter((p) => p.timeline && (p.timeline.t || []).length >= 6);
+    // 電腦玩家沒有 ID、名字也可能相同，所以用順序區分
+    const ecoKey = (x) => (x.side === 'me' ? 'me' : x.id > 0 ? 'id' + x.id : 'p' + cands.indexOf(x));
+    const matchKey = String(m.id);
+    if (state.ecoMatch !== matchKey) {
+      state.ecoMatch = matchKey;
+      state.ecoFocus = null;
+      const first = [cands.find((x) => x.side === 'me'), cands.find((x) => x.side === 'opp')].filter(Boolean);
+      state.ecoPlayers = (first.length ? first : cands.slice(0, 2)).map(ecoKey);
+    }
+    let sel = cands.filter((x) => state.ecoPlayers.indexOf(ecoKey(x)) >= 0);
+    if (!sel.length) sel = cands.slice(0, 1);
+    const rows = sel.map((p) => ({ p, a: ecoAnalysis(p, W), color: colors.get(p), name: p.name + (p.side === 'me' ? '（我）' : '') })).filter((r) => r.a);
+    card.hidden = !rows.length;
+    if (!rows.length) return;
+    const rerender = () => renderEco(m, ps, colors);
+
+    // 選擇玩家（可複選）與時限
+    $('#mEcoChips').replaceChildren(
+      h('div', { class: 'chip-group', role: 'group', 'aria-label': '比較的玩家' }, h('span', null, '比較'),
+        cands.map((x) => {
+          const on = sel.indexOf(x) >= 0;
+          return h('button', { type: 'button', class: 'chip', 'aria-pressed': String(on), onclick: () => {
+            const k = ecoKey(x);
+            const cur = sel.map(ecoKey);
+            state.ecoPlayers = on ? (cur.length > 1 ? cur.filter((c) => c !== k) : cur) : cur.concat(k);
+            state.ecoFocus = null;
+            rerender();
+          } }, h('i', { class: 'pdot', style: 'background:' + colors.get(x) }), x.name + (x.side === 'me' ? '（我）' : ''));
+        })),
+      h('div', { class: 'chip-group', role: 'group', 'aria-label': '兌現時限' }, h('span', null, '幾分鐘內要用掉'),
+        ECO_WINDOWS.map((w) => h('button', { type: 'button', class: 'chip', 'aria-pressed': String(w === W), onclick: () => { state.ecoWin = w; state.ecoFocus = null; rerender(); } }, w / 60 + ' 分鐘')))
+    );
+
+    // 比較表
+    const metrics = [
+      { name: '平均囤積', note: '手上放了 ' + mins + ' 分鐘還沒用的資源', dir: -1, get: (a) => a.staleAvg, show: (a) => fmtNum(a.staleAvg),
+        sub: (a) => (isNum(a.stalePeak) ? '最多 ' + fmtNum(a.stalePeak) + '（' + fmtTime(a.stalePeakT) + '）' : '') },
+      { name: '平均佇列呆料', note: '已付款、還在佇列排隊的資源', dir: -1, get: (a) => (a.queue ? a.queueAvg : null), show: (a) => (a.queue ? fmtNum(a.queueAvg) : '—'),
+        sub: (a) => (!a.queue ? '沒有建造紀錄' : a.queueSource === 'replay' ? '由重播逐棟模擬' : '由資源流量推估，只看得出趨勢（約只抓到實際的 1/4）') },
+      { name: '每棟建築佇列呆料', note: '平均佇列呆料 ÷ 正在排隊的建築數', dir: -1, get: (a) => (a.queue ? a.queuePerAvg : null), show: (a) => (a.queue ? fmtNum(a.queuePerAvg) : '—'),
+        sub: (a) => (!a.queue ? '沒有建造紀錄'
+          : (isNum(a.queueBAvg) ? '排隊時平均 ' + fmtNum(a.queueBAvg, 1) + ' 棟在排' : '沒有排隊')
+            + (a.queueSource === 'replay' ? '' : '（以滿載的建築數推估）')) },
+      { name: '等價 TC 損失產能', note: '平均沒在採集的村民 × 訓練一個村民的 ' + VIL_TIME + ' 秒', dir: -1, get: (a) => a.idleAvg,
+        show: (a) => (isNum(a.idleAvg) ? fmtTime(a.idleAvg * VIL_TIME) : '—'),
+        sub: (a) => (isNum(a.idleAvg) ? '相當於少了 ' + fmtNum(a.idleAvg, 1) + ' 個村民（佔 ' + fmtPct(a.idleShare) + '）' : '') },
+      { name: '村民閒置時間', note: '沒在採集的村民 × 時間', dir: -1, get: (a) => a.idleMinutes, show: (a) => (isNum(a.idleMinutes) ? fmtNum(a.idleMinutes) + ' 村民·分' : '—'),
+        sub: (a) => (isNum(a.idleMinutes) ? '約少採 ' + fmtShort(a.idleMinutes * VIL_REF[2]) + ' 資源' : '') },
+      { name: '城鎮中心生產時間', note: '村民數達到高峰前，城鎮中心有在訓練或研究的時間比例', dir: 1, get: (a) => a.tcUtil, show: (a) => fmtPct(a.tcUtil),
+        sub: (a) => (isNum(a.tcUtil) ? '算到 ' + fmtTime(a.tcUntil) + (a.tcEstimated ? '，由村民數推估' : '') : '') }
+    ];
+    $('#mEcoCompare').replaceChildren(
+      h('thead', null, h('tr', null, h('th', null, '指標'), rows.map((r) => h('th', { class: 'who' }, h('i', { class: 'pdot', style: 'background:' + r.color }), r.name)))),
+      h('tbody', null, metrics.map((mt) => {
+        const vals = rows.map((r) => mt.get(r.a)).filter(isNum);
+        const best = vals.length > 1 ? (mt.dir > 0 ? Math.max(...vals) : Math.min(...vals)) : null;
+        const worst = vals.length > 1 ? (mt.dir > 0 ? Math.min(...vals) : Math.max(...vals)) : null;
+        return h('tr', null, h('td', null, mt.name, h('small', null, mt.note)), rows.map((r) => {
+          const v = mt.get(r.a);
+          const cls = !isNum(v) || best === worst ? '' : v === best ? 'good' : v === worst ? 'bad' : '';
+          return h('td', { class: 'n' }, h('span', { class: cls }, mt.show(r.a)), mt.sub(r.a) ? h('small', null, mt.sub(r.a)) : null);
+        }));
+      }))
+    );
+
+    // 每位玩家一張堆疊圖（共用刻度）
+    const yMax = Math.max(...rows.map((r) => Math.max(...r.a.T.map((_, i) => r.a.bankTot[i] + (r.a.queue ? r.a.queue[i] : 0)))));
+    const xMax = Math.max(...rows.map((r) => r.a.T[r.a.T.length - 1]));
+    let anyQueue = false, anyLanes = false;
+    const boxes = rows.map((r) => {
+      const a = r.a, T = a.T;
+      const active = T.map((_, i) => a.bankTot[i] - num0(a.staleTot[i]));
+      const layers = [
+        { name: mins + ' 分鐘內會花掉的庫存', color: 'var(--neutral)', opacity: 0.35, values: active },
+        { name: '囤積（' + mins + ' 分鐘內沒花掉）', color: 'var(--loss)', opacity: 0.85, values: a.staleTot }
+      ];
+      if (a.queue) { anyQueue = true; layers.push({ name: '佇列中（已付款、還沒開工）', color: 'var(--opp2)', opacity: 0.8, values: a.queue }); }
+      const lanes = a.producers.filter((pr) => pr.jobs.length >= 2 || pr.maxCount > 0).slice(0, 7).map((pr) => ({
+        label: itemName(pr.id) + (pr.maxCount > 1 ? ' ×' + pr.maxCount : ''),
+        cells: pr.cells.map((c) => ({ x0: c.x0, x1: c.x1, fill: c.cnt > 0 || c.busy > 0 ? UTIL_FILL(c.util) : null }))
+      }));
+      if (lanes.length) anyLanes = true;
+      const shadeFrom = T.find((t) => t + a.W > a.tEnd);
+      const box = h('div', { class: 'chart' });
+      const wrap = h('div', null, h('div', { class: 'eco-who' }, h('i', { class: 'pdot', style: 'background:' + r.color }), r.name), box);
+      r.draw = () => autoDraw(box, () => drawStack(box, {
+        label: r.name + '的資源利用', x: T, xMax, yMax, layers, height: rows.length > 1 ? 200 : 250, lanes, lanesTitle: lanes.length ? '生產建築' : '',
+        focus: state.ecoFocus, shade: isNum(shadeFrom) ? { from: shadeFrom, label: '最後 ' + mins + ' 分鐘無法判斷' } : null,
+        tip: (i) => {
+          const out = [h('div', { class: 'tip-title' }, r.name + '・第 ' + fmtTime(T[i]))];
+          out.push(h('div', { class: 'tip-row' }, h('span', null, '手上資源'), h('b', null, fmtNum(a.bankTot[i]))));
+          a.res.forEach((res) => {
+            if (!a.bank[res][i] && !a.stale[res][i]) return;
+            out.push(h('div', { class: 'tip-row' }, h('span', null, '　' + RES_NAME[res]), h('b', null, fmtNum(a.bank[res][i]) + (isNum(a.stale[res][i]) && a.stale[res][i] >= 1 ? '（囤積 ' + fmtNum(a.stale[res][i]) + '）' : ''))));
+          });
+          if (!isNum(a.staleTot[i])) out.push(h('div', { class: 'tip-row muted' }, h('span', null, '離結束不到 ' + mins + ' 分鐘，無法判斷是否囤積')));
+          if (a.queue) out.push(h('div', { class: 'tip-row' }, h('i', { class: 'sw', style: 'background:var(--opp2)' }), h('span', null, '佇列中'), h('b', null, fmtNum(a.queue[i]) + (a.queueB && a.queueB[i] > 1 ? '（' + a.queueB[i] + ' 棟，每棟 ' + fmtNum(a.queuePer[i]) + '）' : ''))));
+          if (a.idleV && isNum(a.idleV[i])) out.push(h('div', { class: 'tip-row' }, h('span', null, '沒在採集的村民'), h('b', null, fmtNum(a.idleV[i], 1) + ' / ' + fmtNum(a.villagers[i]))));
+          a.producers.slice(0, 7).forEach((pr) => {
+            const c = pr.cells[Math.min(i, pr.cells.length - 1)];
+            if (!c || (!c.cnt && !c.busy)) return;
+            out.push(h('div', { class: 'tip-row' }, h('i', { class: 'sw', style: 'background:' + (UTIL_FILL(c.util) || 'var(--panel-2)') }), h('span', null, itemName(pr.id) + (c.cnt ? '（' + c.cnt + ' 棟）' : '')), h('b', null, fmtPct(c.util))));
+          });
+          return out;
+        }
+      }));
+      return wrap;
+    });
+    $('#mEcoCharts').replaceChildren(...boxes);
+    rows.forEach((r) => r.draw());
+    const legend = [
+      h('span', null, h('i', { class: 'sw box', style: 'background:var(--neutral);opacity:.35' }), mins + ' 分鐘內會花掉的庫存'),
+      h('span', null, h('i', { class: 'sw box', style: 'background:var(--loss);opacity:.85' }), '囤積（' + mins + ' 分鐘內沒花掉）')
+    ];
+    if (anyQueue) legend.push(h('span', null, h('i', { class: 'sw box', style: 'background:var(--opp2);opacity:.8' }), '佇列中（已付款、還沒開工）'));
+    if (anyLanes) {
+      legend.push(h('span', { class: 'muted' }, '生產建築：'));
+      [['var(--win)', '滿載'], ['var(--accent)', '部分時間在生產'], ['var(--opp2)', '很少生產'], ['color-mix(in srgb, var(--loss) 70%, transparent)', '閒置']]
+        .forEach(([c, t]) => legend.push(h('span', null, h('i', { class: 'sw box', style: 'background:' + c }), t)));
+    }
+    $('#mEcoLegend').replaceChildren(...legend);
+
+    // 沒在採集的村民（每位玩家一條線）
+    const idleRows = rows.filter((r) => r.a.idleV);
+    $('#mEcoIdleNote').textContent = '用總採集速率除以各時代的基準效率（每個村民每分鐘：' + [1, 2, 3, 4].map((k) => ['', '黑暗', '封建', '城堡', '帝王'][k] + ' ' + VIL_REF[k]).join('、') +
+      '），換算成有在採集的村民數，和實際村民數的差就是沒在採集的人數。包含閒置、走路、蓋建築和逃跑的村民；漁船、聖物等非村民收入會讓數字偏低。';
+    const markers = [];
+    idleRows.forEach((r) => ['feudal', 'castle', 'imperial'].forEach((k) => { if (r.p.ages && isNum(r.p.ages[k])) markers.push({ x: r.p.ages[k], color: r.color }); }));
+    lineChart($('#mEcoIdle'), {
+      label: '沒在採集的村民', empty: '這場沒有村民數資料',
+      series: idleRows.map((r) => ({ name: r.name, color: r.color, width: r.p.side === 'me' ? 2.6 : 2, values: r.a.T.map((t, i) => ({ x: t, y: r.a.idleV[i] })) })),
+      xMin: 0, xFormat: fmtTime, xTicks: timeTicks, markers, height: 200, snapTol: 15,
+      tipTitle: (x) => '第 ' + fmtTime(x),
+      tipValue: (y) => fmtNum(y, 1) + ' 人',
+      tipExtra: (x) => h('div', { class: 'muted' }, idleRows.map((r) => {
+        const i = r.a.T.indexOf(x);
+        return i >= 0 && isNum(r.a.villagers[i]) ? r.p.name + '：村民 ' + fmtNum(r.a.villagers[i]) + '，採集 ' + fmtNum(r.a.rateTot[i]) + '/分' : null;
+      }).filter(Boolean).join('；'))
+    });
+    $('#mEcoIdleLegend').replaceChildren(...idleRows.map((r) => h('span', null, h('i', { class: 'sw', style: 'background:' + r.color }), r.name)), h('span', { class: 'muted' }, '虛線：升時代的時間點'));
+
+    // 問題清單（所有比較中的玩家合併，依嚴重程度排序）
+    const KIND = { hoard: '囤積', queue: '佇列', idle: '建築閒置', idlev: '村民沒在採集' };
+    const list = [].concat(...rows.map((r) => r.a.issues.map((it) => Object.assign({ who: r }, it)))).sort((i1, i2) => i2.severity - i1.severity).slice(0, 14);
+    const focusKey = (it) => it.kind + '|' + it.from + '|' + ecoKey(it.who.p);
+    $('#mEcoIssues').replaceChildren(...(list.length ? list.map((it) => h('li', null, h('button', {
+      type: 'button', class: 'issue', 'aria-pressed': String(!!(state.ecoFocus && state.ecoFocus.key === focusKey(it))),
+      onclick: () => {
+        const same = state.ecoFocus && state.ecoFocus.key === focusKey(it);
+        state.ecoFocus = same ? null : { from: it.from, to: it.to, key: focusKey(it) };
+        rerender();
+        if (!same) $('#mEcoCharts').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    },
+      h('span', { class: 'when' }, fmtTime(it.from) + (it.to - it.from >= 30 ? '–' + fmtTime(it.to) : ''),
+        rows.length > 1 ? h('div', { class: 'small muted' }, h('i', { class: 'pdot', style: 'background:' + it.who.color }), it.who.p.name) : null),
+      h('span', { class: 'what' }, h('span', { class: 'itag ' + it.kind }, KIND[it.kind]), h('b', null, it.title), h('p', null, it.body)),
+      h('span', { class: 'cost' }, it.cost)))) : [h('li', { class: 'empty' }, '用目前的時限沒有找到明顯的問題。')]));
+
+    // 算法說明
+    const anyEst = rows.some((r) => r.a.estimated), noQueue = rows.filter((r) => !r.a.queue);
+    $('#mEcoMethod').replaceChildren(
+      h('summary', null, '怎麼算的'),
+      h('ul', null,
+        h('li', null, '囤積：每個時間點手上的資源，扣掉之後 ' + mins + ' 分鐘內實際花掉的量（先存的先花），剩下的就是放了 ' + mins + ' 分鐘都沒用到的資源。之後 ' + mins + ' 分鐘內會花掉的存款，例如存錢升時代，不算囤積。'),
+        h('li', null, '佇列呆料：遊戲在單位排進佇列時就扣錢。用「累積花費 − 已完成項目的成本 − 正在生產中的成本」算出付了錢卻還沒開工的資源。真正的佇列會先鼓起來再消掉，所以只算同時高於前後 5 分鐘最低點的部分，藉此去掉免費單位、文明特有花費等對不上成本表的固定誤差。建築的施工時間會隨村民數變動，所以完工前一段時間內（資料表施工時間的 2 倍再加 1 分鐘）鎖住的資源，會先當成施工中的建築。有單位在排隊代表建築一定在生產，所以只在有建築滿載時才計算，而且每棟滿載建築最多算 ' + QUEUE_DEPTH + ' 隻的成本，用來排除進貢、城牆等對不上成本表的花費。一直排滿超過 5 分鐘的佇列會被低估。'),
+        h('li', null, '有重播檔的場次（玩家開啟了分享對戰紀錄、而且重播還沒過期），佇列呆料改用重播逐棟模擬。重播只記錄指令、不記錄佇列，所以照遊戲規則重演：每個訓練或研究指令排進那棟建築一項、取消指令照項目序號移除、同一棟先進先出。每一項的完成時間用對戰摘要裡的完成紀錄校正，沒有完成紀錄的才用資料表的生產時間推算。到對局結束都沒做完的項目（人口已滿、建築被拆）會一直算在佇列裡。'),
+        h('li', null, '每棟建築佇列呆料：建築越多，同時排隊的總量本來就越多，但不代表浪費，所以把佇列呆料除以正在排隊的建築數，看每棟排得多深，問題也用每棟的量判斷（超過 ' + QUEUE_MIN + ' 才列出）。沒有重播的場次不知道是哪幾棟在排，改用同時滿載的建築數。'),
+        h('li', null, '生產建築：每 20 秒一格，看同類建築有幾秒在訓練單位（依單位完成時間往回推訓練時間）。新蓋的生產建築在 ' + mins + ' 分鐘內利用率低於 ' + fmtPct(IDLE_UTIL) + ' 會列為「建築閒置」。'),
+        h('li', null, '城鎮中心生產時間：只算到村民數第一次達到整場高峰的 95% 為止。有建造紀錄時，用村民和城鎮中心科技的完成時間往回推訓練時間；沒有時，用村民數每 20 秒的增加推估（每 ' + VIL_TIME + ' 秒多 1 個村民算滿載），村民死亡會讓這個推估偏低。'),
+        h('li', null, '等價 TC 損失產能：平均有幾個村民沒在採集，就等於少了幾個村民；乘上訓練一個村民的 ' + VIL_TIME + ' 秒，就是城鎮中心要多花多少時間才能補回這些產能。'),
+        h('li', null, '沒在採集的村民：村民數 − 總採集速率 ÷ 該時代的基準效率。基準取本資料集所有對局在各時代前 10% 的效率，所以採集效率普通時也會算出一些「沒在採集」的人數，適合用來和對手比較、找出突然變多的時段。開局前 2 分鐘不列入；至少 ' + IDLE_MIN + ' 人且佔村民 15% 以上的時段會列為問題。'),
+        h('li', null, '資料每 20 秒一筆，時間點會有 20 秒以內的誤差。成本與訓練時間取自 aoe4world 的資料表，沒有計入科技加速和文明折扣。'),
+        anyEst ? h('li', null, h('b', null, '有玩家的花費是由採集速率推算的（舊版摘要或本機重播），囤積與佇列數字的誤差比較大。')) : null,
+        noQueue.length ? h('li', null, noQueue.map((r) => r.p.name).join('、') + ' 這場沒有建造紀錄，所以沒有佇列和生產建築的分析。執行 node enrich-summaries.js（aoe4world 對局）或在遊戲電腦上執行 node sync-local-matches.js（本機對局）可以補上。') : null
+      )
+    );
+  }
+
   // ================== 單場分析 ==================
+  const NO_DETAIL_TEXT = '這場沒有逐時數據。AOE4 World 的自訂對局沒有這份摘要，本機也沒有留下可讀的重播統計。';
+  function renderNoDetail(m) {
+    const box = $('#mNoDetail');
+    const pv = state.provider;
+    const st = pv && pv.detailStatus ? pv.detailStatus(m) : null;
+    if (!st) { box.replaceChildren(NO_DETAIL_TEXT); return; }
+    const btn = h('button', { type: 'button', class: 'btn btn-gold' }, '下載這場的詳細數據');
+    const msg = h('span', { class: 'muted small' }, st.note || '');
+    btn.disabled = !st.canFetch;
+    btn.onclick = async () => {
+      btn.disabled = true;
+      btn.textContent = '下載中…';
+      msg.textContent = '向 AoE4 World 取摘要，再向官方戰績網站取重播檔（約幾秒）。';
+      try {
+        const got = await pv.fetchDetail(m);
+        if (state.matchId !== m.id) return;
+        if (got) { renderView(); return; }
+        renderNoDetail(m);
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = '再試一次';
+        msg.textContent = '下載失敗：' + (e && e.message ? e.message : e);
+      }
+    };
+    box.replaceChildren(h('div', null, st.text), h('div', { class: 'nodetail-actions' }, st.canFetch ? btn : null, msg));
+  }
   function renderMatch() {
     let ms = filtered();
     if (!ms.length) ms = state.data.matches;
@@ -1349,13 +2373,13 @@ window.AOE4_CONFIG = {
     const me = meOf(m);
     $('#mNoDetail').hidden = !!me;
     $('#mDetail').hidden = !me;
-    if (!me) return;
+    if (!me) { renderNoDetail(m); return; }
     const ps = orderPlayers(m.detail.players);
     const colors = colorMap(m.detail.players);
     const opps = oppsOf(m);
 
     // 指標按鈕
-    const avail = SERIES.filter((s) => ps.some((p) => { const a = s.get(p.timeline); return Array.isArray(a) && a.some((v) => v > 0); }));
+    const avail = SERIES.filter((s) => ps.some((p) => { const a = s.get(p.timeline, p); return Array.isArray(a) && a.some((v) => v > 0); }));
     if (!avail.some((s) => s.id === state.series)) state.series = 'villagers';
     const groups = [];
     avail.forEach((s) => { let g = groups.find((x) => x.name === s.group); if (!g) groups.push(g = { name: s.group, items: [] }); g.items.push(s); });
@@ -1369,13 +2393,15 @@ window.AOE4_CONFIG = {
     ps.forEach((p) => ['feudal', 'castle', 'imperial'].forEach((k) => { if (p.ages && isNum(p.ages[k])) markers.push({ x: p.ages[k], color: colors.get(p) }); }));
     lineChart($('#mChart'), {
       label: sdef.name + '隨時間變化',
-      series: ps.map((p) => { const ys = sdef.get(p.timeline) || []; return { name: p.name + (p.side === 'me' ? '（我）' : ''), color: colors.get(p), width: p.side === 'me' ? 2.6 : 2, values: (p.timeline.t || []).map((t, i) => ({ x: t, y: ys[i] })) }; }),
+      series: ps.map((p) => { const ys = sdef.get(p.timeline, p) || []; return { name: p.name + (p.side === 'me' ? '（我）' : ''), color: colors.get(p), width: p.side === 'me' ? 2.6 : 2, values: (p.timeline.t || []).map((t, i) => ({ x: t, y: ys[i] })) }; }),
       xMin: 0, xFormat: fmtTime, xTicks: timeTicks, markers: markers, height: 280, snapTol: 15,
       tipTitle: (x) => '第 ' + fmtTime(x) + (sdef.unit ? '（' + sdef.unit + '）' : ''),
       tipValue: (y) => fmtNum(y)
     });
     $('#mLegend').replaceChildren(...ps.map((p) => h('span', null, h('i', { class: 'sw', style: 'background:' + colors.get(p) }), p.name + '・' + civName(p.civ))),
       h('span', { class: 'muted' }, '虛線：升時代的時間點'));
+
+    renderEco(m, ps, colors);
 
     const hasArmy = ps.some((p) => p.army && p.army.t && p.army.t.length && (p.units || []).length);
     $('#mArmyCard').hidden = !hasArmy;
@@ -1399,7 +2425,7 @@ window.AOE4_CONFIG = {
     // 關鍵時間點
     const cps = [300, 600, 900, 1200, 1500, 1800, 2400].filter((t) => t <= dur + 10);
     const rowsDef = [
-      ['村民數', (p, t) => tlAt(p, 'villagers', t), 1], ['採集速率', (p, t) => tlSumAt(p, RATE, t), 1], ['累積採集', (p, t) => tlSumAt(p, GATH, t), 1],
+      ['村民數', (p, t) => tlAt(p, 'villagers', t), 1], ['採集速率', (p, t) => tlSumAt(p, RATE, t), 1], ['累積採集', (p, t) => gatheredAt(p, t), 1],
       ['囤積資源', (p, t) => tlSumAt(p, STOCK, t), -1], ['軍隊（估計）', (p, t) => tlAt(p, 'army', t), 1], ['總分', (p, t) => tlAt(p, 'score', t), 1], ['軍事分', (p, t) => tlAt(p, 'military', t), 1]
     ];
     $('#mCheckpoints').replaceChildren(
