@@ -761,7 +761,13 @@ window.AOE4_CONFIG = {
     return d;
   }
   // provider：資料來自線上來源時（切換玩家），提供下載單場詳細數據、重新抓取等功能；預設資料為 null
-  function load(d, source, provider) {
+  // 預設資料（GitHub 上約 13 MB）下載較久：下載期間若訪客已經切換玩家或匯入檔案，晚到的預設資料不能蓋掉畫面。
+  // 每次開始載入預設資料拿一個序號，其他來源載入時把序號往前推，舊的預設下載回來後就丟掉。
+  let defaultSeq = 0;
+  const startDefault = () => ++defaultSeq;
+  const defaultStillWanted = (seq) => seq === defaultSeq;
+  function load(d, source, provider, defaultTicket) {
+    if (defaultTicket == null) defaultSeq++;
     state.provider = provider || null;
     state.data = validate(d);
     markSpentField(state.data);
@@ -791,14 +797,22 @@ window.AOE4_CONFIG = {
     await bootDefault();
   }
   async function bootDefault() {
+    const seq = startDefault();
     if (CFG.dataUrl) {
       $('#reloadBtn').hidden = false;
-      try { load(await fetchFromUrl(), 'GitHub：' + CFG.dataUrl); banner(''); }
+      banner('正在載入預設的戰績資料（約 13 MB，第一次開啟要等幾秒）…想看自己的戰績，可以直接按右上角「看別人的戰績」。');
+      try {
+        const data = await fetchFromUrl();
+        if (!defaultStillWanted(seq)) return;
+        load(data, 'GitHub：' + CFG.dataUrl, null, seq);
+        banner('');
+      }
       catch (e) {
-        if (window.AOE4_DATA) { load(window.AOE4_DATA, '本機檔案 data/aoe4-data.js'); }
+        if (!defaultStillWanted(seq)) return;
+        if (window.AOE4_DATA) { load(window.AOE4_DATA, '本機檔案 data/aoe4-data.js', null, seq); }
         banner('無法從 ' + CFG.dataUrl + ' 取得資料（' + e.message + '），目前顯示本機檔案。若 API 在別的網址，伺服器需要允許跨來源請求（CORS）。');
       }
-      if (CFG.refreshMinutes > 0) setInterval(reloadFromUrl, CFG.refreshMinutes * 60000);
+      if (CFG.refreshMinutes > 0) setInterval(() => { if (!state.provider) reloadFromUrl(); }, CFG.refreshMinutes * 60000);
     } else if (window.AOE4_DATA) {
       try { load(window.AOE4_DATA, '本機檔案 data/aoe4-data.js'); } catch (e) { banner('data/aoe4-data.js 的格式有誤：' + e.message); }
     } else {
@@ -807,6 +821,7 @@ window.AOE4_CONFIG = {
     }
   }
   async function reloadFromUrl() {
+    const seq = startDefault();
     const btn = $('#reloadBtn');
     const oldLabel = btn.textContent;
     const before = state.data && state.data.generatedAt;
@@ -816,7 +831,8 @@ window.AOE4_CONFIG = {
     await new Promise((resolve) => setTimeout(resolve, 30));
     try {
       const data = await fetchFromUrl(true);
-      load(data, 'GitHub：' + CFG.dataUrl);
+      if (!defaultStillWanted(seq)) return;
+      load(data, 'GitHub：' + CFG.dataUrl, null, seq);
       const when = data.generatedAt ? fmtDate(data.generatedAt, true) : '未知時間';
       const same = before && data.generatedAt === before;
       banner(same
@@ -857,6 +873,7 @@ window.AOE4_CONFIG = {
     load: (d, source, provider) => load(d, source || '程式推送', provider),
     reload: reloadFromUrl,
     loadDefault: () => { state.provider = null; banner(''); return bootDefault(); },
+    cancelDefault: () => { defaultSeq++; },
     refresh: () => { if (!state.data) return; markSpentField(state.data); factorCache = null; renderHeader(); renderView(); },
     banner,
     current: () => ({ data: state.data, provider: state.provider, view: state.view, matchId: state.matchId }),

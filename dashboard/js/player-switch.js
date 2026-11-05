@@ -94,6 +94,8 @@
 
   // ---------------- 載入某位玩家 ----------------
   let session = null;   // { profileId, player, matches, store: Map(gameId → 紀錄), catalog, bulk }
+  // 每次開始載入一位玩家拿一個序號；之後又選了別人或回到預設，舊的載入回來就丟掉，不蓋掉畫面
+  let openSeq = 0;
 
   function fromUrl() {
     const v = new URLSearchParams(location.search).get('player');
@@ -114,12 +116,16 @@
   async function open(profileId, opts) {
     const o = opts || {};
     const dash = Dash();
+    const seq = ++openSeq;
+    const current = () => seq === openSeq;
+    dash.cancelDefault();
     if (session && session.bulk) session.bulk.abort();
     dash.banner('正在讀取玩家 ' + profileId + ' 的資料…');
     try {
       const [cached, cat, store] = await Promise.all([idbGet('players', profileId), catalog(), idbDetails(profileId)]);
       let player;
       let matches = (cached && cached.matches) || [];
+      if (!current()) return false;
       const showCached = () => {
         if (!cached || !cached.player) return;
         session = { profileId, player: cached.player, matches, store, catalog: cat, bulk: null };
@@ -132,7 +138,7 @@
         const known = new Set(matches.map((m) => m.id));
         const fresh = await W.fetchMatches(profileId, {
           known,
-          onProgress: ({ loaded, total }) => dash.banner('正在向 AoE4 World 讀取 ' + (player.name || profileId) + ' 的對局清單…（' + fmtNum(known.size + loaded) + (total ? ' / ' + fmtNum(total) : '') + ' 場）'),
+          onProgress: ({ loaded, total }) => current() && dash.banner('正在向 AoE4 World 讀取 ' + (player.name || profileId) + ' 的對局清單…（' + fmtNum(known.size + loaded) + (total ? ' / ' + fmtNum(total) : '') + ' 場）'),
         });
         if (fresh.length || !cached) {
           const byId = new Map(matches.map((m) => [m.id, m]));
@@ -141,10 +147,12 @@
         }
         await idbPut('players', profileId, { player, matches, updatedAt: new Date().toISOString() });
       } catch (e) {
+        if (!current()) return false;
         if (!cached) throw e;
         dash.banner('無法連到 AoE4 World（' + e.message + '），顯示上次存下的資料。');
         player = cached.player;
       }
+      if (!current()) return false;
       session = { profileId, player, matches, store, catalog: cat, bulk: null };
       remember({ id: profileId, name: player.name, country: player.country });
       setUrl(profileId);
@@ -153,6 +161,7 @@
       else dash.banner('');
       return true;
     } catch (e) {
+      if (!current()) return false;
       dash.banner('讀取玩家 ' + profileId + ' 失敗：' + (e && e.message ? e.message : e) + '。');
       return false;
     }
@@ -352,6 +361,7 @@
     $('#playerBtn').addEventListener('click', openDialog);
     $('#pSearchForm').addEventListener('submit', (e) => { e.preventDefault(); search($('#pSearch').value); });
     $('#pDefault').addEventListener('click', () => {
+      openSeq++;
       $('#playerDlg').close();
       if (session && session.bulk) session.bulk.abort();
       session = null;
@@ -359,7 +369,7 @@
       renderBar();
       Dash().loadDefault();
     });
-    $('#importFile').addEventListener('change', () => { $('#playerDlg').close(); if (session && session.bulk) session.bulk.abort(); session = null; setUrl(null); setTimeout(renderBar, 0); });
+    $('#importFile').addEventListener('change', () => { openSeq++; $('#playerDlg').close(); if (session && session.bulk) session.bulk.abort(); session = null; setUrl(null); setTimeout(renderBar, 0); });
     // 點對話框外面關閉
     $('#playerDlg').addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.close(); });
   }
