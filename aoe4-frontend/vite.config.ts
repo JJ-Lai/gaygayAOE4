@@ -28,7 +28,9 @@ function dashboardDevPlugin(): Plugin {
           return
         }
         let file: string | null = null
-        if (path === '/' || path === '/index.html') file = join(dir, 'index.html')
+        // E2E 測試（playwright.config.ts 設 E2E_REACT_HOME=1）測的是 React 首頁，這時 / 不換成儀表板
+        const reactHome = process.env.E2E_REACT_HOME === '1'
+        if (!reactHome && (path === '/' || path === '/index.html')) file = join(dir, 'index.html')
         else if (path === '/catalog.json') file = join(dir, 'catalog.json')
         else if (path.startsWith('/data/') || path.startsWith('/js/')) {
           const target = normalize(join(dir, path))
