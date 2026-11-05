@@ -501,6 +501,16 @@ window.AOE4_CONFIG = {
     </form>
     <ul id="pResults" class="p-results"></ul>
   </section>
+  <section class="dlg-sec">
+    <h3>讀取這台電腦的 AoE4 對局</h3>
+    <p class="muted small">選擇 <b>文件 → My Games → Age of Empires IV</b> 資料夾（也可以選上層的「文件」）。自訂、對電腦和在這台電腦打的線上對局都讀得到，含逐時數據；遊戲只保留最近一段時間的檔案。檔案只在你的瀏覽器裡解析，不會上傳。</p>
+    <div class="dlg-row">
+      <button type="button" id="pLocalPick" class="btn btn-gold">選擇 AoE4 資料夾…</button>
+      <button type="button" id="pLocalAgain" class="btn" hidden>重新讀取上次的資料夾</button>
+      <input type="file" id="pLocalInput" class="sr-only" webkitdirectory multiple tabindex="-1" aria-hidden="true">
+    </div>
+    <p id="pLocalMsg" class="p-msg" hidden></p>
+  </section>
   <section class="dlg-sec" id="pRecentSec" hidden>
     <h3>最近看過</h3>
     <ul id="pRecent" class="p-results"></ul>
@@ -517,6 +527,7 @@ window.AOE4_CONFIG = {
 <script src="data/aoe4-data.js"></script>
 <script src="js/rec-parse.js"></script>
 <script src="js/aoe4world.js"></script>
+<script src="js/local-stats.js"></script>
 <script src="js/player-switch.js"></script>
 <script>
 (function () {
@@ -670,7 +681,17 @@ window.AOE4_CONFIG = {
   }
   const isNum = (v) => typeof v === 'number' && isFinite(v);
   const mean = (arr) => { const a = arr.filter(isNum); return a.length ? a.reduce((s, v) => s + v, 0) / a.length : null; };
-  const civName = (c) => CIV[c] || (c ? String(c).replace(/_/g, ' ').replace(/\b\w/g, (x) => x.toUpperCase()) : '—');
+  // 本機統計檔、重播用的是遊戲內部代號（hre、malian、mongol_ha_gol…），對照到 aoe4world 的代號
+  const CIV_ALIAS = {
+    hre: 'holy_roman_empire', malian: 'malians', ottoman: 'ottomans', byzantine: 'byzantines', mongol: 'mongols',
+    sultanate: 'delhi_sultanate', abbasid: 'abbasid_dynasty', mongol_ha_gol: 'golden_horde', sultanate_ha_tug: 'tughlaq_dynasty',
+    byzantine_ha_mac: 'macedonian_dynasty', japanese_ha_sen: 'sengoku_daimyo', jin: 'jin_dynasty', viking: 'vikings', scot: 'scots'
+  };
+  function normalizeCivs(d) {
+    const fix = (o) => { if (o && CIV_ALIAS[o.civ]) o.civ = CIV_ALIAS[o.civ]; };
+    (d.matches || []).forEach((m) => { fix(m); (m.players || []).forEach(fix); ((m.detail && m.detail.players) || []).forEach(fix); });
+  }
+  const civName = (c) => CIV[c] || CIV[CIV_ALIAS[c]] || (c ? String(c).replace(/_/g, ' ').replace(/\b\w/g, (x) => x.toUpperCase()) : '—');
   const modeName = (m) => MODE[m] || m || '—';
   const mapName = (name) => name || '—';
   const modeGroup = (m) => {
@@ -770,6 +791,7 @@ window.AOE4_CONFIG = {
     if (defaultTicket == null) defaultSeq++;
     state.provider = provider || null;
     state.data = validate(d);
+    normalizeCivs(state.data);
     markSpentField(state.data);
     state.data.matches.sort((a, b) => Date.parse(a.startedAt) - Date.parse(b.startedAt));
     state.source = source;
