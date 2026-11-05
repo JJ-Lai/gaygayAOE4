@@ -1,10 +1,10 @@
 {
   "profileId": 10861747,
-  "extractedAt": "2026-11-03T14:11:29.915Z",
+  "extractedAt": "2026-11-05T13:45:41.250Z",
   "gameDir": "C:\\Users\\e1252\\OneDrive\\文件\\My Games\\Age of Empires IV",
   "counts": {
-    "total": 255,
-    "skirmish": 105,
+    "total": 256,
+    "skirmish": 106,
     "custom": 135,
     "localOnly": 5,
     "matchhistory": 10
@@ -7567,32 +7567,6 @@
       ]
     },
     {
-      "id": "M258874010",
-      "gameId": 258874010,
-      "source": "network-local-only",
-      "mode": "custom",
-      "startedAtLocal": null,
-      "cachedAt": "2026-11-03T14:03:22.768Z",
-      "map": null,
-      "durationSec": 1330,
-      "civ": "jin_dynasty",
-      "result": "loss",
-      "players": [
-        {
-          "name": "Intolerant",
-          "civ": "chinese",
-          "profileId": 10853087,
-          "result": "win"
-        },
-        {
-          "name": "李侑玲",
-          "civ": "jin_dynasty",
-          "profileId": 10861747,
-          "result": "loss"
-        }
-      ]
-    },
-    {
       "id": "M258862337",
       "gameId": 258862337,
       "source": "network-local-only",
@@ -7687,6 +7661,52 @@
           "civ": "japanese",
           "profileId": 10853087,
           "result": "win"
+        }
+      ]
+    },
+    {
+      "id": "S315361550",
+      "gameId": 315361550,
+      "source": "network-skirmish",
+      "mode": "skirmish",
+      "startedAtLocal": null,
+      "cachedAt": "2026-11-03T16:49:43.465Z",
+      "map": null,
+      "durationSec": 808,
+      "civ": "jin_dynasty",
+      "result": "loss",
+      "players": [
+        {
+          "name": "李侑玲",
+          "civ": "jin_dynasty",
+          "profileId": 10861747,
+          "result": "loss"
+        }
+      ]
+    },
+    {
+      "id": "M258874010",
+      "gameId": 258874010,
+      "source": "network-local-only",
+      "mode": "custom",
+      "startedAtLocal": "2026/11/2 下午 11:56",
+      "cachedAt": "2026-11-03T16:49:56.921Z",
+      "map": "dry_arabia",
+      "durationSec": 1330,
+      "civ": "jin_dynasty",
+      "result": "loss",
+      "players": [
+        {
+          "name": "Intolerant",
+          "civ": "chinese",
+          "profileId": 10853087,
+          "result": "win"
+        },
+        {
+          "name": "李侑玲",
+          "civ": "jin_dynasty",
+          "profileId": 10861747,
+          "result": "loss"
         }
       ]
     }
