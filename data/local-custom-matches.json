@@ -1,12 +1,12 @@
 {
   "profileId": 10861747,
-  "extractedAt": "2026-11-05T13:45:41.250Z",
+  "extractedAt": "2026-11-05T14:04:36.156Z",
   "gameDir": "C:\\Users\\e1252\\OneDrive\\文件\\My Games\\Age of Empires IV",
   "counts": {
-    "total": 256,
+    "total": 261,
     "skirmish": 106,
     "custom": 135,
-    "localOnly": 5,
+    "localOnly": 10,
     "matchhistory": 10
   },
   "matches": [
@@ -67,7 +67,7 @@
         {
           "name": "e1252081",
           "civ": null,
-          "profileId": null,
+          "profileId": 10861747,
           "result": "win"
         }
       ]
@@ -7500,6 +7500,7 @@
       "source": "network-custom",
       "mode": "custom",
       "startedAtLocal": "2026/10/30 下午 10:03",
+      "startedAt": "2026-10-30T14:03:14.000Z",
       "cachedAt": "2026-10-30T14:51:05.939Z",
       "map": "rugged",
       "durationSec": 2381,
@@ -7521,11 +7522,45 @@
       ]
     },
     {
+      "id": "M258627674",
+      "gameId": 258627674,
+      "source": "network-local-only",
+      "mode": "custom",
+      "startedAtLocal": "2026/11/1 下午 09:42",
+      "startedAt": "2026-11-01T13:41:54.000Z",
+      "cachedAt": "2026-11-01T14:33:08.000Z",
+      "map": "megarandom",
+      "durationSec": 3074,
+      "civ": "byzantine_ha_mac",
+      "result": "win",
+      "players": [
+        {
+          "name": "jerryjoshku",
+          "civ": "templar",
+          "profileId": 10857013,
+          "result": "win"
+        },
+        {
+          "name": "Intolerant",
+          "civ": "scots",
+          "profileId": 10853087,
+          "result": "win"
+        },
+        {
+          "name": "李侑玲",
+          "civ": "byzantine_ha_mac",
+          "profileId": 10861747,
+          "result": "win"
+        }
+      ]
+    },
+    {
       "id": "M258850389",
       "gameId": 258850389,
       "source": "network-local-only",
       "mode": "custom",
       "startedAtLocal": "2026/11/2 下午 09:55",
+      "startedAt": "2026-11-02T13:55:46.000Z",
       "cachedAt": "2026-11-02T15:53:33.236Z",
       "map": "dry_arabia",
       "durationSec": 1463,
@@ -7571,9 +7606,10 @@
       "gameId": 258862337,
       "source": "network-local-only",
       "mode": "custom",
-      "startedAtLocal": null,
+      "startedAtLocal": "2026/11/2 下午 10:52",
+      "startedAt": "2026-11-02T14:52:29.000Z",
       "cachedAt": "2026-11-03T14:03:26.898Z",
-      "map": null,
+      "map": "dry_arabia",
       "durationSec": 1504,
       "civ": "jin_dynasty",
       "result": "win",
@@ -7597,9 +7633,10 @@
       "gameId": 258855916,
       "source": "network-local-only",
       "mode": "custom",
-      "startedAtLocal": null,
+      "startedAtLocal": "2026/11/2 下午 10:21",
+      "startedAt": "2026-11-02T14:21:17.000Z",
       "cachedAt": "2026-11-03T14:03:29.899Z",
-      "map": null,
+      "map": "dry_arabia",
       "durationSec": 1459,
       "civ": "jin_dynasty",
       "result": "win",
@@ -7690,6 +7727,7 @@
       "source": "network-local-only",
       "mode": "custom",
       "startedAtLocal": "2026/11/2 下午 11:56",
+      "startedAt": "2026-11-02T15:56:25.000Z",
       "cachedAt": "2026-11-03T16:49:56.921Z",
       "map": "dry_arabia",
       "durationSec": 1330,
@@ -7706,6 +7744,114 @@
           "name": "李侑玲",
           "civ": "jin_dynasty",
           "profileId": 10861747,
+          "result": "loss"
+        }
+      ]
+    },
+    {
+      "id": "M259214808",
+      "gameId": 259214808,
+      "source": "network-local-only",
+      "mode": "custom",
+      "startedAtLocal": "2026/11/4 下午 09:46",
+      "startedAt": "2026-11-04T13:46:35.000Z",
+      "cachedAt": "2026-11-04T14:23:42.000Z",
+      "map": "dry_arabia",
+      "durationSec": 2227,
+      "civ": "jin_dynasty",
+      "result": "win",
+      "players": [
+        {
+          "name": "李侑玲",
+          "civ": "jin_dynasty",
+          "profileId": 10861747,
+          "result": "win"
+        },
+        {
+          "name": "Intolerant",
+          "civ": "rus",
+          "profileId": 10853087,
+          "result": "loss"
+        }
+      ]
+    },
+    {
+      "id": "M259223407",
+      "gameId": 259223407,
+      "source": "network-local-only",
+      "mode": "custom",
+      "startedAtLocal": "2026/11/4 下午 10:28",
+      "startedAt": "2026-11-04T14:28:19.000Z",
+      "cachedAt": "2026-11-04T14:48:18.000Z",
+      "map": "dry_arabia",
+      "durationSec": 1199,
+      "civ": "jin_dynasty",
+      "result": "win",
+      "players": [
+        {
+          "name": "李侑玲",
+          "civ": "jin_dynasty",
+          "profileId": 10861747,
+          "result": "win"
+        },
+        {
+          "name": "Intolerant",
+          "civ": "chinese",
+          "profileId": 10853087,
+          "result": "loss"
+        }
+      ]
+    },
+    {
+      "id": "M259227753",
+      "gameId": 259227753,
+      "source": "network-local-only",
+      "mode": "custom",
+      "startedAtLocal": "2026/11/4 下午 10:50",
+      "startedAt": "2026-11-04T14:50:03.000Z",
+      "cachedAt": "2026-11-04T15:36:52.000Z",
+      "map": "dry_arabia",
+      "durationSec": 2809,
+      "civ": "jin_dynasty",
+      "result": "win",
+      "players": [
+        {
+          "name": "李侑玲",
+          "civ": "jin_dynasty",
+          "profileId": 10861747,
+          "result": "win"
+        },
+        {
+          "name": "Intolerant",
+          "civ": "chinese",
+          "profileId": 10853087,
+          "result": "loss"
+        }
+      ]
+    },
+    {
+      "id": "M259236949",
+      "gameId": 259236949,
+      "source": "network-local-only",
+      "mode": "custom",
+      "startedAtLocal": "2026/11/4 下午 11:44",
+      "startedAt": "2026-11-04T15:43:57.000Z",
+      "cachedAt": "2026-11-05T13:53:48.659Z",
+      "map": "dry_arabia",
+      "durationSec": 2405,
+      "civ": "jin_dynasty",
+      "result": "win",
+      "players": [
+        {
+          "name": "李侑玲",
+          "civ": "jin_dynasty",
+          "profileId": 10861747,
+          "result": "win"
+        },
+        {
+          "name": "Intolerant",
+          "civ": "chinese",
+          "profileId": 10853087,
           "result": "loss"
         }
       ]
