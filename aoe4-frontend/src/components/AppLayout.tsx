@@ -24,6 +24,10 @@ import { useAppStore } from '../store/useAppStore'
 
 const { Header, Sider, Content } = Layout
 
+// 被儀表板（dashboard/index.html 的「戰術模擬」分頁）用 iframe 嵌入時，不顯示這裡的頂部導覽列：
+// 那些頁面需要後端 API，部署到 Cloudflare 的靜態網站上用不了。
+const embedded = typeof window !== 'undefined' && window.self !== window.top
+
 export function AppLayout({ showSidebar = false }: { showSidebar?: boolean }) {
   const navigate = useNavigate()
   const location = useLocation()
@@ -52,6 +56,7 @@ export function AppLayout({ showSidebar = false }: { showSidebar?: boolean }) {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
+      {!embedded && (
       <Header style={{ display: 'flex', alignItems: 'center', gap: 24, background: '#001529' }}>
         <Typography.Title
           level={4}
@@ -84,6 +89,7 @@ export function AppLayout({ showSidebar = false }: { showSidebar?: boolean }) {
           </Button>
         </Space>
       </Header>
+      )}
       <Layout>
         {showSidebar && profileId && (
           <Sider width={200} theme="light" breakpoint="lg" collapsedWidth={0}>
@@ -96,7 +102,7 @@ export function AppLayout({ showSidebar = false }: { showSidebar?: boolean }) {
             />
           </Sider>
         )}
-        <Content style={{ padding: 24, background: '#f5f5f5' }}>
+        <Content style={{ padding: embedded ? 16 : 24, background: '#f5f5f5' }}>
           <Outlet />
         </Content>
       </Layout>

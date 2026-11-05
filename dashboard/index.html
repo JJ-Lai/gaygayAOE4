@@ -94,6 +94,11 @@ h1 { font-family: var(--font-display); font-weight: 600; font-size: 30px; line-h
 .mode-filter select { max-width: 16rem; }
 select { padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel-2); max-width: 100%; }
 
+/* 戰術模擬分頁：內嵌 /simulate（aoe4-frontend 的 React 頁），寬度放到滿版 */
+body.sim-mode main.wrap { max-width: none; padding-bottom: 0; }
+body.sim-mode .mode-filter { display: none; }
+.sim-frame { display: block; width: 100%; min-height: 560px; border: 1px solid var(--line); border-radius: var(--r); background: #f5f5f5; }
+
 .banner { margin-top: 12px; }
 .banner > div { padding: 10px 14px; border-radius: var(--r); border: 1px solid var(--line); background: var(--accent-soft); }
 main { padding-block: 18px 48px; }
@@ -326,6 +331,7 @@ window.AOE4_CONFIG = {
     <button type="button" class="tab" role="tab" data-view="match" id="tab-match">單場分析</button>
     <button type="button" class="tab" role="tab" data-view="factors" id="tab-factors">勝負關鍵</button>
     <button type="button" class="tab" role="tab" data-view="list" id="tab-list">對局列表</button>
+    <button type="button" class="tab" role="tab" data-view="sim" id="tab-sim">戰術模擬</button>
     <div class="mode-filter">
       <label for="modeSel">模式<select id="modeSel"></select></label>
       <label for="oppSel">對手<select id="oppSel"></select></label>
@@ -449,6 +455,11 @@ window.AOE4_CONFIG = {
       <span id="lCount" class="muted small"></span>
     </div>
     <div class="card"><div class="table-wrap tall"><table id="lTable"></table></div></div>
+  </section>
+
+  <section id="view-sim" class="view" role="tabpanel" aria-labelledby="tab-sim" hidden>
+    <p id="simNote" class="muted small" hidden>戰術模擬需要透過網站開啟（直接點開 HTML 檔時無法使用）：在 aoe4-frontend 執行 npm run dev，再開 http://localhost:5173/ 。</p>
+    <iframe id="simFrame" class="sim-frame" title="戰術模擬"></iframe>
   </section>
 </main>
 
@@ -848,6 +859,7 @@ window.AOE4_CONFIG = {
   function wl(ms) { const w = ms.filter((m) => m.result === 'win').length; const l = ms.filter((m) => m.result === 'loss').length; return { w, l, n: w + l, rate: w + l ? w / (w + l) : null }; }
 
   // ================== 分頁 ==================
+  const VIEWS = ['overview', 'match', 'factors', 'list', 'sim'];
   function route() {
     const hash = decodeURIComponent(location.hash.slice(1));
     const mm = /^match-(.+)$/.exec(hash);
@@ -856,7 +868,7 @@ window.AOE4_CONFIG = {
       state.view = 'match';
       state.matchId = /^\d+$/.test(raw) ? Number(raw) : raw;
     }
-    else if (['overview', 'match', 'factors', 'list'].includes(hash)) state.view = hash;
+    else if (VIEWS.includes(hash)) state.view = hash;
     renderView();
   }
   function go(view, matchId) {
@@ -868,13 +880,30 @@ window.AOE4_CONFIG = {
 
   function renderView() {
     document.querySelectorAll('.tab').forEach((t) => t.setAttribute('aria-selected', String(t.dataset.view === state.view)));
-    ['overview', 'match', 'factors', 'list'].forEach((v) => { $('#view-' + v).hidden = v !== state.view; });
+    VIEWS.forEach((v) => { $('#view-' + v).hidden = v !== state.view; });
+    document.body.classList.toggle('sim-mode', state.view === 'sim');
+    if (state.view === 'sim') { showSim(); return; }
     if (!state.data) return;
     if (state.view === 'overview') renderOverview();
     else if (state.view === 'match') renderMatch();
     else if (state.view === 'factors') renderFactors();
     else renderList();
   }
+
+  // ================== 戰術模擬（內嵌） ==================
+  // 第一次切到這個分頁才載入 /simulate，之後切走再切回來會保留模擬的狀態。
+  function showSim() {
+    const frame = $('#simFrame');
+    if (location.protocol === 'file:') { $('#simNote').hidden = false; frame.hidden = true; return; }
+    if (!frame.getAttribute('src')) frame.src = '/simulate';
+    fitSim();
+  }
+  function fitSim() {
+    const frame = $('#simFrame');
+    if (frame.hidden || state.view !== 'sim') return;
+    frame.style.height = Math.max(560, window.innerHeight - frame.getBoundingClientRect().top - 12) + 'px';
+  }
+  window.addEventListener('resize', fitSim);
 
   // ================== 折線圖 ==================
   function niceTicks(min, max, count) {

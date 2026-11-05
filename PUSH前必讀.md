@@ -44,23 +44,27 @@ node sync-local-matches.js
 
 另外，同步推的是 **當下所在的分支**（`HEAD`）。開機時如果停在功能分支上，資料就會推到那個分支，而不是 `main`。
 
-## 接下來會有的變動（2026-11 規劃中）
+## 網站結構：儀表板 + 戰術模擬（2026-11 起）
 
-網站（Cloudflare Workers：`gaygayaoe4`，監看 `main`）會從「只有戰術模擬」改成「儀表板為首頁、戰術模擬是其中一個分頁」：
+網站（Cloudflare Workers：`gaygayaoe4`，監看 `main`）是「儀表板為首頁、戰術模擬是其中一個分頁」：
 
-- `/` → 儀表板（`dashboard/index.html`）
-- `/sim/` → 戰術模擬（`aoe4-frontend`）
+- `/` → 儀表板（`dashboard/index.html`）；「戰術模擬」分頁用 iframe 嵌入 `/simulate`
+- `/simulate` → 戰術模擬（`aoe4-frontend` 的 React 頁）；被嵌入時會自動隱藏 React 的頂部導覽列
 
-會改到的檔案（另一台電腦如果也改了這些，pull 時可能要合併）：
+整合時改到的檔案（另一台電腦如果也改了這些，pull 時可能要合併）：
 
-| 檔案 | 會怎麼改 |
+| 檔案 | 改了什麼 |
 |---|---|
-| `dashboard/index.html` | 加一個「戰術模擬」分頁（只動導覽和一個新區塊） |
-| `aoe4-frontend/vite.config.ts` | 加 `base: '/sim/'` |
-| `aoe4-frontend/src/App.tsx` | Router 加 `basename` |
-| `aoe4-frontend/package.json` | 加 `build:site` 指令 |
-| `aoe4-frontend/wrangler.jsonc`、`public/_redirects` | 部署設定；`name` 必須是 `gaygayaoe4` |
+| `dashboard/index.html` | 加「戰術模擬」分頁（導覽按鈕、`view-sim` 區塊、`showSim()`） |
+| `aoe4-frontend/vite.config.ts` | 開發時 `/` 改成提供儀表板、`/simulate` 是 React |
+| `aoe4-frontend/src/components/AppLayout.tsx` | 被 iframe 嵌入時不顯示頂部導覽列 |
+| `aoe4-frontend/package.json`、`scripts/build-site.mjs` | 新增 `npm run build:site`：vite build 後把 React 頁改名成 `simulate.html`、把儀表板複製成 `index.html` |
+| `aoe4-frontend/wrangler.jsonc` | 部署設定；`name` 必須是 `gaygayaoe4` |
 
-**不會動**的檔案：`aoe4-frontend/src/sim/**`、`src/pages/SimulatePage.tsx`、`public/sim/**`，戰術模擬的開發可以照常進行。
+**沒有動**的檔案：`aoe4-frontend/src/sim/**`、`src/pages/SimulatePage.tsx`、`public/sim/**`、`src/App.tsx`，戰術模擬的開發可以照常進行。戰術模擬維持在 `/simulate`，資料檔仍用 `/sim/...` 絕對路徑，不用改。
+
+本機：
+- `cd aoe4-frontend; npm run dev` → `http://localhost:5173/` 是儀表板，`/simulate` 是模擬
+- 部署前確認：`npm run build:site`，再 `npx wrangler dev` → `http://localhost:8787/`（跟 Cloudflare 同一套執行環境）
 
 推到 `main` 就會觸發 Cloudflare 自動部署，所以還沒測好的東西請先推到別的分支。
