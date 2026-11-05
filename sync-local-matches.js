@@ -7,6 +7,7 @@ const path = require('path');
 const zlib = require('zlib');
 const { execFileSync } = require('child_process');
 const { attachLocalDetails } = require('./lib/local-detail');
+const dashboardData = require('./lib/dashboard-data');
 
 const ROOT = __dirname;
 const OUT = path.join(ROOT, 'data', 'local-custom-matches.json');
@@ -284,18 +285,8 @@ function sameLocalGame(a, b) {
   return Math.abs(Date.parse(a.cachedAt) - Date.parse(b.cachedAt)) < 3 * 60 * 60 * 1000;
 }
 
-function readDashboard() {
-  const file = path.join(ROOT, 'dashboard', 'data', 'aoe4-data.js');
-  const raw = fs.readFileSync(file, 'utf8');
-  return JSON.parse(raw.replace(/^[\s\S]*?window\.AOE4_DATA\s*=\s*/, '').replace(/;\s*$/, ''));
-}
-
-function writeDashboard(data) {
-  const dir = path.join(ROOT, 'dashboard', 'data');
-  const json = JSON.stringify(data);
-  fs.writeFileSync(path.join(dir, 'aoe4-data.js'), '// AoE4 儀表板資料（格式說明見 資料格式.md）\nwindow.AOE4_DATA = ' + json + ';\n');
-  fs.writeFileSync(path.join(dir, 'aoe4-data.json'), json);
-}
+const readDashboard = () => dashboardData.readDashboard(ROOT);
+const writeDashboard = (data) => dashboardData.writeDashboard(ROOT, data);
 
 function mergeDashboard(localMatches, gameDir) {
   const data = readDashboard();
