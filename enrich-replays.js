@@ -13,6 +13,8 @@ const { readDashboard, writeDashboard } = require('./lib/dashboard-data');
 const ROOT = __dirname;
 const REPLAY_DIR = path.join(ROOT, 'data', 'replays');
 const PAUSE_MS = 1100;
+// 2：orders 加入取消指令；版本較舊的場次會用快取的重播重新產生
+const ORDERS_VERSION = 2;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function unpack(raw) {
@@ -66,7 +68,7 @@ async function main() {
     if (!detail || detail.source === 'local-replay' || typeof m.id !== 'number') continue;
     if (!detail.players.some((p) => Array.isArray(p.events))) continue;
     stats.matches++;
-    if (!local[m.id] && detail.players.every((p) => Array.isArray(p.orders))) { stats.already++; continue; }
+    if (!local[m.id] && detail.players.every((p) => Array.isArray(p.orders)) && detail.ordersVersion >= ORDERS_VERSION) { stats.already++; continue; }
     let res;
     try { res = await loadReplay(m.id, me, local[m.id]); }
     catch (e) { stats.failed++; console.error(m.id, e.message); continue; }
@@ -81,13 +83,14 @@ async function main() {
       const rp = replayPlayerFor(rec, p, used);
       if (!rp) continue;
       used.add(rp);
-      // [秒（到 0.125 秒）, pbgid, 建築序號]；只留訓練與研究，這兩種會在建築裡排隊
+      // 訓練／研究：[秒（到 0.125 秒）, pbgid, 建築序號]；取消：[秒, 0, 建築序號, 項目序號]
+      // 項目序號是每棟建築的訓練／研究指令依序編號，所以 pbgid 不明的指令也要留著（pbgid 記 0）
       p.orders = rec.commands
-        .filter((c) => c.pid === rp.pid && (c.type === 'train' || c.type === 'research') && c.pbgid && c.entity)
-        .map((c) => [c.t, c.pbgid, c.entity - ENTITY_ID_BASE]);
+        .filter((c) => c.pid === rp.pid && c.entity && (c.type === 'train' || c.type === 'research' || (c.type === 'cancel' && c.cancelId)))
+        .map((c) => (c.type === 'cancel' ? [c.t, 0, c.entity - ENTITY_ID_BASE, c.cancelId] : [c.t, c.pbgid || 0, c.entity - ENTITY_ID_BASE]));
       any = true;
     }
-    if (any) { detail.replayBuild = rec.build; stats.enriched++; }
+    if (any) { detail.replayBuild = rec.build; detail.ordersVersion = ORDERS_VERSION; stats.enriched++; }
   }
   data.generatedAt = new Date().toISOString();
   writeDashboard(ROOT, data);
