@@ -1,4 +1,4 @@
-# 登入 Windows 後執行一次：讀本機對局，有新資料才推上 GitHub。
+﻿# 登入 Windows 後執行一次：讀本機對局，有新資料才推上 GitHub。
 # 由「啟動」資料夾的捷徑呼叫。移除方式：Win+R 輸入 shell:startup，刪除「AOE4 本機對局同步」。
 $ErrorActionPreference = 'Continue'
 $env:GIT_TERMINAL_PROMPT = '0'
