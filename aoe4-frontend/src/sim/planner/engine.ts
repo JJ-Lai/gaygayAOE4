@@ -161,6 +161,11 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     chopped: 0,
   }
   sites.unshift(sheep)
+  // 城鎮中心旁的獵物（金朝馴鹿）：獵肉速率與攜帶量，投放在城鎮中心，不受「打鹿」策略限制
+  const startHunt: SiteSt | null = spec.startHunt > 0
+    ? { s: { id: 'start-hunt', kind: 'deer', label: '城鎮中心旁獵物', amount: spec.startHunt, units: 8, dist: 3, angle: 0, contested: false }, res: 'food', left: spec.startHunt, camp: 2, workers: 0, chopped: 0 }
+    : null
+  if (startHunt) sites.unshift(startHunt)
   const farm: SiteSt = { s: FARM_SITE, res: 'food', left: Infinity, camp: 2, workers: 0, chopped: 0 }
   sites.push(farm)
   const siteById = new Map(sites.map((x) => [x.s.id, x]))
@@ -208,23 +213,35 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   const GATHER_KEYS: (keyof Gather)[] = ['sheep', 'berry', 'hunt', 'farm', 'wood', 'gold', 'stone']
   let wmul: Record<keyof Gather, number> = { all: 1, sheep: 1, berry: 1, hunt: 1, farm: 1, wood: 1, gold: 1, stone: 1 }
   let baseCarry = spec.carry
+  /** 工人平均移動速度相對普通村民的倍率 */
+  let wSpeed = 1
+  /** 工人平均建造倍率 */
+  let wBuild = { landmark: 1, other: 1 }
   const refreshWorkers = () => {
     const total = Math.max(1, villagers)
     const out = { all: 1, sheep: 0, berry: 0, hunt: 0, farm: 0, wood: 0, gold: 0, stone: 0 }
     let carry = 0
+    let speed = 0
+    const build = { landmark: 0, other: 0 }
     let counted = 0
     for (const [id, n] of workerCount) {
       if (n <= 0) continue
       const ws = spec.workerSpecs[id]
       for (const k of GATHER_KEYS) out[k] += n * (ws?.gather?.all ?? 1) * (ws?.gather?.[k] ?? 1)
       carry += n * (ws?.carry ?? spec.carry)
+      speed += n * (ws?.speed ?? SPEED)
+      build.landmark += n * (ws?.build?.landmark ?? 1)
+      build.other += n * (ws?.build?.other ?? 1)
       counted += n
     }
     // 還沒記到工人種類的（理論上不會有）用普通村民
     const rest = Math.max(0, total - counted)
-    for (const k of GATHER_KEYS) out[k] = (out[k] + rest) / Math.max(1, counted + rest)
+    const all = Math.max(1, counted + rest)
+    for (const k of GATHER_KEYS) out[k] = (out[k] + rest) / all
     wmul = out
-    baseCarry = (carry + rest * spec.carry) / Math.max(1, counted + rest)
+    baseCarry = (carry + rest * spec.carry) / all
+    wSpeed = (speed + rest * SPEED) / all / SPEED
+    wBuild = { landmark: (build.landmark + rest) / all, other: (build.other + rest) / all }
   }
   refreshWorkers()
   const carryNow = () => baseCarry + mods.carry
@@ -276,7 +293,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   }
 
   const dropDist = (x: SiteSt) => {
-    if (x === sheep) return 2
+    if (x === sheep || x === startHunt) return 2
     if (x === farm) return 2.5
     if (x.camp === 2) return x.res === 'wood' ? 2 + Math.min(4, x.chopped / 2500) : x.res === 'food' ? 2 : 1.5
     return Math.max(2, x.s.dist - 2)
@@ -287,9 +304,10 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     if (x.res === 'wood' && spec.woodInstant) return raw
     const hunt = x.s.kind === 'deer' || x.s.kind === 'boar'
     const c = carryNow()
-    const carry = hunt ? Math.max(HUNT_CARRY, c) : c + (x.s.kind === 'berry' && x !== farm ? spec.berryCarry : 0)
+    // 獵肉攜帶量也吃工人種類的攜帶加成（金朝鄉騎 +5 → 30）
+    const carry = hunt ? Math.max(HUNT_CARRY + (baseCarry - spec.carry), c) : c + (x.s.kind === 'berry' && x !== farm ? spec.berryCarry : 0)
     const d = assumeCamp && x.camp !== 2 ? (x.res === 'wood' ? 2 : 1.5) : dropDist(x)
-    return carry / (carry / raw + (2 * d) / (SPEED * mods.speed))
+    return carry / (carry / raw + (2 * d) / (SPEED * mods.speed * wSpeed))
   }
 
   const slots = (x: SiteSt) => {
@@ -311,7 +329,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     }
     return siteById.get(from)?.s ?? null
   }
-  const walkTime = (from: string, to: string) => siteDistance(point(from), point(to)) / (SPEED * mods.speed) + 1
+  const walkTime = (from: string, to: string) => siteDistance(point(from), point(to)) / (SPEED * mods.speed * wSpeed) + 1
 
   const log = (kind: PlanEvent['kind'], text: string, item?: string) => {
     if (!rec) return
@@ -397,7 +415,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   const usable = (x: SiteSt) => {
     if (x.left <= 0) return false
     if (x.s.contested) return false
-    if (x.s.kind === 'deer' && !policy.hunt) return false
+    if (x.s.kind === 'deer' && !policy.hunt && x !== startHunt) return false
     return true
   }
 
@@ -416,7 +434,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         continue
       }
       // 羊在城鎮中心旁，一律先採（試過讓有野果加成的文明先採野果，蓋磨坊與走路的成本反而更慢）
-      const score = x === sheep ? 99 : effRate(x, !!campItem(res)) - x.s.dist * 0.002
+      const score = x === startHunt ? 100 : x === sheep ? 99 : effRate(x, !!campItem(res)) - x.s.dist * 0.002
       if (score > bestScore) {
         best = x
         bestScore = score
@@ -1455,7 +1473,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       if (b.done) continue
       if (autoBuild.includes(b)) {
         b.progress += 1
-      } else if (b.builders > 0) b.progress += (b.builders + 2) / 3
+      } else if (b.builders > 0) b.progress += ((b.builders + 2) / 3) * (b.ageTo != null ? wBuild.landmark : wBuild.other)
       if (b.progress >= b.total) {
         const n = b.builders
         finishBld(b)

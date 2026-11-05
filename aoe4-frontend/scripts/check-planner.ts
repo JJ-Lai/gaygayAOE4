@@ -33,8 +33,10 @@ const CASES: Case[] = [
   // 維京：免費村民讓「最快封建」比職業平均（約 4:15）快很多；起始村民容量 10 是假設值，這個區間只用來抓壞掉的模型。
   { civ: 'vik', label: '維京 封建', goals: [{ kind: 'age', age: 2 }], band: [170, 320] },
   { civ: 'je', label: '貞德 封建', goals: [{ kind: 'age', age: 2 }], band: [195, 290] },
+  // 金朝：2026-11 AoE4 World 頂尖玩家（1850–2500 分）23 場 1v1 金朝封建：最快 3:44、中位數 4:30、75% 4:41。
+  // 引擎沒有走位與操作損失，最快封建應略快於頂尖最快；下限放到 3:20，上限放在 75% 分位附近。
+  { civ: 'jin', label: '金朝 封建（3 名鄉騎開局）', goals: [{ kind: 'age', age: 2 }], band: [200, 285] },
   // 只回報、不設區間：這次改了開局組成的文明
-  { civ: 'jin', label: '金朝 封建（3 名鄉騎開局）', goals: [{ kind: 'age', age: 2 }] },
   { civ: 'gol', label: '金帳 封建（5 村民、一次 2 名）', goals: [{ kind: 'age', age: 2 }] },
   { civ: 'zx', label: '朱熹 封建（5 村民 + 監工）', goals: [{ kind: 'age', age: 2 }] },
   { civ: 'by', label: '拜占庭 封建 → 8 名長弓兵（橄欖油傭兵）', goals: [{ kind: 'age', age: 2 }, { kind: 'army', unit: 'longbowman', count: 8 }] },

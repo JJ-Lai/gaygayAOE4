@@ -52,6 +52,8 @@ export interface CivSpec {
   ownedSheep: number
   /** 開局城鎮中心旁其他可採的食物（例如金朝馴鹿），用採羊速率 */
   startFood: number
+  /** 城鎮中心旁可以打獵的動物（金朝的馴鹿）的食物總量；用獵肉速率與獵肉攜帶量，在羊之前採 */
+  startHunt: number
   /** 第一座城鎮中心要等幾秒才能開始訓練（蒙古城鎮中心開局是收起的） */
   tcStartDelay: number
   // ---------- 工人 ----------
@@ -60,8 +62,11 @@ export interface CivSpec {
   /** 主要工人的上限（金朝鄉騎 20），之後改訓 fallbackWorker */
   workerCap: number
   fallbackWorker?: string
-  /** 各種工人相對本文明普通村民的採集倍率與攜帶量 */
-  workerSpecs: Record<string, { gather?: Partial<Gather>; carry?: number }>
+  /**
+   * 各種工人相對本文明普通村民的採集倍率與攜帶量；speed 是移動速度（格/秒，普通村民 1.125），
+   * build 是建造倍率（landmark 地標、other 其他建築）。引擎依工人組成取平均。
+   */
+  workerSpecs: Record<string, { gather?: Partial<Gather>; carry?: number; speed?: number; build?: { landmark?: number; other?: number } }>
   /** 城鎮中心每次訓練的工人數（金帳 2）；目錄花費乘上它，目錄時間當作整批的時間 */
   villagerBatch: number
   /** 依時代覆蓋村民訓練時間 */
@@ -145,6 +150,7 @@ function spec(abbr: string, zh: string, patch: Partial<CivSpec>): CivSpec {
     extraPop: 1,
     ownedSheep: 5,
     startFood: 0,
+    startHunt: 0,
     tcStartDelay: 0,
     worker: 'villager',
     workerCap: 200,
@@ -614,13 +620,14 @@ const SPECS: Record<string, CivSpec> = {
     startNote: '開局 200 食物、150 木材、100 黃金，3 名鄉騎、0 名普通村民、1 斥候（人口 4/10），城鎮中心下有 2 頭馴鹿（共 800 食物），5 隻羊沿用標準值（未證實）（Fandom、aoe4guides 職業選手流程）。',
     startWorkers: { 'mounted-villager': 3 },
     // extraPop 1（斥候）與 ownedSheep 5 都是預設值；5 隻羊未經證實。
-    // 馴鹿併進羊群：用羊的速率 0.75/秒與一般攜帶量採集。
-    startFood: 800,
+    // 馴鹿是城鎮中心旁的獵物：獵肉速率 0.825/秒、鄉騎獵肉攜帶 25 + 5 = 30，在羊之前採。
+    startHunt: 800,
     worker: 'mounted-villager',
     workerCap: 20,
     fallbackWorker: 'villager',
-    // 相對本文明普通村民：採集 ×2.2，農田只有 ×1.9；攜帶 10 + 5 = 15。
-    workerSpecs: { 'mounted-villager': { gather: { all: 2.2, farm: 1.9 / 2.2 }, carry: 15 } },
+    // 相對本文明普通村民：採集 ×2.2，農田只有 ×1.9；攜帶 10 + 5 = 15；移動 1.42（目錄）；
+    // 建造地標 +75%、其他建築 +100%（防禦建築實際只有 +40%，沒有分開）。
+    workerSpecs: { 'mounted-villager': { gather: { all: 2.2, farm: 1.9 / 2.2 }, carry: 15, speed: 1.42, build: { landmark: 1.75, other: 2 } } },
     // 花園只罩一塊 4 格半徑的區域，近似成全部食物 ×1.25。
     landmarkAura: [{ building: 'flower-pagoda', res: 'food', mul: 1.25 }],
     trickles: [
@@ -638,10 +645,10 @@ const SPECS: Record<string, CivSpec> = {
     notMilitary: ['emissary', 'reindeer-trader', 'trader', 'monk'],
     bonuses: [
       { text: '開局 3 名鄉騎、1 斥候，資源 200 食物 / 150 木材 / 100 黃金', modeled: 'yes', source: 'https://aoe4guides.com/builds/pj6ztHDSiVv9xpo1NsXy', note: '所有 aoe4guides 金朝流程（到 2026-10-27）都從 3 名鄉騎開始；Flip 的流程算帳剛好用完 150 木材與 100 黃金。開局 5 隻羊沒有來源確認，沿用標準值。' },
-      { text: '城鎮中心下有 2 頭馴鹿，共 800 食物', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Reindeer', note: '2 頭由官方文明頁確認；每頭 400 食物只有 Fandom 寫。引擎把它併進羊群：速率用羊的 0.75/秒（實際是獵肉 0.825/秒）、攜帶用一般值（鄉騎 15，不是獵肉的約 30），也吃不到狩獵科技。' },
-      { text: '鄉騎採集 +120%（農田只有 +90%），攜帶 +5', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Mounted_Villager', note: '倍率與攜帶量只出自 Fandom；論壇實測 1 名無科技鄉騎每分鐘採 81–85 黃金，與 ×2.2 吻合。獵肉攜帶應為 30，引擎仍用 25。17.0 修正後採金科技也套用到鄉騎，引擎的科技本來就對所有工人生效。' },
+      { text: '城鎮中心下有 2 頭馴鹿，共 800 食物', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Reindeer', note: '2 頭由官方文明頁確認；每頭 400 食物只有 Fandom 寫。引擎當作城鎮中心旁的獵物：獵肉速率 0.825/秒、獵肉攜帶量（鄉騎 30）、吃得到狩獵科技，最多 8 人同時採，在羊之前採。' },
+      { text: '鄉騎採集 +120%（農田只有 +90%），攜帶 +5', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Mounted_Villager', note: '倍率與攜帶量只出自 Fandom；論壇實測 1 名無科技鄉騎每分鐘採 81–85 黃金，與 ×2.2 吻合（引擎算出約每分鐘 80）。獵肉攜帶 25 + 5 = 30。17.0 修正後採金科技也套用到鄉騎，引擎的科技本來就對所有工人生效。' },
       { text: '鄉騎上限 20 名（每個朝貢國 +3），之後只能訓普通村民；鄉騎 65 食物 50 黃金、35 秒', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/units/jindynasty/mounted-villager-1.json', note: '朝貢國加上限沒建模。職業選手黃金不夠時會先訓普通村民再換回鄉騎，引擎只在滿 20 後才改訓。' },
-      { text: '鄉騎移動較快（1.42），建造較快：地標 +75%、一般建築 +100%、防禦建築 +40%', modeled: 'no', source: 'https://ageofempires.fandom.com/wiki/Mounted_Villager', note: '建造倍率只出自 Fandom；Swaggy 3 名鄉騎蓋大牧場約 70 秒，與 +75% 推算的 65 秒吻合。' },
+      { text: '鄉騎移動較快（1.42），建造較快：地標 +75%、一般建築 +100%、防禦建築 +40%', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Mounted_Villager', note: '移動速度出自目錄；建造倍率只出自 Fandom，Swaggy 3 名鄉騎蓋大牧場約 70 秒，與 +75% 推算的 65 秒吻合。引擎依工人組成取平均（混了普通村民就變慢），防禦建築也用 +100%。沒建模前金朝最快封建算出 4:38，比 23 場頂尖玩家（1850–2500 分）金朝的中位數 4:30 還慢；建模後約 3:31（頂尖最快 3:44）。' },
       { text: '狩獵與伐木專屬科技：靺鞨祖風、狩獵傳統各 +20% 獵肉；役馬木材 +15%、攜帶 +10；集體狩獵在城鎮中心多生 4 頭馴鹿', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Collective_Hunting', note: '靺鞨祖風、狩獵傳統（獵肉各 ×1.2）、役馬（木材 ×1.15）的效果已在目錄修正表補上並列入經濟科技；役馬的攜帶 +10 與集體狩獵的馴鹿沒有計入。' },
       { text: '花塔（黑暗→封建地標）：花園範圍內村民採集 +25%', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Flower_Pagoda', note: '實際只罩一塊 4 格半徑（約 8–10 塊田或一處金礦/林線），近似成全部食物 ×1.25，人多時高估，也不能改放金礦或林線。+25% 只出自 Fandom。' },
       { text: '塔林（城堡→帝王地標）：每 30 秒多 1 座小塔林，最多 15 座、共每分鐘 600 木材', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/jindynasty/pagoda-forest-3.json', note: '用滿額 600/分鐘，忽略完工後 7.5 分鐘的爬坡（第一座在 +30 秒才出現，約多算 2400 木材）。' },
