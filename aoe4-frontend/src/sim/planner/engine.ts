@@ -13,7 +13,7 @@
 import type { CatalogItem, Variation } from '../types.ts'
 import { costOf, isBuildable, isTownCenter, minAge, nameOf, otherOf, variationAt, type AgeOption, type CivData } from './civData.ts'
 import { SPECIAL_ZH, type Gather } from './civSpec.ts'
-import { siteDistance } from './mapgen.ts'
+import { TC_WOOD_ID, siteDistance } from './mapgen.ts'
 import {
   RES,
   zero,
@@ -71,6 +71,8 @@ interface Job {
   /** 軍隊：佔用人口與單位時間（估算房屋需求用） */
   pop?: number
   dur?: number
+  /** 排入時付的錢（村民出來時記錄用） */
+  cost?: Bundle
 }
 
 interface Bld {
@@ -151,7 +153,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
 
   const sites: SiteSt[] = map.sites
     .filter((s) => !(s.kind === 'boar'))
-    .map((s) => ({ s, res: RES_OF[s.kind], left: s.amount, camp: 0, workers: 0, chopped: 0 }))
+    // 城鎮中心旁的散樹直接投放到城鎮中心，等同已有投放點
+    .map((s) => ({ s, res: RES_OF[s.kind], left: s.amount, camp: s.id === TC_WOOD_ID ? 2 : 0, workers: 0, chopped: 0 }))
   const sheep: SiteSt = {
     s: { id: 'sheep', kind: 'sheep', label: '羊', amount: 0, units: 0, dist: 3, angle: 0, contested: false },
     res: 'food',
@@ -315,7 +318,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     if (x.left <= 0) return 0
     if (x === sheep) return Math.min(10, 2 * Math.ceil(x.left / 200))
     if (x === farm) return farmSlots()
-    if (x.res === 'wood') return 24
+    // 散樹每棵一人；林線最多 24 人
+    if (x.res === 'wood') return x.s.id === TC_WOOD_ID ? x.s.units : 24
     return x.s.units
   }
 
@@ -332,9 +336,10 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   }
   const walkTime = (from: string, to: string) => siteDistance(point(from), point(to)) / (SPEED * mods.speed * wSpeed) + 1
 
-  const log = (kind: PlanEvent['kind'], text: string, item?: string) => {
+  const log = (kind: PlanEvent['kind'], text: string, item?: string, cost?: Bundle, prepaid?: boolean) => {
     if (!rec) return
-    events.push({ t, kind, text, item, pop: pop(), villagers, split: splitNow() })
+    const paid = cost && RES.some((r) => cost[r] > 0) ? { ...cost } : undefined
+    events.push({ t, kind, text, item, pop: pop(), villagers, split: splitNow(), bank: { ...bank }, ...(paid ? { cost: paid } : {}), ...(paid && prepaid ? { prepaid } : {}) })
   }
 
   const splitNow = (): Bundle => {
@@ -373,12 +378,12 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       const b = addBld({ item: it.id, step: -1, role: 'camp', done: false, progress: 0, total: (isFree ? 0 : v.time) + x.s.dist / SPEED, builders: 1, at: x.s.dist, angle: x.s.angle, siteId: x.s.id, job: null })
       b.builders = 0
       autoBuild.push(b)
-      log('place', `訓練${name(it.id)}送到${x.s.label}`, it.id)
+      log('place', `訓練${name(it.id)}送到${x.s.label}`, it.id, cost)
       return false
     }
     const b = addBld({ item: it.id, step: -1, role: 'camp', done: false, progress: 0, total: v.time, builders: 0, at: x.s.dist, angle: x.s.angle, siteId: x.s.id, job: null })
     walkers.push({ to: `b:${b.uid}`, eta: t + walkTime(from, x.s.id), res: null })
-    log('place', `蓋${name(it.id)}（${x.s.label}）`, it.id)
+    log('place', `蓋${name(it.id)}（${x.s.label}）`, it.id, cost)
     return true
   }
   const autoBuild: Bld[] = []
@@ -490,7 +495,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       pay(cost)
       const b = addBld({ item: spec.farm.id, step: -1, role: 'farm', done: false, progress: 0, total: variationAt(it, age).time, builders: 0, at: 5, angle: 0.3 + farmsBuilt * 0.2, job: null })
       walkers.push({ to: `b:${b.uid}`, eta: t + walkTime(from, 'farm'), res: null })
-      log('place', `蓋${name(spec.farm.id)}（第 ${farmsBuilt + 1} 座）`, spec.farm.id)
+      log('place', `蓋${name(spec.farm.id)}（第 ${farmsBuilt + 1} 座）`, spec.farm.id, cost)
       return true
     }
     return false
@@ -849,7 +854,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     pay(cost)
     const b = addBld({ item, step, role, done: false, progress: 0, total: v.time, builders: 0, at, angle: angle ?? (uid * 2.39996) % (Math.PI * 2), job: null, ageTo })
     const got = takeBuilders(builders, b)
-    log('place', `${role === 'house' ? '' : ''}蓋${name(item)}（${got} 人）`, item)
+    log('place', `蓋${name(item)}（${got} 人）`, item, cost)
     return b
   }
 
@@ -1025,7 +1030,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
           ps[0].job = { kind: 'tech', item: tech.id, end: t + v.time, count: 1, step: -2 }
           researching.add(tech.id)
           postResearching++
-          log('research', `研究${name(tech.id)}`, tech.id)
+          log('research', `研究${name(tech.id)}`, tech.id, costOf(v))
         }
       }
     }
@@ -1056,7 +1061,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       postQueued += ub.size
       b.job = { kind: 'unit', item: u.id, end: t + ub.time, count: ub.size, step: -2, pop: v.pop * ub.size, dur: ub.time }
       armyPop += v.pop * ub.size
-      log('train', `訓練${name(u.id)}`, u.id)
+      log('train', `訓練${name(u.id)}`, u.id, c)
     }
   }
 
@@ -1092,7 +1097,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
             payOther(o.other)
             ps[0].job = { kind: 'tech', item: o.id, end: t + o.time, count: 1, step: cur }
             researching.add(o.id)
-            log('research', `研究${o.name}（升代）`, o.id)
+            log('research', `研究${o.name}（升代）`, o.id, o.cost)
             advanced = true
           }
         }
@@ -1139,7 +1144,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
           b.job = { kind: 'unit', item: st.item, end: t + ub.time, count: batch, step: cur, pop: v.pop * batch, dur: ub.time }
           armyPop += v.pop * batch
           queued.set(cur, q + batch)
-          log('train', `訓練${name(st.item)}`, st.item)
+          log('train', `訓練${name(st.item)}`, st.item, c)
         }
         advanced = (queued.get(cur) ?? 0) >= st.count
       } else if (st.kind === 'tech') {
@@ -1152,7 +1157,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
           payOther(otherOf(v))
           ps[0].job = { kind: 'tech', item: st.item, end: t + v.time, count: 1, step: cur }
           researching.add(st.item)
-          log('research', `研究${name(st.item)}`, st.item)
+          log('research', `研究${name(st.item)}`, st.item, costOf(v))
           advanced = true
         }
       } else if (st.kind === 'villagers') {
@@ -1198,7 +1203,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       payOther(otherOf(v))
       ps[0].job = { kind: 'tech', item: id, end: t + v.time, count: 1, step: -1 }
       researching.add(id)
-      log('research', `研究${name(id)}`, id)
+      log('research', `研究${name(id)}`, id, costOf(v))
     }
 
     // 5. 村民生產：上一名一完成就接著排（保留小數秒）
@@ -1214,7 +1219,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         // 先前有閒置時，補上整數秒沒算到的那一點點
         if (b.idleTicks && b.lastEnd != null) tcIdle += Math.max(0, t - b.lastEnd - b.idleTicks)
         b.idleTicks = 0
-        b.job = { kind: 'vill', item: choice.item.id, end: start + choice.time, count: batchSize, step: -1 }
+        b.job = { kind: 'vill', item: choice.item.id, end: start + choice.time, count: batchSize, step: -1, cost: choice.cost }
       }
     }
   }
@@ -1407,7 +1412,10 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         if (rec) {
           for (let k = 0; k < j.count; k++) {
             const r = pickRes()[0]
-            log('villager', `第 ${villagers - j.count + k + 1} 名村民 → ${RES_ZH[r]}`)
+            // 每名村民分攤這一批排入時付的錢
+            const each = zero()
+            if (j.cost) for (const x of RES) each[x] = j.cost[x] / j.count
+            log('villager', `第 ${villagers - j.count + k + 1} 名村民 → ${RES_ZH[r]}`, j.item, each, true)
           }
         }
       } else if (j.kind === 'unit') {

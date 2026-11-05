@@ -154,6 +154,9 @@ export const MAP_TYPES: MapType[] = [
   },
 ]
 
+/** 城鎮中心旁散樹（450 木材，投放到城鎮中心）的資源點 id */
+export const TC_WOOD_ID = 'tc-wood'
+
 export function generateMap(typeId: string, seed: number): GameMap {
   const type = MAP_TYPES.find((m) => m.id === typeId) ?? MAP_TYPES[0]
   const r = rng(seed * 7919 + type.id.length)
@@ -189,6 +192,9 @@ export function generateMap(typeId: string, seed: number): GameMap {
     }
     sites.push({ id: `${rule.kind}-${i}`, kind: rule.kind, label: rule.label, amount: rule.amountEach, units: rule.units, dist, angle, contested: !!rule.contested })
   })
+  // 每張圖的城鎮中心旁都有散樹，共 450 木材，直接投放到城鎮中心、不用伐木場。
+  // 方位固定放在背對對手的一側，不抽亂數，免得改變其他資源的位置。
+  sites.unshift({ id: TC_WOOD_ID, kind: 'wood', label: '城鎮中心旁散樹（3 棵）', amount: 450, units: 3, dist: 4, angle: enemyAngle + Math.PI * 0.8, contested: false })
   // 對手：點對稱鏡像（距離不變、方位轉 180°，以對手城鎮中心為基準）
   const enemySites = sites.map((x) => ({ ...x, id: `enemy-${x.id}`, angle: x.angle + Math.PI }))
 
@@ -224,6 +230,7 @@ export function generateMap(typeId: string, seed: number): GameMap {
     notes: [
       ...type.notes,
       '牧羊時間（斥候第一隻約 25 秒，之後每 15~30 秒）、兩城距離（85~110 格）、地圖大小與中立羊位置都是假設；對手資源是自家資源對地圖中心的鏡像。',
+      '城鎮中心旁固定有 3 棵散樹共 450 木材，直接投放到城鎮中心，開局不用先蓋伐木場。',
     ],
   }
 }
