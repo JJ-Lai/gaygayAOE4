@@ -110,6 +110,7 @@ export interface PostArmy {
 
 // ---------- 輸出 ----------
 export type EventKind =
+  | 'start'
   | 'villager'
   | 'rally'
   | 'place'

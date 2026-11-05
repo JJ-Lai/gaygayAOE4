@@ -3,6 +3,7 @@ import type { PlanEvent } from '../../sim/planner/types'
 import { RES_COLOR, clock, compress, type Row } from './format'
 
 const KIND: Partial<Record<PlanEvent['kind'], { label: string; color: string }>> = {
+  start: { label: '開局', color: 'green' },
   villager: { label: '村民', color: 'default' },
   rally: { label: '調度', color: 'cyan' },
   place: { label: '建造', color: 'blue' },

@@ -64,7 +64,9 @@ export function compress(events: PlanEvent[]): Row[] {
         let j = i
         while (j + 1 < events.length && events[j + 1].kind === 'villager' && events[j + 1].text.endsWith(`→ ${m[2]}`)) j++
         const last = events[j].text.match(/^第 (\d+) 名/)?.[1] ?? m[1]
-        rows.push({ key: i, t: e.t, pop: e.pop, kind: 'villager', text: last === m[1] ? `村民 ${m[1]} → ${m[2]}` : `村民 ${m[1]}–${last} → ${m[2]}`, split: events[j].split })
+        // 合併多名時寫出各自的時間範圍，人口用最後一名出來後的值，免得看成同時出了好幾名
+        const text = last === m[1] ? `第 ${m[1]} 名工人 → ${m[2]}` : `第 ${m[1]}–${last} 名工人 → ${m[2]}（${clock(e.t)}–${clock(events[j].t)} 陸續出）`
+        rows.push({ key: i, t: e.t, pop: events[j].pop, kind: 'villager', text, split: events[j].split })
         i = j
         continue
       }
