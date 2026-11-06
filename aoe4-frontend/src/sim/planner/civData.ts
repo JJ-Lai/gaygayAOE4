@@ -99,7 +99,37 @@ export function variationAt(item: CatalogItem, age: number): Variation {
 
 export function buildCivData(catalog: Catalog, abbr: string, names: Record<string, string>): CivData {
   const spec = civSpec(abbr)
-  const list = (catalog.items[abbr] ?? []).map((i) => patchItem(spec, i))
+  const extra: CatalogItem[] = (spec.extraItems ?? []).map((x) => {
+    const src = x.effectsFrom ? (catalog.items[x.effectsFrom.civ] ?? []).find((i) => i.id === x.effectsFrom!.id) : undefined
+    return {
+      id: x.id,
+      name: x.name,
+      kind: 'technology',
+      minAge: x.age,
+      unique: true,
+      military: false,
+      variations: [
+        {
+          id: `${x.id}-${x.age}`,
+          age: x.age,
+          food: x.cost.food ?? 0,
+          wood: x.cost.wood ?? 0,
+          gold: x.cost.gold ?? 0,
+          stone: x.cost.stone ?? 0,
+          time: x.time,
+          pop: 0,
+          producedBy: x.producedBy,
+          tags: [],
+          cls: [],
+          effects: src?.variations[0]?.effects,
+          other: x.other,
+        },
+      ],
+    }
+  })
+  // 同 id 的補充項目取代目錄的（鄂圖曼安納托利亞丘陵的目錄效果是錯的）
+  const extraIds = new Set(extra.map((x) => x.id))
+  const list = [...(catalog.items[abbr] ?? []).filter((i) => !extraIds.has(i.id)), ...extra].map((i) => patchItem(spec, i))
   const items = new Map(list.map((i) => [i.id, i]))
   const houseId = spec.popModel === 'max' ? null : (['house', 'farmhouse', 'longhouse'].find((id) => items.has(id)) ?? null)
 
@@ -129,6 +159,11 @@ export function buildCivData(catalog: Catalog, abbr: string, names: Record<strin
     // 只留在有投放點的建築研究的（避免需要額外地標）
     return variationAt(it, 4).producedBy.length > 0
   })
+  // 文明專屬經濟科技（新鮮食材、大名宅邸…）：效果寫在 spec.triggers
+  for (const ct of spec.civTechs) {
+    const it = items.get(ct.id)
+    if (it && (ct.instant || variationAt(it, 4).producedBy.length > 0) && !ecoTechs.includes(ct.id)) ecoTechs.push(ct.id)
+  }
   return { abbr, spec, items, names, houseId, ageOptions, ecoTechs }
 }
 

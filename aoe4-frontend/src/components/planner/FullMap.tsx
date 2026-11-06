@@ -96,13 +96,36 @@ export function FullMap({ map, result, t, nameOf, maxWidth = 360 }: Props) {
         return <rect key={`f${i}`} x={p.x - 1.3} y={p.y - 1.3} width={2.6} height={2.6} fill="#c9b458" stroke="#8a7a2a" strokeWidth={0.2} />
       })}
 
+      {/* 光環範圍（蓄水池、大酒莊、花塔…）：完成後才生效，蓋造中用虛線 */}
+      {builds
+        .filter((b) => b.radius)
+        .map((b) => {
+          const p = toMap(map.home, b.at, b.angle)
+          const done = b.done != null && b.done <= t!
+          return (
+            <circle
+              key={`z${b.uid}`}
+              cx={p.x}
+              cy={p.y}
+              r={b.radius}
+              fill="#d4a017"
+              fillOpacity={done ? 0.14 : 0.05}
+              stroke="#d4a017"
+              strokeOpacity={0.7}
+              strokeWidth={0.3}
+              strokeDasharray={done ? undefined : '1 0.6'}
+              pointerEvents="none"
+            />
+          )
+        })}
+
       {builds.map((b) => {
         const p = toMap(map.home, b.at, b.angle)
         const size = ROLE_SIZE[b.role] ?? 2.6
         const done = b.done != null && b.done <= t!
         const tower = /outpost|tower/.test(b.item)
         return (
-          <Tooltip key={b.uid} title={`${fmtName(b.item)}：${Math.floor(b.placed / 60)}:${String(Math.round(b.placed % 60)).padStart(2, '0')} 開工${b.done != null ? `，${Math.floor(b.done / 60)}:${String(Math.round(b.done % 60)).padStart(2, '0')} 完成` : ''}`}>
+          <Tooltip key={b.uid} title={`${fmtName(b.item)}：${Math.floor(b.placed / 60)}:${String(Math.round(b.placed % 60)).padStart(2, '0')} 開工${b.done != null ? `，${Math.floor(b.done / 60)}:${String(Math.round(b.done % 60)).padStart(2, '0')} 完成` : ''}${b.radius ? `；光環範圍約 ${b.radius.toFixed(1)} 格（範圍內的採集點才有加成）` : ''}`}>
             {tower ? (
               <polygon
                 points={`${p.x},${p.y - 2.4} ${p.x + 2.1},${p.y + 1.6} ${p.x - 2.1},${p.y + 1.6}`}

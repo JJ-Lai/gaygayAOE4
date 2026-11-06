@@ -84,12 +84,17 @@ export interface StepParams {
   producers: number
 }
 
+/** phaseBias 每格的秒數 */
+export const PHASE_SEC = 45
+
 export interface Policy {
   steps: StepParams[]
   /** 蓋房的額外緩衝人口（基本緩衝依生產速度自動算） */
   houseBuffer: number
   /** 是否去打鹿（要在鹿群旁蓋磨坊） */
   hunt: boolean
+  /** 同時採羊的最多人數（0~10，預設 10）；其餘食物村民去下一個最好的食物點（例如蓋磨坊採野果） */
+  sheepCap?: number
   /** 經濟科技 id -> 在第幾步開始研究；-1 = 不研究 */
   ecoAt: Record<string, number>
   /** 沒有指定地標的升代步驟：時代 -> 地標/科技 id */
@@ -98,6 +103,28 @@ export interface Policy {
   postProducers: number
   /** 被動收入建築（莊園、坑礦、屋台）：id -> 從第幾步開始蓋、蓋幾座 */
   trickle: Record<string, { at: number; count: number }>
+  /**
+   * 光環建築（地標、蓄水池）的位置：id -> 每座的錨點（'home' 或採集點 id）。
+   * 陣列長度 = 要蓋幾座（只對蓄水池這類非地標有意義）；沒寫用預設。
+   */
+  placeAt?: Record<string, string[]>
+  /** 朝代：時代 -> 是否補蓋這個時代的另一座地標（中國、朱熹） */
+  dynasty?: Record<number, boolean>
+  /** 德里：訓練幾名學者駐紮加速研究 */
+  scholars?: number
+  /**
+   * 依時間的資源偏好：第 i 格是第 i×45 ~ (i+1)×45 秒，加在分配比例上（-0.35 ~ 0.35），和步驟的偏好相加。
+   * 讓搜尋可以逐段調整「這段時間多放幾個人在哪種資源」。
+   */
+  phaseBias?: Partial<Bundle>[]
+  /** 可重複的科技研究幾次（維京農莊） */
+  repeats?: Record<string, number>
+  /** 馬利：買幾隻牛給村民採 */
+  herd?: number
+  /** 中國：再訓練幾名監工 */
+  officials?: number
+  /** 法蘭西公會廳：多久收一次（秒） */
+  collectEvery?: number
 }
 
 /** 目標達成後的「全力出兵」設定 */
@@ -168,6 +195,9 @@ export interface BuildingTrack {
   angle: number
   placed: number
   done: number | null
+  /** 光環建築：影響範圍（從中心算，格）與錨點 */
+  radius?: number
+  anchor?: string
 }
 
 export interface GoalResult {
@@ -190,6 +220,10 @@ export interface PlanResult {
   postTechs: string[]
   /** 目標完成那一刻的村民數 */
   villagersAtGoal: number
+  /** 目標達成那一刻的累計收入（四種資源：採集 + 被動收入 + 一次給的），評分的次要條件 */
+  gatheredAtGoal: number
+  /** 同上，分資源 */
+  gatheredByRes: Bundle
   buildings: BuildingTrack[]
   score: number
   goals: GoalResult[]

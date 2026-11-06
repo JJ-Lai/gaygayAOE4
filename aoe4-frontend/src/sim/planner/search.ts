@@ -2,11 +2,15 @@
 // 每次模擬只要 1~3 毫秒，所以可以在 Web Worker 裡一秒跑幾百次，邊跑邊回報目前最佳。
 
 import { isTownCenter, resolveGoals, type CivData } from './civData.ts'
-import { simulate } from './engine.ts'
+import { simulate, zoneAnchors, zonePlan } from './engine.ts'
 import { rng } from './mapgen.ts'
-import { RES, type GameMap, type Goal, type PlanResult, type Policy, type PostArmy, type Step, type StepParams } from './types.ts'
+import { PHASE_SEC, RES, type GameMap, type Goal, type PlanResult, type Policy, type PostArmy, type Step, type StepParams } from './types.ts'
 
 const MAX_T = 60 * 60
+/** 前段班保留幾個策略 */
+const ELITE = 16
+/** 連續幾次評估沒進步就重新開始 */
+const RESTART_AFTER = 1000
 
 export interface SearchOptions {
   idleWeight?: number
@@ -91,9 +95,41 @@ const clone = (p: Policy): Policy => ({
   ecoAt: { ...p.ecoAt },
   landmarkPick: { ...p.landmarkPick },
   trickle: Object.fromEntries(Object.entries(p.trickle ?? {}).map(([k, v]) => [k, { ...v }])),
+  placeAt: Object.fromEntries(Object.entries(p.placeAt ?? {}).map(([k, v]) => [k, [...v]])),
+  dynasty: { ...(p.dynasty ?? {}) },
+  phaseBias: (p.phaseBias ?? []).map((b) => ({ ...b })),
+  repeats: { ...(p.repeats ?? {}) },
 })
 
-function mutate(p: Policy, r: () => number, data: CivData, goals: Goal[]): Policy {
+/** 交配：每個欄位（每一步、每項科技、每一段時間偏好）隨機取自其中一方，讓搜尋能一次組合好幾項改動 */
+function crossover(a: Policy, b: Policy, r: () => number): Policy {
+  const q = clone(a)
+  const o = clone(b)
+  const coin = () => r() < 0.5
+  q.steps = q.steps.map((s, i) => (o.steps[i] && coin() ? o.steps[i] : s))
+  if (coin()) q.houseBuffer = o.houseBuffer
+  if (coin()) q.hunt = o.hunt
+  if (coin()) q.sheepCap = o.sheepCap
+  if (coin()) q.postProducers = o.postProducers
+  if (coin()) q.scholars = o.scholars
+  if (coin()) q.herd = o.herd
+  if (coin()) q.officials = o.officials
+  if (coin()) q.collectEvery = o.collectEvery
+  if (coin()) q.repeats = { ...(o.repeats ?? {}) }
+  for (const k of new Set([...Object.keys(q.ecoAt), ...Object.keys(o.ecoAt)])) if (coin()) {
+    if (k in o.ecoAt) q.ecoAt[k] = o.ecoAt[k]
+    else delete q.ecoAt[k]
+  }
+  for (const k of Object.keys(o.landmarkPick)) if (coin()) q.landmarkPick[Number(k)] = o.landmarkPick[Number(k)]
+  for (const k of Object.keys(o.trickle)) if (coin()) q.trickle[k] = { ...o.trickle[k] }
+  for (const k of Object.keys(o.placeAt ?? {})) if (coin()) q.placeAt = { ...(q.placeAt ?? {}), [k]: [...o.placeAt![k]] }
+  for (const k of Object.keys(o.dynasty ?? {})) if (coin()) q.dynasty = { ...(q.dynasty ?? {}), [k]: o.dynasty![Number(k)] }
+  const n = Math.max(q.phaseBias?.length ?? 0, o.phaseBias?.length ?? 0)
+  q.phaseBias = Array.from({ length: n }, (_, i) => ({ ...((coin() ? o.phaseBias?.[i] : q.phaseBias?.[i]) ?? {}) }))
+  return q
+}
+
+function mutate(p: Policy, r: () => number, data: CivData, goals: Goal[], map: GameMap, horizon = 600): Policy {
   const q = clone(p)
   const n = 1 + Math.floor(r() * 3)
   const pick = <T>(xs: T[]) => xs[Math.floor(r() * xs.length)]
@@ -103,14 +139,24 @@ function mutate(p: Policy, r: () => number, data: CivData, goals: Goal[]): Polic
     const si = Math.floor(r() * Math.max(1, q.steps.length))
     const s = q.steps[si]
     if (which < 0.22 && s) s.builders = clamp(s.builders + pick([-2, -1, 1, 2]), 1, 10)
-    else if (which < 0.5 && s) {
+    else if (which < 0.38 && s) {
       const res = pick(RES)
       s.bias[res] = clamp(s.bias[res] + (r() - 0.5) * 0.2, -0.35, 0.35)
+    }
+    else if (which < 0.52) {
+      // 依時間的資源偏好：挑一段（偏向目前最佳完成時間之前），調一種資源
+      const end = Math.max(1, Math.ceil(horizon / PHASE_SEC))
+      const i = Math.floor(r() * end)
+      const pb = (q.phaseBias ??= [])
+      while (pb.length <= i) pb.push({})
+      const res = pick(RES)
+      pb[i] = { ...pb[i], [res]: clamp((pb[i][res] ?? 0) + (r() - 0.5) * 0.3, -0.35, 0.35) }
     }
     else if (which < 0.64 && s) s.producers = clamp(s.producers + pick([-1, 1]), 1, 8)
     else if (which < 0.72) q.postProducers = clamp(q.postProducers + pick([-2, -1, 1, 2]), 1, 9)
     else if (which < 0.77) q.houseBuffer = clamp(q.houseBuffer + pick([-1, 1]), 0, 6)
-    else if (which < 0.81) q.hunt = !q.hunt
+    else if (which < 0.79) q.hunt = !q.hunt
+    else if (which < 0.81) q.sheepCap = clamp((q.sheepCap ?? 10) + pick([-3, -2, -1, 1, 2, 3]), 0, 10)
     else if (which < 0.86 && buildTrickles(data).length) {
       // 被動收入建築：改數量或開始的步驟
       const tr = pick(buildTrickles(data))
@@ -118,6 +164,34 @@ function mutate(p: Policy, r: () => number, data: CivData, goals: Goal[]): Polic
       if (r() < 0.6) cur.count = clamp(cur.count + pick([-1, 1, 2]), 0, tr.max)
       else cur.at = Math.floor(r() * Math.max(1, q.steps.length))
       q.trickle[tr.building] = cur
+    }
+    else if (which < 0.865 && (data.spec.herd || data.spec.officials || data.spec.civTechs.some((c) => c.repeat) || data.spec.triggers.some((x) => x.stockpile))) {
+      // 馬利買牛、中國監工、可重複科技次數、公會廳收取間隔
+      const opts: (() => void)[] = []
+      if (data.spec.herd) opts.push(() => { q.herd = clamp((q.herd ?? 0) + pick([-2, -1, 1, 2]), 0, data.spec.herd!.max) })
+      if (data.spec.officials) opts.push(() => { q.officials = clamp((q.officials ?? 0) + pick([-1, 1]), 0, data.spec.officials!.max) })
+      for (const c of data.spec.civTechs.filter((x) => x.repeat)) opts.push(() => { q.repeats = { ...(q.repeats ?? {}), [c.id]: clamp((q.repeats?.[c.id] ?? 1) + pick([-1, 1]), 1, c.repeat!) } })
+      if (data.spec.triggers.some((x) => x.stockpile)) opts.push(() => { q.collectEvery = clamp((q.collectEvery ?? 180) + pick([-60, -30, 30, 60, 120]), 40, 900) })
+      if (opts.length) pick(opts)()
+    }
+    else if (which < 0.87 && (data.spec.dynasty?.length || data.spec.scholars)) {
+      // 朝代要不要補蓋地標；德里學者人數
+      if (data.spec.scholars && (!data.spec.dynasty?.length || r() < 0.5)) q.scholars = clamp((q.scholars ?? 0) + pick([-2, -1, 1, 2]), 0, data.spec.scholars.max)
+      else if (data.spec.dynasty?.length) {
+        const a = pick(data.spec.dynasty)
+        q.dynasty = { ...(q.dynasty ?? {}), [a]: !q.dynasty?.[a] }
+      }
+    }
+    else if (which < 0.89 && data.spec.zones?.length) {
+      // 光環建築：換位置；可以蓋多座的（蓄水池）也改數量
+      const z = pick(data.spec.zones)
+      const cands = zoneAnchors(z, map)
+      const cur = zonePlan(data.spec, q, map, z.building)
+      if (z.max && z.max > 1 && r() < 0.4) {
+        if (r() < 0.5 && cur.length > 0) cur.splice(Math.floor(r() * cur.length), 1)
+        else if (cur.length < z.max) cur.push(pick(cands))
+      } else if (cur.length) cur[Math.floor(r() * cur.length)] = pick(cands)
+      q.placeAt = { ...(q.placeAt ?? {}), [z.building]: cur }
     }
     else if (which < 0.93 && data.ecoTechs.length) {
       const id = pick(data.ecoTechs)
@@ -140,6 +214,10 @@ export class Searcher {
   private elite: Evaluated[] = []
   private r: () => number
   private seeds: Policy[] = []
+  /** 起點策略（重新開始時從這裡突變） */
+  private initial: Policy[] = []
+  /** 多久沒進步（評估次數） */
+  private stale = 0
   private data: CivData
   private map: GameMap
   private goals: Goal[]
@@ -160,17 +238,71 @@ export class Searcher {
       })
       variants.push(p)
     }
+    // 開局食物：羊最多幾人（其餘去野果）。有野果加成的文明多半該早點採野果，交給搜尋比較
+    for (const cap of [0, 2, 4, 6]) {
+      const p = clone(base)
+      p.sheepCap = cap
+      variants.push(p)
+    }
     const noHunt = clone(base)
     noHunt.hunt = false
     variants.push(noHunt)
     const eco = clone(base)
     for (const id of ['wheelbarrow', 'double-broadax', 'horticulture', 'specialized-pick', 'tawara', 'mohe-ancestry']) if (data.ecoTechs.includes(id)) eco.ecoAt[id] = Math.min(1, eco.steps.length - 1)
     variants.push(eco)
+    // 組合起點：早期經濟科技 + 不打鹿（單一突變很難同時改兩項）
+    const ecoNoHunt = clone(eco)
+    ecoNoHunt.hunt = false
+    variants.push(ecoNoHunt)
+    // 文明專屬經濟科技（新鮮食材、大名宅邸、邊境聚落…）：一個全部第一步就研的起點，其餘交給突變
+    const civTechs = data.spec.civTechs.map((c) => c.id).filter((id) => data.ecoTechs.includes(id))
+    if (civTechs.length) {
+      const p = clone(eco)
+      for (const id of civTechs) p.ecoAt[id] = 0
+      variants.push(p)
+    }
     for (const tr of buildTrickles(data)) {
       for (const count of [1, Math.min(tr.max, 3)]) {
         const p = clone(base)
         p.trickle[tr.building] = { at: 0, count }
         variants.push(p)
+      }
+    }
+    // 朝代：補蓋宋（二代）、宋＋元；德里學者 1、2、4 名
+    for (const d of (data.spec.dynasty?.length ? [{ 2: true }, { 2: true, 3: true }] : []) as Record<number, boolean>[]) {
+      const p = clone(base)
+      p.dynasty = d
+      variants.push(p)
+    }
+    for (const n of data.spec.herd ? [3, 6] : []) {
+      const p = clone(base)
+      p.herd = n
+      variants.push(p)
+    }
+    for (const n of data.spec.officials ? [1, 2] : []) {
+      const p = clone(base)
+      p.officials = n
+      variants.push(p)
+    }
+    for (const n of data.spec.scholars ? [1, 2, 4] : []) {
+      const p = clone(base)
+      p.scholars = n
+      variants.push(p)
+    }
+    // 光環建築：每個候選位置各一個起點；蓄水池再試 0、2、3 座
+    for (const z of data.spec.zones ?? []) {
+      const cands = zoneAnchors(z, map)
+      for (const a of cands.slice(1)) {
+        const p = clone(base)
+        p.placeAt = { [z.building]: [a] }
+        variants.push(p)
+      }
+      if (z.max && z.max > 1) {
+        for (const n of [0, 2, 3]) {
+          const p = clone(base)
+          p.placeAt = { [z.building]: cands.slice(0, n).concat(Array(Math.max(0, n - cands.length)).fill('home')) }
+          variants.push(p)
+        }
       }
     }
     for (const a of [2, 3, 4]) {
@@ -181,6 +313,7 @@ export class Searcher {
       }
     }
     this.seeds = variants
+    this.initial = variants.map(clone)
   }
 
   /** 跑 ms 毫秒；回傳這段期間是否有進步 */
@@ -200,6 +333,12 @@ export class Searcher {
       if (!this.best || better(ev.result, this.best.result)) {
         this.best = ev
         improved = true
+        this.stale = 0
+      } else if (++this.stale >= RESTART_AFTER && !this.seeds.length) {
+        // 卡在區域最佳：只留目前最佳，從各起點各突變一次重新開始（避免整個前段班都收斂到同一種做法）
+        this.elite = [this.best]
+        this.seeds = this.initial.map((p) => mutate(p, this.r, this.data, this.goals, this.map))
+        this.stale = 0
       }
     }
     return improved
@@ -208,14 +347,21 @@ export class Searcher {
   private next(): Policy {
     if (!this.elite.length) return defaultPolicy(this.data, this.goals)
     // 偏向挑前段班
-    const i = Math.floor(Math.pow(this.r(), 2) * this.elite.length)
-    return mutate(this.elite[i].policy, this.r, this.data, this.goals)
+    const pickElite = () => this.elite[Math.floor(Math.pow(this.r(), 2) * this.elite.length)].policy
+    const b = this.best?.result
+    const horizon = b && b.ok ? (b.armyAt != null && Number.isFinite(b.armyAt) ? b.armyAt : b.finish) : 600
+    // 三成交配後再突變，七成直接突變
+    if (this.elite.length > 1 && this.r() < 0.3) {
+      const child = crossover(pickElite(), pickElite(), this.r)
+      return this.r() < 0.5 ? child : mutate(child, this.r, this.data, this.goals, this.map, horizon)
+    }
+    return mutate(pickElite(), this.r, this.data, this.goals, this.map, horizon)
   }
 
   private insert(ev: Evaluated) {
     this.elite.push(ev)
     this.elite.sort((a, b) => a.result.tcIdle - b.result.tcIdle || a.result.score - b.result.score)
-    if (this.elite.length > 8) this.elite.length = 8
+    if (this.elite.length > ELITE) this.elite.length = ELITE
   }
 
   /** 用目前最佳策略重跑一次並記錄完整事件 */

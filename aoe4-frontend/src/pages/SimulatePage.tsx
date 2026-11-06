@@ -26,13 +26,21 @@ const MODELED: Record<Bonus['modeled'], { label: string; color: string }> = {
   yes: { label: '已計入', color: 'green' },
   approx: { label: '近似', color: 'orange' },
   no: { label: '未建模', color: 'default' },
+  na: { label: '不影響規劃', color: 'blue' },
 }
 
 const BUDGETS = [
-  { value: 8000, label: '8 秒' },
   { value: 20000, label: '20 秒' },
   { value: 60000, label: '1 分鐘' },
+  { value: 120000, label: '2 分鐘' },
+  { value: 300000, label: '5 分鐘' },
 ]
+
+/** 平行搜尋的 worker 數：留一個核心給畫面，最多 6 個 */
+const WORKERS = Math.max(1, Math.min(6, (typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 4 : 4) - 1))
+
+/** 和搜尋同一套比較：先比城鎮中心中斷秒數，再比分數 */
+const isBetter = (a: PlanResult, b: PlanResult) => (a.tcIdle !== b.tcIdle ? a.tcIdle < b.tcIdle : a.score < b.score - 1e-6)
 
 export function SimulatePage() {
   const [catalog, setCatalog] = useState<Catalog | null>(null)
@@ -43,14 +51,16 @@ export function SimulatePage() {
   const [seed, setSeed] = useState(7)
   const [goals, setGoals] = useState<Goal[]>([])
   const [presetId, setPresetId] = useState<string | undefined>(undefined)
-  const [budget, setBudget] = useState(20000)
+  const [budget, setBudget] = useState(60000)
   const [post, setPost] = useState<PostArmy>({ units: 30, upgrades: 2 })
   const [best, setBest] = useState<Best | null>(null)
   const [status, setStatus] = useState({ evals: 0, elapsed: 0, running: false })
   const [runToken, setRunToken] = useState(0)
   const [tab, setTab] = useState('bo')
-  const workerRef = useRef<Worker | null>(null)
+  const workerRef = useRef<Worker[]>([])
   const runId = useRef(0)
+  const bestRef = useRef<PlanResult | null>(null)
+  const progress = useRef<{ evals: number; elapsed: number; running: boolean }[]>([])
 
   useEffect(() => {
     Promise.all([loadCatalog(), fetch('/sim/names-zh.json').then((r) => r.json() as Promise<Record<string, string>>)])
@@ -72,34 +82,49 @@ export function SimulatePage() {
     setGoals(presets[0].goals)
   }, [presets])
 
+  // 平行開好幾個 worker，各用不同亂數種子搜；畫面只顯示目前最好的那個結果
   useEffect(() => {
-    const w = new Worker(new URL('../sim/planner/planner.worker.ts', import.meta.url), { type: 'module' })
-    w.onmessage = (e: MessageEvent<WorkerOut>) => {
-      const m = e.data
-      if (m.id !== runId.current) return
-      if (m.type === 'best') setBest({ result: m.result, policy: m.policy, steps: m.steps })
-      else if (m.type === 'progress') setStatus({ evals: m.evals, elapsed: m.elapsed, running: m.running })
-      else setError(m.message)
-    }
-    workerRef.current = w
-    return () => w.terminate()
+    const ws = Array.from({ length: WORKERS }, (_, k) => {
+      const w = new Worker(new URL('../sim/planner/planner.worker.ts', import.meta.url), { type: 'module' })
+      w.onmessage = (e: MessageEvent<WorkerOut>) => {
+        const m = e.data
+        if (m.id !== runId.current) return
+        if (m.type === 'best') {
+          if (!bestRef.current || isBetter(m.result, bestRef.current)) {
+            bestRef.current = m.result
+            setBest({ result: m.result, policy: m.policy, steps: m.steps })
+          }
+        } else if (m.type === 'progress') {
+          progress.current[k] = { evals: m.evals, elapsed: m.elapsed, running: m.running }
+          const ps = progress.current.filter(Boolean)
+          setStatus({ evals: ps.reduce((s, p) => s + p.evals, 0), elapsed: Math.max(...ps.map((p) => p.elapsed)), running: ps.some((p) => p.running) })
+        } else setError(m.message)
+      }
+      return w
+    })
+    workerRef.current = ws
+    return () => ws.forEach((w) => w.terminate())
   }, [])
 
   // 設定一改就重新最佳化（稍微延遲，避免連續輸入時一直重跑）
   useEffect(() => {
-    if (!data || !goals.length || !workerRef.current) return
+    if (!data || !goals.length || !workerRef.current.length) return
     const h = setTimeout(() => {
       const id = ++runId.current
       setBest(null)
+      bestRef.current = null
+      progress.current = []
       setStatus({ evals: 0, elapsed: 0, running: true })
-      const msg: StartMessage = { type: 'start', id, civ, mapType, seed, goals, post, budgetMs: budget }
-      workerRef.current!.postMessage(msg)
+      workerRef.current.forEach((w, k) => {
+        const msg: StartMessage = { type: 'start', id, civ, mapType, seed, goals, post, budgetMs: budget, worker: k }
+        w.postMessage(msg)
+      })
     }, 250)
     return () => clearTimeout(h)
   }, [data, civ, mapType, seed, goals, post, budget, runToken])
 
   const stop = () => {
-    workerRef.current?.postMessage({ type: 'stop' })
+    workerRef.current.forEach((w) => w.postMessage({ type: 'stop' }))
     setStatus((s) => ({ ...s, running: false }))
   }
 
@@ -239,6 +264,18 @@ export function SimulatePage() {
               <div className="planner-kpi planner-kpi-muted">
                 <div className="planner-kpi-label">目標達成時村民</div>
                 <div className="planner-kpi-value">{result ? result.villagersAtGoal : '—'}</div>
+              </div>
+              <div className="planner-kpi planner-kpi-muted">
+                <div className="planner-kpi-label">目標達成時累計採集</div>
+                <Tooltip
+                  title={
+                    result
+                      ? `食物 ${Math.round(result.gatheredByRes.food)}、木材 ${Math.round(result.gatheredByRes.wood)}、黃金 ${Math.round(result.gatheredByRes.gold)}、石頭 ${Math.round(result.gatheredByRes.stone)}（含被動收入）。評分的次要條件：每 100 資源抵 1 秒。`
+                      : null
+                  }
+                >
+                  <div className="planner-kpi-value">{result ? Math.round(result.gatheredAtGoal).toLocaleString() : '—'}</div>
+                </Tooltip>
               </div>
               <div className="planner-kpi planner-kpi-muted">
                 <div className="planner-kpi-label">城鎮中心中斷村民</div>

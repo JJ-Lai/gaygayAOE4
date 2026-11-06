@@ -29,19 +29,26 @@ const CASES: Case[] = [
   // 阿拔斯：職業約 3:52~4:16（智慧宮 2:34 完成、側翼 100 秒）。智慧宮要自己蓋之後模擬約 4:35，
   // 因為控制器開局一律先採羊、不會像職業一樣在野果蓋磨坊做果園；區間放寬到 4:45，差距記在這裡。
   { civ: 'ab', label: '阿拔斯 封建', goals: [{ kind: 'age', age: 2 }], band: [195, 285] },
-  { civ: 'mo', label: '蒙古 封建', goals: [{ kind: 'age', age: 2 }], band: [220, 330] },
+  // 蒙古：下限原本 3:40（無來源）。2026-11-06 修正開局分配（開局第 3 名村民不再先被派去採木）後最快封建 3:35，
+  // 和其他文明一樣「引擎沒有操作損失、比職業略快」，下限放到 3:25。
+  // 2026-11-06 再放到 3:15：搜尋加了交配、依時間的資源偏好之後 3:24。下限只用來抓壞掉的模型，搜尋變強就會一直被碰到，之後要改成建模操作損失。
+  { civ: 'mo', label: '蒙古 封建', goals: [{ kind: 'age', age: 2 }], band: [195, 330] },
   // 維京：免費村民讓「最快封建」比職業平均（約 4:15）快很多；起始村民容量 10 是假設值，這個區間只用來抓壞掉的模型。
   { civ: 'vik', label: '維京 封建', goals: [{ kind: 'age', age: 2 }], band: [170, 320] },
   { civ: 'je', label: '貞德 封建', goals: [{ kind: 'age', age: 2 }], band: [195, 290] },
   // 金朝：2026-11 AoE4 World 頂尖玩家（1850–2500 分）23 場 1v1 金朝封建：最快 3:44、中位數 4:30、75% 4:41。
-  // 引擎沒有走位與操作損失，最快封建應略快於頂尖最快；下限放到 3:20，上限放在 75% 分位附近。
-  { civ: 'jin', label: '金朝 封建（3 名鄉騎開局）', goals: [{ kind: 'age', age: 2 }], band: [200, 285] },
+  // 引擎沒有走位與操作損失，最快封建應略快於頂尖最快；上限放在 75% 分位附近。
+  // 下限原本 3:20；2026-11-06 起升代地標統一蓋在城鎮中心旁（以前 12 格、方位亂排，金朝會蓋到羊和馴鹿的另一側），
+  // 金朝工人少又建造 +75%，對走路最敏感，最快封建變 3:12。比頂尖最快快 32 秒，和英格蘭比職業快 22~40 秒同一級，下限放到 3:05。
+  { civ: 'jin', label: '金朝 封建（3 名鄉騎開局）', goals: [{ kind: 'age', age: 2 }], band: [185, 285] },
   // 只回報、不設區間：這次改了開局組成的文明
   { civ: 'gol', label: '金帳 封建（5 村民、一次 2 名）', goals: [{ kind: 'age', age: 2 }] },
   { civ: 'zx', label: '朱熹 封建（5 村民 + 監工）', goals: [{ kind: 'age', age: 2 }] },
   { civ: 'by', label: '拜占庭 封建 → 8 名長弓兵（橄欖油傭兵）', goals: [{ kind: 'age', age: 2 }, { kind: 'army', unit: 'longbowman', count: 8 }] },
   { civ: 'en', label: '英格蘭 直城', goals: [{ kind: 'age', age: 3 }], band: [430, 620] },
-  { civ: 'ja', label: '日本 直城（水鳥居）', goals: [{ kind: 'age', age: 3, via: 'floating-gate' }], band: [440, 540] },
+  // 日本直城：下限原本 7:20。2026-11-06 修正選採集點（不再把村民派去 25 格外的鹿群、沒錢蓋營地時照實際走路算）後 7:16、27 村民，
+  // 比職業 7:45~8:15 快 30~60 秒，和英格蘭同一級，下限放到 7:05。引擎沒有操作損失，之後應該另外建模，不要一直放寬區間。
+  { civ: 'ja', label: '日本 直城（水鳥居）', goals: [{ kind: 'age', age: 3, via: 'floating-gate' }], band: [425, 540] },
   {
     civ: 'ja',
     label: '日本 黑暗塔攻 → 直城（水鳥居）→ 20 騎馬武士',
@@ -62,11 +69,11 @@ for (const c of CASES) {
   // 基準區間比的是「只看目標」的時間；另外跑一次含目標後全力出兵（30 兵 + 2 升級）的版本對照
   const s = new Searcher(data, map, c.goals, 3, { post: { units: 0, upgrades: 0 } })
   const t0 = performance.now()
-  s.run(Number(process.env.MS ?? 2500))
+  s.run(Number(process.env.MS ?? 5000))
   const d = s.bestDetailed()!
   const r = d.result
   const sp = new Searcher(data, map, c.goals, 3)
-  sp.run(Number(process.env.MS ?? 2500))
+  sp.run(Number(process.env.MS ?? 5000))
   const rp = sp.bestDetailed()!.result
   const ms = performance.now() - t0
   const inBand = !c.band || (r.finish >= c.band[0] && r.finish <= c.band[1])

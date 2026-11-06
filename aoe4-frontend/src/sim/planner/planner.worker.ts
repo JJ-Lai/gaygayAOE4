@@ -17,6 +17,8 @@ export interface StartMessage {
   post: PostArmy
   /** 最多跑多久（毫秒） */
   budgetMs: number
+  /** 第幾個平行的 worker（決定亂數種子，讓各 worker 往不同方向搜） */
+  worker?: number
 }
 
 export type WorkerIn = StartMessage | { type: 'stop' }
@@ -50,7 +52,7 @@ async function start(m: StartMessage) {
   if (current !== m.id) return
   const data = buildCivData(catalog!, m.civ, names)
   const map = generateMap(m.mapType, m.seed)
-  const searcher = new Searcher(data, map, m.goals, m.seed + 11, { post: m.post })
+  const searcher = new Searcher(data, map, m.goals, m.seed + 11 + (m.worker ?? 0) * 7919, { post: m.post })
   const t0 = performance.now()
   let lastGain = t0
   let lastPost = 0
@@ -71,7 +73,8 @@ async function start(m: StartMessage) {
       dirty = false
       lastPost = now
     }
-    const done = now - t0 > m.budgetMs || now - lastGain > Math.min(6000, m.budgetMs)
+    // 搜尋卡住時會自己重新開始，所以要給它時間；預算的三分之一（至少 15 秒）都沒進步才提早結束
+    const done = now - t0 > m.budgetMs || now - lastGain > Math.max(15000, m.budgetMs / 3)
     post({ type: 'progress', id: m.id, evals: searcher.evals, elapsed: now - t0, running: !done })
     if (done) {
       if (dirty) {
