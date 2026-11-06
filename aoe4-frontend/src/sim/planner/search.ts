@@ -4,7 +4,7 @@
 import { isTownCenter, resolveGoals, type CivData } from './civData.ts'
 import { MAX_BOATS, MAX_TRADERS, simulate, zoneAnchors, zonePlan } from './engine.ts'
 import { rng } from './mapgen.ts'
-import { PHASE_SEC, RES, type GameMap, type HolySettings, type Goal, type PlanResult, type Policy, type PostArmy, type Step, type StepParams, type FishSettings, type TradeSettings } from './types.ts'
+import { PHASE_SEC, RES, type GameMap, type HolySettings, type Goal, type PlanResult, type Policy, type PostArmy, type Step, type StepParams, type FishSettings, type ReplayScript, type TradeSettings } from './types.ts'
 
 const MAX_T = 60 * 60
 /** 前段班保留幾個策略 */
@@ -26,6 +26,8 @@ export interface SearchOptions {
   opDelay?: number
   /** 操作損失：採集效率倍率 */
   efficiency?: number
+  /** 回放職業對局（check-pro-replay.ts 用） */
+  script?: ReplayScript
 }
 
 export const DEFAULT_POST: PostArmy = { units: 30, upgrades: 2 }
@@ -88,7 +90,7 @@ export function evaluate(
   const { steps, errors } = resolveGoals(data, goals, policy.landmarkPick)
   if (errors.length && !steps.length) return null
   const p = fit(policy, steps)
-  const result = simulate(data, map, steps, p, { record, bound, idleWeight: opts.idleWeight ?? 60, post: opts.post ?? DEFAULT_POST, postBound: opts.postBound, holy: opts.holy, trade: opts.trade, fish: opts.fish, opDelay: opts.opDelay, efficiency: opts.efficiency })
+  const result = simulate(data, map, steps, p, { record, bound, idleWeight: opts.idleWeight ?? 60, post: opts.post ?? DEFAULT_POST, postBound: opts.postBound, holy: opts.holy, trade: opts.trade, fish: opts.fish, opDelay: opts.opDelay, efficiency: opts.efficiency, script: opts.script })
   for (const e of errors) result.warnings.push(e)
   return { policy: p, steps, result }
 }
@@ -108,6 +110,7 @@ const CTL_RANGE = {
   camp: [3, 12, 6, 1],
   houseLead: [4, 30, 12, 3],
   farmLead: [30, 240, 90, 20],
+  look: [0, 300, 180, 30],
 } as const
 
 const clone = (p: Policy): Policy => ({

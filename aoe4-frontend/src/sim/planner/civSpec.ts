@@ -953,6 +953,9 @@ const SPECS: Record<string, CivSpec> = {
     },
     // 羅斯貢品在目錄是 0 成本：改成每名 87.5 石頭（4 名 = 350，技能的起始價）。
     costOverride: {
+      // 封建升代 110 秒（Fandom Golden Tent、Khan and Torguuds、Building Carts 頁，17.0）；目錄是 105
+      'khan-and-torguuds': { time: 110 },
+      'building-carts': { time: 110 },
       'rus-tribute': { stone: 87.5 },
     },
     notMilitary: ['trader', 'shaman'],
@@ -985,7 +988,7 @@ const SPECS: Record<string, CivSpec> = {
       { text: '村民不能採石；敖包（150 木材、15 秒）每座每分鐘 60 石頭，礦採完仍持續；上限依時代 1/2/3/4 座', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/goldenhorde.json', note: '固定上限 1 座、不分時代（封建後實際可蓋 2–4 座，石頭會少算）。聖物敖包、敖包供奉、敖包大典各 ×1.2 相乘（72 → 86.4 → 103.68/分）已由遙測確認，但沒有計入；Fandom 的 +30% 是舊數字。' },
       { text: '畜欄取代農田：275 木材，最多 4 名村民，每名約 0.7 食物/秒，自帶投放點、無限食物', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Stockyard', note: '天然食物採完後蓋畜欄，每座 4 名村民，速率用 0.7 食物/秒（gather.farm = 0.7/0.75）。0.7 只出自 Fandom（可信度低），論壇實測 4 人約 150–160 食物/分（0.63–0.67/秒）；建造時間 30 秒（aoe4world）或 20 秒（Fandom）未定。輪牧、過度放牧各 +10%，過度放牧曾被回報無效。' },
       { text: '蒙古包（50 木材）是食物、木材、黃金的投放點，也研究經濟科技；不收石頭', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/goldenhorde.json', note: '15.2.7380 從 75 木材降到 50。' },
-      { text: '在金帳升代（金帳 50 黃金、30 秒，只能 1 座），研究不佔城鎮中心；每代兩種選項同價，封建 400 食物 / 200 黃金、105 秒', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/technologies/goldenhorde.json', note: '城堡 1200/600、帝王 2400/1200，各 110 秒。封建時間 aoe4world 寫 105 秒、Fandom 寫 110 秒；遙測 52 場中 50 場符合 105、43 場符合 110，採用 105。' },
+      { text: '在金帳升代（金帳 50 黃金、30 秒，只能 1 座），研究不佔城鎮中心；每代兩種選項同價，封建 400 食物 / 200 黃金、110 秒（Fandom 17.0；目錄 105 秒，已改）', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/technologies/goldenhorde.json', note: '城堡 1200/600、帝王 2400/1200，各 110 秒。封建時間 aoe4world 寫 105 秒、Fandom 寫 110 秒；遙測 52 場中 50 場符合 105、43 場符合 110，採用 105。' },
       { text: '升代選項：可汗與護衛（拔都汗、護衛石頭 -15%）或建築車（2 座免費軍事建築）；莫斯科貢賦（金帳每分鐘 200 木材，每名重裝單位 -3）或聖物敖包（敖包 ×1.2）；石頭大軍（金帳用石頭訓練）或驛站貿易（每座要塞前哨每分鐘 60 黃金，最多 6 座）', modeled: 'approx', source: 'https://www.ageofempires.com/news/age-of-empires-iv-update-17-0/', note: '建築車（封建 2 輛、城堡與帝王各 1 輛免費軍事建築）、莫斯科貢賦（每分鐘 200 木材）、驛站貿易（每座前哨每分鐘 60 黃金，最多 6 座）已計入（Fandom）；可汗與護衛、聖物敖包、石頭大軍只影響軍隊或要聖物，沒有建模。' },
       { text: '詔令與被動收入：生產速度詔令 +15%（要塞前哨範圍內軍事建築）、畜欄詔令（800 石頭解鎖）每名畜欄村民每分鐘 10 黃金、哈剌沙詔令（600 石頭）每批多 1 名哈剌沙、敖包什一稅（帝王 500 石頭）每座敖包每分鐘 +60 食物 +60 木材 +10 黃金', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Golden_Tent', note: '搜尋決定蓋幾座要塞前哨（150 木 50 石）與用哪種詔令（一次一種）：生產速度詔令軍事建築 +15%（假設都在前哨範圍內）、畜欄詔令每名畜欄村民每分鐘 10 黃金（先研究 800 石頭的解鎖）、哈剌沙詔令每訓練一次多 1 名哈剌沙（先研究 600 石頭的解鎖），數字來自 Fandom。敖包上限依時代 1～4 座。敖包什一稅、哈剌沙以外的詔令細節沒有建模。' },
     ],

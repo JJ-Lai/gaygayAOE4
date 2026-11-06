@@ -33,6 +33,7 @@ import {
   type SiteKind,
   type Step,
   type FishSettings,
+  type ReplayScript,
   type TradeSettings,
 } from './types.ts'
 
@@ -40,7 +41,8 @@ const SPEED = 1.125
 /** 評分：目標達成時每 1 資源的累計收入抵多少秒 */
 const ECO_WEIGHT = 0.01
 /** 控制器規則的預設參數（policy.ctl 可覆蓋，由搜尋調整）；setup = 選採集點時把走路與蓋投放點的一次性時間攤到多少秒的採集上 */
-const CTL = { rebalance: 8, move: 0.15, hyst: 3, setup: 120, camp: 6, houseLead: 12, farmLead: 90 }
+// look = 分配人力時往後看幾秒的花費（職業對局重跑比對：0 → 180 讓城堡偏差從 +80～+250 秒降到 +50～+70 秒，2026-11-07）
+const CTL = { rebalance: 8, move: 0.15, hyst: 3, setup: 120, camp: 6, houseLead: 12, farmLead: 90, look: 180 }
 const HUNT_CARRY = 25
 const RES_OF: Record<SiteKind | 'farm', Res> = {
   sheep: 'food',
@@ -141,6 +143,8 @@ export interface SimOptions {
   opDelay?: number
   /** 操作損失：實際採集效率（繞路、互相卡位、找下一棵樹），乘在所有採集速率上；1 = 理論值 */
   efficiency?: number
+  /** 回放職業對局：照職業出村民、照職業的收入比例分配村民、只在職業蓋了投放點之後蓋營地 */
+  script?: ReplayScript
 }
 
 /** 撿聖物、佔聖地的宗教單位候選（依序取第一個目錄裡有的） */
@@ -213,6 +217,30 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   const name = (id: string) => nameOf(data, id)
   const rec = opts.record
   const opDelay = opts.opDelay ?? 0
+  const script = opts.script
+  /** 回放：已經開始的步驟 */
+  const started = new Set<number>()
+  /** 回放：職業在 at 秒前已開始訓練的村民數（出生時間減訓練時間）＋開局村民 */
+  const scriptedVills = (at: number) => startVillagers + (script ? script.villagers.filter((x) => x - trainTime() <= at).length : 0)
+  /**
+   * 回放：每種資源還要採多少才追得上職業 40 秒後的累計收入（職業的紀錄是投放時入帳、一筆一筆的，
+   * 所以追累計曲線，不用短時間的收入率；模擬已經超前的資源就不派人）
+   */
+  const scriptNeed = (): Bundle => {
+    const out = zero()
+    if (!script) return out
+    const ts = script.income.t
+    const at = t + 40
+    let i = ts.findIndex((x) => x >= at)
+    if (i < 0) i = ts.length - 1
+    const f = i > 0 && ts[i] > ts[i - 1] ? Math.min(1, Math.max(0, (at - ts[i - 1]) / (ts[i] - ts[i - 1]))) : 1
+    for (const r of RES) {
+      const a = i > 0 ? script.income[r][i - 1] : script.income[r][0]
+      const pro = a + (script.income[r][i] - a) * f
+      out[r] = Math.max(0, pro - incomeAcc[r])
+    }
+    return out
+  }
   const ctl = { ...CTL, ...policy.ctl }
   const efficiency = opts.efficiency ?? 1
   const events: PlanEvent[] = []
@@ -712,6 +740,13 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   const tryCamp = (x: SiteSt, from: string) => {
     const it = campItem(x.res)
     if (!it) return false
+    // 回放：職業還沒蓋這種投放點就不蓋營地（例如只去採一趟石頭，走回城鎮中心投放）
+    // 照投放點建築本身算座數（採礦營地同時收金和石，不能各算一次）
+    if (script) {
+      const proN = script.dropoffs.filter((d) => d.t <= t && d.id === it.id).length
+      const simN = blds.filter((b) => b.role === 'camp' && b.item === it.id).length
+      if (proN <= simN) return false
+    }
     const v = variationAt(it, age)
     // 開局送的投放點（圖格魯克的工作象）不用錢
     const isFree = freeDropUsed < spec.freeDropoffs
@@ -931,7 +966,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     if (st.kind === 'build') n = st.count - (placed.get(steps.indexOf(st)) ?? 0)
     if (st.kind === 'army') {
       const v = variationAt(it, Math.max(age, minAge(it)))
-      const left = st.count - (queued.get(steps.indexOf(st)) ?? 0)
+      const left = st.count - armyHave(st.item)
       const prods = Math.max(1, policy.steps[steps.indexOf(st)]?.producers ?? 1)
       n = Math.min(left, prods * Math.max(1, Math.ceil(60 / Math.max(5, v.time))))
     }
@@ -972,19 +1007,24 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   /** 還沒排進生產的軍隊目標所需人口（村民不能把它佔掉） */
   const armyReserve = () => {
     let n = 0
+    // 同一種兵的目標數量是累計的：每種兵只留「最大目標 − 已排入」的人口
+    const short = new Map<string, number>()
     steps.forEach((st, i) => {
       if (st.kind !== 'army' || stepDone[i] != null) return
-      const it = items.get(st.item)
-      const p = it ? variationAt(it, Math.max(age, minAge(it))).pop : 1
-      n += Math.max(0, st.count - (queued.get(i) ?? 0)) * p
+      short.set(st.item, Math.max(short.get(st.item) ?? 0, st.count - armyHave(st.item)))
     })
+    for (const [id, k] of short) {
+      const it = items.get(id)
+      const p = it ? variationAt(it, Math.max(age, minAge(it))).pop : 1
+      n += Math.max(0, k) * p
+    }
     if (post.units > 0) n += Math.max(0, post.units - postQueued)
     return n
   }
   /** 村民最多能用到的人口：200 減掉要留給軍隊目標的 */
   const villagerPopLimit = () => 200 - armyReserve()
   /** 硬性規則：只要人口、村民容量允許就生產 */
-  const producingVills = () => villagers + training() < vilCap() && cpop() + batchSize <= villagerPopLimit()
+  const producingVills = () => villagers + training() < vilCap() && cpop() + batchSize <= villagerPopLimit() && (!script || villagers + training() < scriptedVills(t + trainTime()))
 
   /** 每座城鎮中心保留下一批村民的費用（有備用工人時取最便宜的組合，保證至少能訓練它） */
   const reserve = (): Bundle => {
@@ -1009,6 +1049,18 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         const c2 = stepCost(nx)
         for (const r of RES) n[r] += c2[r]
       }
+      // 往後看：接下來 ctl.look 秒的收入付得起的步驟也算進需求（目標很多、每步很小時，分配才不會每一步都大翻轉、一直有人在走路）
+      if (ctl.look > 0) {
+        let budget = ctl.look * Math.max(1, villagers) * 0.6 - RES.reduce((s, r) => s + n[r], 0)
+        for (let i = cur + 2; i < steps.length && budget > 0; i++) {
+          if (steps[i].kind === 'age') break
+          const c3 = stepCost(steps[i])
+          const tot = RES.reduce((s, r) => s + c3[r], 0)
+          if (tot > budget) break
+          for (const r of RES) n[r] += c3[r]
+          budget -= tot
+        }
+      }
       // 特殊資源不夠：換算成要多採的來源資源（例如橄欖油來自採野果）。看所有還沒做的步驟，才會提早去採。
       const want: Record<string, number> = {}
       preferBerry = false
@@ -1020,7 +1072,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         const v = variationAt(it, Math.max(age, minAge(it)))
         const o = otherOf(v)
         if (!o) continue
-        const left = sx.kind === 'army' ? Math.max(0, sx.count - (queued.get(i) ?? 0)) : researched.has(sx.item) || researching.has(sx.item) ? 0 : 1
+        const left = sx.kind === 'army' ? Math.max(0, sx.count - armyHave(sx.item)) : researched.has(sx.item) || researching.has(sx.item) ? 0 : 1
         for (const [key, x] of Object.entries(o)) want[key] = (want[key] ?? 0) + x * left
       }
       for (const [key, x] of Object.entries(want)) {
@@ -1247,15 +1299,26 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       tot += share[r]
     }
     const sp = policy.steps[cur]
+    // 回放：照「追上職業累計收入還差多少 ÷ 這種資源的採集速率」分配
+    if (script) {
+      const pr = scriptNeed()
+      tot = 0
+      for (const r of RES) {
+        const x = bestSite(r) ?? sites.find((s) => s.res === r && s.workers > 0)
+        const rate = x ? effRate(x, true) : 0
+        share[r] = rate > 0 ? pr[r] / rate : 0
+        tot += share[r]
+      }
+    }
     if (tot <= 0) {
       // 沒有缺口：照目前的比例，新村民偏向食物、木材
       for (const r of RES) share[r] = c[r] + (r === 'food' ? 1 : r === 'wood' ? 0.6 : r === 'gold' ? 0.3 : 0)
       tot = RES.reduce((s, r) => s + share[r], 0)
     }
     for (const r of RES) share[r] = share[r] / tot
-    const pb = policy.phaseBias?.[Math.floor(t / PHASE_SEC)]
+    const pb = script ? undefined : policy.phaseBias?.[Math.floor(t / PHASE_SEC)]
     for (const r of RES) {
-      const b = (sp?.bias[r] ?? 0) + (pb?.[r] ?? 0)
+      const b = script ? 0 : (sp?.bias[r] ?? 0) + (pb?.[r] ?? 0)
       share[r] = Math.max(0, share[r] + b * (r === 'stone' && n.stone <= bank.stone ? 0 : 1))
     }
     const sum = RES.reduce((s, r) => s + share[r], 0) || 1
@@ -1268,8 +1331,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     }
     raw.sort((a, b) => b.v - Math.floor(b.v) - (a.v - Math.floor(a.v)))
     for (let i = 0; used < N && i < raw.length; i++, used++) tgt[raw[i].r]++
-    // 硬性下限：村民生產與房屋所需的收入一定要有人採
-    const floor = productionFloor(N)
+    // 硬性下限：村民生產與房屋所需的收入一定要有人採（回放時照職業的分配，不加下限）
+    const floor = script ? zero() : productionFloor(N)
     for (const r of RES) {
       while (tgt[r] < floor[r]) {
         const donor = RES.filter((x) => x !== r && tgt[x] > floor[x]).sort((a, b) => tgt[b] - floor[b] - (tgt[a] - floor[a]))[0]
@@ -1279,12 +1342,15 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       }
     }
     target = tgt
+    // 回放：職業蓋了投放點之後，已經有人在採、還沒有營地的點補蓋（第一名村民可能在職業蓋營地之前就去了）
+    if (script) for (const x of sites) if (x.workers > 0 && needsCamp(x)) tryCamp(x, x.s.id)
     // 先用新目標分派空閒村民，再看要不要搬人。
     // 以前是先用舊目標分派（開局時舊目標只有「食物 1」），開局第 3 名村民會被排去採木材，
     // 之後又因為搬人的遲滯（差距 < 3 不搬）卡在木材 20 多秒才調回食物。
     if (free.length) assignFree()
 
     // 搬人：多的搬去少的，每次最多 15%
+    // 回放時一樣用一般的搬人限制（試過立刻全數調整，走路的人更多、收入反而略低）
     let moves = Math.max(2, Math.ceil(N * ctl.move))
     const moved: string[] = []
     while (moves > 0) {
@@ -1297,7 +1363,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       const under = below ?? RES.filter((r) => now[r] < tgt[r]).sort((a, b) => tgt[b] - now[b] - (tgt[a] - now[a]))[0]
       if (!over || !under) break
       // 遲滯：差距太小就不搬，避免來回走
-      if (!below && now[over] - tgt[over] + (tgt[under] - now[under]) < ctl.hyst) break
+      if (!below && now[over] - tgt[over] + (tgt[under] - now[under]) < (script ? 2 : ctl.hyst)) break
       const from = sites.filter((x) => x.res === over && x.workers > 0).sort((a, b) => effRate(a) - effRate(b))[0]
       if (!from) break
       from.workers--
@@ -1619,20 +1685,23 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     }
 
     // 1. 目前步驟
-    for (let guard = 0; guard < 4 && cur < steps.length; guard++) {
-      const st = steps[cur]
-      const sp = policy.steps[cur]
+    // 一般模式依序推進（前一步開始了才做下一步）；回放模式每個步驟時間到了就各自開始，不互相等待（職業是同時進行的）
+    const actStep = (i: number): boolean => {
+      const st = steps[i]
+      const sp = policy.steps[i]
+      // 回放：不早於職業開始的時間
+      if (st.earliest != null && t < st.earliest) return false
       let advanced = false
       if (st.kind === 'age') {
-        if (age < st.age! - 1) break
+        if (age < st.age! - 1) return false
         const o = ageOption(st)
-        if (!o) break
+        if (!o) return false
         if (o.mode === 'building') {
           if (affordable(ageCost(o))) {
             // 升代地標一律蓋在城鎮中心旁的農田區（和光環建築的 'home' 同一處，距中心 9 格）；
             // 光環地標在 place() 裡改照策略的錨點。以前是 12 格、方位依編號亂排，可能蓋到所有村民的另一側。
             const home = anchorPoint('home', 3)
-            const b = place(o.id, 'step', cur, sp.builders, home.dist, st.age, home.angle)
+            const b = place(o.id, 'step', i, sp.builders, home.dist, st.age, home.angle)
             b.ageTo = st.age
             advanced = true
           }
@@ -1642,7 +1711,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
           if (ps.length && affordable(oc) && hasOther(o.other)) {
             pay(oc)
             payOther(o.other)
-            ps[0].job = { kind: 'tech', item: o.id, end: t + o.time, count: 1, step: cur }
+            ps[0].job = { kind: 'tech', item: o.id, end: t + o.time, count: 1, step: i }
             researching.add(o.id)
             log('research', `研究${o.name}（升代）`, o.id, oc)
             advanced = true
@@ -1650,30 +1719,32 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         }
       } else if (st.kind === 'build') {
         const it = items.get(st.item)!
-        if (minAge(it) > age) break
-        const n = placed.get(cur) ?? 0
+        if (minAge(it) > age) return false
+        // 補上的前置生產建築：已經有一座（含蓋造中、營地）就不用再蓋
+        if (st.implicit && blds.some((b) => b.item === st.item)) return true
+        const n = placed.get(i) ?? 0
         const cost = costOf(variationAt(it, age))
         if (n < st.count && affordable(cost)) {
           place(
             st.item,
             'step',
-            cur,
+            i,
             st.forward ? sp.builders : Math.min(sp.builders, 4),
             st.forward ? map.enemyDist * 0.8 : 10,
             undefined,
             st.forward ? map.enemyAngle + (n - (st.count - 1) / 2) * 0.06 : undefined,
           )
-          placed.set(cur, n + 1)
+          placed.set(i, n + 1)
         }
-        advanced = (placed.get(cur) ?? 0) >= st.count
+        advanced = (placed.get(i) ?? 0) >= st.count
       } else if (st.kind === 'army') {
         const it = items.get(st.item)!
-        if (minAge(it) > age) break
+        if (minAge(it) > age) return false
         const p = producerFor(st.item)
         const want = Math.max(1, sp.producers)
         if (p && blds.filter((b) => b.item === p).length < want) {
           const c = costOf(variationAt(items.get(p)!, age))
-          if (affordable(c)) place(p, 'prod', cur, 1, 10)
+          if (affordable(c)) place(p, 'prod', i, 1, 10)
         }
         const v = variationAt(it, age)
         const ub = unitBatch(st.item, v)
@@ -1681,9 +1752,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         // 留給村民的人口：每座城鎮中心一批（訓練中的村民已經算在 cpop 裡）
         const villRoom = producingVills() ? tcList().length * batchSize : 0
         for (const b of idleProducers(nonTC(v.producedBy))) {
-          const q = queued.get(cur) ?? 0
-          // 免費送的單位也算進這個目標
-          if (q + (freeUnits.get(st.item) ?? 0) >= st.count) break
+          // 數量是累計的：同一種兵在前面目標已排入的、免費送的都算進來
+          if (armyHave(st.item) >= st.count) break
           const pm = prodMods(b.item, it, b)
           const c = costOf(v)
           for (const r of RES) c[r] *= batch * pm.cost[r]
@@ -1695,21 +1765,21 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
           addMilSpend(c)
           payOther(otherOf(v), batch)
           if (horse) horses -= 1
-          b.job = { kind: 'unit', item: st.item, ...(horse ? { end: t, supervised: false } : supervise(b, ub.time * pm.time)), count: batch, step: cur, pop: v.pop * batch, dur: ub.time * pm.time }
+          b.job = { kind: 'unit', item: st.item, ...(horse ? { end: t, supervised: false } : supervise(b, ub.time * pm.time)), count: batch, step: i, pop: v.pop * batch, dur: ub.time * pm.time }
           armyPop += v.pop * batch
-          queued.set(cur, q + batch)
+          queued.set(i, (queued.get(i) ?? 0) + batch)
           log('train', `訓練${name(st.item)}`, st.item, c)
         }
-        advanced = (queued.get(cur) ?? 0) + (freeUnits.get(st.item) ?? 0) >= st.count
+        advanced = armyHave(st.item) >= st.count
       } else if (st.kind === 'tech') {
         const it = items.get(st.item)!
-        if (minAge(it) > age) break
+        if (minAge(it) > age) return false
         const v = variationAt(it, age)
         const ps = idleProducers(nonTC(v.producedBy))
         if (ps.length && affordable(costOf(v)) && hasOther(otherOf(v))) {
           pay(costOf(v))
           payOther(otherOf(v))
-          ps[0].job = { kind: 'tech', item: st.item, ...supervise(ps[0], researchTime(v.time) * prodMods(ps[0].item, undefined, ps[0]).research), count: 1, step: cur }
+          ps[0].job = { kind: 'tech', item: st.item, ...supervise(ps[0], researchTime(v.time) * prodMods(ps[0].item, undefined, ps[0]).research), count: 1, step: i }
           researching.add(st.item)
           log('research', `研究${name(st.item)}`, st.item, costOf(v))
           advanced = true
@@ -1717,9 +1787,23 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       } else if (st.kind === 'villagers') {
         advanced = villagers >= st.count
       }
-      if (!advanced) break
-      cur++
-      lastRebalance = -99
+      return advanced
+    }
+    if (script) {
+      for (let i = cur; i < steps.length; i++) {
+        if (started.has(i)) continue
+        if (actStep(i)) {
+          started.add(i)
+          lastRebalance = -99
+        }
+      }
+      while (cur < steps.length && started.has(cur)) cur++
+    } else {
+      for (let guard = 0; guard < 4 && cur < steps.length; guard++) {
+        if (!actStep(cur)) break
+        cur++
+        lastRebalance = -99
+      }
     }
 
     // 2. 目標後全力出兵
@@ -2132,6 +2216,14 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   }
   /** 免費送的單位：算進已訓練、人口，目標後出兵階段也算進出兵數 */
   const freeUnits = new Map<string, number>()
+  /** 軍隊目標的數量是累計的（「有 N 名」）：同一種兵所有目標已排入的，加上免費送的 */
+  const armyHave = (unit: string) => {
+    let q = freeUnits.get(unit) ?? 0
+    steps.forEach((s, j) => {
+      if (s.kind === 'army' && s.item === unit) q += queued.get(j) ?? 0
+    })
+    return q
+  }
   const grantUnits = (u: Record<string, number> | undefined, from: string) => {
     if (!u) return
     for (const [id, n] of Object.entries(u)) {
@@ -3344,7 +3436,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       const st = steps[i]
       let ok = false
       if (st.kind === 'age') ok = age >= st.age!
-      else if (st.kind === 'build') ok = blds.filter((b) => b.step === i && b.done).length >= st.count
+      else if (st.kind === 'build') ok = st.implicit && !blds.some((b) => b.step === i) ? blds.some((b) => b.item === st.item && b.done) : blds.filter((b) => b.step === i && b.done).length >= st.count
       else if (st.kind === 'army') ok = (trained.get(st.item) ?? 0) >= st.count
       else if (st.kind === 'tech') ok = researched.has(st.item)
       else if (st.kind === 'villagers') ok = villagers >= st.count
@@ -3377,6 +3469,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         army: armyCount,
         income: inc,
         sites: sites.map((x) => ({ id: x.s.id, workers: x.workers, left: x.left })),
+        gathered: { ...incomeAcc },
         farms: farmsBuilt,
       })
     }

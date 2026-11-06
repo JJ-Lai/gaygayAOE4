@@ -53,12 +53,16 @@ export interface Point {
 }
 
 // ---------- 目標 ----------
-export type Goal =
+export type Goal = (
   | { kind: 'age'; age: 2 | 3 | 4; via?: string }
   | { kind: 'build'; item: string; count: number; forward?: boolean }
   | { kind: 'army'; unit: string; count: number }
   | { kind: 'tech'; item: string }
   | { kind: 'villagers'; count: number }
+) & {
+  /** 不早於這個秒數開始（回放職業對局用） */
+  at?: number
+}
 
 /** 解析後的單一步驟：一個目標可能展開成多步（例如先升代、先蓋馬廄）。 */
 export interface Step {
@@ -72,6 +76,8 @@ export interface Step {
   /** 升代步驟的目標時代 */
   age?: number
   label: string
+  /** 不早於這個秒數開始（回放職業對局用） */
+  earliest?: number
 }
 
 // ---------- 策略參數（搜尋的對象） ----------
@@ -153,12 +159,23 @@ export interface Policy {
   /**
    * 控制器規則的參數（沒寫用預設）：rebalance = 幾秒重算一次村民分配（8）、move = 一次最多搬幾成村民（0.15）、
    * hyst = 差距小於幾人不搬（3）、setup = 選採集點時把走路與蓋營地攤到幾秒（120）、camp = 採集點多遠才蓋營地（6 格）、
-   * houseLead = 蓋房提前的秒數（建造時間之外，12）、farmLead = 天然食物剩不到「食物村民 × 0.6 × 幾秒」就預留農田木材（90）
+   * houseLead = 蓋房提前的秒數（建造時間之外，12）、farmLead = 天然食物剩不到「食物村民 × 0.6 × 幾秒」就預留農田木材（90）、
+   * look = 分配人力時往後看幾秒收入付得起的步驟花費（180）
    */
-  ctl?: Partial<Record<'rebalance' | 'move' | 'hyst' | 'setup' | 'camp' | 'houseLead' | 'farmLead', number>>
+  ctl?: Partial<Record<'rebalance' | 'move' | 'hyst' | 'setup' | 'camp' | 'houseLead' | 'farmLead' | 'look', number>>
   /** 捕魚：訓練幾艘漁船，以及從第幾秒開始（之前不蓋碼頭、不訓練漁船；沒寫是 60 秒） */
   boats?: number
   fishFrom?: number
+}
+
+/**
+ * 回放職業對局：照職業的操作做，不最佳化。villagers = 每名村民出生的秒數（不含開局）；
+ * income = 職業的累計收入（每 20 秒一筆，四種資源），村民照這個比例分配；dropoffs = 職業蓋投放點的秒數（模擬只在職業已經蓋了之後才蓋營地）
+ */
+export interface ReplayScript {
+  villagers: number[]
+  income: { t: number[]; food: number[]; wood: number[]; gold: number[]; stone: number[] }
+  dropoffs: { t: number; id: string }[]
 }
 
 /**
@@ -256,6 +273,8 @@ export interface Sample {
   age: number
   army: number
   income: Bundle
+  /** 到此刻的累計收入（採集 + 被動收入 + 一次給的），和職業對局摘要的累計採集比較用 */
+  gathered?: Bundle
   /** 各採集點此刻的人數與剩餘量（sheep、farm 也在內） */
   sites: { id: string; workers: number; left: number }[]
   farms: number

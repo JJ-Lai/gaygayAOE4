@@ -194,7 +194,9 @@ export function isBuildable(data: CivData, id: string) {
  * 只有別處都做不了時才用城鎮中心（城鎮中心要一直出村民）。
  */
 function buildableProducer(data: CivData, unit: CatalogItem, age: number, owned: Set<string>) {
-  const v = variationAt(unit, 4)
+  // 先看當下時代版本的生產建築，再看其他版本（法蘭西騎士精神：封建在馬廄，城堡起只列皇家學院；只看最後一版會被迫先升城堡）
+  const now = variationAt(unit, Math.max(age, minAge(unit))).producedBy
+  const v = { producedBy: [...new Set([...now, ...unit.variations.flatMap((x) => x.producedBy)])] }
   const worker = data.spec.worker
   for (const p of v.producedBy) if (owned.has(p) && !isTownCenter(data, p)) return { id: p, needBuild: false }
   for (const p of v.producedBy) {
@@ -323,5 +325,10 @@ export function resolveGoals(data: CivData, goals: Goal[], landmarkPick: Record<
     if (g.kind === 'army') steps.push({ goalIndex: gi, implicit: false, kind: 'army', item: id, count: g.count, forward: false, label: `${g.count} 名${name(id)}` })
     else steps.push({ goalIndex: gi, implicit: false, kind: 'tech', item: id, count: 1, forward: false, label: `研究${name(id)}` })
   })
+  // 回放：目標與為它補上的前置（生產建築、升代）都不早於指定的秒數開始
+  for (const s of steps) {
+    const at = goals[s.goalIndex]?.at
+    if (at != null) s.earliest = at
+  }
   return { steps, errors }
 }

@@ -1,0 +1,3174 @@
+{
+ "ranAt": "2026-11-06T17:52:40.108Z",
+ "patch": 12260,
+ "mode": "replay",
+ "loss": {
+  "delay": 4,
+  "efficiency": 0.85
+ },
+ "summary": {
+  "abbasid_dynasty": {
+   "n": 5,
+   "income": 0.9814518122872096,
+   "feudalIdeal": 25,
+   "feudal": 86,
+   "castleIdeal": 13,
+   "castle": 98.5,
+   "castleN": 4,
+   "actionLate": 17
+  },
+  "ayyubids": {
+   "n": 5,
+   "income": 0.9947856558519076,
+   "feudalIdeal": 9,
+   "feudal": 34,
+   "castleIdeal": 10,
+   "castle": 54,
+   "castleN": 4,
+   "actionLate": 21
+  },
+  "byzantines": {
+   "n": 5,
+   "income": 0.9543298951651985,
+   "feudalIdeal": 40,
+   "feudal": 113,
+   "castleIdeal": 98,
+   "castle": 169,
+   "castleN": 5,
+   "actionLate": 74
+  },
+  "chinese": {
+   "n": 5,
+   "income": 0.8613706289226171,
+   "feudalIdeal": 14,
+   "feudal": 52,
+   "castleIdeal": 30.5,
+   "castle": 83.5,
+   "castleN": 4,
+   "actionLate": 60
+  },
+  "delhi_sultanate": {
+   "n": 1,
+   "income": 0.90348253185428,
+   "feudalIdeal": 67,
+   "feudal": 127,
+   "castleIdeal": null,
+   "castle": null,
+   "castleN": 0,
+   "actionLate": 41
+  },
+  "english": {
+   "n": 5,
+   "income": 1.0341059405408817,
+   "feudalIdeal": 29,
+   "feudal": 61,
+   "castleIdeal": 68.5,
+   "castle": 142,
+   "castleN": 4,
+   "actionLate": 47
+  },
+  "french": {
+   "n": 5,
+   "income": 1.0479801125384305,
+   "feudalIdeal": 32,
+   "feudal": 58,
+   "castleIdeal": 30,
+   "castle": 66,
+   "castleN": 3,
+   "actionLate": 53.5
+  },
+  "golden_horde": {
+   "n": 4,
+   "income": 1.0214553993272204,
+   "feudalIdeal": 52,
+   "feudal": 120.5,
+   "castleIdeal": 0,
+   "castle": 41,
+   "castleN": 3,
+   "actionLate": 44
+  },
+  "holy_roman_empire": {
+   "n": 5,
+   "income": 1.0371708848835004,
+   "feudalIdeal": 21,
+   "feudal": 79,
+   "castleIdeal": 54,
+   "castle": 105,
+   "castleN": 1,
+   "actionLate": 22
+  },
+  "house_of_lancaster": {
+   "n": 5,
+   "income": 0.8693377018380738,
+   "feudalIdeal": 7,
+   "feudal": 101,
+   "castleIdeal": 104,
+   "castle": 188,
+   "castleN": 5,
+   "actionLate": 142
+  },
+  "japanese": {
+   "n": 5,
+   "income": 1.0657474128463331,
+   "feudalIdeal": 6,
+   "feudal": 62,
+   "castleIdeal": 32,
+   "castle": 93.5,
+   "castleN": 4,
+   "actionLate": 14.5
+  },
+  "jeanne_darc": {
+   "n": 2,
+   "income": 0.8763809815448234,
+   "feudalIdeal": 25.5,
+   "feudal": 60.5,
+   "castleIdeal": 115,
+   "castle": 140,
+   "castleN": 1,
+   "actionLate": 48.75
+  },
+  "jin_dynasty": {
+   "n": 5,
+   "income": 1.0640928084212837,
+   "feudalIdeal": -20,
+   "feudal": 15,
+   "castleIdeal": -33,
+   "castle": 19,
+   "castleN": 3,
+   "actionLate": 15
+  },
+  "knights_templar": {
+   "n": 5,
+   "income": 0.8622361082005547,
+   "feudalIdeal": 11,
+   "feudal": 31,
+   "castleIdeal": 45,
+   "castle": 131,
+   "castleN": 3,
+   "actionLate": 77
+  },
+  "macedonian_dynasty": {
+   "n": 5,
+   "income": 1.0228301784441065,
+   "feudalIdeal": 25,
+   "feudal": 82,
+   "castleIdeal": 100,
+   "castle": 199,
+   "castleN": 4,
+   "actionLate": 83
+  },
+  "malians": {
+   "n": 5,
+   "income": 1.0172032604345076,
+   "feudalIdeal": 72,
+   "feudal": 195,
+   "castleIdeal": 52,
+   "castle": 104,
+   "castleN": 5,
+   "actionLate": 49
+  },
+  "mongols": {
+   "n": 4,
+   "income": 1.025299222943806,
+   "feudalIdeal": 40.5,
+   "feudal": 94,
+   "castleIdeal": 120.5,
+   "castle": 188.5,
+   "castleN": 4,
+   "actionLate": 81
+  },
+  "order_of_the_dragon": {
+   "n": 5,
+   "income": 0.9917407814974625,
+   "feudalIdeal": 7,
+   "feudal": 52,
+   "castleIdeal": 48,
+   "castle": 147,
+   "castleN": 5,
+   "actionLate": 29
+  },
+  "ottomans": {
+   "n": 5,
+   "income": 1.0323699773995558,
+   "feudalIdeal": 43,
+   "feudal": 123,
+   "castleIdeal": 151,
+   "castle": 336.5,
+   "castleN": 2,
+   "actionLate": 97
+  },
+  "rus": {
+   "n": 5,
+   "income": 0.8885814072923074,
+   "feudalIdeal": 17,
+   "feudal": 100,
+   "castleIdeal": 68.5,
+   "castle": 117.5,
+   "castleN": 4,
+   "actionLate": 29.5
+  },
+  "scots": {
+   "n": 3,
+   "income": 0.9539184725144472,
+   "feudalIdeal": 6,
+   "feudal": 10,
+   "castleIdeal": 74,
+   "castle": 127,
+   "castleN": 2,
+   "actionLate": 72
+  },
+  "sengoku_daimyo": {
+   "n": 5,
+   "income": 0.8471413985414163,
+   "feudalIdeal": 96,
+   "feudal": 169,
+   "castleIdeal": 140,
+   "castle": 218.5,
+   "castleN": 2,
+   "actionLate": 84.5
+  },
+  "tughlaq_dynasty": {
+   "n": 5,
+   "income": 0.6927141495695165,
+   "feudalIdeal": 105,
+   "feudal": 178,
+   "castleIdeal": 212,
+   "castle": 278,
+   "castleN": 3,
+   "actionLate": 136
+  },
+  "vikings": {
+   "n": 2,
+   "income": 1.0375742529366083,
+   "feudalIdeal": 118.5,
+   "feudal": 198.5,
+   "castleIdeal": null,
+   "castle": null,
+   "castleN": 0,
+   "actionLate": 93.25
+  },
+  "zhu_xis_legacy": {
+   "n": 5,
+   "income": 0.855050686904875,
+   "feudalIdeal": 25,
+   "feudal": 77,
+   "castleIdeal": null,
+   "castle": null,
+   "castleN": 0,
+   "actionLate": 41.5
+  }
+ },
+ "results": [
+  {
+   "civ": "holy_roman_empire",
+   "game": 259398942,
+   "player": "哥布林骑士冲撞村民",
+   "rating": 1799,
+   "map": "Dry Arabia",
+   "goals": 1,
+   "skipped": [],
+   "feudal": {
+    "pro": 236,
+    "ideal": 242,
+    "real": 258
+   },
+   "castle": null,
+   "income": 1.0429765849464268,
+   "incomeByRes": {
+    "food": 0.99,
+    "wood": 1.11,
+    "gold": 1.03
+   },
+   "lateMedian": 22,
+   "unfinished": 0
+  },
+  {
+   "civ": "scots",
+   "game": 259395986,
+   "player": "Dr.Falcon13",
+   "rating": 2002,
+   "map": "Dry Arabia",
+   "goals": 2,
+   "skipped": [],
+   "feudal": {
+    "pro": 310,
+    "ideal": 316,
+    "real": 320
+   },
+   "castle": null,
+   "income": 0.9539184725144472,
+   "incomeByRes": {
+    "food": 0.96,
+    "wood": 0.76,
+    "gold": 0.96
+   },
+   "lateMedian": 154.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "scots",
+   "game": 259135502,
+   "player": "EL.loueMT",
+   "rating": 2504,
+   "map": "Marshland",
+   "goals": 19,
+   "skipped": [],
+   "feudal": {
+    "pro": 338,
+    "ideal": 344,
+    "real": 348
+   },
+   "castle": {
+    "pro": 635,
+    "ideal": 718,
+    "real": 788
+   },
+   "income": 0.8857999194227266,
+   "incomeByRes": {
+    "food": 0.85,
+    "wood": 0.94,
+    "gold": 0.87
+   },
+   "lateMedian": 26,
+   "unfinished": 0
+  },
+  {
+   "civ": "house_of_lancaster",
+   "game": 259417370,
+   "player": "HzxNB",
+   "rating": 1965,
+   "map": "Fangs",
+   "goals": 9,
+   "skipped": [],
+   "feudal": {
+    "pro": 270,
+    "ideal": 276,
+    "real": 343
+   },
+   "castle": {
+    "pro": 522,
+    "ideal": 613,
+    "real": 662
+   },
+   "income": 0.9275347161824249,
+   "incomeByRes": {
+    "food": 0.89,
+    "wood": 0.85,
+    "gold": 0.88,
+    "stone": 0.91
+   },
+   "lateMedian": 73,
+   "unfinished": 0
+  },
+  {
+   "civ": "vikings",
+   "game": 259414441,
+   "player": "babibabi2",
+   "rating": 1829,
+   "map": "Dry Arabia",
+   "goals": 2,
+   "skipped": [],
+   "feudal": {
+    "pro": 253,
+    "ideal": 415,
+    "real": 551
+   },
+   "castle": null,
+   "income": 1.0134142632505134,
+   "incomeByRes": {
+    "food": 1,
+    "wood": 1.02,
+    "gold": 0.97,
+    "stone": 0.86
+   },
+   "lateMedian": 150.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "vikings",
+   "game": 259410977,
+   "player": "babibabi2",
+   "rating": 1814,
+   "map": "King of the Hill",
+   "goals": 6,
+   "skipped": [],
+   "feudal": {
+    "pro": 274,
+    "ideal": 349,
+    "real": 373
+   },
+   "castle": null,
+   "income": 1.061734242622703,
+   "incomeByRes": {
+    "food": 1.01,
+    "wood": 1.11,
+    "gold": 1.05
+   },
+   "lateMedian": 36,
+   "unfinished": 0
+  },
+  {
+   "civ": "tughlaq_dynasty",
+   "game": 259250672,
+   "player": "Talouc",
+   "rating": 2008,
+   "map": "Cliffside",
+   "goals": 1,
+   "skipped": [],
+   "feudal": {
+    "pro": 233,
+    "ideal": 301,
+    "real": 369
+   },
+   "castle": null,
+   "income": 0.9288321439861096,
+   "incomeByRes": {
+    "food": 0.97,
+    "wood": 0.76,
+    "gold": 0.83
+   },
+   "lateMedian": 136,
+   "unfinished": 0
+  },
+  {
+   "civ": "english",
+   "game": 259492725,
+   "player": "YZY",
+   "rating": 2152,
+   "map": "Dry Arabia",
+   "goals": 8,
+   "skipped": [],
+   "feudal": {
+    "pro": 270,
+    "ideal": 397,
+    "real": 507
+   },
+   "castle": {
+    "pro": 661,
+    "ideal": 725,
+    "real": 759
+   },
+   "income": 0.950888759177876,
+   "incomeByRes": {
+    "food": 0.88,
+    "wood": 0.93,
+    "gold": 0.87,
+    "stone": 1.01
+   },
+   "lateMedian": 99,
+   "unfinished": 0
+  },
+  {
+   "civ": "holy_roman_empire",
+   "game": 259313548,
+   "player": "EL.AyameSatou",
+   "rating": 2281,
+   "map": "Marshland",
+   "goals": 1,
+   "skipped": [],
+   "feudal": {
+    "pro": 237,
+    "ideal": 258,
+    "real": 324
+   },
+   "castle": null,
+   "income": 0.9692492671157482,
+   "incomeByRes": {
+    "food": 0.98,
+    "wood": 0.86,
+    "gold": 0.95
+   },
+   "lateMedian": 87,
+   "unfinished": 0
+  },
+  {
+   "civ": "scots",
+   "game": 259312033,
+   "player": "Giannis Antetokounmpo",
+   "rating": 1810,
+   "map": "Dry Arabia",
+   "goals": 4,
+   "skipped": [],
+   "feudal": {
+    "pro": 327,
+    "ideal": 333,
+    "real": 337
+   },
+   "castle": {
+    "pro": 445,
+    "ideal": 510,
+    "real": 546
+   },
+   "income": 1.0804378434731117,
+   "incomeByRes": {
+    "food": 1.07,
+    "wood": 1,
+    "gold": 1.04
+   },
+   "lateMedian": 72,
+   "unfinished": 0
+  },
+  {
+   "civ": "golden_horde",
+   "game": 259435965,
+   "player": "FünfmalViereck",
+   "rating": 2213,
+   "map": "Dry Arabia",
+   "goals": 61,
+   "skipped": [],
+   "feudal": {
+    "pro": 274,
+    "ideal": 424,
+    "real": 435
+   },
+   "castle": {
+    "pro": 872,
+    "ideal": 909,
+    "real": 913
+   },
+   "income": 1.0251558833762877,
+   "incomeByRes": {
+    "food": 1,
+    "wood": 1,
+    "gold": 1.01,
+    "stone": 1.13
+   },
+   "lateMedian": 65,
+   "unfinished": 0
+  },
+  {
+   "civ": "ayyubids",
+   "game": 259433373,
+   "player": "FünfmalViereck",
+   "rating": 2211,
+   "map": "Dry Arabia",
+   "goals": 8,
+   "skipped": [],
+   "feudal": {
+    "pro": 264,
+    "ideal": 395,
+    "real": 411
+   },
+   "castle": {
+    "pro": 528,
+    "ideal": 528,
+    "real": 572
+   },
+   "income": 0.9504504494920523,
+   "incomeByRes": {
+    "food": 0.97,
+    "wood": 0.59,
+    "gold": 0.92,
+    "stone": 0.06
+   },
+   "lateMedian": 60,
+   "unfinished": 0
+  },
+  {
+   "civ": "french",
+   "game": 259428007,
+   "player": "FünfmalViereck",
+   "rating": 2201,
+   "map": "Dry Arabia",
+   "goals": 83,
+   "skipped": [],
+   "feudal": {
+    "pro": 265,
+    "ideal": 292,
+    "real": 308
+   },
+   "castle": {
+    "pro": 1003,
+    "ideal": 1033,
+    "real": 1069
+   },
+   "income": 1.0324517995992413,
+   "incomeByRes": {
+    "food": 1.03,
+    "wood": 1.01,
+    "gold": 1.03,
+    "stone": 1.08
+   },
+   "lateMedian": 9,
+   "unfinished": 0
+  },
+  {
+   "civ": "holy_roman_empire",
+   "game": 259423996,
+   "player": "FünfmalViereck",
+   "rating": 2198,
+   "map": "Cliffside",
+   "goals": 63,
+   "skipped": [],
+   "feudal": {
+    "pro": 282,
+    "ideal": 315,
+    "real": 361
+   },
+   "castle": {
+    "pro": 885,
+    "ideal": 939,
+    "real": 990
+   },
+   "income": 1.0371708848835004,
+   "incomeByRes": {
+    "food": 1,
+    "wood": 1,
+    "gold": 1.04
+   },
+   "lateMedian": 29,
+   "unfinished": 0
+  },
+  {
+   "civ": "order_of_the_dragon",
+   "game": 259509321,
+   "player": "YZY",
+   "rating": 2161,
+   "map": "Golden Pit",
+   "goals": 3,
+   "skipped": [],
+   "feudal": {
+    "pro": 333,
+    "ideal": 339,
+    "real": 343
+   },
+   "castle": {
+    "pro": 433,
+    "ideal": 481,
+    "real": 554
+   },
+   "income": 0.9917407814974625,
+   "incomeByRes": {
+    "food": 1,
+    "wood": 0.82,
+    "gold": 0.94
+   },
+   "lateMedian": 29,
+   "unfinished": 0
+  },
+  {
+   "civ": "knights_templar",
+   "game": 259509321,
+   "player": "却依然在心底徘徊",
+   "rating": 1957,
+   "map": "Golden Pit",
+   "goals": 1,
+   "skipped": [],
+   "feudal": {
+    "pro": 242,
+    "ideal": 352,
+    "real": 392
+   },
+   "castle": null,
+   "income": 0.9518309525486047,
+   "incomeByRes": {
+    "food": 0.95,
+    "wood": 0.81,
+    "gold": 0.9,
+    "stone": 0.72
+   },
+   "lateMedian": 150,
+   "unfinished": 0
+  },
+  {
+   "civ": "knights_templar",
+   "game": 259507066,
+   "player": "却依然在心底徘徊",
+   "rating": 1975,
+   "map": "Golden Pit",
+   "goals": 59,
+   "skipped": [],
+   "feudal": {
+    "pro": 202,
+    "ideal": 213,
+    "real": 228
+   },
+   "castle": {
+    "pro": 855,
+    "ideal": 900,
+    "real": 986
+   },
+   "income": 0.895052336191385,
+   "incomeByRes": {
+    "food": 0.88,
+    "wood": 0.91,
+    "gold": 0.89
+   },
+   "lateMedian": 77,
+   "unfinished": 0
+  },
+  {
+   "civ": "japanese",
+   "game": 259507066,
+   "player": "YZY",
+   "rating": 2135,
+   "map": "Golden Pit",
+   "goals": 36,
+   "skipped": [],
+   "feudal": {
+    "pro": 285,
+    "ideal": 290,
+    "real": 304
+   },
+   "castle": {
+    "pro": 691,
+    "ideal": 747,
+    "real": 816
+   },
+   "income": 1.0657474128463331,
+   "incomeByRes": {
+    "food": 1.05,
+    "wood": 1.08,
+    "gold": 1.01,
+    "stone": 1.03
+   },
+   "lateMedian": 30.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "rus",
+   "game": 259503555,
+   "player": "YZY",
+   "rating": 2125,
+   "map": "Fangs",
+   "goals": 9,
+   "skipped": [],
+   "feudal": {
+    "pro": 276,
+    "ideal": 293,
+    "real": 356
+   },
+   "castle": {
+    "pro": 632,
+    "ideal": 702,
+    "real": 755
+   },
+   "income": 0.8885814072923074,
+   "incomeByRes": {
+    "food": 0.88,
+    "wood": 0.85,
+    "gold": 0.81,
+    "stone": 0.9
+   },
+   "lateMedian": 80,
+   "unfinished": 0
+  },
+  {
+   "civ": "house_of_lancaster",
+   "game": 259501822,
+   "player": "YZY",
+   "rating": 2113,
+   "map": "Fangs",
+   "goals": 8,
+   "skipped": [],
+   "feudal": {
+    "pro": 264,
+    "ideal": 271,
+    "real": 474
+   },
+   "castle": {
+    "pro": 586,
+    "ideal": 798,
+    "real": 866
+   },
+   "income": 0.8188198529480883,
+   "incomeByRes": {
+    "food": 0.75,
+    "wood": 0.74,
+    "gold": 0.82,
+    "stone": 1
+   },
+   "lateMedian": 245,
+   "unfinished": 0
+  },
+  {
+   "civ": "holy_roman_empire",
+   "game": 259500468,
+   "player": "YZY",
+   "rating": 2101,
+   "map": "Waterholes",
+   "goals": 22,
+   "skipped": [],
+   "feudal": {
+    "pro": 451,
+    "ideal": 503,
+    "real": 554
+   },
+   "castle": null,
+   "income": 1.0283763312410281,
+   "incomeByRes": {
+    "food": 1.01,
+    "wood": 0.99,
+    "gold": 1.02
+   },
+   "lateMedian": 1,
+   "unfinished": 0
+  },
+  {
+   "civ": "knights_templar",
+   "game": 259498421,
+   "player": "YZY",
+   "rating": 2099,
+   "map": "Cliffside",
+   "goals": 7,
+   "skipped": [],
+   "feudal": {
+    "pro": 246,
+    "ideal": 246,
+    "real": 270
+   },
+   "castle": {
+    "pro": 604,
+    "ideal": 616,
+    "real": 673
+   },
+   "income": 0.8622361082005547,
+   "incomeByRes": {
+    "food": 0.83,
+    "wood": 0.77,
+    "gold": 0.84,
+    "stone": 0.99
+   },
+   "lateMedian": 24,
+   "unfinished": 0
+  },
+  {
+   "civ": "knights_templar",
+   "game": 259494869,
+   "player": "YZY",
+   "rating": 2134,
+   "map": "Cliffside",
+   "goals": 251,
+   "skipped": [],
+   "feudal": {
+    "pro": 203,
+    "ideal": 409,
+    "real": 3078
+   },
+   "castle": {
+    "pro": 1424,
+    "ideal": null,
+    "real": null
+   },
+   "income": 0.20268814240592736,
+   "incomeByRes": {
+    "food": 0.15,
+    "wood": 0.16,
+    "gold": 0.62
+   },
+   "lateMedian": 1002,
+   "unfinished": 126
+  },
+  {
+   "civ": "french",
+   "game": 259483963,
+   "player": "Cüno",
+   "rating": 1976,
+   "map": "Marshland",
+   "goals": 2,
+   "skipped": [],
+   "feudal": {
+    "pro": 258,
+    "ideal": 298,
+    "real": 328
+   },
+   "castle": null,
+   "income": 1.0056320106614738,
+   "incomeByRes": {
+    "food": 0.99,
+    "wood": 1.1,
+    "gold": 0.99
+   },
+   "lateMedian": 53.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "rus",
+   "game": 259482267,
+   "player": "YZY",
+   "rating": 2172,
+   "map": "Marshland",
+   "goals": 8,
+   "skipped": [],
+   "feudal": {
+    "pro": 258,
+    "ideal": 275,
+    "real": 358
+   },
+   "castle": {
+    "pro": 569,
+    "ideal": 646,
+    "real": 725
+   },
+   "income": 0.8728555690429263,
+   "incomeByRes": {
+    "food": 0.86,
+    "wood": 0.74,
+    "gold": 0.9,
+    "stone": 0.91
+   },
+   "lateMedian": 29.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "holy_roman_empire",
+   "game": 259186625,
+   "player": "YZY",
+   "rating": 2164,
+   "map": "Cliffside",
+   "goals": 1,
+   "skipped": [],
+   "feudal": {
+    "pro": 254,
+    "ideal": 260,
+    "real": 267
+   },
+   "castle": null,
+   "income": 1.066854823378885,
+   "incomeByRes": {
+    "food": 1.03,
+    "wood": 1.02,
+    "gold": 1.06
+   },
+   "lateMedian": 13,
+   "unfinished": 0
+  },
+  {
+   "civ": "house_of_lancaster",
+   "game": 259184192,
+   "player": "YZY",
+   "rating": 2156,
+   "map": "Fangs",
+   "goals": 8,
+   "skipped": [],
+   "feudal": {
+    "pro": 260,
+    "ideal": 266,
+    "real": 292
+   },
+   "castle": {
+    "pro": 600,
+    "ideal": 686,
+    "real": 778
+   },
+   "income": 0.9395069733378281,
+   "incomeByRes": {
+    "food": 0.93,
+    "wood": 0.97,
+    "gold": 0.92,
+    "stone": 1
+   },
+   "lateMedian": 142,
+   "unfinished": 0
+  },
+  {
+   "civ": "english",
+   "game": 259179758,
+   "player": "YZY",
+   "rating": 2137,
+   "map": "Dry Arabia",
+   "goals": 2,
+   "skipped": [],
+   "feudal": {
+    "pro": 370,
+    "ideal": 377,
+    "real": 381
+   },
+   "castle": {
+    "pro": 453,
+    "ideal": 547,
+    "real": 608
+   },
+   "income": 1.0188807386113063,
+   "incomeByRes": {
+    "food": 1.01,
+    "wood": 0.98,
+    "gold": 1.02
+   },
+   "lateMedian": 83,
+   "unfinished": 0
+  },
+  {
+   "civ": "french",
+   "game": 259179758,
+   "player": "xTavşan",
+   "rating": 1964,
+   "map": "Dry Arabia",
+   "goals": 32,
+   "skipped": [],
+   "feudal": {
+    "pro": 282,
+    "ideal": 300,
+    "real": 332
+   },
+   "castle": {
+    "pro": 831,
+    "ideal": 837,
+    "real": 874
+   },
+   "income": 1.1308035102374279,
+   "incomeByRes": {
+    "food": 1.08,
+    "wood": 1.4,
+    "gold": 1.08
+   },
+   "lateMedian": 57.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "rus",
+   "game": 259177313,
+   "player": "YZY",
+   "rating": 2117,
+   "map": "Marshland",
+   "goals": 34,
+   "skipped": [],
+   "feudal": {
+    "pro": 277,
+    "ideal": 296,
+    "real": 405
+   },
+   "castle": {
+    "pro": 722,
+    "ideal": 762,
+    "real": 829
+   },
+   "income": 0.8902055291640605,
+   "incomeByRes": {
+    "food": 0.84,
+    "wood": 0.91,
+    "gold": 0.77,
+    "stone": 0.95
+   },
+   "lateMedian": 11,
+   "unfinished": 0
+  },
+  {
+   "civ": "byzantines",
+   "game": 259177313,
+   "player": "xTavşan",
+   "rating": 1986,
+   "map": "Marshland",
+   "goals": 44,
+   "skipped": [],
+   "feudal": {
+    "pro": 295,
+    "ideal": 335,
+    "real": 408
+   },
+   "castle": {
+    "pro": 696,
+    "ideal": 750,
+    "real": 818
+   },
+   "income": 0.9986144844489201,
+   "incomeByRes": {
+    "food": 0.97,
+    "wood": 1,
+    "gold": 1,
+    "stone": 1.03
+   },
+   "lateMedian": 74,
+   "unfinished": 0
+  },
+  {
+   "civ": "french",
+   "game": 259175222,
+   "player": "xTavşan",
+   "rating": 2009,
+   "map": "Marshland",
+   "goals": 76,
+   "skipped": [],
+   "feudal": {
+    "pro": 261,
+    "ideal": 300,
+    "real": 327
+   },
+   "castle": {
+    "pro": 905,
+    "ideal": 935,
+    "real": 1033
+   },
+   "income": 1.0479801125384305,
+   "incomeByRes": {
+    "food": 1.05,
+    "wood": 1.02,
+    "gold": 1
+   },
+   "lateMedian": 74,
+   "unfinished": 0
+  },
+  {
+   "civ": "rus",
+   "game": 259175222,
+   "player": "YZY",
+   "rating": 2095,
+   "map": "Marshland",
+   "goals": 2,
+   "skipped": [],
+   "feudal": {
+    "pro": 272,
+    "ideal": 279,
+    "real": 421
+   },
+   "castle": null,
+   "income": 0.8518598152676622,
+   "incomeByRes": {
+    "food": 0.91,
+    "wood": 0.71,
+    "gold": 0.88,
+    "stone": 0.31
+   },
+   "lateMedian": 98.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "mongols",
+   "game": 259539822,
+   "player": "WSG.哔哩哔哩！干杯~",
+   "rating": 1949,
+   "map": "Waterholes",
+   "goals": 49,
+   "skipped": [],
+   "feudal": {
+    "pro": 341,
+    "ideal": 367,
+    "real": 438
+   },
+   "castle": {
+    "pro": 747,
+    "ideal": 937,
+    "real": 995
+   },
+   "income": 0.9499344265070682,
+   "incomeByRes": {
+    "food": 0.97,
+    "wood": 0.91,
+    "gold": 0.83,
+    "stone": 0.95
+   },
+   "lateMedian": 62,
+   "unfinished": 0
+  },
+  {
+   "civ": "mongols",
+   "game": 259224479,
+   "player": "WSG.哔哩哔哩！干杯~",
+   "rating": 1973,
+   "map": "Fangs",
+   "goals": 39,
+   "skipped": [],
+   "feudal": {
+    "pro": 358,
+    "ideal": 396,
+    "real": 499
+   },
+   "castle": {
+    "pro": 816,
+    "ideal": 858,
+    "real": 903
+   },
+   "income": 1.1139791747747556,
+   "incomeByRes": {
+    "food": 1.05,
+    "wood": 1.23,
+    "gold": 1.23,
+    "stone": 0.97
+   },
+   "lateMedian": 91,
+   "unfinished": 0
+  },
+  {
+   "civ": "mongols",
+   "game": 259220548,
+   "player": "WSG.哔哩哔哩！干杯~",
+   "rating": 1994,
+   "map": "Fangs",
+   "goals": 45,
+   "skipped": [],
+   "feudal": {
+    "pro": 261,
+    "ideal": 304,
+    "real": 329
+   },
+   "castle": {
+    "pro": 798,
+    "ideal": 922,
+    "real": 1007
+   },
+   "income": 0.9780164315065433,
+   "incomeByRes": {
+    "food": 0.96,
+    "wood": 0.98,
+    "gold": 0.99,
+    "stone": 0.96
+   },
+   "lateMedian": 141,
+   "unfinished": 0
+  },
+  {
+   "civ": "mongols",
+   "game": 259201282,
+   "player": "WSG.哔哩哔哩！干杯~",
+   "rating": 1988,
+   "map": "Fangs",
+   "goals": 98,
+   "skipped": [],
+   "feudal": {
+    "pro": 247,
+    "ideal": 307,
+    "real": 338
+   },
+   "castle": {
+    "pro": 1003,
+    "ideal": 1120,
+    "real": 1171
+   },
+   "income": 1.0725820143810687,
+   "incomeByRes": {
+    "food": 1.04,
+    "wood": 1.06,
+    "gold": 1.07,
+    "stone": 1.03
+   },
+   "lateMedian": 71,
+   "unfinished": 0
+  },
+  {
+   "civ": "french",
+   "game": 259537994,
+   "player": "loklok",
+   "rating": 1821,
+   "map": "King of the Hill",
+   "goals": 3,
+   "skipped": [],
+   "feudal": {
+    "pro": 276,
+    "ideal": 308,
+    "real": 334
+   },
+   "castle": null,
+   "income": 1.0596547191022634,
+   "incomeByRes": {
+    "food": 1.07,
+    "wood": 1.2,
+    "gold": 0.99
+   },
+   "lateMedian": 29,
+   "unfinished": 0
+  },
+  {
+   "civ": "english",
+   "game": 259445235,
+   "player": "JanisCP",
+   "rating": 1820,
+   "map": "Waterholes",
+   "goals": 12,
+   "skipped": [],
+   "feudal": {
+    "pro": 452,
+    "ideal": 495,
+    "real": 554
+   },
+   "castle": null,
+   "income": 1.051581247988591,
+   "incomeByRes": {
+    "food": 1.04,
+    "wood": 1.07,
+    "gold": 1
+   },
+   "lateMedian": 16,
+   "unfinished": 0
+  },
+  {
+   "civ": "abbasid_dynasty",
+   "game": 259512315,
+   "player": "coRe",
+   "rating": 2151,
+   "map": "Cliffside",
+   "goals": 19,
+   "skipped": [],
+   "feudal": {
+    "pro": 270,
+    "ideal": 295,
+    "real": 359
+   },
+   "castle": {
+    "pro": 751,
+    "ideal": 760,
+    "real": 816
+   },
+   "income": 0.9814518122872096,
+   "incomeByRes": {
+    "food": 0.98,
+    "wood": 0.98,
+    "gold": 0.81,
+    "stone": 0.99
+   },
+   "lateMedian": 17,
+   "unfinished": 0
+  },
+  {
+   "civ": "rus",
+   "game": 259510483,
+   "player": "coRe",
+   "rating": 2148,
+   "map": "Dry Arabia",
+   "goals": 8,
+   "skipped": [],
+   "feudal": {
+    "pro": 256,
+    "ideal": 277,
+    "real": 339
+   },
+   "castle": {
+    "pro": 599,
+    "ideal": 666,
+    "real": 711
+   },
+   "income": 0.8910912714915027,
+   "incomeByRes": {
+    "food": 0.87,
+    "wood": 0.9,
+    "gold": 0.94,
+    "stone": 0.97
+   },
+   "lateMedian": 28.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "order_of_the_dragon",
+   "game": 259508610,
+   "player": "coRe",
+   "rating": 2188,
+   "map": "Cliffside",
+   "goals": 8,
+   "skipped": [],
+   "feudal": {
+    "pro": 249,
+    "ideal": 461,
+    "real": 475
+   },
+   "castle": {
+    "pro": 562,
+    "ideal": 686,
+    "real": 709
+   },
+   "income": 0.8146183527962146,
+   "incomeByRes": {
+    "food": 0.75,
+    "wood": 0.87,
+    "gold": 0.66,
+    "stone": 0.99
+   },
+   "lateMedian": 129,
+   "unfinished": 0
+  },
+  {
+   "civ": "jin_dynasty",
+   "game": 259474908,
+   "player": "Real Alukar",
+   "rating": 1802,
+   "map": "Fangs",
+   "goals": 2,
+   "skipped": [],
+   "feudal": {
+    "pro": 225,
+    "ideal": 297,
+    "real": 339
+   },
+   "castle": null,
+   "income": 1.2549375268345055,
+   "incomeByRes": {
+    "food": 1.14,
+    "wood": 1.14,
+    "gold": 1.15
+   },
+   "lateMedian": 92.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "golden_horde",
+   "game": 259419890,
+   "player": "how to play this game?",
+   "rating": 1999,
+   "map": "Cliffside",
+   "goals": 63,
+   "skipped": [],
+   "feudal": {
+    "pro": 278,
+    "ideal": 323,
+    "real": 393
+   },
+   "castle": {
+    "pro": 912,
+    "ideal": 912,
+    "real": 912
+   },
+   "income": 1.017754915278153,
+   "incomeByRes": {
+    "food": 1.01,
+    "wood": 1,
+    "gold": 1,
+    "stone": 0.97
+   },
+   "lateMedian": 23,
+   "unfinished": 0
+  },
+  {
+   "civ": "ayyubids",
+   "game": 259369706,
+   "player": "麦当劳汉堡",
+   "rating": 2031,
+   "map": "Highwoods",
+   "goals": 4,
+   "skipped": [],
+   "feudal": {
+    "pro": 270,
+    "ideal": 279,
+    "real": 334
+   },
+   "castle": {
+    "pro": 471,
+    "ideal": 492,
+    "real": 626
+   },
+   "income": 1.0100526813669604,
+   "incomeByRes": {
+    "food": 1,
+    "wood": 0.92,
+    "gold": 0.98
+   },
+   "lateMedian": 43,
+   "unfinished": 0
+  },
+  {
+   "civ": "byzantines",
+   "game": 259366278,
+   "player": "麦当劳汉堡",
+   "rating": 2057,
+   "map": "Cliffside",
+   "goals": 96,
+   "skipped": [],
+   "feudal": {
+    "pro": 276,
+    "ideal": 320,
+    "real": 417
+   },
+   "castle": {
+    "pro": 870,
+    "ideal": 1066,
+    "real": 1161
+   },
+   "income": 0.9230839591239728,
+   "incomeByRes": {
+    "food": 0.85,
+    "wood": 0.96,
+    "gold": 0.95,
+    "stone": 0.96
+   },
+   "lateMedian": 46,
+   "unfinished": 0
+  },
+  {
+   "civ": "tughlaq_dynasty",
+   "game": 259364738,
+   "player": "麦当劳汉堡",
+   "rating": 2040,
+   "map": "Waterholes",
+   "goals": 3,
+   "skipped": [],
+   "feudal": {
+    "pro": 327,
+    "ideal": 432,
+    "real": 497
+   },
+   "castle": null,
+   "income": 0.7414642953691486,
+   "incomeByRes": {
+    "food": 0.77,
+    "wood": 0.73,
+    "gold": 0.43
+   },
+   "lateMedian": 11,
+   "unfinished": 0
+  },
+  {
+   "civ": "chinese",
+   "game": 259362304,
+   "player": "麦当劳汉堡",
+   "rating": 2016,
+   "map": "Dry Arabia",
+   "goals": 50,
+   "skipped": [],
+   "feudal": {
+    "pro": 200,
+    "ideal": 214,
+    "real": 275
+   },
+   "castle": {
+    "pro": 710,
+    "ideal": 765,
+    "real": 763
+   },
+   "income": 0.8613706289226171,
+   "incomeByRes": {
+    "food": 0.81,
+    "wood": 0.94,
+    "gold": 0.86
+   },
+   "lateMedian": 77,
+   "unfinished": 0
+  },
+  {
+   "civ": "chinese",
+   "game": 259360474,
+   "player": "麦当劳汉堡",
+   "rating": 2037,
+   "map": "Dry Arabia",
+   "goals": 6,
+   "skipped": [],
+   "feudal": {
+    "pro": 310,
+    "ideal": 326,
+    "real": 344
+   },
+   "castle": null,
+   "income": 0.8913920054956921,
+   "incomeByRes": {
+    "food": 0.86,
+    "wood": 0.97,
+    "gold": 0.74
+   },
+   "lateMedian": 16.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "order_of_the_dragon",
+   "game": 259356877,
+   "player": "麦当劳汉堡",
+   "rating": 2009,
+   "map": "Cliffside",
+   "goals": 15,
+   "skipped": [],
+   "feudal": {
+    "pro": 190,
+    "ideal": 234,
+    "real": 266
+   },
+   "castle": {
+    "pro": 658,
+    "ideal": 768,
+    "real": 813
+   },
+   "income": 0.7939173024472925,
+   "incomeByRes": {
+    "food": 0.76,
+    "wood": 0.84,
+    "gold": 0.78,
+    "stone": 0.93
+   },
+   "lateMedian": 0,
+   "unfinished": 0
+  },
+  {
+   "civ": "order_of_the_dragon",
+   "game": 259354632,
+   "player": "麦当劳汉堡",
+   "rating": 2028,
+   "map": "King of the Hill",
+   "goals": 74,
+   "skipped": [],
+   "feudal": {
+    "pro": 260,
+    "ideal": 266,
+    "real": 270
+   },
+   "castle": {
+    "pro": 1103,
+    "ideal": 1145,
+    "real": 1221
+   },
+   "income": 1.0046601967068431,
+   "incomeByRes": {
+    "food": 0.97,
+    "wood": 1,
+    "gold": 1.05
+   },
+   "lateMedian": 16,
+   "unfinished": 0
+  },
+  {
+   "civ": "order_of_the_dragon",
+   "game": 259352752,
+   "player": "麦当劳汉堡",
+   "rating": 2003,
+   "map": "Cliffside",
+   "goals": 48,
+   "skipped": [],
+   "feudal": {
+    "pro": 292,
+    "ideal": 299,
+    "real": 344
+   },
+   "castle": {
+    "pro": 836,
+    "ideal": 854,
+    "real": 991
+   },
+   "income": 1.0415599965745632,
+   "incomeByRes": {
+    "food": 1.03,
+    "wood": 1.04,
+    "gold": 1.06
+   },
+   "lateMedian": 38,
+   "unfinished": 0
+  },
+  {
+   "civ": "tughlaq_dynasty",
+   "game": 259351279,
+   "player": "麦当劳汉堡",
+   "rating": 1994,
+   "map": "Waterholes",
+   "goals": 24,
+   "skipped": [],
+   "feudal": {
+    "pro": 436,
+    "ideal": 525,
+    "real": 614
+   },
+   "castle": {
+    "pro": 786,
+    "ideal": 1002,
+    "real": 1065
+   },
+   "income": 0.641416250836074,
+   "incomeByRes": {
+    "food": 0.56,
+    "wood": 0.78,
+    "gold": 0.59,
+    "stone": 0.25
+   },
+   "lateMedian": 91.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "japanese",
+   "game": 259348339,
+   "player": "麦当劳汉堡",
+   "rating": 1976,
+   "map": "Dry Arabia",
+   "goals": 8,
+   "skipped": [],
+   "feudal": {
+    "pro": 257,
+    "ideal": 294,
+    "real": 319
+   },
+   "castle": {
+    "pro": 516,
+    "ideal": 586,
+    "real": 648
+   },
+   "income": 1.0299609830919791,
+   "incomeByRes": {
+    "food": 1.02,
+    "wood": 1.02,
+    "gold": 1.02,
+    "stone": 1.01
+   },
+   "lateMedian": 30,
+   "unfinished": 0
+  },
+  {
+   "civ": "english",
+   "game": 259348339,
+   "player": "Birnensaft",
+   "rating": 1783,
+   "map": "Dry Arabia",
+   "goals": 5,
+   "skipped": [],
+   "feudal": {
+    "pro": 273,
+    "ideal": 302,
+    "real": 321
+   },
+   "castle": {
+    "pro": 480,
+    "ideal": 553,
+    "real": 609
+   },
+   "income": 1.0772571513655584,
+   "incomeByRes": {
+    "food": 1.07,
+    "wood": 1.07,
+    "gold": 1.11
+   },
+   "lateMedian": 47,
+   "unfinished": 0
+  },
+  {
+   "civ": "abbasid_dynasty",
+   "game": 259345098,
+   "player": "麦当劳汉堡",
+   "rating": 1950,
+   "map": "Cliffside",
+   "goals": 21,
+   "skipped": [],
+   "feudal": {
+    "pro": 253,
+    "ideal": 275,
+    "real": 339
+   },
+   "castle": {
+    "pro": 634,
+    "ideal": 634,
+    "real": 711
+   },
+   "income": 0.9085162954166867,
+   "incomeByRes": {
+    "food": 0.89,
+    "wood": 0.9,
+    "gold": 0.85,
+    "stone": 1.02
+   },
+   "lateMedian": 7,
+   "unfinished": 0
+  },
+  {
+   "civ": "jin_dynasty",
+   "game": 259223762,
+   "player": "麦当劳汉堡",
+   "rating": 1986,
+   "map": "Dry Arabia",
+   "goals": 10,
+   "skipped": [],
+   "feudal": {
+    "pro": 285,
+    "ideal": 276,
+    "real": 329
+   },
+   "castle": {
+    "pro": 639,
+    "ideal": 604,
+    "real": 658
+   },
+   "income": 1.0640928084212837,
+   "incomeByRes": {
+    "food": 1.01,
+    "wood": 1.11,
+    "gold": 1.05,
+    "stone": 1
+   },
+   "lateMedian": 16.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "japanese",
+   "game": 259146848,
+   "player": "Mirari",
+   "rating": 1813,
+   "map": "Fangs",
+   "goals": 6,
+   "skipped": [],
+   "feudal": {
+    "pro": 217,
+    "ideal": 278,
+    "real": 308
+   },
+   "castle": {
+    "pro": 574,
+    "ideal": 579,
+    "real": 636
+   },
+   "income": 0.9994064790435002,
+   "incomeByRes": {
+    "food": 1,
+    "wood": 0.97,
+    "gold": 0.99,
+    "stone": 0.84
+   },
+   "lateMedian": 10.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "sengoku_daimyo",
+   "game": 259168774,
+   "player": "xTavşan",
+   "rating": 1982,
+   "map": "Marshland",
+   "goals": 1,
+   "skipped": [],
+   "feudal": {
+    "pro": 286,
+    "ideal": 391,
+    "real": 483
+   },
+   "castle": null,
+   "income": 0.8471413985414163,
+   "incomeByRes": {
+    "food": 0.79,
+    "wood": 0.8,
+    "gold": 0.84,
+    "stone": 0.61
+   },
+   "lateMedian": 197,
+   "unfinished": 0
+  },
+  {
+   "civ": "house_of_lancaster",
+   "game": 259146143,
+   "player": "the luckiest",
+   "rating": 1885,
+   "map": "Cliffside",
+   "goals": 187,
+   "skipped": [],
+   "feudal": {
+    "pro": 273,
+    "ideal": 428,
+    "real": 522
+   },
+   "castle": {
+    "pro": 1148,
+    "ideal": 1811,
+    "real": 1999
+   },
+   "income": 0.5517581311516351,
+   "incomeByRes": {
+    "food": 0.51,
+    "wood": 0.64,
+    "gold": 0.42,
+    "stone": 0.79
+   },
+   "lateMedian": 91,
+   "unfinished": 2
+  },
+  {
+   "civ": "delhi_sultanate",
+   "game": 259129890,
+   "player": "Chuckfrancis",
+   "rating": 1852,
+   "map": "Fangs",
+   "goals": 170,
+   "skipped": [],
+   "feudal": {
+    "pro": 261,
+    "ideal": 328,
+    "real": 388
+   },
+   "castle": {
+    "pro": 1235,
+    "ideal": null,
+    "real": null
+   },
+   "income": 0.90348253185428,
+   "incomeByRes": {
+    "food": 0.85,
+    "wood": 1.04,
+    "gold": 0.78
+   },
+   "lateMedian": 41,
+   "unfinished": 1
+  },
+  {
+   "civ": "english",
+   "game": 259514888,
+   "player": "却依然在心底徘徊",
+   "rating": 1979,
+   "map": "King of the Hill",
+   "goals": 58,
+   "skipped": [],
+   "feudal": {
+    "pro": 315,
+    "ideal": 328,
+    "real": 376
+   },
+   "castle": {
+    "pro": 826,
+    "ideal": 834,
+    "real": 1065
+   },
+   "income": 1.0341059405408817,
+   "incomeByRes": {
+    "food": 1,
+    "wood": 1.01,
+    "gold": 0.99
+   },
+   "lateMedian": 20.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "knights_templar",
+   "game": 259513043,
+   "player": "却依然在心底徘徊",
+   "rating": 1968,
+   "map": "Dry Arabia",
+   "goals": 47,
+   "skipped": [],
+   "feudal": {
+    "pro": 203,
+    "ideal": 208,
+    "real": 234
+   },
+   "castle": {
+    "pro": 753,
+    "ideal": 798,
+    "real": 900
+   },
+   "income": 0.850183299290694,
+   "incomeByRes": {
+    "food": 0.8,
+    "wood": 0.9,
+    "gold": 0.87
+   },
+   "lateMedian": 55,
+   "unfinished": 0
+  },
+  {
+   "civ": "abbasid_dynasty",
+   "game": 259180983,
+   "player": "Mok",
+   "rating": 1808,
+   "map": "Golden Pit",
+   "goals": 49,
+   "skipped": [],
+   "feudal": {
+    "pro": 239,
+    "ideal": 262,
+    "real": 323
+   },
+   "castle": {
+    "pro": 816,
+    "ideal": 915,
+    "real": 936
+   },
+   "income": 0.9219169760861845,
+   "incomeByRes": {
+    "food": 0.93,
+    "wood": 0.94,
+    "gold": 0.81,
+    "stone": 0.99
+   },
+   "lateMedian": 10,
+   "unfinished": 0
+  },
+  {
+   "civ": "byzantines",
+   "game": 259237393,
+   "player": "Talouc",
+   "rating": 1999,
+   "map": "Marshland",
+   "goals": 98,
+   "skipped": [],
+   "feudal": {
+    "pro": 277,
+    "ideal": 311,
+    "real": 368
+   },
+   "castle": {
+    "pro": 893,
+    "ideal": 1007,
+    "real": 1056
+   },
+   "income": 0.9543298951651985,
+   "incomeByRes": {
+    "food": 0.91,
+    "wood": 1,
+    "gold": 0.92,
+    "stone": 1.11
+   },
+   "lateMedian": 67.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "japanese",
+   "game": 259216996,
+   "player": "Talouc",
+   "rating": 1971,
+   "map": "Waterholes",
+   "goals": 12,
+   "skipped": [],
+   "feudal": {
+    "pro": 422,
+    "ideal": 427,
+    "real": 466
+   },
+   "castle": null,
+   "income": 1.0851801269549102,
+   "incomeByRes": {
+    "food": 1.03,
+    "wood": 1.06,
+    "gold": 1.02
+   },
+   "lateMedian": 4,
+   "unfinished": 0
+  },
+  {
+   "civ": "jin_dynasty",
+   "game": 259366186,
+   "player": "InnocenCe",
+   "rating": 1977,
+   "map": "Fangs",
+   "goals": 13,
+   "skipped": [],
+   "feudal": {
+    "pro": 273,
+    "ideal": 238,
+    "real": 258
+   },
+   "castle": {
+    "pro": 749,
+    "ideal": 716,
+    "real": 738
+   },
+   "income": 1.1096445532897568,
+   "incomeByRes": {
+    "food": 1.02,
+    "wood": 1.47,
+    "gold": 1.01
+   },
+   "lateMedian": 0,
+   "unfinished": 0
+  },
+  {
+   "civ": "zhu_xis_legacy",
+   "game": 259471456,
+   "player": "I No？I Yes！Ru J Sang",
+   "rating": 1794,
+   "map": "Cliffside",
+   "goals": 2,
+   "skipped": [],
+   "feudal": {
+    "pro": 227,
+    "ideal": 272,
+    "real": 323
+   },
+   "castle": null,
+   "income": 0.855050686904875,
+   "incomeByRes": {
+    "food": 0.85,
+    "wood": 0.64,
+    "gold": 0.68
+   },
+   "lateMedian": 48,
+   "unfinished": 0
+  },
+  {
+   "civ": "house_of_lancaster",
+   "game": 259443162,
+   "player": "the luckiest",
+   "rating": 1918,
+   "map": "Cliffside",
+   "goals": 8,
+   "skipped": [],
+   "feudal": {
+    "pro": 263,
+    "ideal": 291,
+    "real": 364
+   },
+   "castle": {
+    "pro": 571,
+    "ideal": 675,
+    "real": 759
+   },
+   "income": 0.8693377018380738,
+   "incomeByRes": {
+    "food": 0.84,
+    "wood": 0.8,
+    "gold": 0.87,
+    "stone": 0.94
+   },
+   "lateMedian": 166.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "jin_dynasty",
+   "game": 259130603,
+   "player": "I No？I Yes！Ru J Sang",
+   "rating": 1846,
+   "map": "Dry Arabia",
+   "goals": 8,
+   "skipped": [],
+   "feudal": {
+    "pro": 271,
+    "ideal": 237,
+    "real": 259
+   },
+   "castle": {
+    "pro": 585,
+    "ideal": 578,
+    "real": 651
+   },
+   "income": 1.0566807234146434,
+   "incomeByRes": {
+    "food": 1.04,
+    "wood": 1.07,
+    "gold": 1.06
+   },
+   "lateMedian": 0,
+   "unfinished": 0
+  },
+  {
+   "civ": "zhu_xis_legacy",
+   "game": 259128912,
+   "player": "I No？I Yes！Ru J Sang",
+   "rating": 1868,
+   "map": "Dry Arabia",
+   "goals": 2,
+   "skipped": [],
+   "feudal": {
+    "pro": 236,
+    "ideal": 256,
+    "real": 279
+   },
+   "castle": null,
+   "income": 0.9084174723973304,
+   "incomeByRes": {
+    "food": 0.9,
+    "wood": 0.76,
+    "gold": 0.89
+   },
+   "lateMedian": 21.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "malians",
+   "game": 259503178,
+   "player": "Doctor Proctor",
+   "rating": 1913,
+   "map": "Highwoods",
+   "goals": 28,
+   "skipped": [],
+   "feudal": {
+    "pro": 269,
+    "ideal": 303,
+    "real": 387
+   },
+   "castle": {
+    "pro": 711,
+    "ideal": 763,
+    "real": 815
+   },
+   "income": 1.0192253397904254,
+   "incomeByRes": {
+    "food": 1.04,
+    "wood": 0.96,
+    "gold": 0.97
+   },
+   "lateMedian": 29,
+   "unfinished": 0
+  },
+  {
+   "civ": "malians",
+   "game": 259500738,
+   "player": "Doctor Proctor",
+   "rating": 1893,
+   "map": "Marshland",
+   "goals": 43,
+   "skipped": [],
+   "feudal": {
+    "pro": 244,
+    "ideal": 306,
+    "real": 439
+   },
+   "castle": {
+    "pro": 766,
+    "ideal": 824,
+    "real": 870
+   },
+   "income": 1.0022297687671935,
+   "incomeByRes": {
+    "food": 1,
+    "wood": 0.95,
+    "gold": 0.96
+   },
+   "lateMedian": 56,
+   "unfinished": 0
+  },
+  {
+   "civ": "malians",
+   "game": 259498952,
+   "player": "Doctor Proctor",
+   "rating": 1872,
+   "map": "Highwoods",
+   "goals": 76,
+   "skipped": [],
+   "feudal": {
+    "pro": 263,
+    "ideal": 335,
+    "real": 537
+   },
+   "castle": {
+    "pro": 911,
+    "ideal": 960,
+    "real": 998
+   },
+   "income": 1.0172032604345076,
+   "incomeByRes": {
+    "food": 1.01,
+    "wood": 0.99,
+    "gold": 1
+   },
+   "lateMedian": 89.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "malians",
+   "game": 259497566,
+   "player": "Doctor Proctor",
+   "rating": 1849,
+   "map": "Marshland",
+   "goals": 31,
+   "skipped": [],
+   "feudal": {
+    "pro": 261,
+    "ideal": 342,
+    "real": 461
+   },
+   "castle": {
+    "pro": 670,
+    "ideal": 744,
+    "real": 808
+   },
+   "income": 0.9593338630541273,
+   "incomeByRes": {
+    "food": 0.98,
+    "wood": 0.89,
+    "gold": 0.91
+   },
+   "lateMedian": 49,
+   "unfinished": 0
+  },
+  {
+   "civ": "malians",
+   "game": 259164244,
+   "player": "Ζήτω Το",
+   "rating": 1835,
+   "map": "Dry Arabia",
+   "goals": 61,
+   "skipped": [],
+   "feudal": {
+    "pro": 243,
+    "ideal": 322,
+    "real": 404
+   },
+   "castle": {
+    "pro": 848,
+    "ideal": 893,
+    "real": 947
+   },
+   "income": 1.0476384393194498,
+   "incomeByRes": {
+    "food": 1.03,
+    "wood": 1.01,
+    "gold": 1.02
+   },
+   "lateMedian": 23,
+   "unfinished": 0
+  },
+  {
+   "civ": "tughlaq_dynasty",
+   "game": 259365518,
+   "player": "靈",
+   "rating": 1932,
+   "map": "Marshland",
+   "goals": 6,
+   "skipped": [],
+   "feudal": {
+    "pro": 249,
+    "ideal": 469,
+    "real": 500
+   },
+   "castle": {
+    "pro": 562,
+    "ideal": 774,
+    "real": 840
+   },
+   "income": 0.6181172037227483,
+   "incomeByRes": {
+    "food": 0.65,
+    "wood": 0.56,
+    "gold": 0.34,
+    "stone": 0.72
+   },
+   "lateMedian": 158,
+   "unfinished": 0
+  },
+  {
+   "civ": "tughlaq_dynasty",
+   "game": 259354671,
+   "player": "靈",
+   "rating": 1882,
+   "map": "Dry Arabia",
+   "goals": 5,
+   "skipped": [],
+   "feudal": {
+    "pro": 257,
+    "ideal": 395,
+    "real": 436
+   },
+   "castle": {
+    "pro": 584,
+    "ideal": 744,
+    "real": 823
+   },
+   "income": 0.6927141495695165,
+   "incomeByRes": {
+    "food": 0.72,
+    "wood": 0.64,
+    "gold": 0.44,
+    "stone": 0.71
+   },
+   "lateMedian": 179,
+   "unfinished": 0
+  },
+  {
+   "civ": "zhu_xis_legacy",
+   "game": 259375105,
+   "player": "inception",
+   "rating": 1784,
+   "map": "Highwoods",
+   "goals": 1,
+   "skipped": [],
+   "feudal": {
+    "pro": 242,
+    "ideal": 249,
+    "real": 319
+   },
+   "castle": null,
+   "income": 0.7929097781294209,
+   "incomeByRes": {
+    "food": 0.79,
+    "wood": 0.48,
+    "gold": 0.69
+   },
+   "lateMedian": 77,
+   "unfinished": 0
+  },
+  {
+   "civ": "ottomans",
+   "game": 259214924,
+   "player": "氣氛大師大都督",
+   "rating": 1752,
+   "map": "Cliffside",
+   "goals": 86,
+   "skipped": [],
+   "feudal": {
+    "pro": 290,
+    "ideal": 333,
+    "real": 410
+   },
+   "castle": {
+    "pro": 976,
+    "ideal": 1143,
+    "real": 1299
+   },
+   "income": 0.9880749204754554,
+   "incomeByRes": {
+    "food": 0.98,
+    "wood": 0.99,
+    "gold": 0.96,
+    "stone": 0.98
+   },
+   "lateMedian": 22.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "jin_dynasty",
+   "game": 259201706,
+   "player": "速不台的奇妙冒险",
+   "rating": 1703,
+   "map": "Dry Arabia",
+   "goals": 1,
+   "skipped": [],
+   "feudal": {
+    "pro": 246,
+    "ideal": 226,
+    "real": 261
+   },
+   "castle": null,
+   "income": 0.9385329460184191,
+   "incomeByRes": {
+    "food": 0.87,
+    "gold": 0.88
+   },
+   "lateMedian": 15,
+   "unfinished": 0
+  },
+  {
+   "civ": "golden_horde",
+   "game": 259465110,
+   "player": "Green",
+   "rating": 1905,
+   "map": "Highwoods",
+   "goals": 3,
+   "skipped": [],
+   "feudal": {
+    "pro": 274,
+    "ideal": 325,
+    "real": 393
+   },
+   "castle": null,
+   "income": 0.9438049937079448,
+   "incomeByRes": {
+    "food": 0.93,
+    "wood": 0.82,
+    "gold": 0.88,
+    "stone": 0.93
+   },
+   "lateMedian": 19,
+   "unfinished": 0
+  },
+  {
+   "civ": "byzantines",
+   "game": 259524447,
+   "player": "Dr.Falcon13",
+   "rating": 1894,
+   "map": "Marshland",
+   "goals": 22,
+   "skipped": [],
+   "feudal": {
+    "pro": 282,
+    "ideal": 317,
+    "real": 401
+   },
+   "castle": {
+    "pro": 561,
+    "ideal": 650,
+    "real": 741
+   },
+   "income": 1.024025898991456,
+   "incomeByRes": {
+    "food": 0.99,
+    "wood": 0.98,
+    "gold": 0.95,
+    "stone": 0.97
+   },
+   "lateMedian": 132.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "byzantines",
+   "game": 259522114,
+   "player": "Dr.Falcon13",
+   "rating": 1879,
+   "map": "Marshland",
+   "goals": 73,
+   "skipped": [],
+   "feudal": {
+    "pro": 277,
+    "ideal": 327,
+    "real": 343
+   },
+   "castle": {
+    "pro": 823,
+    "ideal": 921,
+    "real": 992
+   },
+   "income": 0.9367757304688656,
+   "incomeByRes": {
+    "food": 0.88,
+    "wood": 0.99,
+    "gold": 0.88,
+    "stone": 1
+   },
+   "lateMedian": 82,
+   "unfinished": 0
+  },
+  {
+   "civ": "macedonian_dynasty",
+   "game": 259416404,
+   "player": "Dr.Falcon13",
+   "rating": 1910,
+   "map": "Fangs",
+   "goals": 11,
+   "skipped": [],
+   "feudal": {
+    "pro": 260,
+    "ideal": 272,
+    "real": 322
+   },
+   "castle": {
+    "pro": 479,
+    "ideal": 588,
+    "real": 751
+   },
+   "income": 0.9489223922483265,
+   "incomeByRes": {
+    "food": 0.96,
+    "wood": 0.94,
+    "gold": 0.92
+   },
+   "lateMedian": 83,
+   "unfinished": 0
+  },
+  {
+   "civ": "macedonian_dynasty",
+   "game": 259398420,
+   "player": "氣氛大師大都督",
+   "rating": 1724,
+   "map": "Fangs",
+   "goals": 11,
+   "skipped": [],
+   "feudal": {
+    "pro": 255,
+    "ideal": 280,
+    "real": 337
+   },
+   "castle": {
+    "pro": 498,
+    "ideal": 589,
+    "real": 684
+   },
+   "income": 1.0228301784441065,
+   "incomeByRes": {
+    "food": 1.02,
+    "wood": 1.11,
+    "gold": 1
+   },
+   "lateMedian": 93,
+   "unfinished": 0
+  },
+  {
+   "civ": "zhu_xis_legacy",
+   "game": 259482025,
+   "player": "I No？I Yes！Ru J Sang",
+   "rating": 1871,
+   "map": "Cliffside",
+   "goals": 2,
+   "skipped": [],
+   "feudal": {
+    "pro": 240,
+    "ideal": 265,
+    "real": 304
+   },
+   "castle": null,
+   "income": 0.8496283857076835,
+   "incomeByRes": {
+    "food": 0.88,
+    "wood": 0.63,
+    "gold": 0.88
+   },
+   "lateMedian": 32,
+   "unfinished": 0
+  },
+  {
+   "civ": "zhu_xis_legacy",
+   "game": 259480333,
+   "player": "I No？I Yes！Ru J Sang",
+   "rating": 1851,
+   "map": "Golden Pit",
+   "goals": 2,
+   "skipped": [],
+   "feudal": {
+    "pro": 235,
+    "ideal": 271,
+    "real": 318
+   },
+   "castle": null,
+   "income": 0.8810444000704754,
+   "incomeByRes": {
+    "food": 0.89,
+    "wood": 0.73,
+    "gold": 0.81
+   },
+   "lateMedian": 41.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "abbasid_dynasty",
+   "game": 259410939,
+   "player": "Tikm",
+   "rating": 1788,
+   "map": "Dry Arabia",
+   "goals": 25,
+   "skipped": [],
+   "feudal": {
+    "pro": 245,
+    "ideal": 276,
+    "real": 337
+   },
+   "castle": {
+    "pro": 640,
+    "ideal": 657,
+    "real": 769
+   },
+   "income": 1.005912782688981,
+   "incomeByRes": {
+    "food": 1.03,
+    "wood": 1.03,
+    "gold": 0.94
+   },
+   "lateMedian": 92,
+   "unfinished": 0
+  },
+  {
+   "civ": "abbasid_dynasty",
+   "game": 259370008,
+   "player": "Citrus",
+   "rating": 1737,
+   "map": "Dry Arabia",
+   "goals": 2,
+   "skipped": [],
+   "feudal": {
+    "pro": 257,
+    "ideal": 291,
+    "real": 335
+   },
+   "castle": null,
+   "income": 1.033795687216368,
+   "incomeByRes": {
+    "food": 1.02,
+    "wood": 1.03,
+    "gold": 0.98
+   },
+   "lateMedian": 43,
+   "unfinished": 0
+  },
+  {
+   "civ": "chinese",
+   "game": 259247105,
+   "player": "﹌夕陽の余溫づ",
+   "rating": 1723,
+   "map": "Cliffside",
+   "goals": 119,
+   "skipped": [],
+   "feudal": {
+    "pro": 217,
+    "ideal": 225,
+    "real": 269
+   },
+   "castle": {
+    "pro": 976,
+    "ideal": 1166,
+    "real": 1241
+   },
+   "income": 0.7569110149597919,
+   "incomeByRes": {
+    "food": 0.71,
+    "wood": 0.83,
+    "gold": 0.76,
+    "stone": 0.6
+   },
+   "lateMedian": 143,
+   "unfinished": 0
+  },
+  {
+   "civ": "japanese",
+   "game": 259245757,
+   "player": "Camiknoedel",
+   "rating": 1771,
+   "map": "Cliffside",
+   "goals": 26,
+   "skipped": [],
+   "feudal": {
+    "pro": 365,
+    "ideal": 371,
+    "real": 459
+   },
+   "castle": {
+    "pro": 780,
+    "ideal": 788,
+    "real": 794
+   },
+   "income": 1.289906456853704,
+   "incomeByRes": {
+    "food": 1.14,
+    "wood": 1.23,
+    "gold": 1.34,
+    "stone": 4.42
+   },
+   "lateMedian": 14.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "chinese",
+   "game": 259212600,
+   "player": "Vashundol",
+   "rating": 1700,
+   "map": "Cliffside",
+   "goals": 32,
+   "skipped": [],
+   "feudal": {
+    "pro": 222,
+    "ideal": 229,
+    "real": 270
+   },
+   "castle": {
+    "pro": 692,
+    "ideal": 697,
+    "real": 806
+   },
+   "income": 0.9054574953318507,
+   "incomeByRes": {
+    "food": 0.87,
+    "wood": 0.95,
+    "gold": 0.91
+   },
+   "lateMedian": 60,
+   "unfinished": 0
+  },
+  {
+   "civ": "ottomans",
+   "game": 259140585,
+   "player": "GiveUAnxiety",
+   "rating": 1714,
+   "map": "Dry Arabia",
+   "goals": 4,
+   "skipped": [],
+   "feudal": {
+    "pro": 280,
+    "ideal": 302,
+    "real": 396
+   },
+   "castle": null,
+   "income": 1.064407901169362,
+   "incomeByRes": {
+    "food": 1.07,
+    "wood": 1.17,
+    "gold": 0.98
+   },
+   "lateMedian": 95,
+   "unfinished": 0
+  },
+  {
+   "civ": "chinese",
+   "game": 259132783,
+   "player": "Mirari",
+   "rating": 1806,
+   "map": "Fangs",
+   "goals": 8,
+   "skipped": [],
+   "feudal": {
+    "pro": 188,
+    "ideal": 214,
+    "real": 253
+   },
+   "castle": {
+    "pro": 609,
+    "ideal": 615,
+    "real": 624
+   },
+   "income": 0.7465567425365858,
+   "incomeByRes": {
+    "food": 0.77,
+    "wood": 0.7,
+    "gold": 0.61,
+    "stone": 0.93
+   },
+   "lateMedian": 12.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "sengoku_daimyo",
+   "game": 259552701,
+   "player": "Ivanoha",
+   "rating": 1732,
+   "map": "Marshland",
+   "goals": 68,
+   "skipped": [],
+   "feudal": {
+    "pro": 300,
+    "ideal": 409,
+    "real": 776
+   },
+   "castle": {
+    "pro": 758,
+    "ideal": 949,
+    "real": 1055
+   },
+   "income": 0.8058671450002972,
+   "incomeByRes": {
+    "food": 0.77,
+    "wood": 0.88,
+    "gold": 0.78,
+    "stone": 0.79
+   },
+   "lateMedian": 321,
+   "unfinished": 0
+  },
+  {
+   "civ": "jeanne_darc",
+   "game": 259443571,
+   "player": "JanisCP",
+   "rating": 1847,
+   "map": "Marshland",
+   "goals": 2,
+   "skipped": [],
+   "feudal": {
+    "pro": 264,
+    "ideal": 300,
+    "real": 344
+   },
+   "castle": null,
+   "income": 0.9118757525246344,
+   "incomeByRes": {
+    "food": 0.85,
+    "wood": 0.81,
+    "gold": 0.78
+   },
+   "lateMedian": 54.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "golden_horde",
+   "game": 259211882,
+   "player": "氣氛大師大都督",
+   "rating": 1777,
+   "map": "Cliffside",
+   "goals": 48,
+   "skipped": [],
+   "feudal": {
+    "pro": 274,
+    "ideal": 327,
+    "real": 396
+   },
+   "castle": {
+    "pro": 774,
+    "ideal": 774,
+    "real": 844
+   },
+   "income": 1.0511087585735768,
+   "incomeByRes": {
+    "food": 1.02,
+    "wood": 1.13,
+    "gold": 1.01,
+    "stone": 0.97
+   },
+   "lateMedian": 99,
+   "unfinished": 0
+  },
+  {
+   "civ": "ottomans",
+   "game": 259409632,
+   "player": "哥布林骑士冲撞村民",
+   "rating": 1725,
+   "map": "Cliffside",
+   "goals": 4,
+   "skipped": [],
+   "feudal": {
+    "pro": 280,
+    "ideal": 377,
+    "real": 425
+   },
+   "castle": null,
+   "income": 1.0323699773995558,
+   "incomeByRes": {
+    "food": 1.04,
+    "wood": 1.14,
+    "gold": 0.88
+   },
+   "lateMedian": 113.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "ottomans",
+   "game": 259363648,
+   "player": "氣氛大師大都督",
+   "rating": 1750,
+   "map": "Fangs",
+   "goals": 166,
+   "skipped": [],
+   "feudal": {
+    "pro": 251,
+    "ideal": 293,
+    "real": 433
+   },
+   "castle": {
+    "pro": 1604,
+    "ideal": 1739,
+    "real": 1954
+   },
+   "income": 0.8904433009166697,
+   "incomeByRes": {
+    "food": 0.86,
+    "wood": 0.94,
+    "gold": 0.75,
+    "stone": 0.76
+   },
+   "lateMedian": 220,
+   "unfinished": 17
+  },
+  {
+   "civ": "ottomans",
+   "game": 259361488,
+   "player": "氣氛大師大都督",
+   "rating": 1782,
+   "map": "Dry Arabia",
+   "goals": 4,
+   "skipped": [],
+   "feudal": {
+    "pro": 278,
+    "ideal": 342,
+    "real": 401
+   },
+   "castle": null,
+   "income": 1.0869072237285,
+   "incomeByRes": {
+    "food": 1.09,
+    "wood": 1.09,
+    "gold": 0.95
+   },
+   "lateMedian": 97,
+   "unfinished": 0
+  },
+  {
+   "civ": "ayyubids",
+   "game": 259518717,
+   "player": "rongyu",
+   "rating": 1708,
+   "map": "King of the Hill",
+   "goals": 11,
+   "skipped": [],
+   "feudal": {
+    "pro": 285,
+    "ideal": 285,
+    "real": 302
+   },
+   "castle": {
+    "pro": 557,
+    "ideal": 577,
+    "real": 621
+   },
+   "income": 0.9427760735709291,
+   "incomeByRes": {
+    "food": 0.96,
+    "wood": 0.9,
+    "gold": 0.91
+   },
+   "lateMedian": 21,
+   "unfinished": 0
+  },
+  {
+   "civ": "macedonian_dynasty",
+   "game": 259297883,
+   "player": "Їбаш, їбаш, їбаш, ї",
+   "rating": 1735,
+   "map": "Marshland",
+   "goals": 27,
+   "skipped": [],
+   "feudal": {
+    "pro": 283,
+    "ideal": 289,
+    "real": 323
+   },
+   "castle": {
+    "pro": 772,
+    "ideal": 826,
+    "real": 893
+   },
+   "income": 1.0332111177897165,
+   "incomeByRes": {
+    "food": 1.01,
+    "wood": 1.03,
+    "gold": 1.05
+   },
+   "lateMedian": 40,
+   "unfinished": 0
+  },
+  {
+   "civ": "sengoku_daimyo",
+   "game": 259262114,
+   "player": "Kyomu",
+   "rating": 1717,
+   "map": "Cliffside",
+   "goals": 2,
+   "skipped": [],
+   "feudal": {
+    "pro": 315,
+    "ideal": 401,
+    "real": 484
+   },
+   "castle": null,
+   "income": 0.8921245575280405,
+   "incomeByRes": {
+    "food": 0.91,
+    "wood": 0.84,
+    "gold": 0.84
+   },
+   "lateMedian": 84.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "ayyubids",
+   "game": 259507397,
+   "player": "dziļzyls",
+   "rating": 1713,
+   "map": "Archipelago",
+   "goals": 3,
+   "skipped": [],
+   "feudal": {
+    "pro": 141,
+    "ideal": 161,
+    "real": 167
+   },
+   "castle": null,
+   "income": 1.0774135114381442,
+   "incomeByRes": {
+    "food": 0.91,
+    "wood": 0.74
+   },
+   "lateMedian": 16,
+   "unfinished": 0
+  },
+  {
+   "civ": "ayyubids",
+   "game": 259528984,
+   "player": "kiesiew761",
+   "rating": 1676,
+   "map": "Fangs",
+   "goals": 25,
+   "skipped": [],
+   "feudal": {
+    "pro": 306,
+    "ideal": 313,
+    "real": 340
+   },
+   "castle": {
+    "pro": 709,
+    "ideal": 709,
+    "real": 737
+   },
+   "income": 0.9947856558519076,
+   "incomeByRes": {
+    "food": 1,
+    "wood": 0.8,
+    "gold": 1.03,
+    "stone": 0.16
+   },
+   "lateMedian": 14,
+   "unfinished": 0
+  },
+  {
+   "civ": "sengoku_daimyo",
+   "game": 259230190,
+   "player": "Kyomu",
+   "rating": 1660,
+   "map": "Highwoods",
+   "goals": 74,
+   "skipped": [],
+   "feudal": {
+    "pro": 307,
+    "ideal": 403,
+    "real": 451
+   },
+   "castle": {
+    "pro": 841,
+    "ideal": 930,
+    "real": 981
+   },
+   "income": 0.9364731991174585,
+   "incomeByRes": {
+    "food": 0.88,
+    "wood": 0.94,
+    "gold": 0.86,
+    "stone": 0.9
+   },
+   "lateMedian": 70.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "jeanne_darc",
+   "game": 259309379,
+   "player": "Three Golds In A Trenchcoat",
+   "rating": 1600,
+   "map": "Cliffside",
+   "goals": 33,
+   "skipped": [],
+   "feudal": {
+    "pro": 302,
+    "ideal": 317,
+    "real": 343
+   },
+   "castle": {
+    "pro": 793,
+    "ideal": 908,
+    "real": 933
+   },
+   "income": 0.8408862105650122,
+   "incomeByRes": {
+    "food": 0.79,
+    "wood": 0.88,
+    "gold": 0.89
+   },
+   "lateMedian": 43,
+   "unfinished": 0
+  },
+  {
+   "civ": "macedonian_dynasty",
+   "game": 259294249,
+   "player": "Їбаш, їбаш, їбаш, ї",
+   "rating": 1699,
+   "map": "Dry Arabia",
+   "goals": 12,
+   "skipped": [],
+   "feudal": {
+    "pro": 295,
+    "ideal": 392,
+    "real": 425
+   },
+   "castle": {
+    "pro": 619,
+    "ideal": 808,
+    "real": 831
+   },
+   "income": 0.7994469215577376,
+   "incomeByRes": {
+    "food": 0.75,
+    "wood": 0.9,
+    "gold": 0.84,
+    "stone": 0.99
+   },
+   "lateMedian": 82,
+   "unfinished": 0
+  },
+  {
+   "civ": "macedonian_dynasty",
+   "game": 259289791,
+   "player": "Їбаш, їбаш, їбаш, ї",
+   "rating": 1677,
+   "map": "Cliffside",
+   "goals": 2,
+   "skipped": [],
+   "feudal": {
+    "pro": 321,
+    "ideal": 418,
+    "real": 551
+   },
+   "castle": null,
+   "income": 1.1393870794239604,
+   "incomeByRes": {
+    "food": 1.01,
+    "wood": 1.08,
+    "gold": 1.01
+   },
+   "lateMedian": 120.5,
+   "unfinished": 0
+  },
+  {
+   "civ": "sengoku_daimyo",
+   "game": 259534101,
+   "player": "kiesiew761",
+   "rating": 1627,
+   "map": "King of the Hill",
+   "goals": 2,
+   "skipped": [],
+   "feudal": {
+    "pro": 312,
+    "ideal": 404,
+    "real": 462
+   },
+   "castle": null,
+   "income": 0.8411000989010075,
+   "incomeByRes": {
+    "food": 0.83,
+    "wood": 0.84,
+    "gold": 0.82,
+    "stone": 0.6
+   },
+   "lateMedian": 75,
+   "unfinished": 0
+  }
+ ]
+}
