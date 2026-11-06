@@ -4,7 +4,7 @@ import type { Catalog } from '../types.ts'
 import { buildCivData } from './civData.ts'
 import { generateMap } from './mapgen.ts'
 import { Searcher } from './search.ts'
-import type { Goal, PlanResult, Policy, PostArmy, Step } from './types.ts'
+import type { Goal, HolySettings, PlanResult, Policy, PostArmy, Step } from './types.ts'
 
 export interface StartMessage {
   type: 'start'
@@ -15,6 +15,8 @@ export interface StartMessage {
   goals: Goal[]
   /** 目標後全力出兵的兵數與升級數 */
   post: PostArmy
+  /** 地圖上能拿的聖物、聖地（沒給就不模擬） */
+  holy?: HolySettings
   /** 最多跑多久（毫秒） */
   budgetMs: number
   /** 第幾個平行的 worker（決定亂數種子，讓各 worker 往不同方向搜） */
@@ -52,7 +54,7 @@ async function start(m: StartMessage) {
   if (current !== m.id) return
   const data = buildCivData(catalog!, m.civ, names)
   const map = generateMap(m.mapType, m.seed)
-  const searcher = new Searcher(data, map, m.goals, m.seed + 11 + (m.worker ?? 0) * 7919, { post: m.post })
+  const searcher = new Searcher(data, map, m.goals, m.seed + 11 + (m.worker ?? 0) * 7919, { post: m.post, holy: m.holy })
   const t0 = performance.now()
   let lastGain = t0
   let lastPost = 0

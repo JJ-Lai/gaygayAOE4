@@ -125,6 +125,30 @@ export interface Policy {
   officials?: number
   /** 法蘭西公會廳：多久收一次（秒） */
   collectEvery?: number
+  /** 輔助單位（教士、僧侶）各訓練幾名 */
+  support?: Record<string, number>
+  /** 蒙古：敖包範圍內雙倍生產村民 */
+  double?: boolean
+  /** 馬利格里奧巴拉：一直開的慶典（spec.festival.options 的 key） */
+  festival?: string
+  /** 金帳：使用的詔令（spec.edicts.options 的 key） */
+  edict?: string
+  /** 圖格魯克：各座要塞依序任命的總督 */
+  governors?: string[]
+  /** 要拿幾個聖物、佔幾個聖地（上限是 HolySettings） */
+  relics?: number
+  sites?: number
+}
+
+/**
+ * 聖物與聖地的設定（地圖模型沒有它們的位置）：你最多能拿到幾個聖物、佔幾個聖地，以及離城鎮中心多遠（格）。
+ * 1v1 地圖有 5 個聖物、乾燥阿拉伯 3 個聖地（Fandom），但雙方會搶，能拿到幾個與距離由使用者設定。
+ */
+export interface HolySettings {
+  relics: number
+  relicDist: number
+  sites: number
+  siteDist: number
 }
 
 /** 目標達成後的「全力出兵」設定 */

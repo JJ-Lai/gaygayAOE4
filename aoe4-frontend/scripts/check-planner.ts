@@ -67,13 +67,19 @@ for (const c of CASES) {
   const data = buildCivData(catalog, c.civ, names)
   const map = generateMap('dry-arabia', 7)
   // 基準區間比的是「只看目標」的時間；另外跑一次含目標後全力出兵（30 兵 + 2 升級）的版本對照
-  const s = new Searcher(data, map, c.goals, 3, { post: { units: 0, upgrades: 0 } })
+  // 單一亂數種子的結果差異很大（例如英格蘭直城 7:14～7:46），所以跑 3 個種子取最好的，和頁面平行多個 worker 一樣
   const t0 = performance.now()
-  s.run(Number(process.env.MS ?? 5000))
+  let s = new Searcher(data, map, c.goals, 3, { post: { units: 0, upgrades: 0 } })
+  s.run(Number(process.env.MS ?? 4000))
+  for (const seed of [4, 5]) {
+    const o = new Searcher(data, map, c.goals, seed, { post: { units: 0, upgrades: 0 } })
+    o.run(Number(process.env.MS ?? 4000))
+    if (o.best && s.best && (o.best.result.tcIdle < s.best.result.tcIdle || (o.best.result.tcIdle === s.best.result.tcIdle && o.best.result.score < s.best.result.score))) s = o
+  }
   const d = s.bestDetailed()!
   const r = d.result
   const sp = new Searcher(data, map, c.goals, 3)
-  sp.run(Number(process.env.MS ?? 5000))
+  sp.run(Number(process.env.MS ?? 4000))
   const rp = sp.bestDetailed()!.result
   const ms = performance.now() - t0
   const inBand = !c.band || (r.finish >= c.band[0] && r.finish <= c.band[1])

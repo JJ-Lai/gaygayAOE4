@@ -4,7 +4,7 @@
 import { isTownCenter, resolveGoals, type CivData } from './civData.ts'
 import { simulate, zoneAnchors, zonePlan } from './engine.ts'
 import { rng } from './mapgen.ts'
-import { PHASE_SEC, RES, type GameMap, type Goal, type PlanResult, type Policy, type PostArmy, type Step, type StepParams } from './types.ts'
+import { PHASE_SEC, RES, type GameMap, type HolySettings, type Goal, type PlanResult, type Policy, type PostArmy, type Step, type StepParams } from './types.ts'
 
 const MAX_T = 60 * 60
 /** 前段班保留幾個策略 */
@@ -16,6 +16,8 @@ export interface SearchOptions {
   idleWeight?: number
   /** 目標後全力出兵；預設 30 兵 + 2 項升級 */
   post?: PostArmy
+  /** 聖物與聖地的設定（使用者在頁面上設） */
+  holy?: HolySettings
 }
 
 export const DEFAULT_POST: PostArmy = { units: 30, upgrades: 2 }
@@ -78,7 +80,7 @@ export function evaluate(
   const { steps, errors } = resolveGoals(data, goals, policy.landmarkPick)
   if (errors.length && !steps.length) return null
   const p = fit(policy, steps)
-  const result = simulate(data, map, steps, p, { record, bound, idleWeight: opts.idleWeight ?? 60, post: opts.post ?? DEFAULT_POST, postBound: opts.postBound })
+  const result = simulate(data, map, steps, p, { record, bound, idleWeight: opts.idleWeight ?? 60, post: opts.post ?? DEFAULT_POST, postBound: opts.postBound, holy: opts.holy })
   for (const e of errors) result.warnings.push(e)
   return { policy: p, steps, result }
 }
@@ -99,6 +101,7 @@ const clone = (p: Policy): Policy => ({
   dynasty: { ...(p.dynasty ?? {}) },
   phaseBias: (p.phaseBias ?? []).map((b) => ({ ...b })),
   repeats: { ...(p.repeats ?? {}) },
+  support: { ...(p.support ?? {}) },
 })
 
 /** 交配：每個欄位（每一步、每項科技、每一段時間偏好）隨機取自其中一方，讓搜尋能一次組合好幾項改動 */
@@ -116,6 +119,13 @@ function crossover(a: Policy, b: Policy, r: () => number): Policy {
   if (coin()) q.officials = o.officials
   if (coin()) q.collectEvery = o.collectEvery
   if (coin()) q.repeats = { ...(o.repeats ?? {}) }
+  if (coin()) q.support = { ...(o.support ?? {}) }
+  if (coin()) q.double = o.double
+  if (coin()) q.festival = o.festival
+  if (coin()) q.edict = o.edict
+  if (coin()) q.relics = o.relics
+  if (coin()) q.sites = o.sites
+  if (coin()) q.governors = [...(o.governors ?? [])]
   for (const k of new Set([...Object.keys(q.ecoAt), ...Object.keys(o.ecoAt)])) if (coin()) {
     if (k in o.ecoAt) q.ecoAt[k] = o.ecoAt[k]
     else delete q.ecoAt[k]
@@ -129,7 +139,7 @@ function crossover(a: Policy, b: Policy, r: () => number): Policy {
   return q
 }
 
-function mutate(p: Policy, r: () => number, data: CivData, goals: Goal[], map: GameMap, horizon = 600): Policy {
+function mutate(p: Policy, r: () => number, data: CivData, goals: Goal[], map: GameMap, horizon = 600, holy?: HolySettings): Policy {
   const q = clone(p)
   const n = 1 + Math.floor(r() * 3)
   const pick = <T>(xs: T[]) => xs[Math.floor(r() * xs.length)]
@@ -155,7 +165,12 @@ function mutate(p: Policy, r: () => number, data: CivData, goals: Goal[], map: G
     else if (which < 0.64 && s) s.producers = clamp(s.producers + pick([-1, 1]), 1, 8)
     else if (which < 0.72) q.postProducers = clamp(q.postProducers + pick([-2, -1, 1, 2]), 1, 9)
     else if (which < 0.77) q.houseBuffer = clamp(q.houseBuffer + pick([-1, 1]), 0, 6)
-    else if (which < 0.79) q.hunt = !q.hunt
+    else if (which < 0.785) q.hunt = !q.hunt
+    else if (which < 0.79 && holy && (holy.relics || holy.sites)) {
+      // 聖物、聖地要拿幾個
+      if (holy.relics && (!holy.sites || r() < 0.5)) q.relics = clamp((q.relics ?? 0) + pick([-1, 1]), 0, holy.relics)
+      else q.sites = clamp((q.sites ?? 0) + pick([-1, 1]), 0, holy.sites)
+    }
     else if (which < 0.81) q.sheepCap = clamp((q.sheepCap ?? 10) + pick([-3, -2, -1, 1, 2, 3]), 0, 10)
     else if (which < 0.86 && buildTrickles(data).length) {
       // 被動收入建築：改數量或開始的步驟
@@ -165,13 +180,25 @@ function mutate(p: Policy, r: () => number, data: CivData, goals: Goal[], map: G
       else cur.at = Math.floor(r() * Math.max(1, q.steps.length))
       q.trickle[tr.building] = cur
     }
-    else if (which < 0.865 && (data.spec.herd || data.spec.officials || data.spec.civTechs.some((c) => c.repeat) || data.spec.triggers.some((x) => x.stockpile))) {
+    else if (which < 0.865 && (data.spec.herd || data.spec.officials || data.spec.support?.length || data.spec.doubleProduce || data.spec.festival || data.spec.edicts || data.spec.governors || data.spec.civTechs.some((c) => c.repeat) || data.spec.triggers.some((x) => x.stockpile))) {
       // 馬利買牛、中國監工、可重複科技次數、公會廳收取間隔
       const opts: (() => void)[] = []
       if (data.spec.herd) opts.push(() => { q.herd = clamp((q.herd ?? 0) + pick([-2, -1, 1, 2]), 0, data.spec.herd!.max) })
       if (data.spec.officials) opts.push(() => { q.officials = clamp((q.officials ?? 0) + pick([-1, 1]), 0, data.spec.officials!.max) })
       for (const c of data.spec.civTechs.filter((x) => x.repeat)) opts.push(() => { q.repeats = { ...(q.repeats ?? {}), [c.id]: clamp((q.repeats?.[c.id] ?? 1) + pick([-1, 1]), 1, c.repeat!) } })
       if (data.spec.triggers.some((x) => x.stockpile)) opts.push(() => { q.collectEvery = clamp((q.collectEvery ?? 180) + pick([-60, -30, 30, 60, 120]), 40, 900) })
+      for (const su of data.spec.support ?? []) opts.push(() => { q.support = { ...(q.support ?? {}), [su.unit]: clamp((q.support?.[su.unit] ?? 0) + pick([-1, 1]), 0, su.max) } })
+      if (data.spec.doubleProduce) opts.push(() => { q.double = !q.double })
+      if (data.spec.festival) opts.push(() => { q.festival = pick([undefined, ...Object.keys(data.spec.festival!.options)]) })
+      if (data.spec.edicts) opts.push(() => { q.edict = pick([undefined, ...Object.keys(data.spec.edicts!.options)]) })
+      if (data.spec.governors) opts.push(() => {
+        // 總督：換掉某一座的人選（每位只能一座）
+        const keys = Object.keys(data.spec.governors!.options)
+        const g = [...(q.governors ?? [])]
+        const i = Math.floor(r() * Math.min(6, g.length + 1))
+        g[i] = pick(keys.filter((k) => !g.includes(k) || g[i] === k))
+        q.governors = g.filter(Boolean)
+      })
       if (opts.length) pick(opts)()
     }
     else if (which < 0.87 && (data.spec.dynasty?.length || data.spec.scholars)) {
@@ -274,6 +301,41 @@ export class Searcher {
       p.dynasty = d
       variants.push(p)
     }
+    if (data.spec.doubleProduce) {
+      const p = clone(base)
+      p.double = true
+      variants.push(p)
+    }
+    // 聖物與聖地：全拿、只拿聖物、只佔聖地
+    if (opts.holy && (opts.holy.relics || opts.holy.sites)) {
+      for (const [rl, st] of [[opts.holy.relics, opts.holy.sites], [opts.holy.relics, 0], [0, opts.holy.sites]]) {
+        if (!rl && !st) continue
+        const p = clone(base)
+        p.relics = rl
+        p.sites = st
+        variants.push(p)
+      }
+    }
+    for (const k of Object.keys(data.spec.edicts?.options ?? {})) {
+      const p = clone(base)
+      p.edict = k
+      variants.push(p)
+    }
+    for (const k of Object.keys(data.spec.governors?.options ?? {})) {
+      const p = clone(base)
+      p.governors = [k]
+      variants.push(p)
+    }
+    for (const k of Object.keys(data.spec.festival?.options ?? {})) {
+      const p = clone(base)
+      p.festival = k
+      variants.push(p)
+    }
+    for (const su of data.spec.support ?? []) {
+      const p = clone(base)
+      p.support = { [su.unit]: Math.min(2, su.max) }
+      variants.push(p)
+    }
     for (const n of data.spec.herd ? [3, 6] : []) {
       const p = clone(base)
       p.herd = n
@@ -337,7 +399,7 @@ export class Searcher {
       } else if (++this.stale >= RESTART_AFTER && !this.seeds.length) {
         // 卡在區域最佳：只留目前最佳，從各起點各突變一次重新開始（避免整個前段班都收斂到同一種做法）
         this.elite = [this.best]
-        this.seeds = this.initial.map((p) => mutate(p, this.r, this.data, this.goals, this.map))
+        this.seeds = this.initial.map((p) => mutate(p, this.r, this.data, this.goals, this.map, 600, this.opts.holy))
         this.stale = 0
       }
     }
@@ -353,9 +415,9 @@ export class Searcher {
     // 三成交配後再突變，七成直接突變
     if (this.elite.length > 1 && this.r() < 0.3) {
       const child = crossover(pickElite(), pickElite(), this.r)
-      return this.r() < 0.5 ? child : mutate(child, this.r, this.data, this.goals, this.map, horizon)
+      return this.r() < 0.5 ? child : mutate(child, this.r, this.data, this.goals, this.map, horizon, this.opts.holy)
     }
-    return mutate(pickElite(), this.r, this.data, this.goals, this.map, horizon)
+    return mutate(pickElite(), this.r, this.data, this.goals, this.map, horizon, this.opts.holy)
   }
 
   private insert(ev: Evaluated) {

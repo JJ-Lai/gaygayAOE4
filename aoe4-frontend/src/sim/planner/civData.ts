@@ -45,6 +45,8 @@ export const ECO_TECHS = [
   'cupellation',
   'takezaiku',
   'fudasashi',
+  // 聖物的什一稅倉（帝王時代，修道院類建築）
+  'tithe-barns',
   // 日本、戰國：俵（黑暗時代）；金朝：狩獵與伐木專屬科技
   'tawara',
   'mohe-ancestry',

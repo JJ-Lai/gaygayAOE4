@@ -13,7 +13,7 @@ import { CIV_ZH, GLOBAL_BONUSES, type Bonus } from '../sim/planner/civSpec'
 import { MAP_TYPES, generateMap } from '../sim/planner/mapgen'
 import type { StartMessage, WorkerOut } from '../sim/planner/planner.worker'
 import { presetsFor } from '../sim/planner/presets'
-import type { Goal, PlanResult, Policy, PostArmy, Step } from '../sim/planner/types'
+import type { Goal, HolySettings, PlanResult, Policy, PostArmy, Step } from '../sim/planner/types'
 import type { Catalog } from '../sim/types'
 
 interface Best {
@@ -53,6 +53,9 @@ export function SimulatePage() {
   const [presetId, setPresetId] = useState<string | undefined>(undefined)
   const [budget, setBudget] = useState(60000)
   const [post, setPost] = useState<PostArmy>({ units: 30, upgrades: 2 })
+  // 聖物與聖地：地圖腳本不公開，數量與距離都是假設（1v1 地圖 5 個聖物，乾燥阿拉伯 3 個聖地；自己能拿到的取一部分）
+  const [holyOn, setHolyOn] = useState(false)
+  const [holy, setHoly] = useState<HolySettings>({ relics: 2, relicDist: 40, sites: 1, siteDist: 48 })
   const [best, setBest] = useState<Best | null>(null)
   const [status, setStatus] = useState({ evals: 0, elapsed: 0, running: false })
   const [runToken, setRunToken] = useState(0)
@@ -116,12 +119,12 @@ export function SimulatePage() {
       progress.current = []
       setStatus({ evals: 0, elapsed: 0, running: true })
       workerRef.current.forEach((w, k) => {
-        const msg: StartMessage = { type: 'start', id, civ, mapType, seed, goals, post, budgetMs: budget, worker: k }
+        const msg: StartMessage = { type: 'start', id, civ, mapType, seed, goals, post, holy: holyOn ? holy : undefined, budgetMs: budget, worker: k }
         w.postMessage(msg)
       })
     }, 250)
     return () => clearTimeout(h)
-  }, [data, civ, mapType, seed, goals, post, budget, runToken])
+  }, [data, civ, mapType, seed, goals, post, holyOn, holy, budget, runToken])
 
   const stop = () => {
     workerRef.current.forEach((w) => w.postMessage({ type: 'stop' }))
@@ -225,6 +228,30 @@ export function SimulatePage() {
                     onChange={(upgrades) => setPost((p) => ({ ...p, upgrades }))}
                     options={[0, 1, 2, 3, 4].map((n) => ({ value: n, label: n ? `${n} 項升級` : '不升級' }))}
                   />
+                </Flex>
+              </Flex>
+            </Card>
+
+            <Card size="small" title="聖物與聖地">
+              <Flex vertical gap={8}>
+                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                  城堡時代起（德里研究聖域後從封建起）由引擎補修道院類建築與 1 名宗教單位去撿聖物（每個每分鐘 80 黃金）、站聖地 30 秒佔領（每個每分鐘 100 黃金）；拿幾個由最佳化決定。地圖腳本不公開，下面的數量（自己能安全拿到的）與距離（格）都是假設，對手爭奪不建模。
+                </Typography.Text>
+                <Flex align="center" gap={8} wrap>
+                  <Select
+                    size="small"
+                    style={{ width: 110 }}
+                    value={holyOn ? 'on' : 'off'}
+                    onChange={(v) => setHolyOn(v === 'on')}
+                    options={[
+                      { value: 'off', label: '不模擬' },
+                      { value: 'on', label: '模擬' },
+                    ]}
+                  />
+                  <InputNumber size="small" min={0} max={5} value={holy.relics} disabled={!holyOn} onChange={(v) => setHoly((h) => ({ ...h, relics: v ?? 0 }))} prefix="聖物" suffix="個" style={{ width: 110 }} />
+                  <InputNumber size="small" min={5} max={150} value={holy.relicDist} disabled={!holyOn} onChange={(v) => setHoly((h) => ({ ...h, relicDist: v ?? 40 }))} prefix="距離" suffix="格" style={{ width: 120 }} />
+                  <InputNumber size="small" min={0} max={3} value={holy.sites} disabled={!holyOn} onChange={(v) => setHoly((h) => ({ ...h, sites: v ?? 0 }))} prefix="聖地" suffix="個" style={{ width: 110 }} />
+                  <InputNumber size="small" min={5} max={150} value={holy.siteDist} disabled={!holyOn} onChange={(v) => setHoly((h) => ({ ...h, siteDist: v ?? 48 }))} prefix="距離" suffix="格" style={{ width: 120 }} />
                 </Flex>
               </Flex>
             </Card>
@@ -541,7 +568,7 @@ function ModelNotes() {
       </ul>
       <Typography.Title level={5}>還沒做的</Typography.Title>
       <ul>
-        <li>戰鬥、騷擾、斥候偵查、引野豬、釣魚、貿易、聖物。</li>
+        <li>戰鬥、騷擾、斥候偵查、引野豬、釣魚、貿易；聖物與聖地只算自己安全拿到的（數量、距離是假設），對手爭奪不建模。</li>
         <li>建築的影響範圍（光環一律近似為涵蓋所有採集點）。「文明加成」分頁列出每一條是否已計入。</li>
         <li>地圖格數距離沒有公開資料，全部是假設區間；地圖腳本本身（Content Editor 的 playerresources.lua）不公開。</li>
       </ul>

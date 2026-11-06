@@ -21,6 +21,7 @@ import {
   type Bundle,
   type GameMap,
   type GoalResult,
+  type HolySettings,
   type PlanEvent,
   type BuildingTrack,
   type PlanResult,
@@ -128,11 +129,17 @@ export interface SimOptions {
   post?: PostArmy
   /** 全力出兵階段超過這個秒數就放棄（剪枝） */
   postBound?: number
+  /** 聖物與聖地的設定；沒給就不模擬 */
+  holy?: HolySettings
 }
+
+/** 撿聖物、佔聖地的宗教單位候選（依序取第一個目錄裡有的） */
+const RELIGIOUS = ['monk', 'scholar', 'imam', 'shaman', 'prelate', 'buddhist-monk', 'dervish', 'kirkman', 'warrior-monk']
 
 /** 目標後最多模擬多久 */
 const POST_CAP = 15 * 60
-const POST_TYPES = ['barracks', 'archery-range', 'stable']
+// 金朝的馬廄是戰馬廄（war-stable），用來消耗草場的馬
+const POST_TYPES = ['barracks', 'archery-range', 'stable', 'war-stable']
 const SMITHS = ['blacksmith', 'forge']
 
 const FARM_SITE: Site = { id: 'farm', kind: 'berry', label: '農田', amount: Infinity, units: 0, dist: 5, angle: 0.3, contested: false }
@@ -221,6 +228,9 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     ? { s: { id: 'herd', kind: 'sheep', label: spec.herd.label, amount: 0, units: 0, dist: 3, angle: -0.4, contested: false }, res: 'food', left: 0, camp: 2, workers: 0, chopped: 0, raw: spec.herd.raw }
     : null
   if (herd) sites.splice(1, 0, herd)
+  /** 有收入的輔助單位：已有與訓練中的人數 */
+  const supportN = new Map<string, number>()
+  const supportTraining = new Map<string, number>()
   let herdBought = 0
   let herdTraining = 0
   const siteById = new Map(sites.map((x) => [x.s.id, x]))
@@ -250,7 +260,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   // ---------- 條件式修正（spec.triggers）----------
   const itemOfVar = new Map<Variation, CatalogItem>()
   for (const it of items.values()) for (const v of it.variations) itemOfVar.set(v, it)
-  const active: { tr: Trigger; until: number; next: number; count: number; start: number }[] = []
+  const active: { tr: Trigger; until: number; next: number; count: number; start: number; tokens?: number }[] = []
   /** 累計採到的獵物食物（羊、鹿、野豬），與每個里程碑開始計算時的量 */
   let huntDone = 0
   const huntAt = new Map<string, number>()
@@ -281,6 +291,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   }
   const costMulFor = (it: CatalogItem | undefined, id: string, r: Res) => {
     let m = 1
+    // 烏奇總督：科技便宜
+    if (spec.governors && (it?.kind === 'technology' || it?.kind === 'upgrade')) m *= 1 - govState().techCost
     for (const { tr } of active) {
       for (const c of tr.costMul ?? []) {
         if (c.res && !c.res.includes(r)) continue
@@ -299,10 +311,15 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   /** 目錄花費，再套用生效中的花費倍率（新鮮食材、肥沃月彎、知識保存…） */
   const costOf = (v: Variation): Bundle => {
     const c = baseCostOf(v)
-    if (!active.length) return c
+    if (!active.length && !spec.governors) return c
     const it = itemOfVar.get(v)
     if (!it) return c
     for (const r of RES) if (c[r] > 0) c[r] *= costMulFor(it, it.id, r)
+    // 固定減價（蘭開斯特每座莊園讓城堡徵召便宜）
+    for (const { tr } of active) {
+      if (!tr.costMinus || !tr.costMinus.ids.includes(it.id)) continue
+      for (const [r, x] of Object.entries(tr.costMinus.amount)) c[r as Res] = Math.max(0, c[r as Res] - (x ?? 0))
+    }
     return c
   }
   const ageCost = (o: AgeOption): Bundle => {
@@ -326,7 +343,9 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     return n
   }
   const popCap = () => (spec.popModel === 'max' ? 200 : Math.min(200, 10 * tcs() + spec.housePop * houses() + popExtra()))
-  const pop = () => villagers + spec.extraPop + armyPop
+  /** 升級後離開經濟的英雄（貞德）仍佔人口 */
+  let heroPop = 0
+  const pop = () => villagers + spec.extraPop + armyPop + heroPop
   const vilCap = () => (spec.freeVillagers ? spec.freeVillagers.base + spec.freeVillagers.perHouse * houses() : Infinity)
 
   const workerItem = (): CatalogItem | undefined => {
@@ -376,8 +395,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   const zoneBy = new Map((spec.zones ?? []).map((z) => [z.building, z]))
   /** 完成的光環建築：位置（相對城鎮中心）與錨點 */
   const zoneInst: { z: Zone; p: Site; anchor: string }[] = []
-  /** 農田佔地 3×3（推測：花塔 4 格光環約罩 8–10 塊田） */
-  const FARM_AREA = 9
+  /** 農田佔地 2×2（Fandom Farm 頁） */
+  const FARM_AREA = 4
   /** 光環建築的位置：'home' 在城鎮中心與農田之間；採集點則蓋在它靠城鎮中心的一側 */
   const anchorPoint = (anchor: string, half: number) => {
     const x = anchor === 'home' ? null : siteById.get(anchor)
@@ -389,8 +408,9 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   /** 一座光環建築蓋在農田區時，周圍能放幾塊田（8 成面積可用） */
   const farmsIn = (z: Zone) => Math.max(0, Math.floor(((Math.PI * (z.radius + z.half) ** 2 - (2 * z.half) ** 2) * 0.8) / FARM_AREA))
   let zoneVer = 0
-  /** 神職人員是否駐紮在光環建築（亞琛禮拜堂） */
+  /** 神職人員是否駐紮在光環建築（亞琛禮拜堂、西篤會修道院），駐紮在哪一座 */
   let garrisoned = false
+  let garrisonInst: { z: Zone; p: Site; anchor: string } | null = null
   /** 一座光環建築範圍內正在採集的人數 */
   const coveredBy = (i: { z: Zone; p: Site; anchor: string }) => {
     let n = 0
@@ -405,7 +425,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   const zoneMulCache = new Map<SiteSt, number>()
   /** 範圍內的採集倍率：同一種光環建築多座只算一次，不同種相乘；農田依「範圍內田數 / 全部田數」折算 */
   const zoneMul = (x: SiteSt) => {
-    if (!zoneInst.length) return 1
+    if (!zoneInst.length && !matsuriAura) return 1
     const key = zoneVer + ':' + farmsBuilt
     if (key !== zoneCacheKey) {
       zoneMulCache.clear()
@@ -417,7 +437,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     for (const z of spec.zones ?? []) {
       if (z.to || (z.res !== 'all' && z.res !== x.res)) continue
       if (z.farmOnly && x !== farm) continue
-      const inst = zoneInst.filter((i) => i.z === z)
+      const inst = zoneInst.filter((i) => i.z === z && (!z.garrison || i === garrisonInst))
       if (!inst.length || (z.garrison && !garrisoned)) continue
       if (x === farm) {
         const home = inst.filter((i) => i.anchor === 'home').length
@@ -429,6 +449,12 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         const n = inst.filter((i) => siteDistance(i.p, x.s) <= z.radius + z.half + extentOf(x)).length
         if (n) m *= z.stack ? 1 + (z.mul - 1) * n : z.mul
       }
+    }
+    // 祭典光環（戰國屋台商人）：祭典 radius 格內的採集點
+    const tdr = spec.trickles.find((tr) => tr.sources?.trader)?.sources?.trader
+    if (tdr && matsuriAura > 0 && owned(tdr.at)) {
+      const p = buildingPoint(tdr.at)
+      if (x === farm ? siteDistance(p, FARM_SITE) <= tdr.radius : siteDistance(p, x.s) <= tdr.radius + 2 + extentOf(x)) m *= 1 + matsuriAura
     }
     zoneMulCache.set(x, m)
     return m
@@ -836,7 +862,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   }
   const trainTime = () => {
     const it = workerItem()
-    return ((spec.trainTimeByAge?.[age - 1] ?? (it ? variationAt(it, age).time : 20)) * tVillTime) / golden.prod
+    return ((spec.trainTimeByAge?.[age - 1] ?? (it ? variationAt(it, age).time : 20)) * tVillTime) / golden.prod / (1 + (spec.governors ? govState().villagerSpeed : 0))
   }
   const tcIds = new Set([...items.keys()].filter((id) => isTownCenter(data, id)))
   const isTC = (id: string) => tcIds.has(id)
@@ -929,7 +955,18 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     for (const [id, at] of Object.entries(policy.ecoAt)) {
       if (at < 0 || at > cur || researched.has(id) || researching.has(id)) continue
       const it = items.get(id)
-      if (!it || minAge(it) > age || !ecoReady(id)) continue
+      if (!it || minAge(it) > age) continue
+      if (!ecoReady(id)) {
+        // 前置是還沒蓋的建築（村落要塞要主堡、改良科技要敖包）：先把它的花費算進需求
+        const req = spec.civTechs.find((x) => x.id === id)?.requires
+        const b = (Array.isArray(req) ? req : req ? [req] : []).find((x) => isBuildable(data, x) && !blds.some((y) => y.item === x))
+        const bi = b ? items.get(b) : undefined
+        if (bi && minAge(bi) <= age) {
+          const bc = costOf(variationAt(bi, age))
+          for (const r of RES) n[r] += bc[r]
+        }
+        continue
+      }
       const c = costOf(variationAt(it, age))
       for (const r of RES) n[r] += c[r]
     }
@@ -944,6 +981,27 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     }
     if (spec.herd && (policy.herd ?? 0) > herdBought + herdTraining) for (const [r, x] of Object.entries(spec.herd.cost)) n[r as Res] += x ?? 0
     if (spec.officials && (policy.officials ?? 0) > officialsN - spec.officials.start + officialsTraining) for (const [r, x] of Object.entries(spec.officials.cost)) n[r as Res] += x ?? 0
+    for (const su of spec.support ?? []) {
+      if (Math.min(su.max, policy.support?.[su.unit] ?? 0) <= (supportN.get(su.unit) ?? 0) + (supportTraining.get(su.unit) ?? 0)) continue
+      if (su.requires && !owned(su.requires) && !researched.has(su.requires)) continue
+      const it = items.get(su.unit)
+      if (it && minAge(it) <= age) {
+        const c = costOf(variationAt(it, age))
+        for (const r of RES) n[r] += c[r]
+      }
+    }
+    // 聖物與聖地：修道院類建築、宗教單位
+    if (holy && relUnit && relHome && ((policy.relics ?? 0) > relicsHeld || (policy.sites ?? 0) > sitesHeld) && age >= (spec.sanctity ? spec.sanctity.fromAge : 3)) {
+      const hb = items.get(relHome)
+      if (hb && !hasRelProducer() && minAge(hb) <= age) {
+        const c = costOf(variationAt(hb, age))
+        for (const r of RES) n[r] += c[r]
+      }
+      if (monks + monkTraining === 0 && minAge(relUnit) <= age) {
+        const c = costOf(variationAt(relUnit, age))
+        for (const r of RES) n[r] += c[r]
+      }
+    }
     // 還要訓練的學者（與清真寺）
     if (spec.scholars && (policy.scholars ?? 0) > scholarsN + scholarsTraining) {
       const unit = items.get(spec.scholars.unit)
@@ -1173,9 +1231,16 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       angle = ap.angle
     }
     const v = variationAt(it, Math.max(age, minAge(it)))
-    const cost = role === 'step' && ageTo ? ageCost(ageOption(steps[step])!) : costOf(v)
+    let cost = role === 'step' && ageTo ? ageCost(ageOption(steps[step])!) : costOf(v)
+    // 建築車（金帳）：軍事生產建築免費、15 秒展開
+    const cart = role === 'prod' && cartTokens > 0
+    if (cart) {
+      cartTokens--
+      cost = zero()
+    }
     pay(cost)
-    const b = addBld({ item, step, role, done: false, progress: 0, total: buildTimeOf(item, v), builders: 0, at, angle: angle ?? (uid * 2.39996) % (Math.PI * 2), job: null, ageTo, anchor })
+    if (role === 'prod') addMilSpend(cost)
+    const b = addBld({ item, step, role, done: false, progress: 0, total: cart ? 15 : buildTimeOf(item, v), builders: 0, at, angle: angle ?? (uid * 2.39996) % (Math.PI * 2), job: null, ageTo, anchor })
     const got = takeBuilders(builders, b)
     log('place', `蓋${name(item)}（${got} 人）`, item, cost)
     return b
@@ -1350,7 +1415,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         const ps = idleProducers([sid])
         if (ps.length && affordable(costOf(v))) {
           pay(costOf(v))
-          ps[0].job = { kind: 'tech', item: tech.id, ...supervise(ps[0], researchTime(v.time) * prodMods(ps[0].item).research), count: 1, step: -2 }
+          ps[0].job = { kind: 'tech', item: tech.id, ...supervise(ps[0], researchTime(v.time) * prodMods(ps[0].item, undefined, ps[0]).research), count: 1, step: -2 }
           researching.add(tech.id)
           postResearching++
           log('research', `研究${name(tech.id)}`, tech.id, costOf(v))
@@ -1374,16 +1439,20 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       if (!u) continue
       const v = variationAt(u, age)
       const ub = unitBatch(u.id, v)
-      const pm = prodMods(b.item, u)
+      const pm = prodMods(b.item, u, b)
       const c = costOf(v)
-      for (const r of RES) c[r] *= ub.size * pm.cost
+      for (const r of RES) c[r] *= ub.size * pm.cost[r]
+      const horse = !!spec.horses && horses >= 1 && spec.horses.at.includes(b.item) && v.cls.includes(spec.horses.cls)
+      if (horse) for (const [r, x] of Object.entries(spec.horses!.discount)) c[r as Res] = Math.max(0, c[r as Res] - (x ?? 0))
       const withUp = zero()
       for (const r of RES) withUp[r] = c[r] + keepUp[r]
       if (!affordable(withUp) || !hasOther(otherOf(v), ub.size) || cpop() + v.pop * ub.size + villRoom > popCap()) continue
       pay(c)
+      addMilSpend(c)
       payOther(otherOf(v), ub.size)
       postQueued += ub.size
-      b.job = { kind: 'unit', item: u.id, ...supervise(b, ub.time * pm.time), count: ub.size, step: -2, pop: v.pop * ub.size, dur: ub.time * pm.time }
+      if (horse) horses -= 1
+      b.job = { kind: 'unit', item: u.id, ...(horse ? { end: t, supervised: false } : supervise(b, ub.time * pm.time)), count: ub.size, step: -2, pop: v.pop * ub.size, dur: ub.time * pm.time }
       armyPop += v.pop * ub.size
       log('train', `訓練${name(u.id)}`, u.id, c)
     }
@@ -1465,13 +1534,18 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
           const q = queued.get(cur) ?? 0
           // 免費送的單位也算進這個目標
           if (q + (freeUnits.get(st.item) ?? 0) >= st.count) break
-          const pm = prodMods(b.item, it)
+          const pm = prodMods(b.item, it, b)
           const c = costOf(v)
-          for (const r of RES) c[r] *= batch * pm.cost
+          for (const r of RES) c[r] *= batch * pm.cost[r]
+          // 金朝：用掉 1 匹馬，立刻出兵、便宜一點
+          const horse = !!spec.horses && horses >= 1 && spec.horses.at.includes(b.item) && v.cls.includes(spec.horses.cls)
+          if (horse) for (const [r, x] of Object.entries(spec.horses!.discount)) c[r as Res] = Math.max(0, c[r as Res] - (x ?? 0))
           if (!affordable(c) || !hasOther(otherOf(v), batch) || cpop() + v.pop * batch + villRoom > popCap()) break
           pay(c)
+          addMilSpend(c)
           payOther(otherOf(v), batch)
-          b.job = { kind: 'unit', item: st.item, ...supervise(b, ub.time * pm.time), count: batch, step: cur, pop: v.pop * batch, dur: ub.time * pm.time }
+          if (horse) horses -= 1
+          b.job = { kind: 'unit', item: st.item, ...(horse ? { end: t, supervised: false } : supervise(b, ub.time * pm.time)), count: batch, step: cur, pop: v.pop * batch, dur: ub.time * pm.time }
           armyPop += v.pop * batch
           queued.set(cur, q + batch)
           log('train', `訓練${name(st.item)}`, st.item, c)
@@ -1485,7 +1559,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         if (ps.length && affordable(costOf(v)) && hasOther(otherOf(v))) {
           pay(costOf(v))
           payOther(otherOf(v))
-          ps[0].job = { kind: 'tech', item: st.item, ...supervise(ps[0], researchTime(v.time) * prodMods(ps[0].item).research), count: 1, step: cur }
+          ps[0].job = { kind: 'tech', item: st.item, ...supervise(ps[0], researchTime(v.time) * prodMods(ps[0].item, undefined, ps[0]).research), count: 1, step: cur }
           researching.add(st.item)
           log('research', `研究${name(st.item)}`, st.item, costOf(v))
           advanced = true
@@ -1513,11 +1587,17 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
 
     // 3b. 被動收入建築：搜尋決定從第幾步開始、蓋幾座
     for (const tr of spec.trickles) {
-      const want = Math.min(tr.max, policy.trickle?.[tr.building]?.count ?? 0)
+      const want = Math.min(tr.max, tr.maxByAge?.[age - 1] ?? Infinity, policy.trickle?.[tr.building]?.count ?? 0)
       if (want <= 0 || (policy.trickle[tr.building].at ?? 0) > cur) continue
       const it = items.get(tr.building)
       if (!it || minAge(it) > age || !trickleBuildable(it, tr)) continue
       if (blds.filter((b) => b.item === tr.building).length >= want) continue
+      // 前置建築（屋台要祭典）：還沒有就先蓋
+      if (tr.requires && !blds.some((b) => b.item === tr.requires)) {
+        const ri = items.get(tr.requires)
+        if (ri && minAge(ri) <= age && affordable(costOf(variationAt(ri, age)))) place(tr.requires, 'econ', -1, 1, 8)
+        continue
+      }
       const v = variationAt(it, age)
       if (affordable(costOf(v)) && hasOther(otherOf(v))) {
         payOther(otherOf(v))
@@ -1555,7 +1635,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       if (!ps.length || !affordable(costOf(v)) || !hasOther(otherOf(v))) continue
       pay(costOf(v))
       payOther(otherOf(v))
-      ps[0].job = { kind: 'tech', item: id, ...supervise(ps[0], researchTime(v.time) * prodMods(ps[0].item).research), count: 1, step: -1 }
+      ps[0].job = { kind: 'tech', item: id, ...supervise(ps[0], researchTime(v.time) * prodMods(ps[0].item, undefined, ps[0]).research), count: 1, step: -1 }
       researching.add(id)
       log('research', `研究${name(id)}`, id, costOf(v))
     }
@@ -1583,12 +1663,14 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         for (const b of idleProducers(sc.at)) {
           if ((policy.scholars ?? 0) <= scholarsN + scholarsTraining) break
           const villRoom = producingVills() ? batchSize : 0
-          if (!affordable(costOf(v)) || cpop() + v.pop + villRoom > popCap()) break
-          pay(costOf(v))
+          // 依訓練建築不同的價格（德里信仰圓頂 80 黃金）
+          const sCost = sc.costAt?.[b.item] ? ({ ...zero(), ...sc.costAt[b.item] } as Bundle) : costOf(v)
+          if (!affordable(sCost) || cpop() + v.pop + villRoom > popCap()) continue
+          pay(sCost)
           b.job = { kind: 'unit', item: sc.unit, end: t + v.time, count: 1, step: -3, pop: v.pop, dur: v.time }
           armyPop += v.pop
           scholarsTraining++
-          log('train', `訓練${name(sc.unit)}（駐紮加速研究）`, sc.unit, costOf(v))
+          log('train', `訓練${name(sc.unit)}（駐紮加速研究）`, sc.unit, sCost)
         }
       }
     }
@@ -1619,6 +1701,27 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       }
     }
 
+    // 4f. 有收入的輔助單位（教士、僧侶）
+    for (const su of spec.support ?? []) {
+      const cap = su.maxFrom ? Math.min(su.max, su.maxFrom.base + su.maxFrom.per.filter((id) => owned(id)).length) : su.max
+      const want = Math.min(cap, policy.support?.[su.unit] ?? 0)
+      if (want <= (supportN.get(su.unit) ?? 0) + (supportTraining.get(su.unit) ?? 0)) continue
+      if (su.requires && !owned(su.requires) && !researched.has(su.requires)) continue
+      const it = items.get(su.unit)
+      if (!it || minAge(it) > age) continue
+      const v = variationAt(it, age)
+      const villRoom = producingVills() ? batchSize : 0
+      for (const b of idleProducers(su.at)) {
+        if (want <= (supportN.get(su.unit) ?? 0) + (supportTraining.get(su.unit) ?? 0)) break
+        if (!affordable(costOf(v)) || cpop() + v.pop + villRoom > popCap()) break
+        pay(costOf(v))
+        b.job = { kind: 'unit', item: su.unit, end: t + v.time, count: 1, step: -6, pop: v.pop, dur: v.time }
+        armyPop += v.pop
+        supportTraining.set(su.unit, (supportTraining.get(su.unit) ?? 0) + 1)
+        log('train', `訓練${name(su.unit)}（收入）`, su.unit, costOf(v))
+      }
+    }
+
     // 5. 村民生產：上一名一完成就接著排（保留小數秒）
     if (producingVills() && t >= spec.tcStartDelay) {
       for (const b of idleProducers([...tcIds])) {
@@ -1628,11 +1731,20 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         const choice = workerChoices().find((w) => affordableRaw(w.cost))
         if (!choice) break
         pay(choice.cost)
+        // 雙倍生產（蒙古敖包範圍內）：多付石頭，一格出兩倍
+        const dp = spec.doubleProduce
+        let count = batchSize
+        const cost = { ...choice.cost }
+        if (dp && policy.double && owned(dp.requires) && bank.stone >= dp.stone && cp + 2 * batchSize <= popCap() && cp + 2 * batchSize <= villagerPopLimit() && villagers + training() + 2 * batchSize <= vilCap()) {
+          bank.stone -= dp.stone
+          cost.stone += dp.stone
+          count = 2 * batchSize
+        }
         const start = b.lastEnd != null && b.lastEnd > t - 1 ? b.lastEnd : t
         // 先前有閒置時，補上整數秒沒算到的那一點點
         if (b.idleTicks && b.lastEnd != null) tcIdle += Math.max(0, t - b.lastEnd - b.idleTicks)
         b.idleTicks = 0
-        b.job = { kind: 'vill', item: choice.item.id, end: start + choice.time, count: batchSize, step: -1, cost: choice.cost }
+        b.job = { kind: 'vill', item: choice.item.id, end: start + choice.time, count, step: -1, cost }
       }
     }
   }
@@ -1645,7 +1757,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       const v = variationAt(it, age)
       const cost = spec.freeVillagers ? zero() : costOf(v)
       for (const r of RES) cost[r] *= batchSize
-      out.push({ item: it, cost, time: ((spec.trainTimeByAge?.[age - 1] ?? v.time) * tVillTime) / golden.prod })
+      out.push({ item: it, cost, time: ((spec.trainTimeByAge?.[age - 1] ?? v.time) * tVillTime) / golden.prod / (1 + (spec.governors ? govState().villagerSpeed : 0)) })
     }
     add(workerItem())
     if (spec.fallbackWorker) add(items.get(spec.fallbackWorker))
@@ -1694,6 +1806,66 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   }
 
   // ---------- 完成事件 ----------
+  /** 只生效一次的觸發（minCount）、建築車、累計採到的特殊資源 */
+  const onceDone = new Set<Trigger>()
+  let cartTokens = 0
+  const specialGathered: Record<string, number> = {}
+  /** 圖格魯克總督：每秒算一次各位總督的等級與效果 */
+  let govCache: { t: number; count: number; villagerSpeed: number; techCost: number; food: number; stone: number } | null = null
+  const govState = () => {
+    if (govCache && govCache.t === t) return govCache
+    const out = { t, count: 0, villagerSpeed: 0, techCost: 0, food: 0, stone: 0 }
+    const gv = spec.governors
+    if (gv) {
+      const forts = blds.filter((b) => b.done && b.item === gv.fort)
+      const used = new Set<string>()
+      forts.forEach((_f, i) => {
+        const key = policy.governors?.[i]
+        const o = key ? gv.options[key] : undefined
+        if (!o || used.has(key!)) return
+        used.add(key!)
+        out.count++
+        let lv = 1 + gv.upgrades.filter((u) => (repeatDone.get(u) ?? (researched.has(u) ? 1 : 0)) > i).length
+        if (lv >= 4 && gv.level4Requires && !owned(gv.level4Requires)) lv = 3
+        const L = Math.min(4, lv) - 1
+        out.villagerSpeed += o.villagerSpeed?.[L] ?? 0
+        out.techCost += o.techCost?.[L] ?? 0
+        if (o.perBuilding) {
+          // 要塞旁 radius 格內的農田與房屋（假設要塞蓋在家附近）：能放的數量照 2×2 佔地估
+          const cap = Math.floor(((Math.PI * (o.radius ?? 6) ** 2 - 16) * 0.8) / 4)
+          const nb = Math.min(cap, farmsBuilt + houses())
+          const food = o.perBuilding[L] * nb
+          out.food += food
+          if (L === 3) out.stone += food * (o.stonePct4 ?? 0)
+        }
+      })
+    }
+    govCache = out
+    return out
+  }
+  /** 冥想花園：建築位置與增量進度 */
+  const bountyAt: { tr: Trigger; p: Site; next: number; count: number }[] = []
+  /** 某建築目前的位置（找最後一座完成的） */
+  const buildingPoint = (id: string): Site => {
+    const b = [...blds].reverse().find((x) => x.item === id)
+    return { ...FARM_SITE, dist: b?.at ?? 6, angle: b?.angle ?? FARM_SITE.angle }
+  }
+  /** 江南塔：累積的軍事花費與已送的軍隊數 */
+  let milSpent = 0
+  let spendArmies = 0
+  const addMilSpend = (c: Bundle) => {
+    milSpent += RES.reduce((a, r) => a + c[r], 0)
+    for (const { tr } of active) {
+      const sa = tr.spendArmy
+      if (!sa || spendArmies >= sa.max) continue
+      const need = Math.min(sa.cap, sa.first + sa.step * spendArmies)
+      if (milSpent >= need) {
+        milSpent -= need
+        spendArmies++
+        grantUnits(sa.units, tr.on)
+      }
+    }
+  }
   /** 免費送的單位：算進已訓練、人口，目標後出兵階段也算進出兵數 */
   const freeUnits = new Map<string, number>()
   const grantUnits = (u: Record<string, number> | undefined, from: string) => {
@@ -1715,19 +1887,25 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     }
   }
   /** 生產與研究修正（堡伯宮、騎兵學校、華萊士號召…） */
-  const prodMods = (at: string, unit?: CatalogItem) => {
+  const prodMods = (at: string, unit?: CatalogItem, bld?: Bld) => {
     let time = 1
-    let cost = 1
+    const cost: Bundle = { food: 1, wood: 1, gold: 1, stone: 1 }
     let research = 1
     const cls = unit ? variationAt(unit, Math.max(age, minAge(unit))).cls : []
     for (const { tr } of active) {
       for (const pm of tr.prod ?? []) {
         if (pm.at && !pm.at.includes(at)) continue
+        if (pm.needScholar && scholarsN < 1) continue
+        // 只套用到最早蓋好的那一棟（艾爾斯修道院的聖物）
+        if (pm.single) {
+          const first = blds.find((b) => b.done && (!pm.at || pm.at.includes(b.item)))
+          if (!bld || first !== bld) continue
+        }
         if (unit) {
           if (pm.units && !pm.units.includes(unit.id)) continue
           if (pm.cls && !cls.includes(pm.cls)) continue
           time *= (pm.time ?? 1) * (pm.timeByAge?.[age - 1] ?? 1)
-          cost *= pm.cost ?? 1
+          for (const r of RES) if (!pm.costRes || pm.costRes.includes(r)) cost[r] *= pm.cost ?? 1
         } else if (!pm.units && !pm.cls) research *= pm.research ?? 1
       }
     }
@@ -1749,8 +1927,25 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       if (!pay) return
       bank[pay] -= g.payFlex
     }
+    // 兌換（羅斯金門）：缺黃金時賣多出來的食物／木材／石頭，黃金多時買最缺的
+    if (g.exchange) {
+      const n = need()
+      const want = flexRes()
+      if (want === 'gold') {
+        const pay = (['food', 'wood', 'stone'] as Res[]).filter((r) => bank[r] - 100 >= n[r]).sort((a, b) => bank[b] - n[b] - (bank[a] - n[a]))[0]
+        if (pay) {
+          bank[pay] -= 100
+          bank.gold += 150
+          incomeAcc.gold += 50
+        }
+      } else if (bank.gold - 100 >= n.gold) {
+        bank.gold -= 100
+        bank[want] += 150
+        incomeAcc[want] += 50
+      }
+    }
     for (const [k, x] of Object.entries(g)) {
-      if (!x || k === 'payFlex') continue
+      if (!x || k === 'payFlex' || k === 'exchange') continue
       if (k === 'farms') {
         for (let i = 0; i < x; i++) {
           addBld({ item: spec.farm.id, step: -1, role: 'farm', done: true, progress: 0, total: 0, builders: 0, at: 5, angle: 0.3 + farmsBuilt * 0.2, job: null })
@@ -1803,6 +1998,10 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     let changed = false
     for (const tr of spec.triggers) {
       if (tr.on !== id || (tr.fromAge != null && tr.fromAge !== age)) continue
+      if (tr.minCount) {
+        if (onceDone.has(tr) || blds.filter((b) => b.done && b.item === id).length < tr.minCount) continue
+        onceDone.add(tr)
+      }
       if (tr.replaces) {
         for (let i = active.length - 1; i >= 0; i--) if (tr.replaces.includes(active[i].tr.on)) active.splice(i, 1)
       }
@@ -1811,6 +2010,19 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       for (const x of tr.alsoApply ?? []) applyTech(x)
       applyGrant(tr.grant, id)
       grantUnits(tr.units, id)
+      if (tr.freeBuildings) {
+        cartTokens += tr.freeBuildings
+        log('note', `${name(id)}：${tr.freeBuildings} 輛建築車（免費軍事建築）`)
+      }
+      if (tr.actsAsTC) {
+        tcIds.add(tr.actsAsTC)
+        log('note', `${name(tr.actsAsTC)}可以訓練村民`)
+      }
+      if (tr.bounty) bountyAt.push({ tr, p: buildingPoint(id), next: t, count: 0 })
+      if (tr.freeUpgrades) {
+        postUpgrades += tr.freeUpgrades
+        log('note', `${name(id)}免費完成 ${tr.freeUpgrades} 項鐵匠升級`)
+      }
       if (tr.site) addSite(tr.site)
       if (tr.villagers) {
         villagers += tr.villagers
@@ -1866,6 +2078,34 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
 
   /** 鄂圖曼維齊爾經驗：每達到一個門檻得 1 點 vizier（門檻每點分開算） */
   const repeatDone = new Map<string, number>()
+  /** 聖物與聖地：宗教單位、手上的任務、已拿到的數量 */
+  const holy = opts.holy
+  const relUnit = RELIGIOUS.map((id) => items.get(id)).find((u) => !!u)
+  // 訓練宗教單位的建築：城鎮中心不能停村民，所以不算；已經有能訓練的地標（雷格尼茨大教堂、信仰圓頂）就直接用，否則蓋 relHome（修道院類）
+  const relProducers = relUnit ? variationAt(relUnit, 4).producedBy.filter((p) => !p.includes('town-center')) : []
+  const relHome = relProducers.find((p) => {
+    const it = items.get(p)
+    return !!it && isBuildable(data, p) && !isLandmark(it)
+  })
+  const hasRelProducer = () => blds.some((b) => relProducers.includes(b.item))
+  let monks = 0
+  let monkTraining = 0
+  let monkBusyUntil = 0
+  let monkTask: 'site' | 'relic' | null = null
+  let relicsHeld = 0
+  let sitesHeld = 0
+  /** 金帳詔令、金朝的馬 */
+  let edictOn: string | null = null
+  let heroXp = 0
+  let heroLeft = false
+  let horses = 0
+  /** 業力、慶典、屋台商人與祭典光環的狀態 */
+  let karma: number | null = null
+  let karmaUntil = 0
+  let festNext = 0
+  let yataiFood = 0
+  let matsuriAura = 0
+  const unitAcc: Record<string, number> = {}
   const stock: Record<string, { acc: number; since: number; nextTick: number }> = {}
   let vizierXp = 0
   let vizierEarned = 0
@@ -1888,6 +2128,14 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     age = a
     ageTimes[a] = t
     if (spec.vizier) addVizierXp(spec.vizier.age[a] ?? 0)
+    // 建築車：之後每升一個時代再給
+    for (const { tr } of active) {
+      const n = tr.freeBuildingsByAge?.[a]
+      if (n) {
+        cartTokens += n
+        log('note', `升代：再 ${n} 輛建築車`)
+      }
+    }
     log('age', `進入${['', '黑暗', '封建', '城堡', '帝王'][a]}時代（${name(via)}）`, via)
   }
 
@@ -1907,6 +2155,12 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     }
     if (b.role === 'farm') {
       farmsBuilt++
+      // 田野之石：農田（橄欖園 2×2）也返還石頭
+      if (spec.buildRefund) {
+        const amt = spec.buildRefund.byId[b.item] ?? spec.buildRefund.other
+        bank[spec.buildRefund.res] += amt
+        incomeAcc[spec.buildRefund.res] += amt
+      }
       return
     }
     if (b.role === 'camp' && b.siteId) {
@@ -2024,6 +2278,12 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         herdTraining--
         herdBought++
         herd.left += spec.herd.food
+      } else if (j.kind === 'unit' && j.step === -7) {
+        monkTraining--
+        monks++
+      } else if (j.kind === 'unit' && j.step === -6) {
+        supportTraining.set(j.item, (supportTraining.get(j.item) ?? 1) - 1)
+        supportN.set(j.item, (supportN.get(j.item) ?? 0) + 1)
       } else if (j.kind === 'unit' && j.step === -5) {
         officialsTraining--
         officialsN++
@@ -2031,7 +2291,22 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         scholarsTraining--
         scholarsN += j.count
         log('note', `${name(j.item)}駐紮，研究時間 ×${scholarMul().toFixed(2)}`)
+      } else if (j.kind === 'unit' && spec.bundles?.[j.item]) {
+        // 營隊（溫格德宮殿）：給裡面的各種單位
+        trained.set(j.item, (trained.get(j.item) ?? 0) + j.count)
+        const bun = spec.bundles[j.item]
+        let total = 0
+        for (const [id, n] of Object.entries(bun)) {
+          trained.set(id, (trained.get(id) ?? 0) + n * j.count)
+          total += n * j.count
+          if (j.step === -2) postMix[id] = (postMix[id] ?? 0) + n * j.count
+        }
+        armyCount += total
+        if (j.step === -2) postUnits += total
       } else if (j.kind === 'unit') {
+        // 哈剌沙詔令：軍事建築每訓練一次另外送 1 名
+        const bu = edictOn ? spec.edicts?.options[edictOn]?.bonusUnit : undefined
+        if (bu && (j.step >= 0 || j.step === -2) && !isTC(b.item)) grantUnits({ [bu]: 1 }, b.item)
         trained.set(j.item, (trained.get(j.item) ?? 0) + j.count)
         armyCount += j.count
         if (j.step === -2) {
@@ -2079,15 +2354,23 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       inspireSite = null
       for (const x of sites) if (x.workers > 0 && (!inspireSite || x.workers > inspireSite.workers)) inspireSite = x
       // 神職人員駐紮光環建築（亞琛禮拜堂）罩到的人比在外激勵多時就駐紮，在外的激勵停止
-      const g = zoneInst.find((i) => i.z.garrison)
-      let on = false
-      if (g) {
-        const inField = inspireSite ? Math.min(spec.inspire.villagers, inspireSite.workers) : 0
-        on = coveredBy(g) > inField
-        if (on) inspireSite = null
+      // 只有一名神職人員：在所有能駐紮的建築（亞琛禮拜堂、西篤會修道院）裡挑罩到最多人的
+      let g: (typeof zoneInst)[number] | null = null
+      let gc = 0
+      for (const i of zoneInst) {
+        if (!i.z.garrison || (i.z.requires && !fired.has(i.z.requires) && !owned(i.z.requires))) continue
+        const c = coveredBy(i)
+        if (c > gc) {
+          g = i
+          gc = c
+        }
       }
-      if (on !== garrisoned) {
-        garrisoned = on
+      const inField = inspireSite ? Math.min(spec.inspire.villagers, inspireSite.workers) : 0
+      const target = g && gc > inField ? g : null
+      if (target) inspireSite = null
+      if (target !== garrisonInst) {
+        garrisonInst = target
+        garrisoned = !!target
         zoneVer++
       }
     }
@@ -2112,6 +2395,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         if (!hit) continue
         if (bp.requires && !owned(bp.requires)) continue
         addRes(bp.to, amt * bp.ratio * specialMul(x, bp.to))
+        if (!(RES as string[]).includes(bp.to)) specialGathered[bp.to] = (specialGathered[bp.to] ?? 0) + amt * bp.ratio * specialMul(x, bp.to)
       }
       if (spec.depositBonus && spec.depositBonus.res.includes(x.res)) bank[x.res] += amt * (spec.depositBonus.mul - 1)
       if ((x.s.kind === 'deer' || x.s.kind === 'boar' || x === sheep) && spec.huntGold) bank.gold += amt * spec.huntGold
@@ -2135,9 +2419,24 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     for (const a of active) {
       if (!a.tr.every || t < a.next) continue
       applyGrant(a.tr.times == null || a.count < a.tr.times ? a.tr.each : a.tr.after, a.tr.on)
-      if (a.tr.times == null || a.count < a.tr.times) grantUnits(a.tr.eachUnits, a.tr.on)
+      if (a.tr.times == null || a.count < a.tr.times) {
+        if (a.tr.eachCost) a.tokens = (a.tokens ?? 0) + 1
+        else grantUnits(a.tr.eachUnitsByAge?.[age] ?? a.tr.eachUnits, a.tr.on)
+      }
       a.count++
       a.next += a.tr.every
+    }
+    // 存起來的徵召次數（克里姆林宮）：付得起就用
+    for (const a of active) {
+      if (!a.tokens || !a.tr.eachCost) continue
+      const c = { ...zero(), ...a.tr.eachCost } as Bundle
+      const u = a.tr.eachUnitsByAge?.[age] ?? a.tr.eachUnits
+      const popNeed = Object.entries(u ?? {}).reduce((s, [id, n]) => s + (items.get(id) ? variationAt(items.get(id)!, Math.max(age, minAge(items.get(id)!))).pop : 1) * n, 0)
+      while (a.tokens > 0 && affordable(c) && cpop() + popNeed <= popCap()) {
+        pay(c)
+        a.tokens--
+        grantUnits(u, a.tr.on)
+      }
     }
     for (const x of sites) {
       if (x.regrowAt != null && t >= x.regrowAt) {
@@ -2154,10 +2453,18 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         gain[key] = (gain[key] ?? 0) + perSec
       }
       if (tr.perTechIncome) for (const [k, x] of Object.entries(tr.perTechIncome)) add(k, ((x ?? 0) * researched.size) / 60)
+      if (tr.incomePerMin) for (const [k, x] of Object.entries(tr.incomePerMin)) add(k, (x ?? 0) / 60)
       if (tr.rampIncome) {
         const since = t - a.start
         const n = Math.min(tr.rampIncome.max, 1 + Math.floor(since / tr.rampIncome.every))
         for (const [k, x] of Object.entries(tr.rampIncome.perMin)) add(k, ((x ?? 0) * n) / 60)
+        // 依資源不同的收入（浮鳥居依代：農舍食物、伐木場木材 70，鍛造場黃金 50）：放在當下最缺的那種
+        const fr = tr.rampIncome.flexRates
+        if (fr) {
+          const nd = need()
+          const r = (Object.keys(fr) as Res[]).sort((p, q) => nd[q] - bank[q] - (nd[p] - bank[p]))[0]
+          add(r, ((fr[r] ?? 0) * n) / 60)
+        }
       }
       if (tr.unitIncome) {
         const n = trained.get(tr.unitIncome.unit) ?? 0
@@ -2194,11 +2501,167 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         stock[a.tr.on] = { acc: 0, since: t, nextTick: t + sp.tick }
       }
     }
+    // 聖物與聖地
+    if (holy && relUnit && relHome) {
+      const wantSites = Math.min(holy.sites, policy.sites ?? 0)
+      const wantRelics = Math.min(holy.relics, policy.relics ?? 0)
+      const sc = spec.sanctity
+      const canSites = age >= 3 || (!!sc && age >= sc.fromAge && researched.has(sc.tech))
+      const canRelics = age >= 3
+      // 任務完成
+      if (monkTask && t >= monkBusyUntil) {
+        if (monkTask === 'site') {
+          sitesHeld++
+          log('note', `佔領聖地（第 ${sitesHeld} 個）`)
+        } else {
+          relicsHeld++
+          log('note', `聖物送回（第 ${relicsHeld} 個）`)
+        }
+        monkTask = null
+      }
+      const more = (canSites && sitesHeld + (monkTask === 'site' ? 1 : 0) < wantSites) || (canRelics && relicsHeld + (monkTask === 'relic' ? 1 : 0) < wantRelics)
+      if (more) {
+        const hb = items.get(relHome)
+        if (!hasRelProducer()) {
+          if (hb && minAge(hb) <= age && affordable(costOf(variationAt(hb, age)))) place(relHome, 'econ', -1, 1, 8)
+        } else if (monks + monkTraining === 0) {
+          const v = variationAt(relUnit, Math.max(age, minAge(relUnit)))
+          const villRoom = producingVills() ? batchSize : 0
+          for (const b of idleProducers(relProducers)) {
+            if (minAge(relUnit) > age || !affordable(costOf(v)) || cpop() + v.pop + villRoom > popCap()) break
+            pay(costOf(v))
+            b.job = { kind: 'unit', item: relUnit.id, end: t + v.time, count: 1, step: -7, pop: v.pop, dur: v.time }
+            armyPop += v.pop
+            monkTraining++
+            log('train', `訓練${name(relUnit.id)}（聖物、聖地）`, relUnit.id, costOf(v))
+            break
+          }
+        } else if (monks > 0 && !monkTask) {
+          const spd = variationAt(relUnit, Math.max(age, minAge(relUnit))).speed ?? 1.125
+          if (canSites && sitesHeld < wantSites) {
+            monkTask = 'site'
+            monkBusyUntil = t + holy.siteDist / spd + 30
+          } else if (canRelics && relicsHeld < wantRelics) {
+            // 走過去、帶著聖物走回來（帶聖物時約 0.8 倍速，Fandom 教士 1.12 → 0.9）
+            monkTask = 'relic'
+            monkBusyUntil = t + holy.relicDist / spd + holy.relicDist / (spd * 0.8)
+          }
+        }
+      }
+      // 寶塔（元朝）：有聖物就蓋，最多 max 座
+      const pg = spec.relicPagoda
+      if (pg && fired.has(pg.requires) && relicsHeld > blds.filter((b) => b.item === pg.building).length && blds.filter((b) => b.item === pg.building).length < pg.max) {
+        const pit = items.get(pg.building)
+        if (pit && affordable(costOf(variationAt(pit, age)))) place(pg.building, 'econ', -1, 1, 8)
+      }
+      // 收入
+      if (relicsHeld || sitesHeld) {
+        const pagodas = pg && fired.has(pg.requires) ? Math.min(relicsHeld, pg.max, blds.filter((b) => b.done && b.item === pg.building).length) : 0
+        const inMon = relicsHeld - pagodas
+        let gold = inMon * 80
+        for (const rm of spec.relicMul ?? []) if (owned(rm.building)) gold *= rm.mul
+        const inc: Bundle = { food: 0, wood: 0, gold, stone: 0 }
+        if (researched.has('tithe-barns')) {
+          inc.food += 40 * inMon
+          inc.wood += 40 * inMon
+          inc.stone += 10 * inMon
+        }
+        if (pg) for (const [k, x] of Object.entries(pg.perMin)) inc[k as Res] += (x ?? 0) * pagodas
+        inc.gold += sitesHeld * 100 * (sc && researched.has(sc.tech) ? sc.siteMul : 1)
+        for (const r of RES) {
+          bank[r] += inc[r] / 60
+          incomeAcc[r] += inc[r] / 60
+        }
+      }
+    }
+    // 貸款（聖殿騎士團匯票）：缺黃金、食物真的有多時借一筆
+    const ln = spec.loans
+    if (ln && researched.has(ln.requires) && !active.some((a) => a.tr.on === 'loan') && flexRes() === 'gold') {
+      const nd = need()
+      const o = [...ln.options].sort((a, b) => b.food - a.food).find((x) => bank.food - x.food >= nd.food)
+      if (o) {
+        bank.food -= o.food
+        active.push({ tr: { on: 'loan', incomePerMin: { gold: o.perSec * 60 } }, until: t + o.duration, next: Infinity, count: 0, start: t })
+        log('research', `朝聖者貸款：付 ${o.food} 食物，${o.duration} 秒內每秒 ${o.perSec} 黃金`, undefined, { food: o.food, wood: 0, gold: 0, stone: 0 })
+      }
+    }
+    // 英雄（聖女貞德）：累積經驗，升級後離開經濟
+    const hr = spec.hero
+    if (hr && !heroLeft) {
+      heroXp += hr.xpPassive + ((workerCount.get(hr.worker) ?? 0) > 0 ? hr.xpWork : 0)
+      if (heroXp >= hr.levelUp) {
+        heroLeft = true
+        workerCount.set(hr.worker, Math.max(0, (workerCount.get(hr.worker) ?? 0) - 1))
+        villagers = Math.max(0, villagers - 1)
+        heroPop = 1
+        // 從採集點拿走一人（挑最慢的點）
+        const x = sites.filter((y) => y.workers > 0).sort((a, b) => effRate(a) - effRate(b))[0]
+        if (x) x.workers--
+        refreshWorkers()
+        log('note', `${name(hr.worker)}經驗 ${hr.levelUp}，升 2 級後離開經濟`)
+        fire(hr.on)
+      }
+    }
+    // 巴克爾總督：要塞旁農田與房屋產食物（第 4 級另給石頭）
+    if (spec.governors) {
+      const g = govState()
+      bank.food += g.food / 60
+      incomeAcc.food += g.food / 60
+      bank.stone += g.stone / 60
+      incomeAcc.stone += g.stone / 60
+    }
+    // 詔令（金帳）：有前哨、選項已解鎖時生效（一次一種）
+    const ed = spec.edicts
+    if (ed && policy.edict && !edictOn) {
+      const o = ed.options[policy.edict]
+      if (o && owned(ed.requires) && (!o.requires || researched.has(o.requires))) {
+        active.push({ tr: { on: 'edict:' + policy.edict, prod: o.prod, farmerIncome: o.farmerIncome }, until: Infinity, next: Infinity, count: 0, start: t })
+        recomputeTriggers()
+        edictOn = policy.edict
+        log('note', `發布${o.label}`)
+      }
+    }
+    // 草場產馬（金朝）
+    const hs = spec.horses
+    if (hs) {
+      const n = blds.filter((b) => b.done && b.item === hs.building).length
+      const every = hs.every[age - 1]
+      if (n && every) horses = Math.min(n * hs.max, horses + n / every)
+    }
+    // 輔助單位收入（教士魚池、禪之後的僧侶）
+    for (const su of spec.support ?? []) {
+      const n = supportN.get(su.unit) ?? 0
+      if (!n || (su.requires && !owned(su.requires) && !researched.has(su.requires))) continue
+      for (const [k, x] of Object.entries(su.perMin)) {
+        bank[k as Res] += ((x ?? 0) * n) / 60
+        incomeAcc[k as Res] += ((x ?? 0) * n) / 60
+      }
+    }
+    // 免費產兵的建築（鄂圖曼軍事學校）
+    for (const tr of spec.trickles) {
+      if (!tr.unit) continue
+      const n = blds.filter((b) => b.done && b.item === tr.building).length
+      if (!n) continue
+      unitAcc[tr.building] = (unitAcc[tr.building] ?? 0) + n / tr.unit.every
+      if (unitAcc[tr.building] >= 1) {
+        const k = Math.floor(unitAcc[tr.building])
+        unitAcc[tr.building] -= k
+        grantUnits({ [tr.unit.id]: k }, tr.building)
+      }
+    }
     // 指定建築的額外收入（蘭開斯特免役稅）
     for (const { tr } of active) {
+      if (tr.mint) addRes(tr.mint.res, ((specialGathered[tr.mint.res] ?? 0) * tr.mint.pctPerMin) / 60)
+      if (tr.perGovernor) {
+        const g = govState().count
+        for (const [k, x] of Object.entries(tr.perGovernor)) {
+          bank[k as Res] += ((x ?? 0) * g) / 60
+          incomeAcc[k as Res] += ((x ?? 0) * g) / 60
+        }
+      }
       const bi = tr.buildingIncome
       if (!bi) continue
-      const n = blds.filter((b) => b.done && b.item === bi.building).length
+      const n = Math.min(bi.max ?? Infinity, blds.filter((b) => b.done && b.item === bi.building).length)
       for (const [k, perMin] of Object.entries(bi.perMin)) {
         const amt = ((perMin ?? 0) * n) / 60
         bank[k as Res] += amt
@@ -2209,6 +2672,69 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     if (active.some((a) => a.until <= t)) {
       for (let i = active.length - 1; i >= 0; i--) if (active[i].until <= t) active.splice(i, 1)
       recomputeTriggers()
+    }
+
+    // 業力（金朝山殿）
+    const km = spec.karma
+    if (km && owned(km.building)) {
+      if (karma == null) karma = km.start
+      if (t >= karmaUntil) {
+        const p = buildingPoint(km.building)
+        // 範圍內的採集點：採集與帶著資源走回投放點都算（空手走過去不算）
+        let rate = 0
+        const avg = [...workerCount].reduce((s, [id, n]) => s + n * (km.rates[id] ?? km.rates.villager ?? 0.1), 0) / Math.max(1, villagers)
+        for (const x of sites) {
+          if (x.workers <= 0) continue
+          const inR = x === farm ? siteDistance(p, FARM_SITE) <= km.radius : siteDistance(p, x.s) <= km.radius + extentOf(x)
+          if (!inR) continue
+          const tg = carryNow() / Math.max(0.01, rawRate(x))
+          const tw = dropDist(x) / (SPEED * mods.speed * wSpeed * tSpeed)
+          rate += x.workers * avg * ((tg + tw) / (tg + 2 * tw))
+        }
+        karma += rate
+        if (karma >= km.threshold) {
+          karmaUntil = t + km.duration
+          karma = 0
+          active.push({ tr: { on: km.building + ':karma', gather: km.gather }, until: t + km.duration, next: Infinity, count: 0, start: t })
+          recomputeTriggers()
+          log('note', `業力滿 ${km.threshold}，${km.duration} 秒內農田採集 +${Math.round(((km.gather.farm ?? 1) - 1) * 100)}%`)
+        }
+      }
+    }
+    // 慶典（馬利格里奧巴拉）
+    const fs = spec.festival
+    if (fs && policy.festival && fs.options[policy.festival] && owned(fs.building) && t >= festNext) {
+      const c = { ...zero(), ...fs.cost } as Bundle
+      if (affordable(c)) {
+        pay(c)
+        const o = fs.options[policy.festival]
+        active.push({ tr: { on: fs.building + ':festival', gather: o.gather, villagerTime: o.villagerTime, prod: o.prod }, until: t + fs.duration, next: Infinity, count: 0, start: t })
+        recomputeTriggers()
+        festNext = t + fs.duration + fs.cooldown
+        log('research', `舉辦${o.label}（${fs.duration} 秒）`, fs.building, c)
+      }
+    }
+    // 冥想花園：範圍內資源存量增加
+    for (const bz of bountyAt) {
+      if (t < bz.next) continue
+      const tr = bz.tr.bounty!
+      const inR = sites.filter((x) => x !== farm && x !== sheep && (x.s.kind === 'berry' || x.s.kind === 'gold' || x.s.kind === 'stone' || x.s.kind === 'wood') && siteDistance(bz.p, x.s) <= tr.radius + extentOf(x))
+      if (bz.count < tr.times) {
+        for (const x of inR) {
+          const add = x.s.amount * (x.s.kind === 'wood' ? tr.treePct : tr.pct)
+          if (x.left > 0 && Number.isFinite(add)) x.left += add
+        }
+        bz.count++
+        bz.next += tr.every
+      } else if (bz.count === tr.times) {
+        for (const x of inR) {
+          if (x.left <= 0 || !Number.isFinite(x.left)) continue
+          bank[x.res] += x.left * tr.finalPct
+          incomeAcc[x.res] += x.left * tr.finalPct
+        }
+        bz.count++
+        log('note', `冥想花園：範圍內 ${inR.length} 個採集點各給剩餘量的 ${tr.finalPct * 100}%`)
+      }
     }
 
     // 被動收入建築（莊園、坑礦、屋台…）
@@ -2225,8 +2751,37 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
           incomeAcc[k as Res] += amt
         }
       }
+      // 依附近來源的收入（屋台）：每座挑一個還沒被佔的最好採集點
+      if (tr.sources) {
+        const src = tr.sources
+        const contrib = sites
+          .filter((x) => x.left > 0 && x.res === 'food' && x !== herd)
+          .map((x) => {
+            if (x === farm) return src.per.farm && (!src.farmTech || researched.has(src.farmTech)) ? farmsBuilt * src.per.farm : 0
+            const kind = x === sheep ? 'sheep' : (x.s.kind as 'berry' | 'deer' | 'boar')
+            const each = x === sheep ? 200 : x.s.amount / Math.max(1, x.s.units)
+            return Math.ceil(x.left / each) * (src.per[kind] ?? 0)
+          })
+          .sort((a, b) => b - a)
+        let perMin = 0
+        for (let k = 0; k < n; k++) perMin += src.base + (contrib[k] ?? 0)
+        bank.food += perMin / 60
+        incomeAcc.food += perMin / 60
+        if (src.trader) {
+          yataiFood += perMin / 60
+          while (yataiFood >= src.trader.every) {
+            yataiFood -= src.trader.every
+            bank.food += src.trader.food
+            incomeAcc.food += src.trader.food
+            if (matsuriAura < src.trader.max - 1e-9) {
+              matsuriAura = Math.min(src.trader.max, matsuriAura + src.trader.step)
+              zoneVer++
+            }
+          }
+        }
+      }
       for (const [k, perMin] of Object.entries(tr.perMin)) {
-        const amt = ((perMin ?? 0) * n) / 60
+        const amt = ((perMin ?? 0) * n * (tr.ageMul?.[age - 1] ?? 1)) / 60
         addRes(k, amt)
         if ((RES as string[]).includes(k)) incomeAcc[k as Res] += amt
       }
