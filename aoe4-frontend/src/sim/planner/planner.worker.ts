@@ -4,7 +4,7 @@ import type { Catalog } from '../types.ts'
 import { buildCivData } from './civData.ts'
 import { generateMap } from './mapgen.ts'
 import { Searcher } from './search.ts'
-import type { Goal, HolySettings, PlanResult, Policy, PostArmy, Step } from './types.ts'
+import type { Goal, HolySettings, PlanResult, Policy, PostArmy, Step, FishSettings, OpLoss, TradeSettings } from './types.ts'
 
 export interface StartMessage {
   type: 'start'
@@ -17,6 +17,12 @@ export interface StartMessage {
   post: PostArmy
   /** 地圖上能拿的聖物、聖地（沒給就不模擬） */
   holy?: HolySettings
+  /** 中立貿易站的數量與距離（沒給就不模擬貿易） */
+  trade?: TradeSettings
+  /** 深水魚的數量與距離（沒給就不模擬捕魚） */
+  fish?: FishSettings
+  /** 操作損失（沒給是理論最快） */
+  loss?: OpLoss
   /** 最多跑多久（毫秒） */
   budgetMs: number
   /** 第幾個平行的 worker（決定亂數種子，讓各 worker 往不同方向搜） */
@@ -54,7 +60,7 @@ async function start(m: StartMessage) {
   if (current !== m.id) return
   const data = buildCivData(catalog!, m.civ, names)
   const map = generateMap(m.mapType, m.seed)
-  const searcher = new Searcher(data, map, m.goals, m.seed + 11 + (m.worker ?? 0) * 7919, { post: m.post, holy: m.holy })
+  const searcher = new Searcher(data, map, m.goals, m.seed + 11 + (m.worker ?? 0) * 7919, { post: m.post, holy: m.holy, trade: m.trade, fish: m.fish, opDelay: m.loss?.delay, efficiency: m.loss?.efficiency })
   const t0 = performance.now()
   let lastGain = t0
   let lastPost = 0

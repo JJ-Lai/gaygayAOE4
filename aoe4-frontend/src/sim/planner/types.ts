@@ -138,6 +138,47 @@ export interface Policy {
   /** 要拿幾個聖物、佔幾個聖地（上限是 HolySettings） */
   relics?: number
   sites?: number
+  /** 陸地貿易：訓練幾名商人（不含免費送的） */
+  traders?: number
+  /** 馬利：沿貿易路線蓋幾座收費哨站 */
+  tolls?: number
+  /** 金朝：派使者在幾座貿易站建立朝貢國 */
+  tributaries?: number
+  /** 拜占庭：用渡槽把蓄水池連起來提升水位 */
+  link?: boolean
+  /** 蒙古：沿貿易路線蓋幾座驛站前哨（商人在光環內加速） */
+  yams?: number
+  /** 拜占庭：金角塔用哪份傭兵合約（spec.mercenaries.contracts 的 key） */
+  contract?: string
+  /**
+   * 控制器規則的參數（沒寫用預設）：rebalance = 幾秒重算一次村民分配（8）、move = 一次最多搬幾成村民（0.15）、
+   * hyst = 差距小於幾人不搬（3）、setup = 選採集點時把走路與蓋營地攤到幾秒（120）、camp = 採集點多遠才蓋營地（6 格）、
+   * houseLead = 蓋房提前的秒數（建造時間之外，12）、farmLead = 天然食物剩不到「食物村民 × 0.6 × 幾秒」就預留農田木材（90）
+   */
+  ctl?: Partial<Record<'rebalance' | 'move' | 'hyst' | 'setup' | 'camp' | 'houseLead' | 'farmLead', number>>
+  /** 捕魚：訓練幾艘漁船，以及從第幾秒開始（之前不蓋碼頭、不訓練漁船；沒寫是 60 秒） */
+  boats?: number
+  fishFrom?: number
+}
+
+/**
+ * 捕魚的設定（地圖模型沒有水）：漁船能用的深水魚有幾個、碼頭到魚的距離，以及城鎮中心到岸邊（蓋碼頭）的距離（格）。
+ */
+export interface FishSettings {
+  spots: number
+  dist: number
+  dock: number
+  /** 村民能採的岸邊魚條數（在岸邊，離城鎮中心 dock 格） */
+  shore?: number
+}
+
+/**
+ * 陸地貿易的設定（地圖模型沒有貿易站的位置）：能用的中立貿易站有幾座，以及離家裡的市場多遠（格）。
+ * 有些地圖沒有貿易站；位置與距離由使用者設定。
+ */
+export interface TradeSettings {
+  posts: number
+  dist: number
 }
 
 /**
@@ -150,6 +191,17 @@ export interface HolySettings {
   sites: number
   siteDist: number
 }
+
+/**
+ * 操作損失：引擎沒有反應時間與走位損失，最快時間比職業快 20～60 秒。
+ * PRO_LOSS 用三個職業基準校準（英格蘭封建 3:50～4:10、日本直城 7:45～8:15、金朝頂尖最快封建 3:44）：
+ * 每次手動指令 4 秒、採集效率 85%，三者分別得到 3:52、7:57、3:52（2026-11-06，scripts/check-planner.ts）。
+ */
+export interface OpLoss {
+  delay: number
+  efficiency: number
+}
+export const PRO_LOSS: OpLoss = { delay: 4, efficiency: 0.85 }
 
 /** 目標達成後的「全力出兵」設定 */
 export interface PostArmy {

@@ -13,7 +13,8 @@ import { CIV_ZH, GLOBAL_BONUSES, type Bonus } from '../sim/planner/civSpec'
 import { MAP_TYPES, generateMap } from '../sim/planner/mapgen'
 import type { StartMessage, WorkerOut } from '../sim/planner/planner.worker'
 import { presetsFor } from '../sim/planner/presets'
-import type { Goal, HolySettings, PlanResult, Policy, PostArmy, Step } from '../sim/planner/types'
+import type { Goal, HolySettings, PlanResult, Policy, PostArmy, Step, FishSettings, TradeSettings } from '../sim/planner/types'
+import { PRO_LOSS } from '../sim/planner/types'
 import type { Catalog } from '../sim/types'
 
 interface Best {
@@ -56,6 +57,14 @@ export function SimulatePage() {
   // 聖物與聖地：地圖腳本不公開，數量與距離都是假設（1v1 地圖 5 個聖物，乾燥阿拉伯 3 個聖地；自己能拿到的取一部分）
   const [holyOn, setHolyOn] = useState(false)
   const [holy, setHoly] = useState<HolySettings>({ relics: 2, relicDist: 40, sites: 1, siteDist: 48 })
+  // 陸地貿易：地圖模型沒有貿易站，數量與距離由使用者設定（1v1 沿地圖一邊約 88 格，Fandom）
+  const [tradeOn, setTradeOn] = useState(false)
+  const [trade, setTrade] = useState<TradeSettings>({ posts: 1, dist: 70 })
+  // 操作損失：預設職業水準（校準過的反應時間與採集效率），可切成理論最快
+  const [lossOn, setLossOn] = useState(true)
+  // 捕魚：地圖模型沒有水，深水魚數量與距離由使用者設定
+  const [fishOn, setFishOn] = useState(false)
+  const [fish, setFish] = useState<FishSettings>({ spots: 4, dist: 10, dock: 25, shore: 4 })
   const [best, setBest] = useState<Best | null>(null)
   const [status, setStatus] = useState({ evals: 0, elapsed: 0, running: false })
   const [runToken, setRunToken] = useState(0)
@@ -119,12 +128,12 @@ export function SimulatePage() {
       progress.current = []
       setStatus({ evals: 0, elapsed: 0, running: true })
       workerRef.current.forEach((w, k) => {
-        const msg: StartMessage = { type: 'start', id, civ, mapType, seed, goals, post, holy: holyOn ? holy : undefined, budgetMs: budget, worker: k }
+        const msg: StartMessage = { type: 'start', id, civ, mapType, seed, goals, post, holy: holyOn ? holy : undefined, trade: tradeOn ? trade : undefined, fish: fishOn ? fish : undefined, loss: lossOn ? PRO_LOSS : undefined, budgetMs: budget, worker: k }
         w.postMessage(msg)
       })
     }, 250)
     return () => clearTimeout(h)
-  }, [data, civ, mapType, seed, goals, post, holyOn, holy, budget, runToken])
+  }, [data, civ, mapType, seed, goals, post, holyOn, holy, tradeOn, trade, fishOn, fish, lossOn, budget, runToken])
 
   const stop = () => {
     workerRef.current.forEach((w) => w.postMessage({ type: 'stop' }))
@@ -256,8 +265,70 @@ export function SimulatePage() {
               </Flex>
             </Card>
 
+            <Card size="small" title="貿易">
+              <Flex vertical gap={8}>
+                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                  商人在家裡的市場和中立貿易站之間往返，每到一端給 (0.008 × 速度 × 距離² + 0.1 × 距離) 黃金（Fandom 實測擬合；一般商人在 70 格路線每趟約 46 黃金、每分鐘約 40）。引擎在需要時蓋市場，訓練幾名商人由最佳化決定。文明加成一起算：法蘭西、貞德商會送商人與可運食物木材，金朝朝貢國，馬利收費哨站，日本烏城寶物商隊，蒙古絲路與銀樹，拜占庭橄欖油。不是每張地圖都有貿易站，數量與距離（格）由你設定，對手攔截不建模。
+                </Typography.Text>
+                <Flex align="center" gap={8} wrap>
+                  <Select
+                    size="small"
+                    style={{ width: 110 }}
+                    value={tradeOn ? 'on' : 'off'}
+                    onChange={(v) => setTradeOn(v === 'on')}
+                    options={[
+                      { value: 'off', label: '不模擬' },
+                      { value: 'on', label: '模擬' },
+                    ]}
+                  />
+                  <InputNumber size="small" min={1} max={4} value={trade.posts} disabled={!tradeOn} onChange={(v) => setTrade((x) => ({ ...x, posts: v ?? 1 }))} prefix="貿易站" suffix="座" style={{ width: 120 }} />
+                  <InputNumber size="small" min={10} max={200} value={trade.dist} disabled={!tradeOn} onChange={(v) => setTrade((x) => ({ ...x, dist: v ?? 70 }))} prefix="距離" suffix="格" style={{ width: 120 }} />
+                </Flex>
+              </Flex>
+            </Card>
+
+            <Card size="small" title="捕魚">
+              <Flex vertical gap={8}>
+                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                  水圖用：引擎在岸邊蓋碼頭、訓練漁船（幾艘由最佳化決定），漁船平均分到各個深水魚。一般漁船深水魚每秒 0.75 食物、攜帶 40、要回碼頭投放；羅斯漁船每秒 1.42、不用回碼頭（Fandom）。深水魚每個 1000 食物，採完後每 10 秒長回 50。岸邊魚每條 600 食物，村民每秒採 1.0，有碼頭就投放到碼頭。延繩、流網由最佳化決定研不研。文明加成一起算：馬利另得 10% 黃金、拜占庭另得 20%（岸邊魚 10%）橄欖油、中國碼頭生產 +10%。地圖模型沒有水，魚的數量與距離（格）由你設定；海戰不建模。
+                </Typography.Text>
+                <Flex align="center" gap={8} wrap>
+                  <Select
+                    size="small"
+                    style={{ width: 110 }}
+                    value={fishOn ? 'on' : 'off'}
+                    onChange={(v) => setFishOn(v === 'on')}
+                    options={[
+                      { value: 'off', label: '不模擬' },
+                      { value: 'on', label: '模擬' },
+                    ]}
+                  />
+                  <InputNumber size="small" min={1} max={12} value={fish.spots} disabled={!fishOn} onChange={(v) => setFish((x) => ({ ...x, spots: v ?? 1 }))} prefix="深水魚" suffix="個" style={{ width: 120 }} />
+                  <InputNumber size="small" min={2} max={60} value={fish.dist} disabled={!fishOn} onChange={(v) => setFish((x) => ({ ...x, dist: v ?? 10 }))} prefix="碼頭到魚" suffix="格" style={{ width: 140 }} />
+                  <InputNumber size="small" min={5} max={80} value={fish.dock} disabled={!fishOn} onChange={(v) => setFish((x) => ({ ...x, dock: v ?? 25 }))} prefix="到岸邊" suffix="格" style={{ width: 130 }} />
+                  <InputNumber size="small" min={0} max={20} value={fish.shore ?? 0} disabled={!fishOn} onChange={(v) => setFish((x) => ({ ...x, shore: v ?? 0 }))} prefix="岸邊魚" suffix="條" style={{ width: 120 }} />
+                </Flex>
+              </Flex>
+            </Card>
+
             <Card size="small" title="4. 搜尋">
               <Flex vertical gap={8}>
+                <Flex align="center" gap={8} wrap>
+                  <Typography.Text>操作</Typography.Text>
+                  <Select
+                    size="small"
+                    style={{ width: 150 }}
+                    value={lossOn ? 'pro' : 'ideal'}
+                    onChange={(v) => setLossOn(v === 'pro')}
+                    options={[
+                      { value: 'pro', label: '職業水準' },
+                      { value: 'ideal', label: '理論最快' },
+                    ]}
+                  />
+                  <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                    職業水準：每次手動下指令（放建築、調村民）多 {PRO_LOSS.delay} 秒、採集效率 {Math.round(PRO_LOSS.efficiency * 100)}%，用職業對局的升代時間校準。理論最快沒有任何操作損失。
+                  </Typography.Text>
+                </Flex>
                 <Flex align="center" gap={8}>
                   <Typography.Text>每次最多搜尋</Typography.Text>
                   <Select size="small" style={{ width: 100 }} value={budget} onChange={setBudget} options={BUDGETS} />

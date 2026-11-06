@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs'
 import { buildCivData } from '../src/sim/planner/civData.ts'
 import { generateMap } from '../src/sim/planner/mapgen.ts'
 import { Searcher } from '../src/sim/planner/search.ts'
-import type { Goal } from '../src/sim/planner/types.ts'
+import { PRO_LOSS, type Goal } from '../src/sim/planner/types.ts'
 import type { Catalog } from '../src/sim/types.ts'
 
 const catalog = JSON.parse(readFileSync(new URL('../public/sim/catalog.json', import.meta.url), 'utf8')) as Catalog
@@ -20,6 +20,8 @@ interface Case {
   goals: Goal[]
   /** [最早, 最晚] 秒 */
   band?: [number, number]
+  /** 用職業水準的操作損失（PRO_LOSS）跑，區間直接對照職業基準 */
+  pro?: boolean
 }
 
 const CASES: Case[] = [
@@ -45,7 +47,14 @@ const CASES: Case[] = [
   { civ: 'gol', label: '金帳 封建（5 村民、一次 2 名）', goals: [{ kind: 'age', age: 2 }] },
   { civ: 'zx', label: '朱熹 封建（5 村民 + 監工）', goals: [{ kind: 'age', age: 2 }] },
   { civ: 'by', label: '拜占庭 封建 → 8 名長弓兵（橄欖油傭兵）', goals: [{ kind: 'age', age: 2 }, { kind: 'army', unit: 'longbowman', count: 8 }] },
-  { civ: 'en', label: '英格蘭 直城', goals: [{ kind: 'age', age: 3 }], band: [430, 620] },
+  // 下限原本 7:10；2026-11-06 乾燥阿拉伯換成實測距離（主林線 5.4～6.7 格、近金礦 9.8～10.6，比以前假設的近）後理論最快到 7:10，放到 7:00。
+  // 職業水準另外有案例直接對照職業區間（見下面）。
+  { civ: 'en', label: '英格蘭 直城', goals: [{ kind: 'age', age: 3 }], band: [420, 620] },
+  // 職業水準（PRO_LOSS）直接對照職業基準：英格蘭封建 3:50～4:10、日本直城 7:45～8:15（aoe4guides），
+  // 金朝頂尖玩家 23 場最快 3:44、中位數 4:30、75% 4:41（AoE4 World）。區間比基準各放寬約 15 秒，容許搜尋的隨機性。
+  { civ: 'en', label: '英格蘭 封建（職業水準）', goals: [{ kind: 'age', age: 2 }], band: [215, 265], pro: true },
+  { civ: 'ja', label: '日本 直城（水鳥居，職業水準）', goals: [{ kind: 'age', age: 3, via: 'floating-gate' }], band: [450, 510], pro: true },
+  { civ: 'jin', label: '金朝 封建（職業水準）', goals: [{ kind: 'age', age: 2 }], band: [215, 281], pro: true },
   // 日本直城：下限原本 7:20。2026-11-06 修正選採集點（不再把村民派去 25 格外的鹿群、沒錢蓋營地時照實際走路算）後 7:16、27 村民，
   // 比職業 7:45~8:15 快 30~60 秒，和英格蘭同一級，下限放到 7:05。引擎沒有操作損失，之後應該另外建模，不要一直放寬區間。
   { civ: 'ja', label: '日本 直城（水鳥居）', goals: [{ kind: 'age', age: 3, via: 'floating-gate' }], band: [425, 540] },
@@ -69,16 +78,17 @@ for (const c of CASES) {
   // 基準區間比的是「只看目標」的時間；另外跑一次含目標後全力出兵（30 兵 + 2 升級）的版本對照
   // 單一亂數種子的結果差異很大（例如英格蘭直城 7:14～7:46），所以跑 3 個種子取最好的，和頁面平行多個 worker 一樣
   const t0 = performance.now()
-  let s = new Searcher(data, map, c.goals, 3, { post: { units: 0, upgrades: 0 } })
+  const loss = c.pro ? { opDelay: PRO_LOSS.delay, efficiency: PRO_LOSS.efficiency } : {}
+  let s = new Searcher(data, map, c.goals, 3, { post: { units: 0, upgrades: 0 }, ...loss })
   s.run(Number(process.env.MS ?? 4000))
   for (const seed of [4, 5]) {
-    const o = new Searcher(data, map, c.goals, seed, { post: { units: 0, upgrades: 0 } })
+    const o = new Searcher(data, map, c.goals, seed, { post: { units: 0, upgrades: 0 }, ...loss })
     o.run(Number(process.env.MS ?? 4000))
     if (o.best && s.best && (o.best.result.tcIdle < s.best.result.tcIdle || (o.best.result.tcIdle === s.best.result.tcIdle && o.best.result.score < s.best.result.score))) s = o
   }
   const d = s.bestDetailed()!
   const r = d.result
-  const sp = new Searcher(data, map, c.goals, 3)
+  const sp = new Searcher(data, map, c.goals, 3, loss)
   sp.run(Number(process.env.MS ?? 4000))
   const rp = sp.bestDetailed()!.result
   const ms = performance.now() - t0

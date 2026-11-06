@@ -40,7 +40,15 @@ export interface MapType {
   rules: SiteRule[]
   notes: string[]
   confidence: 'sourced' | 'qualitative'
+  /** 兩座首都城鎮中心的距離（格）；沒寫用全部地圖的實測值 */
+  enemy?: [number, number]
 }
+
+/**
+ * 實測（scripts/measure-map-distances.mjs，本機 84 場 1v1 統計檔，1 格 = 4 座標單位）：
+ * 全部地圖的兩城距離四分位 65～71.6 格。資源距離是「首都城鎮中心到開局 7 分鐘內第一座營地」，營地緊貼資源，所以是到資源邊緣的距離。
+ */
+const ENEMY_MEASURED: [number, number] = [65, 71.6]
 
 const gold = (amount: number, dist: [number, number], contested = false, label = '金礦'): SiteRule => ({
   kind: 'gold', label, amountEach: amount, units: amount >= 8000 ? 16 : amount >= 4000 ? 12 : 8, dist, contested,
@@ -84,14 +92,21 @@ const ARABIA: SiteRule[] = [
 
 const swap = (rules: SiteRule[], drop: (r: SiteRule) => boolean, add: SiteRule[]) => [...rules.filter((r) => !drop(r)), ...add]
 
+// 乾燥阿拉伯實測 47 場（scripts/map-distances.json）：第一座採礦營地 9.8～10.6 格（近金礦）、第一座伐木場 5.4～6.7（主林線）、
+// 第一座磨坊 6.8～8.1（近野果）、兩城 68.4～71.6。其他資源（遠金礦、石礦、鹿、外圍森林）量不到，維持假設。
+const ARABIA_MEASURED: SiteRule[] = ARABIA.map((r) =>
+  r.label === '近金礦' ? { ...r, dist: [9.8, 10.6] } : r.label === '主林線' ? { ...r, dist: [5.4, 6.7] } : r.label === '近野果（6 叢）' ? { ...r, dist: [6.8, 8.1] } : r,
+)
+
 export const MAP_TYPES: MapType[] = [
   {
     id: 'dry-arabia',
     name: '乾燥阿拉伯',
     nearSheep: 7,
-    rules: ARABIA,
+    rules: ARABIA_MEASURED,
     confidence: 'sourced',
-    notes: ['數量來自 Fandom 的 Dry Arabia 資訊欄；17.0 沒有改這張圖。', '所有距離都是假設的區間，Fandom 與官方都沒有公開格數。'],
+    enemy: [68.4, 71.6],
+    notes: ['數量來自 Fandom 的 Dry Arabia 資訊欄；17.0 沒有改這張圖。', '近金礦、主林線、近野果與兩城距離是本機 47 場對局統計檔的實測四分位（到資源邊緣）；其他距離是假設的區間。'],
   },
   {
     id: 'altai',
@@ -163,7 +178,8 @@ export function generateMap(typeId: string, seed: number): GameMap {
   const between = ([a, b]: [number, number]) => a + (b - a) * r()
 
   // 全地圖：兩座城鎮中心沿對角線，相對地圖中心點對稱
-  const enemyDist = Math.round(85 + r() * 25)
+  const [e0, e1] = type.enemy ?? ENEMY_MEASURED
+  const enemyDist = Math.round((e0 + (e1 - e0) * r()) * 10) / 10
   const size = Math.round(enemyDist * 1.5)
   const c = size / 2
   // SVG 座標 y 向下：-45° 是右上方
@@ -229,7 +245,7 @@ export function generateMap(typeId: string, seed: number): GameMap {
     neutral,
     notes: [
       ...type.notes,
-      '牧羊時間（斥候第一隻約 25 秒，之後每 15~30 秒）、兩城距離（85~110 格）、地圖大小與中立羊位置都是假設；對手資源是自家資源對地圖中心的鏡像。',
+      `兩城距離 ${enemyDist} 格（實測四分位 ${e0}～${e1}）；牧羊時間（斥候第一隻約 25 秒，之後每 15~30 秒）、地圖大小與中立羊位置是假設；對手資源是自家資源對地圖中心的鏡像。`,
       '城鎮中心旁固定有 3 棵散樹共 450 木材，直接投放到城鎮中心，開局不用先蓋伐木場。',
     ],
   }

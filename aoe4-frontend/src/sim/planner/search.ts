@@ -2,9 +2,9 @@
 // 每次模擬只要 1~3 毫秒，所以可以在 Web Worker 裡一秒跑幾百次，邊跑邊回報目前最佳。
 
 import { isTownCenter, resolveGoals, type CivData } from './civData.ts'
-import { simulate, zoneAnchors, zonePlan } from './engine.ts'
+import { MAX_BOATS, MAX_TRADERS, simulate, zoneAnchors, zonePlan } from './engine.ts'
 import { rng } from './mapgen.ts'
-import { PHASE_SEC, RES, type GameMap, type HolySettings, type Goal, type PlanResult, type Policy, type PostArmy, type Step, type StepParams } from './types.ts'
+import { PHASE_SEC, RES, type GameMap, type HolySettings, type Goal, type PlanResult, type Policy, type PostArmy, type Step, type StepParams, type FishSettings, type TradeSettings } from './types.ts'
 
 const MAX_T = 60 * 60
 /** 前段班保留幾個策略 */
@@ -18,6 +18,14 @@ export interface SearchOptions {
   post?: PostArmy
   /** 聖物與聖地的設定（使用者在頁面上設） */
   holy?: HolySettings
+  /** 陸地貿易的設定（使用者在頁面上設） */
+  trade?: TradeSettings
+  /** 捕魚的設定（使用者在頁面上設） */
+  fish?: FishSettings
+  /** 操作損失：每次手動下指令多花的秒數 */
+  opDelay?: number
+  /** 操作損失：採集效率倍率 */
+  efficiency?: number
 }
 
 export const DEFAULT_POST: PostArmy = { units: 30, upgrades: 2 }
@@ -80,7 +88,7 @@ export function evaluate(
   const { steps, errors } = resolveGoals(data, goals, policy.landmarkPick)
   if (errors.length && !steps.length) return null
   const p = fit(policy, steps)
-  const result = simulate(data, map, steps, p, { record, bound, idleWeight: opts.idleWeight ?? 60, post: opts.post ?? DEFAULT_POST, postBound: opts.postBound, holy: opts.holy })
+  const result = simulate(data, map, steps, p, { record, bound, idleWeight: opts.idleWeight ?? 60, post: opts.post ?? DEFAULT_POST, postBound: opts.postBound, holy: opts.holy, trade: opts.trade, fish: opts.fish, opDelay: opts.opDelay, efficiency: opts.efficiency })
   for (const e of errors) result.warnings.push(e)
   return { policy: p, steps, result }
 }
@@ -91,7 +99,19 @@ function better(a: PlanResult, b: PlanResult) {
   return a.score < b.score - 1e-6
 }
 
+/** 控制器規則參數的範圍：[最小, 最大, 預設, 每次調整量]（預設和 engine.ts 的 CTL 相同） */
+const CTL_RANGE = {
+  rebalance: [3, 16, 8, 2],
+  move: [0.05, 0.4, 0.15, 0.05],
+  hyst: [1, 5, 3, 1],
+  setup: [45, 300, 120, 30],
+  camp: [3, 12, 6, 1],
+  houseLead: [4, 30, 12, 3],
+  farmLead: [30, 240, 90, 20],
+} as const
+
 const clone = (p: Policy): Policy => ({
+  ctl: { ...(p.ctl ?? {}) },
   ...p,
   steps: p.steps.map((s) => ({ ...s, bias: { ...s.bias } })),
   ecoAt: { ...p.ecoAt },
@@ -125,6 +145,15 @@ function crossover(a: Policy, b: Policy, r: () => number): Policy {
   if (coin()) q.edict = o.edict
   if (coin()) q.relics = o.relics
   if (coin()) q.sites = o.sites
+  if (coin()) q.traders = o.traders
+  if (coin()) q.tolls = o.tolls
+  if (coin()) q.tributaries = o.tributaries
+  if (coin()) q.yams = o.yams
+  if (coin()) q.link = o.link
+  if (coin()) q.contract = o.contract
+  if (coin()) q.ctl = { ...(o.ctl ?? {}) }
+  if (coin()) q.boats = o.boats
+  if (coin()) q.fishFrom = o.fishFrom
   if (coin()) q.governors = [...(o.governors ?? [])]
   for (const k of new Set([...Object.keys(q.ecoAt), ...Object.keys(o.ecoAt)])) if (coin()) {
     if (k in o.ecoAt) q.ecoAt[k] = o.ecoAt[k]
@@ -139,7 +168,10 @@ function crossover(a: Policy, b: Policy, r: () => number): Policy {
   return q
 }
 
-function mutate(p: Policy, r: () => number, data: CivData, goals: Goal[], map: GameMap, horizon = 600, holy?: HolySettings): Policy {
+function mutate(p: Policy, r: () => number, data: CivData, goals: Goal[], map: GameMap, horizon = 600, so: SearchOptions = {}): Policy {
+  const holy = so.holy
+  const trade = so.trade && so.trade.posts > 0 ? so.trade : undefined
+  const fish = so.fish && so.fish.spots > 0 ? so.fish : undefined
   const q = clone(p)
   const n = 1 + Math.floor(r() * 3)
   const pick = <T>(xs: T[]) => xs[Math.floor(r() * xs.length)]
@@ -152,6 +184,12 @@ function mutate(p: Policy, r: () => number, data: CivData, goals: Goal[], map: G
     else if (which < 0.38 && s) {
       const res = pick(RES)
       s.bias[res] = clamp(s.bias[res] + (r() - 0.5) * 0.2, -0.35, 0.35)
+    }
+    else if (which < 0.40) {
+      // 控制器規則的參數：挑一項往上或往下調
+      const k = pick(Object.keys(CTL_RANGE) as (keyof typeof CTL_RANGE)[])
+      const [lo, hi, def, step] = CTL_RANGE[k]
+      q.ctl = { ...(q.ctl ?? {}), [k]: clamp(Math.round(((q.ctl?.[k] ?? def) + pick([-1, 1]) * step) * 100) / 100, lo, hi) }
     }
     else if (which < 0.52) {
       // 依時間的資源偏好：挑一段（偏向目前最佳完成時間之前），調一種資源
@@ -171,6 +209,17 @@ function mutate(p: Policy, r: () => number, data: CivData, goals: Goal[], map: G
       if (holy.relics && (!holy.sites || r() < 0.5)) q.relics = clamp((q.relics ?? 0) + pick([-1, 1]), 0, holy.relics)
       else q.sites = clamp((q.sites ?? 0) + pick([-1, 1]), 0, holy.sites)
     }
+    else if (which < 0.80 && (trade || fish)) {
+      // 陸地貿易：商人數；馬利收費哨站、金朝朝貢國數；捕魚：漁船數
+      const opts: (() => void)[] = []
+      if (trade) opts.push(() => { q.traders = clamp((q.traders ?? 0) + pick([-4, -2, -1, 1, 2, 4]), 0, MAX_TRADERS) })
+      if (fish) opts.push(() => { q.boats = clamp((q.boats ?? 0) + pick([-4, -2, -1, 1, 2, 4]), 0, MAX_BOATS) })
+      if (fish) opts.push(() => { q.fishFrom = clamp((q.fishFrom ?? 60) + pick([-60, -30, 30, 60, 120]), 0, 900) })
+      if (trade && data.spec.trade?.tolls) opts.push(() => { q.tolls = clamp((q.tolls ?? 0) + pick([-1, 1]), 0, data.spec.trade!.tolls!.maxPerLeg) })
+      if (trade && data.spec.trade?.speedAura) opts.push(() => { q.yams = clamp((q.yams ?? 0) + pick([-1, 1]), 0, 8) })
+      if (trade && data.spec.trade?.tributary) opts.push(() => { q.tributaries = clamp((q.tributaries ?? 0) + pick([-1, 1]), 0, trade.posts) })
+      pick(opts)()
+    }
     else if (which < 0.81) q.sheepCap = clamp((q.sheepCap ?? 10) + pick([-3, -2, -1, 1, 2, 3]), 0, 10)
     else if (which < 0.86 && buildTrickles(data).length) {
       // 被動收入建築：改數量或開始的步驟
@@ -180,7 +229,7 @@ function mutate(p: Policy, r: () => number, data: CivData, goals: Goal[], map: G
       else cur.at = Math.floor(r() * Math.max(1, q.steps.length))
       q.trickle[tr.building] = cur
     }
-    else if (which < 0.865 && (data.spec.herd || data.spec.officials || data.spec.support?.length || data.spec.doubleProduce || data.spec.festival || data.spec.edicts || data.spec.governors || data.spec.civTechs.some((c) => c.repeat) || data.spec.triggers.some((x) => x.stockpile))) {
+    else if (which < 0.865 && (data.spec.herd || data.spec.officials || data.spec.support?.length || data.spec.doubleProduce || data.spec.festival || data.spec.edicts || data.spec.governors || data.spec.mercenaries || data.spec.civTechs.some((c) => c.repeat) || data.spec.triggers.some((x) => x.stockpile))) {
       // 馬利買牛、中國監工、可重複科技次數、公會廳收取間隔
       const opts: (() => void)[] = []
       if (data.spec.herd) opts.push(() => { q.herd = clamp((q.herd ?? 0) + pick([-2, -1, 1, 2]), 0, data.spec.herd!.max) })
@@ -191,6 +240,7 @@ function mutate(p: Policy, r: () => number, data: CivData, goals: Goal[], map: G
       if (data.spec.doubleProduce) opts.push(() => { q.double = !q.double })
       if (data.spec.festival) opts.push(() => { q.festival = pick([undefined, ...Object.keys(data.spec.festival!.options)]) })
       if (data.spec.edicts) opts.push(() => { q.edict = pick([undefined, ...Object.keys(data.spec.edicts!.options)]) })
+      if (data.spec.mercenaries) opts.push(() => { q.contract = pick(Object.keys(data.spec.mercenaries!.contracts)) })
       if (data.spec.governors) opts.push(() => {
         // 總督：換掉某一座的人選（每位只能一座）
         const keys = Object.keys(data.spec.governors!.options)
@@ -214,7 +264,8 @@ function mutate(p: Policy, r: () => number, data: CivData, goals: Goal[], map: G
       const z = pick(data.spec.zones)
       const cands = zoneAnchors(z, map)
       const cur = zonePlan(data.spec, q, map, z.building)
-      if (z.max && z.max > 1 && r() < 0.4) {
+      if (z.link && r() < 0.2) q.link = !q.link
+      else if (z.max && z.max > 1 && r() < 0.4) {
         if (r() < 0.5 && cur.length > 0) cur.splice(Math.floor(r() * cur.length), 1)
         else if (cur.length < z.max) cur.push(pick(cands))
       } else if (cur.length) cur[Math.floor(r() * cur.length)] = pick(cands)
@@ -252,6 +303,8 @@ export class Searcher {
 
   constructor(data: CivData, map: GameMap, goals: Goal[], seed = 1, opts: SearchOptions = {}) {
     this.opts = opts
+    // 捕魚開啟時，碼頭的捕魚科技（延繩、流網）也加進可研究的經濟科技
+    if (opts.fish && opts.fish.spots > 0) data = { ...data, ecoTechs: [...data.ecoTechs, ...['extended-lines', 'drift-nets'].filter((id) => data.items.has(id) && !data.ecoTechs.includes(id))] }
     this.data = data
     this.map = map
     this.goals = goals
@@ -316,6 +369,37 @@ export class Searcher {
         variants.push(p)
       }
     }
+    // 陸地貿易：5、10、20 名商人（馬利再加收費哨站、金朝再加朝貢國）
+    if (opts.trade && opts.trade.posts > 0) {
+      for (const n of [5, 10, 20]) {
+        const p = clone(base)
+        p.traders = n
+        if (data.spec.trade?.tolls) p.tolls = data.spec.trade.tolls.maxPerLeg
+        variants.push(p)
+      }
+      if (data.spec.trade?.tributary) {
+        const p = clone(base)
+        p.tributaries = opts.trade.posts
+        variants.push(p)
+      }
+    }
+    // 捕魚：4、8、12 艘漁船，從 1 分鐘或 3 分鐘開始
+    if (opts.fish && opts.fish.spots > 0) {
+      for (const n of [4, 8, 12]) {
+        for (const from of [60, 180]) {
+          const p = clone(base)
+          p.boats = n
+          p.fishFrom = from
+          variants.push(p)
+        }
+      }
+    }
+    // 金角塔：每份合約一個起點
+    for (const k of Object.keys(data.spec.mercenaries?.contracts ?? {})) {
+      const p = clone(base)
+      p.contract = k
+      variants.push(p)
+    }
     for (const k of Object.keys(data.spec.edicts?.options ?? {})) {
       const p = clone(base)
       p.edict = k
@@ -364,6 +448,12 @@ export class Searcher {
           const p = clone(base)
           p.placeAt = { [z.building]: cands.slice(0, n).concat(Array(Math.max(0, n - cands.length)).fill('home')) }
           variants.push(p)
+          // 連渡槽提升水位
+          if (z.link && n >= 2) {
+            const q = clone(p)
+            q.link = true
+            variants.push(q)
+          }
         }
       }
     }
@@ -399,7 +489,7 @@ export class Searcher {
       } else if (++this.stale >= RESTART_AFTER && !this.seeds.length) {
         // 卡在區域最佳：只留目前最佳，從各起點各突變一次重新開始（避免整個前段班都收斂到同一種做法）
         this.elite = [this.best]
-        this.seeds = this.initial.map((p) => mutate(p, this.r, this.data, this.goals, this.map, 600, this.opts.holy))
+        this.seeds = this.initial.map((p) => mutate(p, this.r, this.data, this.goals, this.map, 600, this.opts))
         this.stale = 0
       }
     }
@@ -415,9 +505,9 @@ export class Searcher {
     // 三成交配後再突變，七成直接突變
     if (this.elite.length > 1 && this.r() < 0.3) {
       const child = crossover(pickElite(), pickElite(), this.r)
-      return this.r() < 0.5 ? child : mutate(child, this.r, this.data, this.goals, this.map, horizon, this.opts.holy)
+      return this.r() < 0.5 ? child : mutate(child, this.r, this.data, this.goals, this.map, horizon, this.opts)
     }
-    return mutate(pickElite(), this.r, this.data, this.goals, this.map, horizon, this.opts.holy)
+    return mutate(pickElite(), this.r, this.data, this.goals, this.map, horizon, this.opts)
   }
 
   private insert(ev: Evaluated) {

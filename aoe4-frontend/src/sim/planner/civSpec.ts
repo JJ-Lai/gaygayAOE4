@@ -177,7 +177,50 @@ export interface Zone {
   farmOnly?: boolean
   /** 只加成副產物的特殊資源（拜占庭大酒莊：範圍內橄欖油 +60%），不加成採集本身 */
   to?: Special
+  /** 範圍內每名村民每分鐘的收入（蘭開斯特莊園），同種多座只算一次；有這個欄位時不加成採集 */
+  perWorker?: Partial<Record<Res, number>>
+  /** 兼作投放點（大酒莊＝磨坊、倉庫／祭典／莊園收四種資源）：蓋在採集點旁時那個點不用另蓋營地；收食物的也能在周圍種田 */
+  dropoff?: Res[] | 'all'
+  /** 依等級的倍率（蓄水池水位 1～5）；等級 = 1 + 已完成的連接段數，不超過已完成的座數 */
+  levels?: number[]
+  /** 連接同種建築提升等級（拜占庭渡槽）：每格花費、時間照目錄的 building；兩座之間至少 minLen 格。搜尋決定連不連（policy.link） */
+  link?: { building: string; minLen: number }
   note?: string
+}
+
+/**
+ * 陸地貿易的文明加成。一般商人的收入照 Fandom Trade 頁：每到一端給 (0.008 × 速度 × 距離² + 0.1 × 距離) × 商人倍率 黃金。
+ */
+export interface TradeSpec {
+  /** 免費商人（法蘭西、貞德商會）：擁有 building 後，techs 每完成一項送 1 名（研究在前的蓋好時補送），最多 max 名 */
+  freeTraders?: { building: string; techs: string[]; max: number }
+  /** 商人可以改運食物或木材（法蘭西、貞德）：每趟給當下最缺的食物／木材／黃金 */
+  anyRes?: boolean
+  /** 驛站（蒙古）：沿路線蓋 building，radius 格內商人移動 ×mul；搜尋決定蓋幾座（policy.yams） */
+  speedAura?: { building: string; radius: number; mul: number }
+  /** 研究或擁有 on 之後商人黃金 ×mul（鄂圖曼貿易袋 +40%） */
+  goldMul?: { on: string; mul: number }[]
+  /** 每趟另得的特殊資源（拜占庭：黃金的 20% 橄欖油） */
+  other?: { to: Special; ratio: number }
+  /** 同時有 n 名以上商人時，每趟另得黃金 × pct 的 res（蒙古絲路 5/10/15 名） */
+  tiers?: { n: number; res: Res; pct: number }[]
+  /** 在這些建築訓練商人時的花費（只改黃金）與時間倍率（蒙古銀樹：黃金 -40%、快 40%） */
+  producerMods?: Record<string, { gold?: number; time?: number }>
+  /**
+   * 收費哨站（馬利）：沿路線每隔 spacing 格一座（光環不重疊才收滿），每經過一座抽 pct × 這趟黃金，每趟最多 maxPerLeg 次。
+   * 擁有 landmark（撒哈拉貿易網）時它也算一座，在它收的稅另給等量食物，其他哨站另給 foodPct 倍食物
+   */
+  tolls?: { building: string; pct: number; spacing: number; maxPerLeg: number; landmark: string; foodPct: number }
+  /**
+   * 寶物商隊（日本烏城）：building 完成 delay 秒後從貿易站出發，之後每 every 秒一隊，以 speed 格/秒走到家，
+   * 每隊給 min(cap, base + perTile × 距離) 的食物、木材、黃金，石頭用 stone* 三項
+   */
+  caravan?: { building: string; delay: number; every: number; speed: number; base: number; perTile: number; cap: number; stoneBase: number; stonePerTile: number; stoneCap: number }
+  /**
+   * 朝貢國（金朝）：使者走到貿易站、站 establish 秒建立。之後每 every 秒多 1 名佃農，rates[佃農數] = 每分鐘食物；
+   * techs 每項 +techPct；同時有的使者最多 maxActive 名；free 蓋好時送 1 名；在朝貢國貿易的商人黃金 ×goldMul；每座工人上限 +workerCap
+   */
+  tributary?: { unit: string; at: string[]; free: string; establish: number; every: number; rates: number[]; techs: string[]; techPct: number; goldMul: number; workerCap: number; maxActive: number }
 }
 
 export interface CivSpec {
@@ -230,6 +273,8 @@ export interface CivSpec {
   gather: Gather
   /** 磨坊附近農田依時代的額外倍率（英格蘭） */
   farmByAge?: number[]
+  /** 農田區的磨坊（英格蘭磨坊範圍）：每座罩 perMill 塊田，farmByAge 只套在罩到的田；田不夠罩時引擎在農田區再蓋 */
+  farmMill?: { building: string; perMill: number }
   /** 樹上的實際採集速率（含砍樹時間） */
   woodAtTree: number
   woodByAge?: number[]
@@ -239,7 +284,7 @@ export interface CivSpec {
   /** 有磨坊時每叢野果的存量 */
   orchardBush: number
   /** 採集 from 時另外得到 ratio 倍的 to；hunt = 羊、鹿、野豬；berry = 野果（不含農田）；farm = 農田類；requires = 需要已完成的建築 */
-  byproducts: { from: Res | 'hunt' | 'berry' | 'farm' | 'all'; to: Res | Special; ratio: number; requires?: string; note?: string }[]
+  byproducts: { from: Res | 'hunt' | 'berry' | 'farm' | 'fish' | 'all'; to: Res | Special; ratio: number; requires?: string; note?: string }[]
   /** 投放時額外的比例（圖格魯克工作象經濟 1.05） */
   depositBonus?: { res: Res[]; mul: number }
   /** 打獵時另得黃金的比例（羅斯賞金） */
@@ -269,7 +314,7 @@ export interface CivSpec {
    * 黃金時代：範圍內建築數（近似為家附近的非農田建築）達到門檻後的加成，各階累加。
    * mul = 採集、build = 建造、research = 研究速度、prod = 生產速度（含村民）。
    */
-  goldenAge?: { buildings: number; mul?: number; build?: number; research?: number; prod?: number }[]
+  goldenAge?: { buildings: number; mul?: number; build?: number; research?: number; prod?: number; trade?: number }[]
   /** 研究或完成 on 之後，黃金時代的加成部分 ×mul（阿拔斯行政側翼 ×1.5） */
   goldenBoost?: { on: string; mul: number }
   /** 被動收入建築：搜尋決定何時蓋、蓋幾座（0 ~ max），完成後每分鐘的收入 */
@@ -279,8 +324,6 @@ export interface CivSpec {
     max: number
     note?: string
     as?: 'building'
-    /** 至少有一座時，家附近（羊、散樹、農田）每名村民每分鐘的額外收入（蘭開斯特莊園光環） */
-    perHomeWorker?: Partial<Record<Res, number>>
     /** 每座每 every 秒免費產出 1 名 id（鄂圖曼軍事學校） */
     unit?: { id: string; every: number }
     /** 依時代的數量上限（黑暗～帝王），比 max 嚴 */
@@ -294,6 +337,8 @@ export interface CivSpec {
     sources?: { base: number; per: Partial<Record<'sheep' | 'berry' | 'deer' | 'boar' | 'farm', number>>; farmTech?: string; trader?: { every: number; food: number; step: number; max: number; radius: number; at: string } }
     /** 要先擁有這棟建築才能蓋（屋台要祭典）；沒有的話引擎先蓋它 */
     requires?: string
+    /** 研究或擁有 on 之後收入 ×mul（鄂圖曼貿易袋讓蘇丹客棧 +40%） */
+    mulOn?: { on: string; mul: number }[]
   }[]
   /** 建築完成時一次給的資源：id -> 資源（蘇格蘭集結大廳 +1 次集結） */
   grants: Record<string, Partial<Record<Res | Special, number>>>
@@ -369,6 +414,17 @@ export interface CivSpec {
   relicPagoda?: { building: string; requires: string; perMin: Partial<Record<Res, number>>; max: number }
   /** 聖域（德里）：研究 tech 後從 fromAge 起就能佔聖地，聖地黃金 ×siteMul */
   sanctity?: { tech: string; fromAge: number; siteMul: number }
+  /** 陸地貿易的文明加成（頁面「貿易」開啟時才模擬） */
+  trade?: TradeSpec
+  /**
+   * 金角塔（拜占庭）：building 完成後依序免費產出合約（policy.contract，沒選用第一份）裡可用的傭兵；
+   * 每批時間 = 目錄（傭兵屋）時間 × timeMul，批量照 batches。requires = 要先研究的合約（老兵、精英）
+   */
+  mercenaries?: { building: string; timeMul: number; contracts: Record<string, { label: string; units: { id: string; requires?: string }[] }> }
+  /** 帕拉丁學校（拜占庭）：擁有 building 時，訓練 units 每名有 chance 機率在地標多送一名（照期望值累積） */
+  bonusSpawn?: { building: string; units: string[]; chance: number }
+  /** 漁船投放食物時另得的資源（馬利 10% 黃金、拜占庭 20% 橄欖油）；頁面「捕魚」開啟時才模擬 */
+  fishBonus?: { to: Res | Special; ratio: number }[]
   /** 累積量達到門檻時觸發（維京約弗薩迦：村民採 2500 獵物食物）；after = 要先研究或觸發的 id */
   milestones?: { id: string; label: string; kind: 'hunt'; amount: number; after?: string }[]
   /** 朝代（中國、朱熹）：這些時代的升代地標全部蓋齊時觸發 `dynasty-<時代>`；搜尋決定要不要補蓋另一座（policy.dynasty） */
@@ -384,7 +440,7 @@ export interface CivSpec {
    * 有收入的輔助單位（蘇格蘭教士放魚池、日本僧侶在禪之後產金）：搜尋決定訓練幾名（policy.support[unit]），
    * 每名每分鐘 perMin；requires = 要先研究或擁有的 id
    */
-  support?: { unit: string; at: string[]; max: number; perMin: Partial<Record<Res, number>>; requires?: string; maxFrom?: { base: number; per: string[] } }[]
+  support?: { unit: string; at: string[]; max: number; perMin: Partial<Record<Res, number>>; requires?: string; maxFrom?: { base: number; per: string[] }; mulOn?: { on: string; mul: number }[] }[]
   /** 雙倍生產（蒙古敖包範圍內）：要有 requires，每批村民多出一倍，多付 stone 石頭；搜尋決定開不開（policy.double） */
   doubleProduce?: { requires: string; stone: number }
   /** 每棟建築完成返還的資源（拜占庭田野之石）：byId 指定建築，地標用 landmark，其他非農田建築用 other */
@@ -398,6 +454,22 @@ const DROP: Record<Res, string[]> = {
   wood: ['lumber-camp'],
   gold: ['mining-camp'],
   stone: ['mining-camp'],
+}
+
+/**
+ * 法蘭西、貞德的商會（Fandom Chamber of Commerce 頁）：每完成一項這 16 項經濟科技送 1 名商人，陸地最多 14 名；
+ * 商人可以改運食物或木材（Fandom Trade 頁）
+ */
+const CHAMBER_TRADE: TradeSpec = {
+  freeTraders: {
+    building: 'chamber-of-commerce',
+    techs: [
+      'horticulture', 'fertilization', 'precision-cross-breeding', 'drift-nets', 'extended-lines', 'forestry', 'double-broadax', 'lumber-preservation',
+      'crosscut-saw', 'merchant-guilds', 'wheelbarrow', 'specialized-pick', 'shaft-mining', 'cupellation', 'professional-scouts', 'survival-techniques',
+    ],
+    max: 14,
+  },
+  anyRes: true,
 }
 
 function spec(abbr: string, zh: string, patch: Partial<CivSpec>): CivSpec {
@@ -465,7 +537,8 @@ const SPECS: Record<string, CivSpec> = {
     orchardBush: 350,
     prebuilt: [],
     // 黃金時代：一階採集 +15%、二階建造 +20%；行政側翼讓加成 ×1.5（採集 +22.5%、建造 +30%）
-    goldenAge: [{ buildings: 10, mul: 1.15 }, { buildings: 20, build: 1.2 }],
+    // 16.2.10604 起五階（Fandom Abbasid Dynasty 頁）：10 棟採集 +15%、20 棟建造 +20%、50 棟商人收入 +20%（三、五階是戰鬥加成）
+    goldenAge: [{ buildings: 10, mul: 1.15 }, { buildings: 20, build: 1.2 }, { buildings: 50, trade: 1.2 }],
     goldenBoost: { on: 'administration-wing', mul: 1.5 },
     notMilitary: ['trade-caravan', 'imam'],
     triggers: [
@@ -493,13 +566,13 @@ const SPECS: Record<string, CivSpec> = {
       { text: '磨坊蓋在野果旁形成果園，每叢 +100 食物', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/abbasid.json' },
       { text: '村民在黑暗時代蓋智慧宮（50 木、30 秒），之後在智慧宮研究側翼升代（每個 100 秒），不需要村民', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/House_of_Wisdom', note: '側翼 400 食 + 200 金 → 1200 + 600 → 2400 + 1200，四代可再買第 4 個（2400 + 1200，不升代），用目錄花費與時間。智慧宮不再當成開局建築，目錄要把智慧宮改成一代可蓋，否則無法升代。各側翼只能選一次、與智慧宮科技共用一條佇列，都沒檢查。' },
       { text: '黃金時代一階：智慧宮範圍內 10 棟建築，村民採集 +15%', modeled: 'approx', source: 'https://aoe4.club/en/patchs/age-of-empires-iv-patch-16-2-10475', note: '要先蓋好智慧宮；把家附近完成的非農田建築（含首都城鎮中心，不含遠處的投放點）都算在範圍內。實際只算智慧宮影響範圍內、不含農田與城牆。' },
-      { text: '黃金時代其他階：20 棟建造 +20%、50 棟商隊黃金 +20%；行政側翼讓黃金時代加成 ×1.5（採集 +22.5%、建造 +30%）', modeled: 'approx', source: 'https://aoe4.club/en/patchs/age-of-empires-iv-patch-16-2-10475', note: '二階（20 棟）建造 +20% 與行政側翼 ×1.5 已計入；50 棟商隊黃金 +20% 沒有貿易所以不算。棟數近似成家附近的非農田建築。16.2.10604 起為 10/20/30/50/75 五階；三階駱駝傷害、五階近戰步兵傷害與經濟無關。' },
+      { text: '黃金時代其他階：20 棟建造 +20%、50 棟商隊黃金 +20%；行政側翼讓黃金時代加成 ×1.5（採集 +22.5%、建造 +30%）', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Abbasid_Dynasty', note: '二階（20 棟）建造 +20%、四階（50 棟）商人收入 +20%（頁面「貿易」開啟時）與行政側翼 ×1.5 都已計入。棟數近似成家附近的非農田建築。16.2.10604 起為 10/20/30/50/75 五階；三階駱駝傷害、五階近戰步兵傷害與經濟無關。' },
       { text: '新鮮食材（磨坊，二代）：村民 -40%，50 → 30 食物', modeled: 'yes', source: 'https://ageofempires.fandom.com/wiki/Fresh_Foodstuffs', note: '科技 50 食物 + 75 黃金、20 秒（目錄）；研究後村民 30 食物。搜尋決定研不研、哪一步研。' },
       { text: '肥沃月彎（經濟側翼，二代）：房屋、磨坊、伐木場、礦場、城鎮中心木石 -30%', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Fertile_Crescent_(technology)', note: '經濟側翼研究後才能研（25 食物 + 75 黃金、30 秒）。城鎮中心 280 木 + 210 石已由第 13 季職業開局證實；農田（只有 Fandom）與碼頭（只有 aoe4world）信心中等，也一起打折。' },
       { text: '知識保存（文化側翼，二代）：之後所有科技與側翼 -20%', modeled: 'yes', source: 'https://ageofempires.fandom.com/wiki/Preservation_of_Knowledge', note: '文化側翼研究後才能研；之後所有科技與科技型升代（側翼）-20%，城堡側翼變 960 食物 + 480 黃金。' },
       { text: '農業（經濟側翼，三代）：農田採集 +15%', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/technologies/abbasid.json', note: '目錄效果 foodGatherRate ×1.15 會套到羊、野果和農田，不只農田；也沒檢查是否選了經濟側翼。' },
       { text: '代數（每項軍事科技智慧宮每分鐘 +3 食 +3 木 +2 金）、改良加工（投放 +8%）、城市規劃（相鄰同型建築效率 +8%）', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Algebra', note: '改良加工（帝王，300 木 700 金、90 秒，投放 +8% 近似成採集 ×1.08）已計入；代數（依軍事科技數的被動收入）與城市規劃（相鄰同型建築效率 +8%）沒有建模。' },
-      { text: '貿易商隊 -33%（40 木 + 40 金）、碼頭 -50%（75 木）', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/abbasid.json', note: '目錄費用已是折扣後；商隊每分鐘黃金比一般商人少約 12–14%（只有 Fandom）未建模。商隊與伊瑪目不算軍隊。' },
+      { text: '貿易商隊 -33%（40 木 + 40 金）、碼頭 -50%（75 木）', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/abbasid.json', note: '目錄費用已是折扣後。商隊收入照 Fandom Trade 頁：速度 1.5625、最後倍率 0.38，每分鐘黃金比一般商人少約 12%（頁面「貿易」開啟時）。商隊與伊瑪目不算軍隊。' },
       { text: '軍事側翼完成時送 2 長矛兵 + 2 弓箭手（升二代）、2 駱駝騎兵（升三代）、3 手砲兵（升四代）', modeled: 'yes', source: 'https://ageofempires.fandom.com/wiki/Military_Wing', note: '側翼研究完成時送出，算進軍隊目標與目標後出兵。' },
       { text: '攻城專家：步兵可野戰建造衝車與攻城塔，三代起可造弩砲與投石車', modeled: 'na', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/abbasid.json', note: '「不需攻城工程」由 aoe4world 證實，時代限制只有 Fandom；目錄只有攻城工坊能造，且沒有攻城塔。' },
     ],
@@ -549,7 +622,7 @@ const SPECS: Record<string, CivSpec> = {
       { text: '文化側翼・後勤：免費 2/3/4 名托缽僧（常駐治療光環）；軍事側翼・援軍：完成 15 秒後起每 120 秒免費 1/3/7 名沙漠突襲者', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/technologies/ayyubids.json', note: '軍事側翼・援軍已計入（每 120 秒 1/3/7 名沙漠突襲者，算進軍隊目標與目標後出兵）；文化側翼・後勤的托缽僧是治療單位，不影響規劃。後勤數量未驗證：兩場對局紀錄出現 3 個托缽僧圖示，說明寫 2。' },
       { text: '軍事側翼・名匠：進入的時代鐵匠攻防科技（含軍事學院）自動免費完成；貿易側翼・顧問：免費 3/5/7 名阿塔貝格（0 人口）', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/technologies/ayyubids.json', note: '每次免費完成該時代 4 項鐵匠攻防科技（近戰／遠程的攻擊與護甲，算進目標後的升級數）與軍事學院（軍事建築生產 +33%，只算一次），來源：Fandom「Master Smiths (House of Wisdom)」。貿易側翼・顧問的阿塔貝格是支援單位，不影響規劃。' },
       { text: '貿易側翼・市集：每 3 分鐘商隊提供 4 筆用黃金換資源或單位的交易', modeled: 'no', source: 'https://ageofempires.fandom.com/wiki/Bazaar', note: '交易內容隨機。食物、木材 150→225、350→625、425→1025 有更新說明；石頭（175/325/525）與單位數只有 Fandom（中等信心）。貝都因單位只能從這裡買。' },
-      { text: '商隊便宜 33%（40 木材/40 黃金）、碼頭便宜 50%（75 木材）', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/ayyubids.json', note: '目錄已折價。' },
+      { text: '商隊便宜 33%（40 木材/40 黃金）、碼頭便宜 50%（75 木材）', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/ayyubids.json', note: '目錄已折價。商隊收入照 Fandom Trade 頁（速度 1.5625、倍率 0.38），頁面「貿易」開啟時計入。' },
       { text: '步兵不需攻城工程就能在野外造攻城槌；城堡時代起可造弩砲、投石機', modeled: 'na', source: 'https://ageofempires.fandom.com/wiki/Battering_Ram_(Age_of_Empires_IV)', note: '目錄的攻城槌只能在攻城工坊（城堡時代）訓練。野外造槌 70 秒只有 Fandom；資料只有封建版，Fandom 說黑暗時代就可以（未驗證）。野外弩砲、投石機 50 秒（12.0.1974）。' },
     ],
   }),
@@ -562,12 +635,15 @@ const SPECS: Record<string, CivSpec> = {
     // 蓄水池：一級水 +10%，範圍 9.5 格（Fandom）；佔地 2×2 是推測
     zones: [
       // 大酒莊（升封建地標）：6.25 格內村民採集時的橄欖油 +60%（只加成橄欖油，不加成採集）
-      { building: 'grand-winery', res: 'food', mul: 1.6, radius: 6.25, half: 3, to: 'oliveoil' },
-{ building: 'cistern', res: 'all', mul: 1.1, radius: 9.5, half: 1, max: 5 }],
+      { building: 'grand-winery', res: 'food', mul: 1.6, radius: 6.25, half: 3, to: 'oliveoil', dropoff: ['food'] },
+// 水位 1～5：+10/14/18/22/24%（17.0，Fandom Cistern 頁）；渡槽每格 2 石頭、2 秒，蓄水池影響區 10×10 不能重疊，所以兩座之間至少約 8 格
+{ building: 'cistern', res: 'all', mul: 1.1, radius: 9.5, half: 1, max: 5, levels: [1.1, 1.14, 1.18, 1.22, 1.24], link: { building: 'aqueduct', minLen: 8 } }],
     // 橄欖油：採野果另得 50%、橄欖園 15%（羊、打獵不產油）
     byproducts: [
       { from: 'berry', to: 'oliveoil', ratio: 0.5 },
       { from: 'farm', to: 'oliveoil', ratio: 0.15 },
+      // 村民採岸邊魚另得 10%（Fandom Shore Fish 頁；頁面「捕魚」開啟、有岸邊魚時）
+      { from: 'fish', to: 'oliveoil', ratio: 0.1 },
     ],
     farm: { id: 'olive-grove', slots: 1 },
     // 傭兵：目錄的 other.oliveoil 是每名單位的價格，time 是整批時間。戰象、塔象一批 1 隻，用預設值。
@@ -596,6 +672,23 @@ const SPECS: Record<string, CivSpec> = {
       sipahi: { oliveoil: 150 },
     },
     notMilitary: ['trader', 'monk'],
+    // 商人另得黃金 20% 的橄欖油（Fandom Trade 頁）
+    trade: { other: { to: 'oliveoil', ratio: 0.2 } },
+    // 漁船另得 20% 橄欖油（Fandom Fishing 頁，深水與岸邊魚都算）
+    fishBonus: [{ to: 'oliveoil', ratio: 0.2 }],
+    // 金角塔（Fandom Golden Horn Tower 頁）：免費產出已解鎖的傭兵，每批時間約傭兵屋基礎時間 × 2.93（17.0），批量同傭兵屋。
+    // 合約內容照 Fandom Mercenary House 頁：封建一種，老兵、精英合約各再解鎖一種
+    mercenaries: {
+      building: 'golden-horn-tower',
+      timeMul: 2.93,
+      contracts: {
+        eastern: { label: '東方合約', units: [{ id: 'keshik' }, { id: 'ghulam', requires: 'veteran-mercenaries' }, { id: 'tower-elephant', requires: 'elite-mercenaries' }] },
+        western: { label: '西方合約', units: [{ id: 'longbowman' }, { id: 'landsknecht', requires: 'veteran-mercenaries' }, { id: 'streltsy', requires: 'elite-mercenaries' }] },
+        silk: { label: '絲路合約', units: [{ id: 'javelin-thrower' }, { id: 'camel-rider', requires: 'veteran-mercenaries' }, { id: 'grenadier', requires: 'elite-mercenaries' }] },
+      },
+    },
+    // 帕拉丁學校（Fandom Palatine School 頁）：訓練這 4 種單位時 30% 機率在地標多生一名
+    bonusSpawn: { building: 'palatine-school', units: ['limitanei', 'varangian-guard', 'cataphract', 'cheirosiphon'], chance: 0.3 },
     triggers: [
       // 蓄水池徵兵：範圍內軍事生產每級 +20%；近似成一級水、軍事建築都在範圍內
       { on: 'cistern', prod: [{ at: ['barracks', 'archery-range', 'stable', 'siege-workshop'], time: 1 / 1.2 }] },
@@ -607,21 +700,21 @@ const SPECS: Record<string, CivSpec> = {
     // 田野之石：建築完成返還 2n² 石頭（n = 邊長格數）。佔地查 Fandom 各建築頁：房屋、投放點、橄欖園、蓄水池、前哨 2×2；兵營、靶場、馬廄、攻城工坊、傭兵屋 3×3；鐵匠鋪、市場、修道院、碼頭、大學、主堡、城鎮中心、地標 4×4
     buildRefund: {
       res: 'stone',
-      byId: { barracks: 18, 'archery-range': 18, stable: 18, 'siege-workshop': 18, 'mercenary-house': 18, blacksmith: 32, market: 32, monastery: 32, dock: 32, university: 32, keep: 32, 'town-center': 32 },
+      byId: { aqueduct: 0, barracks: 18, 'archery-range': 18, stable: 18, 'siege-workshop': 18, 'mercenary-house': 18, blacksmith: 32, market: 32, monastery: 32, dock: 32, university: 32, keep: 32, 'town-center': 32 },
       other: 8,
       landmark: 32,
     },
     bonuses: [
       { text: '開局多 100 石頭與 100 橄欖油（200/150/100/100 + 100 油），6 村民 + 1 斥候', modeled: 'yes', source: 'https://ageofempires.fandom.com/wiki/Byzantines_(Age_of_Empires_IV)', note: 'Patch 9.1.370 把開局石頭從 50 提高到 100，之後沒有再改；2024 年的對局紀錄也吻合。石頭剛好蓋第一座蓄水池。' },
-      { text: '蓄水池灌溉：範圍內村民採集依水位 +10/14/18/22/24%', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Cistern', note: '一級水 +10%，範圍 9.5 格（Fandom），只算範圍內的採集點；搜尋決定蓋幾座（0～5，每座 100 石頭、15 秒）、各蓋在農田區或哪個礦／林線／野果旁。蓋在農田區時依可容納的田數折算農田。水位升級（連通與多座疊加）未建模，多座只讓更多地方有一級水。17.0 把五級水從 26% 改成 24%。' },
+      { text: '蓄水池灌溉：範圍內村民採集依水位 +10/14/18/22/24%', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Cistern', note: '範圍 9.5 格（Fandom），只算範圍內的採集點；搜尋決定蓋幾座（0～5，每座 100 石頭、15 秒）、各蓋在農田區或哪個礦／林線／野果旁，以及要不要用渡槽連起來。水位 = 1 + 已完成的渡槽段數（依蓋好的順序把相鄰兩座連起來，每格 2 石頭、2 秒，兩座之間至少 8 格，因為影響區 10×10 不能重疊），所有蓄水池同一水位。蓋在農田區時依可容納的田數折算農田。17.0 把五級水從 26% 改成 24%。用城牆接渡槽沒有建模。' },
       { text: '田野之石：每棟建築完成返還石頭（2×2 +8、3×3 +18、4×4 與地標 +32、奇觀 +72）', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Byzantines_(Age_of_Empires_IV)', note: '每棟建築（含橄欖園）完成時返還 2n² 石頭（n = 邊長格數，Fandom 拜占庭頁）；各建築佔地查 Fandom：房屋、投放點、橄欖園、蓄水池 2×2（8），兵營、靶場、馬廄、攻城工坊 3×3（18），鐵匠鋪、市場、修道院、碼頭、大學、主堡、城鎮中心、地標 4×4（32）。' },
-      { text: '橄欖油：採野果另得 50%、橄欖園 15%、岸邊魚 10%，漁船 20%、商人 20%', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/byzantines.json', note: '野果與橄欖園的油已計入；魚、漁船、商人的油沒有建模（引擎不模擬捕魚與貿易）。' },
-      { text: '大酒莊（升封建地標）：6.25 格內村民橄欖油 +60%，兼作磨坊與修道院', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Grand_Winery', note: '範圍內食物採集點產生的橄欖油 +60%（野果、農田區），搜尋決定蓋在哪；兼作磨坊與修道院沒有建模。半徑只有 Fandom。' },
+      { text: '橄欖油：採野果另得 50%、橄欖園 15%、岸邊魚 10%，漁船 20%、商人 20%', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/byzantines.json', note: '野果、橄欖園的油一直有算；商人每趟另得黃金 20%（頁面「貿易」開啟時，Fandom Trade 頁）；漁船另得 20%、村民採岸邊魚另得 10%（頁面「捕魚」開啟時，Fandom Fishing、Shore Fish 頁）。' },
+      { text: '大酒莊（升封建地標）：6.25 格內村民橄欖油 +60%，兼作磨坊與修道院', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Grand_Winery', note: '範圍內食物採集點產生的橄欖油 +60%（野果、農田區），搜尋決定蓋在哪；蓋在野果、鹿群旁時兼作那裡的磨坊（不用另蓋），周圍也能種田（野果採完後）。兼作修道院（聖物）沒有建模。半徑只有 Fandom。' },
       { text: '橄欖園取代農田（75 木材、6 秒，採集速率同農田）', modeled: 'yes', source: 'https://ageofempires.fandom.com/wiki/Olive_Grove', note: '天然食物採完後蓋橄欖園，每座 1 名村民，附帶 15% 橄欖油。' },
       { text: '傭兵只花橄欖油、成批購買：長弓兵 4 名 420 油/75 秒、標槍兵 4 名 460、怯薛 2 名 380、古拉姆 3 名 420', modeled: 'approx', source: 'https://www.ageofempires.com/news/age-of-empires-iv-update-16-1-9737-and-yue-feis-legacy-dlc-release-preview/', note: '批量與單價都對（16.1.9737 長弓兵 5→4 名、420 油）。但沒有橄欖油收入，實際上買不到。合約免費、10 秒、只能選一份，老兵/精英合約的前置，以及貿易站傭兵需要旁邊有貿易站，這些都未限制。傭兵坊蓋在徵兵蓄水池旁的生產加速未建模。蘭茨克內希特 450 油只有 aoe4world 一個來源（Fandom 寫 480）。' },
       { text: '蓄水池影響範圍：徵兵（軍事生產每級 +20%）、辯證（研究每級 +30%）、守護（受傷每級 -5%）', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Cistern', note: '徵兵近似成蓋好第一座蓄水池後所有軍事建築生產 +20%（一級水，假設都在範圍內）；辯證（研究）與守護（受傷）沒有建模。只有 Fandom 一個來源。' },
       { text: '邊境聚落（房屋科技，封建）：40 木材、80 黃金，房屋建造快 500%（15 秒 → 2.5 秒）', modeled: 'yes', source: 'https://ageofempires.fandom.com/wiki/House_(Age_of_Empires_IV)', note: '房屋科技（40 木材、80 黃金、20 秒），要先有一座房屋；研究後房屋建造時間 ÷6。' },
-      { text: '金角塔免費自動產出已解鎖的傭兵；帕拉丁學校讓邊防軍、瓦良格衛隊、鐵甲騎兵、希臘火噴射器 30% 機率在地標多生一名', modeled: 'no', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/byzantines.json', note: '金角塔約為傭兵坊批次時間的 2.9 倍（16.1.9737 慢 15%、17.0 再慢 10%），倍數是推算的近似值。兩座地標本身都不是付費生產佇列，目錄卻把它們列成這些單位的生產建築，是錯的。' },
+      { text: '金角塔免費自動產出已解鎖的傭兵；帕拉丁學校讓邊防軍、瓦良格衛隊、鐵甲騎兵、希臘火噴射器 30% 機率在地標多生一名', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Golden_Horn_Tower', note: '金角塔：搜尋選一份合約（東方怯薛、西方長弓兵、絲路標槍兵；研究老兵／精英合約後再加一種），完成後依序免費產出，每批時間 = 傭兵屋時間 × 2.93（17.0，Fandom），批量同傭兵屋，人口不夠就等；遊戲是隨機挑，這裡輪流。合約本身（免費、10 秒）沒算；傭兵屋蓋在貿易站旁解鎖的兩種沒建模。帕拉丁學校：擁有時這 4 種單位每訓練 1 名累積 0.3 名，滿 1 名就多送（照期望值，Fandom Palatine School 頁）。兩座地標都不是付費生產佇列，目錄卻把它們列成這些單位的生產建築，是錯的。' },
     ],
   }),
   ch: spec('ch', '中國', {
@@ -633,6 +726,8 @@ const SPECS: Record<string, CivSpec> = {
       { from: 'all', to: 'gold', ratio: 0.1, requires: 'imperial-academy', note: '稅金 8%／學院範圍內 16%，需監工收回；近似成學院完成後全部採集的 10% 直接變黃金。' },
     ],
     notMilitary: ['imperial-official', 'trader', 'monk'],
+    // 碼頭工作效率 +10%（Fandom：9.2.628 起從 +20% 改成 +10%）：漁船 30 → 27.3 秒；目錄的 25 秒是舊的 +20%
+    costOverride: { 'fishing-boat': { time: 27.3 } },
     // 朝代：同時代兩座升代地標蓋齊。只有最新朝代的加成有效（replaces），解鎖的建築永久保留
     dynasty: [2, 3, 4],
     triggers: [
@@ -657,7 +752,7 @@ const SPECS: Record<string, CivSpec> = {
       { text: '糧倉（宋）：範圍內農田 +10%／座，最多 3 座 +30%', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Granary_(Age_of_Empires_IV)', note: '宋朝後才能蓋（150 木材、18 秒，最多 3 座、4×4），7.5 格內農田採集 +10%／座（Fandom Granary 頁），搜尋決定蓋幾座、蓋在哪；兼磨坊的投放點效果沒有建模。' },
       { text: '寶塔（元）：放聖物後每分鐘 +100 黃金、62 食物、62 木材、25 石頭，最多 3 座', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Pagoda', note: '進入元朝（兩座城堡地標蓋齊）且拿到聖物後，引擎自動蓋寶塔（150 木材，最多 3 座），每座放 1 個聖物：每分鐘 100 黃金、62 食物、62 木材、25 石頭（Fandom Pagoda 頁），取代修道院的 80 黃金。聖物數量看頁面「聖物與聖地」設定與搜尋。' },
       { text: '古代技術：每進入過一個朝代，村民採集 +5%（唐朝算一個，最多 +20%）', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Ancient_Techniques', note: '用目錄固定 ×1.05，只對一直待在唐朝的玩家正確；加法或乘法疊加未證實（中信度）。神道研究只要 100 木材、250 黃金、36 秒，沒有建模。' },
-      { text: '碼頭工作效率 +10%', modeled: 'no', source: 'https://github.com/aoe4world/data/blob/main/civilizations/chinese.json', note: '目錄漁船 25 秒（朱熹 30 秒），疑似已含舊版 +20%，所以不再套用；未證實，且引擎不模擬捕魚。' },
+      { text: '碼頭工作效率 +10%', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Chinese_(Age_of_Empires_IV)', note: 'Fandom：9.2.628 起從 +20% 改成 +10%。目錄漁船 25 秒是舊的 +20%，改成 30 ÷ 1.1 = 27.3 秒（和朱熹相同）；捕魚只在頁面「捕魚」開啟時模擬。碼頭的其他船與研究沒有套用（引擎不模擬海戰）。' },
     ],
   }),
   de: spec('de', '德里蘇丹國', {
@@ -719,6 +814,8 @@ const SPECS: Record<string, CivSpec> = {
     start: { ...STD, wood: 200 },
     startNote: '開局 200 食物、200 木材、100 黃金、0 石頭，6 村民、1 斥候（人口 7/10），羊沿用預設 5 隻（官方第一季更新：木材 150→200，至 17.0 未改回）。',
     farmByAge: [1.2, 1.25, 1.3, 1.3],
+    // 磨坊範圍是磨坊旁 2 格內的農田，一座約放 9～12 塊（Fandom Mill 頁）；取 10
+    farmMill: { building: 'mill', perMill: 10 },
     // 國王算支援／英雄單位，交易者、修道士是經濟／宗教單位，都不拿來自動湊軍隊
     notMilitary: ['trader', 'monk', 'king'],
     triggers: [
@@ -748,7 +845,7 @@ const SPECS: Record<string, CivSpec> = {
     bonuses: [
       { text: '開局木材 200（比標準多 50）', modeled: 'yes', source: 'https://www.ageofempires.com/news/age-of-empires-iv-season-one-update-release-notes/', note: '官方第一季更新 150→200；Fandom 與 Jockxtar 第 13 季農田開局的木材帳也對得上。' },
       { text: '農田便宜 50%', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/english.json', note: '目錄農田 37 木材，磨坊維持 50 木材。' },
-      { text: '磨坊附近的農田依時代 +20/25/30/30%，黑暗時代就有效', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/abilities/english/ability-mill-influence-1.json', note: '有磨坊後所有農田都算在範圍內；只有磨坊有這個範圍，城鎮中心和地標沒有。' },
+      { text: '磨坊附近的農田依時代 +20/25/30/30%，黑暗時代就有效', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/abilities/english/ability-mill-influence-1.json', note: '範圍是磨坊旁 2 格內的農田，一座約放 9～12 塊（Fandom Mill 頁），取 10：引擎在開始種田時於農田區蓋磨坊，田超過「10 × 農田區磨坊數」就再蓋一座，加成只套罩到的比例。Fandom 寫 +15/20/25/30%，和 aoe4world 的 +20/25/30/30% 不同，用 aoe4world。' },
       { text: '營火（斥候、兵士放置，25 木材，最多 5 個）讓附近打獵 +10%，封建時代起才能用', modeled: 'approx', source: 'https://www.aoe4.club/en/patchs/age-of-empires-iv-season-twelve-update-15-1-6970', note: '目錄沒有，補成封建時代、25 木材、立即放置；近似成所有打獵 +10%（實際每個營火只罩附近，最多 5 個）。' },
       { text: '兵士黑暗時代就能訓練，生產快 40%（16.1.9737 從 50% 下修）', modeled: 'yes', source: 'https://www.ageofempires.com/news/age-of-empires-iv-update-16-1-9737-and-yue-feis-legacy-dlc-release-preview/', note: '目錄已是 14.65 秒（20.5/1.4）、1 時代。' },
       { text: '議會廳兼射箭場、工作快 100%，在這裡出的長弓兵便宜 5%（38 食物、47.5 木材）', modeled: 'yes', source: 'https://www.aoe4.club/en/civs/english/buildings/council-hall', note: '議會廳生產與研究時間 ÷2、長弓兵在這裡 -5%（目錄已把議會廳列為長弓兵生產建築）。' },
@@ -794,6 +891,7 @@ const SPECS: Record<string, CivSpec> = {
       'royal-ribauldequin': { time: 45 / 1.5 },
     },
     notMilitary: ['trader', 'monk'],
+    trade: CHAMBER_TRADE,
     triggers: [
       // 主堡／紅宮殿範圍內的靶場、馬廄訓練便宜 20%；近似成蓋好之後所有靶場、馬廄都在範圍內
       { on: 'keep', prod: [{ at: ['archery-range', 'stable'], cost: 0.8 }] },
@@ -809,7 +907,7 @@ const SPECS: Record<string, CivSpec> = {
       { text: '經濟科技便宜 35%', modeled: 'yes', source: 'https://www.ageofempires.com/news/age-of-empires-iv-patch-11-1-1201/', note: '目錄是舊的 30% 價，這裡逐項改成標準價 × 0.65（保留小數）。手推車 32.5 木／97.5 金、生存技巧 16.25／48.75 已由對局資源變化證實；其他項目沒實測，專業斥候是否打折未查證。商人公會沒有非法蘭西的標準價可比，維持目錄價。' },
       { text: '碼頭 +10 人口', modeled: 'yes', source: 'https://ageofempires.fandom.com/wiki/Update_12.0.1974' },
       { text: '騎兵學校（黑暗→封建地標）：所有馬廄與學校本身生產快 20%', modeled: 'approx', source: 'https://aoe4world.com/players/2094304/games/259189556/summary?camelize=true', note: '皇家騎士 29.17 秒（實測每 29–30 秒一隻）、騎手 18.75 秒。直接改單位時間，等於假設一定蓋騎兵學校；走商會升代時會算太快。馬廄的科技研究沒加速。' },
-      { text: '商會（黑暗→封建地標）：每完成一項經濟科技立刻送 1 名商人（陸地最多 14）', modeled: 'no', source: 'https://www.aoe4.club/en/patchs/age-of-empires-iv-update-16-1-9737-and-yue-feis-legacy-dlc-release-preview', note: '16 項經濟科技都算，黑暗時代研究的在商會完成時補發；免費商人仍佔 1 人口，貿易收入依距離，未建模。' },
+      { text: '商會（黑暗→封建地標）：每完成一項經濟科技立刻送 1 名商人（陸地最多 14）', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Chamber_of_Commerce', note: '頁面「貿易」開啟時才模擬：擁有商會後，16 項經濟科技每完成一項送 1 名商人（研究在前的蓋好時補送），最多 14 名，送的商人佔 1 人口、直接開始貿易。專業斥候、兩項捕魚科技、商人公會搜尋不研究，所以實際最多 12 名。商人可運食物／木材／黃金，近似成每趟給當下最缺的那種。沒開貿易時當作沒有（不佔人口）。' },
       { text: '公會廳（封建→城堡地標）：囤積所選資源，越久不收越快（每秒 1 → 10，石頭減半）', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Guild_Hall', note: '搜尋決定多久收一次（40～900 秒），收的時候換成當下最缺的資源（石頭減半）。公式（每 20 秒一筆，從 20 起每分鐘 +20、上限 200）只有 Fandom 推得，信心中等。' },
       { text: '鐵匠恩典：每次升代免費、立即獲得近戰攻擊科技', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/french.json', note: '目錄的冶鐵爐、脫碳、大馬士革鋼已是 0 費用 0 秒；實際上在升代（已有鐵匠鋪）或第一座鐵匠鋪完成時自動給予。' },
       { text: '主堡便宜 10%，主堡／紅宮殿範圍內的靶場、馬廄訓練便宜 20%（徵兵獎勵再 -5%）；皇家學院研究便宜 30%', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Influence_(Age_of_Empires_IV)', note: '主堡 810 石已在目錄；主堡或紅宮殿蓋好後靶場、馬廄訓練 -20%（假設都在範圍內，兩座不疊加的規則沒有建模）。皇家學院研究 -30% 沒有建模。' },
@@ -948,6 +1046,8 @@ const SPECS: Record<string, CivSpec> = {
     tcSheep: 4,
     gather: { all: 1, sheep: 1.2, berry: 1, hunt: 1, farm: 1, wood: 1, gold: 1, stone: 1 },
     popBuildings: { manor: 10 },
+    // 莊園光環（Fandom Manor 頁：7.5 格、3×3）：範圍內每名村民每分鐘 +3 食物 +2 木材，多座不疊加；莊園收四種資源，搜尋決定蓋在農田區或礦、林線旁
+    zones: [{ building: 'manor', res: 'all', mul: 1, radius: 7.5, half: 1.5, perWorker: { food: 3, wood: 2 }, dropoff: 'all' }],
     dropoff: {
       food: ['mill', 'manor'],
       wood: ['lumber-camp', 'manor'],
@@ -955,7 +1055,7 @@ const SPECS: Record<string, CivSpec> = {
       stone: ['mining-camp', 'manor'],
     },
     trickles: [
-      { building: 'manor', perMin: { food: 30, wood: 10 }, max: 3, perHomeWorker: { food: 3, wood: 2 }, note: '基礎上限 3 座（只見於 Fandom）；精簡土地制度、開放農田制度各 +4（最多 11）未建模。範圍內村民的額外產出、免役稅的黃金另計（未建模）。' },
+      { building: 'manor', perMin: { food: 30, wood: 10 }, max: 3, note: '基礎上限 3 座（只見於 Fandom）；精簡土地制度、開放農田制度各 +4（最多 11）未建模。範圍內村民的額外產出、免役稅的黃金另計（未建模）。' },
     ],
     costOverride: {
       // earls-guard-1 是遊戲免費贈送用的假單位（0 花費、0 秒、0 人口，城堡時代前就能從蘭開斯特城堡出）；改成兵營的 90 食物、20 黃金、20.5 秒，至少不會免費瞬間產出
@@ -1001,8 +1101,8 @@ const SPECS: Record<string, CivSpec> = {
       { text: '開局 200 食物、200 木材、100 黃金，6 村民、1 斥候、5 隻自有羊 + 首都城鎮中心旁 4 隻（共 9 隻）', modeled: 'yes', source: 'https://aoe4world.com/games', note: '2026-11 AoE4 World 12260 對局摘要 4/4 場一致：0 秒時 200/200/100/0、6 村民、1 斥候、5 隻自有羊；城鎮中心旁的 4 隻是中立羊，摘要不列在玩家名下。木材 200 也由這批對局確認。' },
       { text: '羊毛產業：採羊 +20%', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/lancaster.json', note: '13.0.4343 由 +25% 改為 +20%。引擎和磨坊食物科技 +10% 相乘（1.32）；遊戲應是相加（1.3），沒有來源寫明。' },
       { text: '每座城鎮中心（含首都）旁生成 4 隻羊', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/lancaster/town-center-1.json', note: '首都的 4 隻從開局就算；新城鎮中心完成時再加 4 隻（800 食物）。引擎只有一個羊群，新城鎮中心的羊也當成在首都旁採、投放在城鎮中心。' },
-      { text: '莊園：175 木、100 石、45 秒，每座每分鐘 30 食物 + 10 木材、+10 人口、全資源投放點', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/lancaster/manor-2.json', note: '被動產出與人口已計入；投放點只列在磨坊、伐木場、採礦場之後當備用，不會縮短採集點的步行距離。上限固定 3 座（Fandom），精簡土地制度、開放農田制度各 +4 未建模。' },
-      { text: '莊園範圍內每名村民每分鐘再 +3 食物、+2 木材（每名村民只算一座）', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/lancaster/manor-2.json', note: '近似：有莊園時，家附近（羊、城鎮中心旁散樹、農田）每名村民每分鐘 +3 食物 +2 木材，假設莊園蓋在家附近、7.5 格罩得到；遠處採集點不算。3 或 4 食物的衝突未解，用遊戲說明的 3。' },
+      { text: '莊園：175 木、100 石、45 秒，每座每分鐘 30 食物 + 10 木材、+10 人口、全資源投放點', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/lancaster/manor-2.json', note: '被動產出與人口已計入；搜尋決定蓋在農田區或礦、林線旁，蓋在採集點旁時兼作那裡的投放點（不用另蓋營地）。上限固定 3 座（Fandom），精簡土地制度、開放農田制度各 +4 未建模。' },
+      { text: '莊園範圍內每名村民每分鐘再 +3 食物、+2 木材（每名村民只算一座）', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Manor_(Age_of_Empires_IV)', note: '莊園光環 7.5 格、3×3（Fandom）：範圍內採集點的村民每分鐘 +3 食物 +2 木材，多座不疊加；莊園蓋在農田區時依可容納的田數折算農田。位置由搜尋決定。食物 3 或 4 有衝突（Fandom 寫 15.1.6970 起 +4），用遊戲說明的 3。' },
       { text: '免役稅（帝王，200 木、500 金）：每座莊園每分鐘再 +30 黃金', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/technologies/lancaster/scutage-4.json', note: '帝王時代莊園科技（目錄 200 木、500 金、60 秒）；之後每座莊園每分鐘 +30 黃金。' },
       { text: '國王學院：所有科技便宜 20%，並可研究山地訓練（霍伯拉生產速度 +100%）', modeled: 'approx', source: 'https://github.com/aoe4world/explorer/blob/main/src/data/patches/patch-16.1.9737-season-13.tsx', note: '所有科技 -20% 已計入（蓋好學院後生效）；山地訓練（霍伯拉生產 +100%）未計入。16.1.9737 由 15% 改為 20%；據 Fandom 不含城堡徵召。' },
       { text: '蘭開斯特城堡徵召：封建 5 名輕騎槍兵、城堡 12 名自耕農、帝王 10+10+10，每座莊園減 50 資源，各限一次', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Lancaster_Castle', note: '三種徵召當成要付錢的一次性選項，搜尋決定用不用（Fandom Lancaster Castle 頁）：召集貴族 250 食物 250 黃金、30 秒 → 5 名輕騎槍兵；郡徵兵（城堡）600 木材 600 黃金、45 秒 → 12 名自耕農；民兵徵召計畫（帝王）1250 食物 1250 黃金、45 秒 → 輕騎槍兵、伯爵衛兵、自耕農各 10。每座莊園 -25 食物／木材／黃金（頁面說明寫三種，更新紀錄只寫食物和黃金）。' },
@@ -1015,6 +1115,8 @@ const SPECS: Record<string, CivSpec> = {
     // 農舍＝房屋＋磨坊，鍛造場＝採礦場＋鐵匠鋪。倉庫（Kura）雖然收四種資源，但它是 400 食物＋200 黃金的地標，
     // 引擎只用這張表挑「要蓋哪種投放點」，所以不放進來（放了也不會讓既有的倉庫縮短走路距離）
     dropoff: { food: ['farmhouse'], wood: ['lumber-camp'], gold: ['forge'], stone: ['forge'] },
+    // 倉庫（升封建地標）收四種資源：當成沒有加成的光環，讓搜尋決定蓋在農田區或礦、林線旁；蓋在採集點旁時那個點不用另蓋營地
+    zones: [{ building: 'kura-storehouse', res: 'all', mul: 1, radius: 0, half: 2, dropoff: 'all' }],
     byproducts: [
       { from: 'gold', to: 'stone', ratio: 0.2, note: '銀礦開採：投放 ≥5 黃金另得 20% 石頭' },
       { from: 'stone', to: 'gold', ratio: 0.2, note: '銀礦開採：投放 ≥5 石頭另得 20% 黃金' },
@@ -1024,6 +1126,9 @@ const SPECS: Record<string, CivSpec> = {
       shinobi: { food: 50, gold: 50 },
     },
     notMilitary: ['trader', 'shinto-priest', 'buddhist-monk'],
+    // 烏城寶物商隊（Fandom Castle of the Crow、Treasure Caravan 頁）：完成 30 秒後、之後每 180 秒一隊，
+    // 每隊食物／木材／黃金 120 + 13.33 × 格數（最多 630）、石頭 40 + 4.44 × 格數（最多 210）。商隊速度沒有公開，用一般商人的 1 格/秒
+    trade: { caravan: { building: 'castle-of-the-crow', delay: 30, every: 180, speed: 1, base: 120, perTile: 13.33, cap: 630, stoneBase: 40, stonePerTile: 4.44, stoneCap: 210 } },
     triggers: [
       // 浮鳥居：神道祭司每 120 秒帶 1 個依代（最多 4）；近似成每個依代每分鐘 70 當下最缺的資源（放在農舍／伐木場）
       { on: 'floating-gate', rampIncome: { every: 120, max: 4, perMin: {}, flexRates: { food: 70, wood: 70, gold: 50 } } },
@@ -1052,12 +1157,12 @@ const SPECS: Record<string, CivSpec> = {
       { text: '武士町：兵營便宜 50%（75 木材）；漁村：漁船便宜 25%（56 木材）', modeled: 'yes', source: 'https://www.ageofempires.com/news/age-of-empires-iv-patch-12-2-3327/', note: '目錄已折價；漁船只在水圖有用。' },
       { text: '俵（黑暗，25 木材、50 黃金、30 秒）取代手推車：攜帶量 +3、移動 +7%、採野果 +25%', modeled: 'yes', source: 'https://ageofempires.fandom.com/wiki/Tawara', note: '目錄沒有效果，已在目錄修正表補上：攜帶 +3、移動 ×1.07、採野果 ×1.25；搜尋會決定何時研究。' },
       { text: '竹細工（封建）、札差（城堡）：每級攜帶量 +3、移動 +7%、採野果 +25%', modeled: 'yes', source: 'https://ageofempires.fandom.com/wiki/Tawara', note: '三級各自疊加（攜帶 +3、移動 ×1.07、野果 ×1.25）；目錄原本把移動寫成 ×0.9，已修正。' },
-      { text: '大名宅邸／大名御殿／幕府城（175／600／1200 石頭，城鎮中心研究 20 秒）：附近 10 格農田採集 +20%／+40%／+60%，各送 1 名村民', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Daimyo_Manor', note: '城鎮中心研究 20 秒（送的村民補回這段時間），搜尋決定研不研、哪一步研。近似：假設所有農田都在 10 格內；送村民的時機沒有文件，引擎在研究完成時送。旗本武士上限未計入。' },
-      { text: '倉庫（封建地標）：完成時送 1 塊農田，之後每 50 秒 1 塊，最多 12 塊；滿了改為每 50 秒 38 木材；收四種資源', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Kura_Storehouse', note: '送田與送滿後的木材已計入（Fandom 的數字）；倉庫收四種資源的投放點角色沒有建模。' },
+      { text: '大名宅邸／大名御殿／幕府城（175／600／1200 石頭，城鎮中心研究 20 秒）：附近 10 格農田採集 +20%／+40%／+60%，各送 1 名村民', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Daimyo_Manor', note: '城鎮中心研究 20 秒（送的村民補回這段時間），搜尋決定研不研、哪一步研。城鎮中心 10 格內約放得下 85 塊 2×2 農田（8 成面積可用），所以所有農田都算在範圍內；送村民的時機沒有文件，引擎在研究完成時送。旗本武士上限未計入。' },
+      { text: '倉庫（封建地標）：完成時送 1 塊農田，之後每 50 秒 1 塊，最多 12 塊；滿了改為每 50 秒 38 木材；收四種資源', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Kura_Storehouse', note: '送田與送滿後的木材已計入（Fandom 的數字）；搜尋決定倉庫蓋在農田區或礦、林線旁，蓋在採集點旁時兼作那裡的投放點（不用另蓋鍛造場、伐木場）。' },
       { text: '甲賀鄉（封建地標）訓練忍者：50 食物、50 黃金、20 秒，完成時免費排入 1 名', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Shinobi_(Age_of_Empires_IV)', note: '已修正費用；第一名免費忍者未建模。' },
       { text: '浮鳥居：神道祭司每 120 秒帶 1 個依代（最多 4）；放入城鎮中心生產 +30%、軍事建築 +125%、農舍每分 70 食物、伐木場每分 70 木材、鍛造場每分 50 黃金', modeled: 'approx', source: 'https://www.ageofempires.com/news/age-of-empires-iv-patch-12-2-3327/', note: '完成時立刻生成 1 名帶依代的神道祭司（免費），之後每 120 秒 1 名，最多 4 個依代（Fandom Floating Gate 頁）；每個依代放在當下最缺資源的建築：農舍每 20 秒 23.3 食物、伐木場 23.3 木材（各每分 70）、鍛造場 16.7 黃金（每分 50）。祭司走過去放的時間、放進城鎮中心（生產 +30%）或軍事建築（+125%）沒有建模。' },
       { text: '平等寺：禪（100 食物、200 木材）後每名僧侶每 60 秒產 25 黃金', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/technologies/japanese.json', note: '搜尋決定研不研禪（100 食物、200 木材、30 秒）與訓練幾名僧侶（0～6，80 黃金、30 秒），研究後每名每分鐘 25 黃金。' },
-      { text: '烏城：每 180 秒從貿易站送出寶物商隊，每趟最多 630 食物／木材／黃金與 210 石頭', modeled: 'no', source: 'https://ageofempires.fandom.com/wiki/Castle_of_the_Crow', note: '數字只有 Fandom 單一來源；需要地圖有中立貿易站。' },
+      { text: '烏城：每 180 秒從貿易站送出寶物商隊，每趟最多 630 食物／木材／黃金與 210 石頭', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Treasure_Caravan', note: '頁面「貿易」開啟時才模擬（不需要訓練商人）：烏城完成 30 秒後第一隊從貿易站出發，之後每 180 秒一隊；每隊食物、木材、黃金各 120 + 13.33 × 格數（最多 630），石頭 40 + 4.44 × 格數（最多 210）。數字只有 Fandom；寶物商隊的速度沒有公開，用一般商人的 1 格/秒。' },
     ],
   }),
   je: spec('je', '聖女貞德', {
@@ -1093,6 +1198,7 @@ const SPECS: Record<string, CivSpec> = {
       'drift-nets': { wood: 97.5, gold: 227.5 },
     },
     notMilitary: ['trader', 'monk'],
+    trade: CHAMBER_TRADE,
     triggers: [
       // 祝聖（最多 4 次、每 120 秒回充 1 次）：近似成升 2 級後所有軍事生產建築訓練單位食物 -25%
       { on: 'jeanne-level-2', prod: [{ at: ['barracks', 'archery-range', 'stable', 'siege-workshop', 'school-of-cavalry'], cost: 0.75, costRes: ['food'] }] },
@@ -1109,7 +1215,7 @@ const SPECS: Record<string, CivSpec> = {
       { text: '貞德 500 經驗升 2 級後變戰鬥單位，不再採集、建造', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Jeanne_d%27Arc_(hero)', note: '經驗照 Fandom：每秒被動 0.5、採集時再 +1（建造 +2 用採集的數字近似），滿 500 升 2 級後離開經濟（不再採集，仍佔 1 人口）。打野豬、附近敵軍死亡、佔聖地的經驗沒有建模。' },
       { text: '貞德 2 級起：祝聖生產建築，訓練單位食物 -25%（軍械連隊後木、金也 -25%）；附近村民建造 +33%', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/abilities/jeannedarc.json', note: '祝聖已計入：升 2 級後軍事生產建築訓練單位食物 -25%（Fandom：最多 4 次、每 120 秒回充，近似成全部建築都祝聖過）；軍械連隊後木、金也 -25%，與「建造王國」（附近村民建造 +33%）沒有建模。' },
       { text: '騎兵學校（封建地標）：騎兵學校與所有馬廄生產快 20%', modeled: 'yes', source: 'https://ageofempires.fandom.com/wiki/School_of_Cavalry', note: '騎兵學校與馬廄生產時間 ÷1.2（皇家騎士 35 → 29.2 秒）。' },
-      { text: '商會（封建地標）：每研究一項經濟科技立即送 1 名商人', modeled: 'no', source: 'https://ageofempires.fandom.com/wiki/Chamber_of_Commerce', note: '黑暗時代研究的手推車、林業、生存技巧在商會完成時補送；陸地最多 14 名。商人可運回食物、木材或黃金，貿易船 +20%；模擬沒有貿易。' },
+      { text: '商會（封建地標）：每研究一項經濟科技立即送 1 名商人', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Chamber_of_Commerce', note: '和法蘭西相同（頁面「貿易」開啟時才模擬）：擁有商會後每完成一項清單上的經濟科技送 1 名商人，研究在前的蓋好時補送，最多 14 名；專業斥候、捕魚科技、商人公會搜尋不研究。商人每趟給當下最缺的食物／木材／黃金；貿易船 +20% 沒有（不模擬水上）。' },
       { text: '公會廳（城堡地標）：被動產出自選資源，越久越快', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Guild_Hall', note: '用固定 204/分黃金（Fandom 前 5 分鐘 1020 的平均）；實際會加速到 10/s，領取就重來。Fandom 自己的每 20 秒規則算出來是 900，數字前後矛盾，未查證。' },
       { text: '碼頭 +10 人口', modeled: 'yes', source: 'https://www.ageofempires.com/news/age-of-empires-iv-season-nine-update-preview-12-0-1974/' },
       { text: '沒有法蘭西的城鎮中心加速與投放建築半價', modeled: 'yes', source: 'https://ageofempires.fandom.com/wiki/Town_Center_(Age_of_Empires_IV)', note: '目錄村民 20 秒、磨坊／伐木場／採礦場 50 木材，正確。' },
@@ -1147,6 +1253,11 @@ const SPECS: Record<string, CivSpec> = {
       emissary: { gold: 100 },
     },
     notMilitary: ['emissary', 'reindeer-trader', 'trader', 'monk'],
+    // 朝貢國（Fandom Tributary State、Emissary 頁）：使者站 10 秒建立；第一塊田立刻出現、之後每 30 秒 1 塊，佃農在田出現 30 秒後到，
+    // 每分鐘食物依佃農數 110/122/130/133/135/136/137/138；園藝、施肥、精準育種各 +10%。龍亭蓋好送 1 名使者，同時最多 2 名
+    trade: {
+      tributary: { unit: 'emissary', at: ['dragon-pavilion'], free: 'dragon-pavilion', establish: 10, every: 30, rates: [0, 110, 122, 130, 133, 135, 136, 137, 138], techs: ['horticulture', 'fertilization', 'precision-cross-breeding'], techPct: 0.1, goldMul: 1.15, workerCap: 3, maxActive: 2 },
+    },
     // 山殿業力（Fandom Mountain Hall 頁）：開始 100，12.5 格內採集的村民每秒 0.1、鄉騎 0.2；滿 1000 時 60 秒農田 +75%，之後歸零
     karma: { building: 'mountain-hall', radius: 12.5, start: 100, threshold: 1000, duration: 60, rates: { villager: 0.1, 'mounted-villager': 0.2 }, gather: { farm: 1.75 } },
     // 草場產馬（Fandom Grassland 頁）：每座封建 75 秒、城堡 60 秒、帝王 45 秒 1 匹，最多 5 匹；戰馬廄用掉 1 匹立刻訓練騎兵、-25 食物
@@ -1155,13 +1266,13 @@ const SPECS: Record<string, CivSpec> = {
       { text: '開局 3 名鄉騎、1 斥候、2 隻羊，資源 200 食物 / 150 木材 / 100 黃金', modeled: 'yes', source: 'https://aoe4world.com/games', note: '2026-11 AoE4 World 12260 對局摘要 4/4 場一致：0 秒時 3 名鄉騎、1 斥候、2 隻羊（標準文明是 5 隻），資源 200/150/100/0。aoe4guides 金朝流程也都從 3 名鄉騎開始。' },
       { text: '城鎮中心下有 2 頭馴鹿，共 800 食物', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Reindeer', note: '2 頭由官方文明頁確認；每頭 400 食物只有 Fandom 寫。引擎當作城鎮中心旁的獵物：獵肉速率 0.825/秒、獵肉攜帶量（鄉騎 30）、吃得到狩獵科技，最多 8 人同時採，在羊之前採。' },
       { text: '鄉騎採集 +120%（農田只有 +90%），攜帶 +5', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Mounted_Villager', note: '倍率與攜帶量只出自 Fandom；論壇實測 1 名無科技鄉騎每分鐘採 81–85 黃金，與 ×2.2 吻合（引擎算出約每分鐘 80）。獵肉攜帶 25 + 5 = 30。17.0 修正後採金科技也套用到鄉騎，引擎的科技本來就對所有工人生效。' },
-      { text: '鄉騎上限 20 名（每個朝貢國 +3），之後只能訓普通村民；鄉騎 65 食物 50 黃金、35 秒', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/units/jindynasty/mounted-villager-1.json', note: '朝貢國加上限沒建模。職業選手黃金不夠時會先訓普通村民再換回鄉騎，引擎只在滿 20 後才改訓。' },
+      { text: '鄉騎上限 20 名（每個朝貢國 +3），之後只能訓普通村民；鄉騎 65 食物 50 黃金、35 秒', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/units/jindynasty/mounted-villager-1.json', note: '每座朝貢國 +3 已計入（頁面「貿易」開啟時）。職業選手黃金不夠時會先訓普通村民再換回鄉騎，引擎只在滿上限後才改訓。' },
       { text: '鄉騎移動較快（1.42），建造較快：地標 +75%、一般建築 +100%、防禦建築 +40%', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Mounted_Villager', note: '移動速度出自目錄；建造倍率只出自 Fandom，Swaggy 3 名鄉騎蓋大牧場約 70 秒，與 +75% 推算的 65 秒吻合。引擎依工人組成取平均（混了普通村民就變慢），防禦建築也用 +100%。沒建模前金朝最快封建算出 4:38，比 23 場頂尖玩家（1850–2500 分）金朝的中位數 4:30 還慢；建模後約 3:31（頂尖最快 3:44）。' },
       { text: '狩獵與伐木專屬科技：靺鞨祖風、狩獵傳統各 +20% 獵肉；役馬木材 +15%、攜帶 +10；集體狩獵在城鎮中心多生 4 頭馴鹿', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Collective_Hunting', note: '靺鞨祖風、狩獵傳統（獵肉各 ×1.2）、役馬（木材 ×1.15）的效果已在目錄修正表補上並列入經濟科技；役馬的攜帶 +10 與集體狩獵的馴鹿沒有計入。' },
       { text: '花塔（黑暗→封建地標）：花園範圍內村民採集 +25%', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Flower_Pagoda', note: '花園以放置點為圓心、半徑 4 格，範圍內村民採集 +25%（Fandom Flower Pagoda 頁）；搜尋決定放在農田區或礦、林線、野果旁。花園可以放在地圖任何地方，引擎只放在候選點旁。' },
       { text: '塔林（城堡→帝王地標）：每 30 秒多 1 座小塔林，最多 15 座、共每分鐘 600 木材', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/jindynasty/pagoda-forest-3.json', note: '用滿額 600/分鐘，忽略完工後 7.5 分鐘的爬坡（第一座在 +30 秒才出現，約多算 2400 木材）。' },
       { text: '大牧場、草場產馬：戰馬廄消耗 1 匹馬可立刻訓練騎兵，少 25 資源', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Grassland', note: '搜尋決定蓋幾座草場（100 木材、每座升代地標 1 座）；每座封建 75 秒、城堡 60 秒、帝王 45 秒產 1 匹馬（最多 5 匹），戰馬廄訓練騎兵時用掉 1 匹就立刻出兵、-25 食物（Fandom Grassland 頁）。近似：戰馬廄都在草場範圍內；大牧場產馬、馬給騎兵加生命沒有建模。' },
-      { text: '朝貢國（使者佔領中立貿易站）：每座每分鐘 110–138 食物、鄉騎上限 +3、商人黃金 +15%', modeled: 'no', source: 'https://ageofempires.fandom.com/wiki/Tributary_State', note: '食物表只出自 Fandom（農田 1→8 座）；需要地圖上有中立貿易站。使者在龍亭 100 黃金（城鎮中心 150），已用 costOverride 改成龍亭價。' },
+      { text: '朝貢國（使者佔領中立貿易站）：每座每分鐘 110–138 食物、鄉騎上限 +3、商人黃金 +15%', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Tributary_State', note: '頁面「貿易」開啟時才模擬，搜尋決定建立幾座（不超過貿易站數）：龍亭蓋好送 1 名使者，再訓練的在龍亭（100 黃金，同時最多 2 名）；使者走到貿易站站 10 秒建立後消失。第一塊田立刻出現、之後每 30 秒 1 塊，佃農在田出現 30 秒後到，每分鐘食物照 Fandom 表（佃農 1→8 名：110→138），園藝、施肥、精準育種各 +10%。每座鄉騎上限 +3；有朝貢國時商人都在那裡貿易，黃金 ×1.15。食物表只出自 Fandom；貿易站周圍被擋住、田數不滿 8 的情況不建模。' },
       { text: '山殿（封建→城堡地標）：業力滿 1000 時農田 +75%、持續 60 秒', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Mountain_Hall', note: '業力已計入（Fandom Mountain Hall 頁）：完成時 100，山殿 12.5 格內採集與帶著資源走回投放點的村民每秒 +0.1、鄉騎 +0.2（空手走過去不算），滿 1000 時 60 秒內農田 +75%，結束後歸零。其他修道院的範圍、單位陣亡 -4 沒有建模。' },
     ],
   }),
@@ -1239,7 +1350,7 @@ const SPECS: Record<string, CivSpec> = {
       { from: 'stone', to: 'silver', ratio: 0.4, requires: 'mining-camp', note: '方鉛礦開採：採石量的 40% 另計為白銀' },
     ],
     // 大酒莊：6.25 格內食物採集 +35%（半徑只有 Fandom）
-    zones: [{ building: 'grand-winery', res: 'food', mul: 1.35, radius: 6.25, half: 3 }],
+    zones: [{ building: 'grand-winery', res: 'food', mul: 1.35, radius: 6.25, half: 3, dropoff: ['food'] }],
     // 瓦良格軍營沒有被動收入：借 trickles 讓搜尋決定蓋不蓋（max 1 = 限 1 座），完成後由 popBuildings 給 +10 人口。
     // 第一山丘蓄水池不放進 trickles：引擎會把它當一般經濟建築在封建時代蓋、不升代，還可能和金角塔並存。
     trickles: [
@@ -1275,7 +1386,7 @@ const SPECS: Record<string, CivSpec> = {
       { text: '方鉛礦開採：採金、採石時另得 40% 白銀，在採礦場或非首都城鎮中心投放時入帳', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/macedonian.json', note: '有任一座採礦場後，所有採金、採石都按採集量計入白銀；沒採礦場前在首都城鎮中心投放的不計（是否算未確認）。採礦科技會等比提高白銀，提煉（投放 +15% 黃金）是否也算未確認，假設不算。' },
       { text: '瓦良格軍營（黑暗時代 50 木材、20 秒、限 1 座）+10 人口，兼做免費增援', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Varangian_Warcamp', note: '用 trickles（無收入、max 1）讓搜尋決定何時蓋，popBuildings 計入 +10 人口。它不能付費訓練單位，只在損失 7 倍批次價值後免費增援，增援未建模；目錄卻把它列為阿特蓋爾、瓦良格衛隊、里達里的生產建築，修正前規劃器可能拿它當 50 木材的兵營。' },
       { text: '沒有兵營：瓦良格要塞（200 木材、30 秒，黑暗時代可蓋）訓練阿特蓋爾（70 食物 20 木材）、早期瓦良格衛隊（80 食物 40 黃金）、弓手（40 食物 50 木材）與里達里', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/macedonian.json', note: '費用、時間取自目錄。目錄也把瓦良格軍營列為生產建築，已有軍營、沒有要塞時規劃器會改在軍營出兵；後續全力出兵也不認得要塞（只認兵營、射箭場、馬廄）。' },
-      { text: '大酒莊（封建地標）光環內食物採集 +35%（17.0 從 30% 提高），兼磨坊與修道院', modeled: 'approx', source: 'https://www.ageofempires.com/news/age-of-empires-iv-update-17-0/', note: '範圍 6.25 格（半徑與離開後 10 秒殘留只有 Fandom 記載），只算範圍內的食物採集點；搜尋決定蓋在農田區、野果或鹿群旁。兼磨坊的投放點效果沒有建模。' },
+      { text: '大酒莊（封建地標）光環內食物採集 +35%（17.0 從 30% 提高），兼磨坊與修道院', modeled: 'approx', source: 'https://www.ageofempires.com/news/age-of-empires-iv-update-17-0/', note: '範圍 6.25 格（半徑與離開後 10 秒殘留只有 Fandom 記載），只算範圍內的食物採集點；搜尋決定蓋在農田區、野果或鹿群旁，蓋在野果、鹿群旁時兼作那裡的磨坊，野果採完後周圍的田也吃光環。兼修道院（聖物給白銀）沒有建模。' },
       { text: '兵工廠鑄幣：影響範圍內的採礦場、城鎮中心每分鐘產出累計投放白銀的 12%；大酒莊每個聖物每分 100 白銀（17.0 從 80 提高）', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/abilities/macedonian.json', note: '搜尋決定蓋不蓋兵工廠（100 木材）；蓋好後每分鐘產出累計採到白銀的 12%（Fandom Varangian Arsenal 頁：範圍內每座採礦場與城鎮中心各算自己收到的白銀）。近似成兵工廠蓋在主要採礦場旁、全部白銀都算；大酒莊聖物白銀要聖物系統，沒有建模。' },
       { text: '第一山丘蓄水池（城堡地標）：恩惠開局 4 次、每 60 秒回充 1 次（上限 99），用在採礦場、伐木場、磨坊、農田時 60 秒內給 160 資源；用在軍事或科技建築時工作效率 +150%、60 秒', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/abilities/macedonian.json', note: '近似：完成時一次給 640（4 次恩惠），之後每 60 秒 160，都給當下最缺的資源；恩惠用在軍事或科技建築（效率 +150%）沒有建模。' },
       { text: '帝國競技場（封建地標，兼馬廄）完成後免費送出 3 名冠軍：斥候 45 秒、騎兵再 130 秒、里達里再 205 秒（17.0）', modeled: 'yes', source: 'https://www.ageofempires.com/news/age-of-empires-iv-update-17-0/', note: '完成後 45、175、380 秒各送 1 名冠軍（斥候、騎兵、里達里），算進軍隊目標與目標後出兵。' },
@@ -1302,6 +1413,11 @@ const SPECS: Record<string, CivSpec> = {
     },
     // 目錄把商人、伊瑪目標成軍隊
     notMilitary: ['trader', 'imam'],
+    // 收費哨站（Fandom Toll Outpost、Saharan Trade Network 頁）：經過 10 格光環抽 8%，光環不重疊才收滿（每 20 格一座），每趟最多 5 次；
+    // 撒哈拉貿易網本身也收稅並另給等量食物，其他哨站另給一半食物
+    // 漁船投放食物時另得 10% 黃金（aoe4world 馬利文明資料）
+    fishBonus: [{ to: 'gold', ratio: 0.1 }],
+    trade: { tolls: { building: 'toll-outpost', pct: 0.08, spacing: 20, maxPerLeg: 5, landmark: 'saharan-trade-network', foodPct: 0.5 } },
     // 牛：在磨坊買（90 黃金、15 秒，不佔人口是推測），每隻 500 食物，村民每秒 0.81；放在城鎮中心旁、一隻一人
     herd: { at: 'mill', label: '牛', cost: { gold: 90 }, time: 15, food: 500, raw: 0.81, max: 20 },
     triggers: [
@@ -1331,8 +1447,8 @@ const SPECS: Record<string, CivSpec> = {
       { text: '不能採野豬', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/malians.json', note: '引擎目前對所有文明都不放野豬，所以這個旗標實際上沒有差別。' },
       { text: '格里奧巴拉（帝王地標）慶典：300 黃金、持續 90 秒、冷卻 30 秒；食物慶典採食物 +50%（含牧場），生產慶典所有單位生產 +100%（含村民，商人除外）', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Griot_Bara', note: '搜尋決定一直開食物慶典（食物採集 +50%）或生產慶典（所有單位含村民生產 +100%）或不開；每次 300 黃金、持續 90 秒、冷卻 30 秒，付得起就馬上再開（Fandom Griot Bara 頁）。食物慶典對牧牛場牛的 +50% 沒有套上去；攻城慶典不影響規劃。' },
       { text: '法林巴要塞（城堡地標）：免費招募 1 條曼薩兵種，其餘兩條各 100 食物、250 黃金', modeled: 'na', source: 'https://github.com/aoe4world/explorer/blob/main/src/data/patches/patch-16.1.9737-season-13.tsx', note: '只解鎖或升級兵種（第一條免費、其餘 100 食物 250 黃金，Fandom Farimba Garrison 頁），沒有經濟效果；目錄沒有鎖這些兵種，所以不影響規劃。' },
-      { text: '貿易：收費哨站（100 木材）向經過的商人抽 8% 黃金；撒哈拉貿易網另給等量食物；手稿貿易縮短科技研究時間', modeled: 'no', source: 'https://ageofempires.fandom.com/wiki/Toll_Outpost', note: '引擎沒有貿易；手稿貿易沒有公開公式。' },
-      { text: '漁船投放食物時另得 10% 黃金', modeled: 'no', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/malians.json', note: 'byproducts 會套到所有食物，只限漁船無法表示；僅水圖。' },
+      { text: '貿易：收費哨站（100 木材）向經過的商人抽 8% 黃金；撒哈拉貿易網另給等量食物；手稿貿易縮短科技研究時間', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Toll_Outpost', note: '頁面「貿易」開啟時才模擬：有商人之後沿路線每 20 格蓋一座收費哨站（10 格光環不重疊才收滿，Fandom），搜尋決定蓋幾座；每趟經過一座抽 8% 黃金、最多 5 次（「每趟」當作單程）。擁有撒哈拉貿易網時假設它在路線上（佔一個位置），在它收的稅另給等量食物，其他哨站另給一半食物（Fandom Saharan Trade Network 頁）。手稿貿易沒有公開公式，未建模。' },
+      { text: '漁船投放食物時另得 10% 黃金', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/malians.json', note: '頁面「捕魚」開啟時：漁船採到的食物另給 10% 黃金（fishBonus）。' },
       { text: '城堡時代老兵升級半價、半時間（例如 50 食物＋125 黃金、30 秒）', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/malians.json', note: '目錄已是折半的花費和時間。' },
     ],
   }),
@@ -1373,6 +1489,17 @@ const SPECS: Record<string, CivSpec> = {
     ],
     // 雙倍生產（敖包範圍內一格出 2 名，原價一次 + 石頭）是選用模式，不能用固定的 batches 表示，所以不設 batches。
     notMilitary: ['trader', 'shaman'],
+    // 絲路：同時有 5/10/15 名商人時，每趟另得黃金 10% 的食物／木材／黃金；銀樹訓練商人黃金 -40%、快 40%（Fandom Trade、The Silver Tree 頁）
+    trade: {
+      tiers: [
+        { n: 5, res: 'food', pct: 0.1 },
+        { n: 10, res: 'wood', pct: 0.1 },
+        { n: 15, res: 'gold', pct: 0.1 },
+      ],
+      producerMods: { 'the-silver-tree': { gold: 0.6, time: 1 / 1.4 } },
+      // 驛站：前哨 12.5 格內商人移動 +15%（Fandom Outpost 頁）；搜尋決定沿路線蓋幾座
+      speedAura: { building: 'outpost', radius: 12.5, mul: 1.15 },
+    },
     triggers: [
       // 改良經濟科技：目錄效果只是加強的部分，研究時一併套用一般版的效果（一般版與改良版互斥）
       { on: 'wheelbarrow-improved', alsoApply: ['wheelbarrow'] },
@@ -1404,7 +1531,7 @@ const SPECS: Record<string, CivSpec> = {
       { text: '黑暗時代就能蓋馬廄，騎兵訓練快 25%（18 秒）；城鎮中心只要 750 木材', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/units/mongols.json', note: '目錄已是 18 秒與 750 木材、165 秒。' },
       { text: '草原堡壘（封建地標、升城堡）也是蒙古包，在此投放黃金 +50%', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/mongols.json', note: '蓋在金礦旁時，那個金礦的採集 ×1.5（投放 +50% 近似成採集倍率）；搜尋決定蓋在哪個金礦旁。收起搬家沒有建模。' },
       { text: '白塔（城堡地標、升帝王）：每分鐘 240 石頭，不需要露頭，有敖包範圍', modeled: 'approx', source: 'https://github.com/aoe4world/explorer/blob/main/src/data/patches/patch-15.1.6970-season-12.tsx', note: '石頭收入已計入；雙倍生產石頭 -50% 和範圍效果沒有計入。中等可信度。' },
-      { text: '劫掠賞金（點燃敵方建築 +25 食物、+25 黃金）、絲路（商人 5/10/15 名時額外 +10%）、驛站移動速度、什一稅聖物收入', modeled: 'no', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/mongols.json', note: '需要敵方建築、貿易或聖物，純經濟模擬不適用。' },
+      { text: '劫掠賞金（點燃敵方建築 +25 食物、+25 黃金）、絲路（商人 5/10/15 名時額外 +10%）、驛站移動速度、什一稅聖物收入', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Trade_(Age_of_Empires_IV)', note: '頁面「貿易」開啟時：絲路（同時有 5/10/15 名商人時，每趟另得黃金 10% 的食物／木材／黃金）、銀樹訓練商人黃金 -40%、快 40%（Fandom The Silver Tree 頁，有銀樹時優先在銀樹訓練）、驛站（有商人後沿路線每 25 格蓋一座前哨，12.5 格光環內商人 +15% 速度，搜尋決定蓋幾座，Fandom Outpost 頁）都已計入。劫掠賞金要敵方建築，不適用；什一稅倉照聖物系統的一般效果算。' },
     ],
   }),
   od: spec('od', '龍騎士團', {
@@ -1461,9 +1588,12 @@ const SPECS: Record<string, CivSpec> = {
       // 軍事學校：免費持續產出，時間 4.75 倍；近似成每座每 71 秒 1 名長槍兵（15 × 4.75）。上限 = 目前時代數
       { building: 'military-school', perMin: {}, max: 4, maxByAge: [1, 2, 3, 4], unit: { id: 'spearman', every: 71 }, note: '軍事學校（150 木 100 石、30 秒）：每座每 71 秒免費 1 名長槍兵；搜尋決定蓋幾座、何時蓋。' },
 
-      { building: 'sultanhani-trade-network', perMin: { gold: 84 }, max: 1, note: '蘇丹客棧（升封建地標）完工送 3 名駐守商人，每名每分鐘 28 黃金（17.0 從 26 提高）= 84；再訓練商人（60 木 60 金、30 秒）駐守最多 10 名、貿易袋 +40% 都未建模。只能當升代地標蓋，不能和雙塔伊斯蘭學院同時存在。' },
+      { building: 'sultanhani-trade-network', perMin: { gold: 84 }, max: 1, mulOn: [{ on: 'trade-bags', mul: 1.4 }], note: '蘇丹客棧（升封建地標）完工送 3 名駐守商人，每名每分鐘 28 黃金（17.0 從 26 提高）= 84；再訓練的駐守商人用 support（最多再 7 名）；貿易袋 +40%。只能當升代地標蓋，不能和雙塔伊斯蘭學院同時存在。' },
     ],
     notMilitary: ['trader', 'imam'],
+    // 蘇丹客棧：再訓練商人駐守（60 木 60 金、30 秒），每名每分鐘 28 黃金，連同送的 3 名最多 10 名（Fandom Sultanhani Trade Network 頁）
+    support: [{ unit: 'trader', at: ['sultanhani-trade-network'], max: 7, perMin: { gold: 28 }, requires: 'sultanhani-trade-network', mulOn: [{ on: 'trade-bags', mul: 1.4 }] }],
+    trade: { goldMul: [{ on: 'trade-bags', mul: 1.4 }] },
     // 維齊爾：村民 2、升封建 15、城堡 45、帝王 100 經驗；每點門檻 60/100/150/240/320（之後 320），最多 5 點
     vizier: { villager: 2, age: { 2: 15, 3: 45, 4: 100 }, points: [60, 100, 150, 240, 320], max: 5 },
     // 帝國議會：第 1 層的選擇都沒有經濟效果，用一項「任選一項」代表；目錄的安納托利亞丘陵效果寫反（×0.9），整項取代
@@ -1472,12 +1602,15 @@ const SPECS: Record<string, CivSpec> = {
       { id: 'anatolian-hills', name: '安納托利亞丘陵', age: 1, cost: {}, other: { vizier: 1 }, time: 0, producedBy: [] },
       { id: 'extensive-fortifications', name: '廣泛防禦工事', age: 1, cost: {}, other: { vizier: 1 }, time: 0, producedBy: [] },
       { id: 'pax-ottomana', name: '鄂圖曼和平', age: 1, cost: {}, other: { vizier: 1 }, time: 0, producedBy: [] },
+      // 貿易袋（議會第 4 層，要任一第 3 層）：商人黃金 +40%、蘇丹客棧 +40%（Fandom Trade Bags 頁）；目錄沒有生產建築
+      { id: 'trade-bags', name: '貿易袋', age: 1, cost: {}, other: { vizier: 1 }, time: 0, producedBy: [] },
     ],
     civTechs: [
       { id: 'vizier-tier-1', instant: true },
       { id: 'anatolian-hills', instant: true, requires: 'vizier-tier-1' },
       { id: 'extensive-fortifications', instant: true, requires: 'vizier-tier-1' },
       { id: 'pax-ottomana', instant: true, requires: ['anatolian-hills', 'extensive-fortifications'] },
+      { id: 'trade-bags', instant: true, requires: 'pax-ottomana' },
     ],
     triggers: [
       // 鐵匠鋪／大學影響範圍：軍事生產在封建、城堡、帝王 +20/30/40%；近似成蓋好鐵匠鋪後軍事建築都在範圍內
@@ -1498,7 +1631,7 @@ const SPECS: Record<string, CivSpec> = {
       { text: '軍事學校（150 木 100 石、30 秒）：免費持續產出選定單位，時間 4.75 倍；上限 = 目前時代數（黑暗 1、封建 2…），軍事校園 +1', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Military_School', note: '搜尋決定蓋幾座（上限 = 目前時代數，軍事校園 +1 沒有建模）；近似成每座每 71 秒免費 1 名長槍兵（15 秒 × 4.75），算進軍隊目標與目標後出兵。實際可以選弓箭手、西帕希、梅赫特、阿肯吉等。' },
       { text: '鐵匠鋪／大學影響範圍：軍事生產建築在封建、城堡、帝王 +20/30/40% 生產速度', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/abilities/ottomans.json', note: '近似成蓋好鐵匠鋪後所有軍事建築都在範圍內，生產時間 ÷1.2/1.3/1.4（封建/城堡/帝王）；伊斯坦堡天文台的加成沒有建模。' },
       { text: '雙塔伊斯蘭學院（升封建地標，400 食 200 金、190 秒）：兼作磨坊，長出 4 叢野果、採集 +50%，採完 120 秒再生', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Twin_Minaret_Medrese', note: '完成後家附近多 4 叢野果（每叢 250 是推測，沒有來源）、採集 +50%、就近投放，採完 120 秒長回來。' },
-      { text: '蘇丹客棧（升封建地標，400 食 200 金、190 秒）：送 3 名駐守商人，每名每分鐘 28 黃金，最多 10 名', modeled: 'approx', source: 'https://www.ageofempires.com/news/age-of-empires-iv-update-17-0/', note: '用 trickles 固定 3 名 = 84 黃金/分；加訓商人與貿易袋 +40% 未建模。送的 3 名商人是否佔人口未證實。' },
+      { text: '蘇丹客棧（升封建地標，400 食 200 金、190 秒）：送 3 名駐守商人，每名每分鐘 28 黃金，最多 10 名', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Sultanhani_Trade_Network', note: '送的 3 名固定 84 黃金/分；搜尋決定再訓練幾名駐守（0～7，60 木 60 金、30 秒，每名 28/分，佔 1 人口）。貿易袋（議會第 4 層，1 點）讓客棧與商人 +40%，搜尋決定選不選。送的 3 名商人是否佔人口未證實（當作不佔）。' },
       { text: '帝國議會：訓練單位與升級得到維齊爾經驗（村民 2、升封建 15、城堡 45、帝王 100），每點需 60/100/150/240/320 經驗（之後每點 320），最多 5 點（伊斯坦堡皇宮 +4、單位經驗 ×2）', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Imperial_Council', note: '經驗與點數已計入（村民 2、升代 15/45/100；每點門檻分開算，未證實）；選擇不需建築、立即生效，下一層要先在上一層選過一項。第 1 層的選擇都沒有經濟效果，用「任選一項」代表；伊斯坦堡皇宮 +4 點、單位經驗表（只有 Fandom）未計入。' },
       { text: '安納托利亞丘陵（議會第 2 層）：首都城鎮中心送 12 隻羊，村民採金、採石 +15%', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Anatolian_Hills', note: '已取代目錄的錯誤效果：送 12 隻羊（併入城鎮中心旁的羊）、採金採石 +15%；第 2 層，要先選過第 1 層。' },
       { text: '鄂圖曼和平（議會第 3 層）：240 秒內村民生產 +75%（20 → 11.4 秒）', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Pax_Ottomana', note: '目錄沒有，已補上：240 秒內村民 20 → 11.4 秒；第 3 層（要先選過第 2 層）。廣泛防禦工事（第 2 層，城鎮中心與防禦建築 -20%）也一起補上。' },
@@ -1543,7 +1676,7 @@ const SPECS: Record<string, CivSpec> = {
       { text: '高級貿易所（封建→城堡）：產金是狩獵小屋的 5 倍，不佔樹、不算上限；每 60 秒生 1 隻鹿，也是食物投放點', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/High_Trade_House', note: '選它升城堡後固定 200 黃金/分（Fandom 實測 190–250，單一來源；遊戲說明 +400%，Fandom 寫 4 倍），不隨賞金增加。生鹿與投放點未建模。' },
       { text: '三一修道院：所有修道院的戰鬥僧侶 -50%（20 食物、100 黃金）', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/rus.json', note: '蓋好後戰鬥僧侶花費 ×0.5。' },
       { text: '什一稅倉（帝王，500 黃金、60 秒）：修道院每個聖物每分鐘再產 40 食物、40 木材、10 石頭', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/technologies/rus.json', note: '已建模：什一稅倉是經濟科技（搜尋決定研不研），研究後修道院裡每個聖物每分鐘再產 40 食物、40 木材、10 石頭（寶塔裡的不算）。聖物數量看頁面「聖物與聖地」設定。' },
-      { text: '羅斯漁船：150 木材、46 秒、2 人口，深水 1.42、岸邊 1.2825 食物/秒，滿載直接入庫不用回碼頭', modeled: 'no', source: 'https://ageofempires.fandom.com/wiki/Lodya_Fishing_Boat', note: '引擎沒有捕魚；目錄標封建時代，Fandom 寫黑暗時代就能在碼頭訓練。' },
+      { text: '羅斯漁船：150 木材、46 秒、2 人口，深水 1.42、岸邊 1.2825 食物/秒，滿載直接入庫不用回碼頭', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Lodya_Fishing_Boat', note: '頁面「捕魚」開啟時：羅斯用羅斯漁船，深水魚每秒 1.42、不用回碼頭（目錄的費用、時間、人口）；Fandom 寫黑暗時代就能訓練，引擎照 Fandom（目錄標封建）。岸邊魚、改裝成其他船沒有建模。' },
     ],
   }),
   sco: spec('sco', '蘇格蘭', {
@@ -1666,7 +1799,7 @@ const SPECS: Record<string, CivSpec> = {
     bonuses: [
       { text: '標準開局：200 食物、150 木材、100 黃金，6 村民、1 斥候、5 隻羊，人口 7/10', modeled: 'yes', source: 'https://ageofempires.fandom.com/wiki/Sengoku_Daimyo', note: '三份職業開局的算術吻合：100 起始黃金＋30 採集＝第一次買木材的 130 黃金；起始 150 木材剛好蓋祭典（100）和農舍（50）。沒有預建建築、沒有開局屋台。' },
       { text: '屋台：祭典訓練（125 木材、15 秒、0 人口），每分鐘 10 食物＋標記來源（野豬 +40、鹿／魚 +4、羊／野果 +2），上限 60（屋台農田採集後 80），直接入庫；上限 3 台，每升一代 +1', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Yatai', note: '當成村民蓋 15 秒的被動收入點，每台固定 40 食物／分、最多 3 台，不要求先有祭典。未計：走到定點（0.875 格／秒）與架設的時間、封建後第 4 台以上、農田 +4 科技。40 是依職業開局（野豬 60、鹿 35、羊＋野果 30）估的平均值；標記半徑 aoe4world 寫 2 格、Fandom 寫 10 格，未定。收入直接入庫沒有官方明說。16.1.10056 起基礎 20→10。鹿與野豬位置開局全開，屋台可直接走去。' },
-      { text: '屋台食物商人與祭典光環：每產 215 食物（17.0 前 250）派出一名，回祭典 +50 食物、10 格內村民採集 +5%（最多 +30%）、祭典 +250 生命', modeled: 'approx', source: 'https://www.ageofempires.com/news/age-of-empires-iv-update-17-0/', note: '已計入（Fandom Yatai、Matsuri 頁）：每產 215 食物派一名商人回祭典 +50 食物，祭典 10 格內村民採集 +5%／名、最多 +30%（祭典蓋在家附近）。商人走路時間、離開範圍保留 15 秒、祭典 +250 生命沒有建模。' },
+      { text: '屋台食物商人與祭典光環：每產 215 食物（17.0 前 250）派出一名，回祭典 +50 食物、10 格內村民採集 +5%（最多 +30%）、祭典 +250 生命', modeled: 'approx', source: 'https://www.ageofempires.com/news/age-of-empires-iv-update-17-0/', note: '已計入（Fandom Yatai、Matsuri 頁）：每產 215 食物派一名商人回祭典 +50 食物，祭典 10 格內村民採集 +5%／名、最多 +30%；光環以祭典實際蓋的位置算（它是投放點，引擎通常蓋在金礦或林線旁）。商人走路時間、離開範圍保留 15 秒、祭典 +250 生命沒有建模。' },
       { text: '祭典：0:00 就能蓋（100 木材、20 秒），四種資源的投放點兼黑暗時代市場（用 130 黃金買 100 木材）', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/sengoku.json', note: '只建模投放點（黃金優先用祭典，所以第二座金礦也會蓋祭典而不是 50 木材的鍛造場）。市場交易沒有建模：職業開局封建前會用黃金買 2～3 次木材來做屋台，模擬只能先採 125 木材，屋台會比實戰晚。' },
       { text: '銀礦開採：投放黃金另得 20% 石頭，投放石頭另得 20% 黃金', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/units/sengoku.json', note: '需一次投放 ≥5，村民攜帶量 10 以上一定成立；模擬按採集量即時加。清酒釀造所的金蓆黃金是否也觸發，沒有來源。' },
       { text: '農舍取代房屋＋磨坊（50 木材、15 秒、+10 人口、食物投放點）；鍛造場取代採礦場＋鐵匠鋪（50 木材、20 秒）', modeled: 'yes', source: 'https://ageofempires.fandom.com/wiki/Farmhouse' },
