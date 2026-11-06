@@ -39,6 +39,47 @@ const DASH = JSON.parse(readFileSync(new URL('../../dashboard/catalog.json', imp
 const CATALOG = JSON.parse(readFileSync(new URL('../public/sim/catalog.json', import.meta.url), 'utf8'))
 const civs = new Set(CATALOG.civilizations.map((c) => c.id))
 
+/** 模擬器目錄裡各文明的項目 id → 種類（pbgid 對不到時用圖示名稱對） */
+const SIM_IDS = new Map(Object.entries(CATALOG.items).map(([abbr, list]) => [abbr, new Map(list.map((x) => [x.id, x.kind]))]))
+const ABBR = new Map(CATALOG.civilizations.map((c) => [c.id, c.abbr]))
+/** 圖示名稱 → 目錄 id：去掉 building_/unit_ 前綴與文明後綴，底線改連字號（units/yatai → yatai、buildings/building_farmhouse → farmhouse） */
+/**
+ * 圖示名稱跟目錄 id 對不起來、要手動對照的項目（[目錄 id, 種類]）。
+ * 圖格魯克的工作象經濟科技、要塞升級、手推車、求生技巧只在模擬器的 extraItems 裡，目錄沒有。
+ */
+const ALIAS = {
+  tughlaq_dynasty: {
+    elephant_economics_1: ['woven-baskets', 'technology'],
+    elephant_economics_2: ['carrying-frames', 'technology'],
+    elephant_economics_3: ['elephant-harnesses', 'technology'],
+    tughluqabad_fort_tier2: ['shahi-walls', 'technology'],
+    tughluqabad_fort_tier3: ['red-brick-bastions', 'technology'],
+    tughluqabad_fort_tier4: ['tughlaqabad-fort-benefactor', 'technology'],
+    hunting_villager: ['survival-techniques', 'technology'],
+    wheelbarrow: ['wheelbarrow', 'technology'],
+  },
+  byzantines: { aquaeducts: ['aqueduct', 'building'] },
+  jin_dynasty: { wheat_field: ['farm', 'building'] },
+  scots: { fish_pond_sco: ['fishpond', 'building'] },
+  // 馬利的牛（磨坊買，90 黃金）：回放時當成 policy.herd 的數量
+  malians: { cattle: ['cattle', 'unit'] },
+  vikings: { building_sacred_grove: ['sacred-grove', 'building'], longhouse_farmstead: ['farmstead', 'technology'] },
+}
+
+function idFromIcon(icon, civ) {
+  const ids = SIM_IDS.get(ABBR.get(civ))
+  if (!ids) return null
+  let n = String(icon || '').split('/').pop().replace(/\.(png|webp)$/, '').toLowerCase()
+  const alias = ALIAS[civ]?.[n]
+  if (alias) return alias
+  n = n.replace(/^(building|unit|upgrade)_/, '').replace(/^wonder_age\d_/, '').replace(/_/g, '-')
+  const base = [n, n.replace(/-[a-z]{2,4}$/, ''), n.replace(/-\d+$/, ''), n.replace(/-\d+$/, '').replace(/-[a-z]{2,4}$/, '')]
+  // 複數（grasslands → grassland）、拼法（aquaeducts → aqueduct）
+  const cands = [...base, ...base.map((x) => x.replace(/s$/, '')), ...base.map((x) => x.replace(/aqua/, 'aque').replace(/s$/, ''))]
+  for (const cand of cands) if (ids.has(cand)) return [cand, ids.get(cand)]
+  return null
+}
+
 function extract(sp, horizon) {
   const villagers = []
   const buildings = []
@@ -46,18 +87,24 @@ function extract(sp, horizon) {
   const techs = []
   const unknown = []
   for (const b of sp.buildOrder || []) {
-    const d = DASH[b.pbgid]
     const times = (k) => (b[k] || []).filter((t) => typeof t === 'number' && t > 0 && t <= horizon)
+    // 有些產出只記在 unknown 的事件代碼 14（戰國屋台、朱熹監工…），當成完成
+    const spawned = Object.entries(b.unknown || {}).filter(([code]) => code === '14').flatMap(([, ts]) => ts).filter((t) => typeof t === 'number' && t > 0 && t <= horizon)
+    let d = DASH[b.pbgid]
     if (!d) {
-      const n = times('finished').length + times('constructed').length
+      const m = idFromIcon(b.icon, sp.civilization)
+      if (m) d = [m[0], m[1] === 'unit' ? 'u' : m[1] === 'building' ? 'b' : 't']
+    }
+    if (!d) {
+      const n = times('finished').length + times('constructed').length + spawned.length
       if (n && b.type !== 'Animal' && b.type !== 'Age') unknown.push(`${b.type}:${String(b.icon).split('/').pop()}`)
       continue
     }
     const [id, kind] = d
     if (kind === 'u') {
-      for (const t of times('finished')) (/villager$/.test(id) ? villagers : units).push([Math.round(t), id])
+      for (const t of [...times('finished'), ...spawned]) (/villager$/.test(id) ? villagers : units).push([Math.round(t), id])
     } else if (kind === 'b') {
-      for (const t of times('constructed')) buildings.push([Math.round(t), id])
+      for (const t of [...times('constructed'), ...spawned]) buildings.push([Math.round(t), id])
     } else {
       for (const t of times('finished')) techs.push([Math.round(t), id])
     }
@@ -80,7 +127,11 @@ function gatheredOf(sp, horizon) {
     if (!Array.isArray(spent) || !Array.isArray(stock)) return null
     return spent.slice(0, n).map((x, i) => Math.round(x + (stock[i] ?? 0) - (stock[0] ?? 0)))
   }
-  return { t: ts.slice(0, n), food: col('food'), wood: col('wood'), gold: col('gold'), stone: col('stone'), income: true }
+  // 另外存累計花費與庫存，回放時逐項對帳
+  const raw = (k) => (Array.isArray(r[k]) ? r[k].slice(0, n).map((x) => Math.round(x)) : null)
+  const spent = { food: raw('foodGathered'), wood: raw('woodGathered'), gold: raw('goldGathered'), stone: raw('stoneGathered') }
+  const stock = { food: raw('food'), wood: raw('wood'), gold: raw('gold'), stone: raw('stone') }
+  return { t: ts.slice(0, n), food: col('food'), wood: col('wood'), gold: col('gold'), stone: col('stone'), income: true, spent, stock }
 }
 
 const first = await getJson('https://aoe4world.com/api/v0/games?page=1')
@@ -94,17 +145,18 @@ const need = () => [...civs].filter((c) => (perCiv.get(c) || 0) < PER_CIV)
 const save = () =>
   writeFileSync(OUT, JSON.stringify({ fetchedAt: new Date().toISOString(), patch, minRating: MIN_RATING, perCiv: PER_CIV, short: need().map((c) => `${c} ${perCiv.get(c) || 0}`), tried: [...tried], samples }, null, 1) + '\n')
 
-// 舊樣本沒有累計採集：重抓摘要補上
+// 舊樣本沒有累計採集（或 REEXTRACT=1）：重抓摘要補上、重算操作紀錄
 for (const smp of samples) {
-  if (smp.gathered?.income) continue
+  if (smp.gathered?.spent && !process.env.REEXTRACT) continue
+  if (process.env.CIV && smp.civ !== process.env.CIV) continue
   const s = await getJson(`https://aoe4world.com/players/${smp.profileId}/games/${smp.game}/summary?camelize=true`)
   await sleep(1200)
   const sp = s?.players?.find((x) => x.profileId === smp.profileId)
-  if (sp) smp.gathered = gatheredOf(sp, smp.horizon)
+  if (sp) Object.assign(smp, extract(sp, smp.horizon))
   save()
 }
 
-outer: for (let page = 1; page <= 40; page++) {
+outer: for (let page = 1; page <= (process.env.BACKFILL_ONLY ? 0 : 40); page++) {
   const lb = await getJson(`https://aoe4world.com/api/v0/leaderboards/rm_solo?page=${page}`)
   await sleep(900)
   if (!lb?.players?.length) break

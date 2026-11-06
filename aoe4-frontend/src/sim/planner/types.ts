@@ -174,8 +174,16 @@ export interface Policy {
  */
 export interface ReplayScript {
   villagers: number[]
+  /** 監工（中國、朱熹）的出生秒數：照職業的時間訓練 */
+  officials?: number[]
+  /** 學者（德里）的出生秒數：照職業的時間訓練 */
+  scholars?: number[]
+  /** 職業每塊農田（橄欖園、牧場…）完成的秒數：照時間蓋田，不等天然食物採完 */
+  farms?: number[]
   income: { t: number[]; food: number[]; wood: number[]; gold: number[]; stone: number[] }
   dropoffs: { t: number; id: string }[]
+  /** 職業紀錄裡看不到的投放點（圖格魯克工作象）：不受 dropoffs 限制，照模擬自己的判斷蓋 */
+  untracked?: string[]
 }
 
 /**
@@ -210,15 +218,14 @@ export interface HolySettings {
 }
 
 /**
- * 操作損失：引擎沒有反應時間與走位損失，最快時間比職業快 20～60 秒。
- * PRO_LOSS 用三個職業基準校準（英格蘭封建 3:50～4:10、日本直城 7:45～8:15、金朝頂尖最快封建 3:44）：
- * 每次手動指令 4 秒、採集效率 85%，三者分別得到 3:52、7:57、3:52（2026-11-06，scripts/check-planner.ts）。
+ * 操作損失（每次手動指令多幾秒、採集效率）。頁面不再使用：2026-11-07 起用職業對局回放（scripts/check-pro-replay.ts）驗證，
+ * 照職業的操作做、沒有操作損失時，升代時間的中位數就與職業相差約 10 秒內。以前的 PRO_LOSS（4 秒、85%）是拿搜尋到的最佳流程
+ * 對照職業基準校準的，把「流程比職業好」誤算成操作損失。引擎仍保留 opDelay、efficiency 選項。
  */
 export interface OpLoss {
   delay: number
   efficiency: number
 }
-export const PRO_LOSS: OpLoss = { delay: 4, efficiency: 0.85 }
 
 /** 目標達成後的「全力出兵」設定 */
 export interface PostArmy {
@@ -276,7 +283,7 @@ export interface Sample {
   /** 到此刻的累計收入（採集 + 被動收入 + 一次給的），和職業對局摘要的累計採集比較用 */
   gathered?: Bundle
   /** 各採集點此刻的人數與剩餘量（sheep、farm 也在內） */
-  sites: { id: string; workers: number; left: number }[]
+  sites: { id: string; workers: number; left: number; rate?: number }[]
   farms: number
 }
 

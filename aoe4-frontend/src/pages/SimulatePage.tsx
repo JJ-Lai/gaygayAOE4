@@ -14,7 +14,6 @@ import { MAP_TYPES, generateMap } from '../sim/planner/mapgen'
 import type { StartMessage, WorkerOut } from '../sim/planner/planner.worker'
 import { presetsFor } from '../sim/planner/presets'
 import type { Goal, HolySettings, PlanResult, Policy, PostArmy, Step, FishSettings, TradeSettings } from '../sim/planner/types'
-import { PRO_LOSS } from '../sim/planner/types'
 import type { Catalog } from '../sim/types'
 
 interface Best {
@@ -60,8 +59,6 @@ export function SimulatePage() {
   // 陸地貿易：地圖模型沒有貿易站，數量與距離由使用者設定（1v1 沿地圖一邊約 88 格，Fandom）
   const [tradeOn, setTradeOn] = useState(false)
   const [trade, setTrade] = useState<TradeSettings>({ posts: 1, dist: 70 })
-  // 操作損失：預設職業水準（校準過的反應時間與採集效率），可切成理論最快
-  const [lossOn, setLossOn] = useState(true)
   // 捕魚：地圖模型沒有水，深水魚數量與距離由使用者設定
   const [fishOn, setFishOn] = useState(false)
   const [fish, setFish] = useState<FishSettings>({ spots: 4, dist: 10, dock: 25, shore: 4 })
@@ -128,12 +125,12 @@ export function SimulatePage() {
       progress.current = []
       setStatus({ evals: 0, elapsed: 0, running: true })
       workerRef.current.forEach((w, k) => {
-        const msg: StartMessage = { type: 'start', id, civ, mapType, seed, goals, post, holy: holyOn ? holy : undefined, trade: tradeOn ? trade : undefined, fish: fishOn ? fish : undefined, loss: lossOn ? PRO_LOSS : undefined, budgetMs: budget, worker: k }
+        const msg: StartMessage = { type: 'start', id, civ, mapType, seed, goals, post, holy: holyOn ? holy : undefined, trade: tradeOn ? trade : undefined, fish: fishOn ? fish : undefined, budgetMs: budget, worker: k }
         w.postMessage(msg)
       })
     }, 250)
     return () => clearTimeout(h)
-  }, [data, civ, mapType, seed, goals, post, holyOn, holy, tradeOn, trade, fishOn, fish, lossOn, budget, runToken])
+  }, [data, civ, mapType, seed, goals, post, holyOn, holy, tradeOn, trade, fishOn, fish, budget, runToken])
 
   const stop = () => {
     workerRef.current.forEach((w) => w.postMessage({ type: 'stop' }))
@@ -313,22 +310,9 @@ export function SimulatePage() {
 
             <Card size="small" title="4. 搜尋">
               <Flex vertical gap={8}>
-                <Flex align="center" gap={8} wrap>
-                  <Typography.Text>操作</Typography.Text>
-                  <Select
-                    size="small"
-                    style={{ width: 150 }}
-                    value={lossOn ? 'pro' : 'ideal'}
-                    onChange={(v) => setLossOn(v === 'pro')}
-                    options={[
-                      { value: 'pro', label: '職業水準' },
-                      { value: 'ideal', label: '理論最快' },
-                    ]}
-                  />
-                  <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                    職業水準：每次手動下指令（放建築、調村民）多 {PRO_LOSS.delay} 秒、採集效率 {Math.round(PRO_LOSS.efficiency * 100)}%，用職業對局的升代時間校準。理論最快沒有任何操作損失。
-                  </Typography.Text>
-                </Flex>
+                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                  不另加操作損失：用 118 場職業對局照職業的操作回放，升封建、升城堡時間的中位數與職業相差約 10 秒內，所以搜尋到的時間是照這份流程做得到的時間。
+                </Typography.Text>
                 <Flex align="center" gap={8}>
                   <Typography.Text>每次最多搜尋</Typography.Text>
                   <Select size="small" style={{ width: 100 }} value={budget} onChange={setBudget} options={BUDGETS} />

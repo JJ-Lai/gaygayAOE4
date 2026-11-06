@@ -746,7 +746,7 @@ const SPECS: Record<string, CivSpec> = {
       { text: '一般建築建造快 100%、防禦快 50%', modeled: 'yes', source: 'https://github.com/aoe4world/data/blob/main/civilizations/chinese.json', note: '目錄的建造時間已經是加速後的數字（房屋 7.5 秒、城鎮中心 82.5 秒、一代地標 95 秒）。' },
       { text: '村莊 +40 人口（100 木材、15 秒，上限 3 座）', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Village_(Age_of_Empires_IV)', note: '用 popBuildings 計入；引擎自動補人口只蓋房屋，村莊要另外下「蓋村莊」目標，而且不限制 3 座。' },
       { text: '稅收：村民投放資源的 8% 存成稅金（漁船 4%），帝國學院範圍內加倍，由監工收回（每次 40，研究帝國科舉後 70）；生產單位 +2、研究科技 +24；城鎮中心投放不產生稅', modeled: 'approx', source: 'https://www.ageofempires.com/news/age-of-empires-iv-update-16-1-9737-and-yue-feis-legacy-dlc-release-preview/', note: '近似成學院完成後全部採集量的 10% 直接入庫黃金；學院前的稅、改用另一座一代地標升代時的稅、單位／科技稅、監工的訓練花費與收稅路程都沒算，城鎮中心投放的羊也照算。實際每分鐘收到多少稅沒有來源，0.1 是估計值。' },
-      { text: '監工督導：經濟建築投放 +20%，軍事／研究建築工作效率 +150%（不能督導城鎮中心、碼頭、市場、地標，17.0 起也不能督導據點）', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Imperial_Official', note: '研究與生產建築的督導已計入：開始一項研究或生產時，有空的監工就督導，時間 ÷2.5（不能督導城鎮中心）。經濟建築投放 +20% 沒有另外算（稅收已近似）；督導中的監工不能收稅也沒有建模。' },
+      { text: '監工督導：經濟建築投放 +20%，軍事／研究建築工作效率 +150%（不能督導城鎮中心、碼頭、市場、地標，17.0 起也不能督導據點）', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Imperial_Official', note: '開始一項研究或生產時，有空的監工就督導，時間 ÷2.5（不能督導城鎮中心）。其餘沒在督導研究或生產的監工各督導一種有投放建築的資源（照採集人數由多到少），那種資源投放 +20%；城鎮中心投放（羊、散樹）不算。職業對局回放（2026-11-07）顯示中國職業開局就在城鎮中心訓練監工，回放照做；一般模式城鎮中心只出村民。' },
       { text: '監工在帝國學院訓練只要 70 食物、35 黃金（城鎮中心 100／50），20 秒，同時最多 4 名', modeled: 'approx', source: 'https://github.com/aoe4world/data/blob/main/units/unified/imperial-official.json', note: '搜尋決定在帝國學院再訓練幾名（70 食物、35 黃金、20 秒，最多 4 名）；城鎮中心要一直出村民，所以不在城鎮中心訓練。' },
       { text: '朝代：蓋齊同時代兩座地標進入宋／元／明；宋朝村民 15 秒，元朝村民與監工移動 +15%，明朝軍隊生命 +15%', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Dynasty', note: '搜尋決定要不要補蓋同時代的另一座地標（費用同升代）；蓋齊後進入宋（村民 20 → 15 秒）、元（工人移動 +15%）、明（軍隊生命，不影響規劃）。只有最新朝代的加成有效。朝代鎖定的寶塔、諸葛弩、火槍騎兵、擲彈兵仍沒有前置。' },
       { text: '糧倉（宋）：範圍內農田 +10%／座，最多 3 座 +30%', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Granary_(Age_of_Empires_IV)', note: '宋朝後才能蓋（150 木材、18 秒，最多 3 座、4×4），7.5 格內農田採集 +10%／座（Fandom Granary 頁），搜尋決定蓋幾座、蓋在哪；兼磨坊的投放點效果沒有建模。' },
@@ -1955,8 +1955,6 @@ const SPECS: Record<string, CivSpec> = {
     // 村莊 +40 人口（100 木材、15 秒，上限 3 座）；房屋照常 +10。引擎自動補人口只蓋房屋，村莊要用「蓋 N 座村莊」目標才會蓋。
     popBuildings: { village: 40 },
     byproducts: [
-      // 開局監工督導磨坊：每次投放食物 +20%。只有一名監工，近似成磨坊完成後全部食物 +20%
-      { from: 'food', to: 'food', ratio: 0.2, requires: 'mill', note: '開局監工督導磨坊，投放 +20%；近似成全部食物，後期多座磨坊／糧倉時高估。' },
       // 稅收：非城鎮中心投放點的投放量 8%，扣掉監工收稅的延遲與城鎮中心投放 → 0.07
       { from: 'all', to: 'gold', ratio: 0.07, note: '稅金 8%，要監工走回城鎮中心或江南塔才入庫；近似成全部採集的 7% 直接變黃金。' },
       // 廬山書院：收稅時另得 20% 的食物（0.07 × 0.2）
@@ -1986,7 +1984,7 @@ const SPECS: Record<string, CivSpec> = {
     relicPagoda: { building: 'pagoda', requires: 'dynasty-3', perMin: { gold: 100, food: 62, wood: 62, stone: 25 }, max: 3 },
     bonuses: [
       { text: '開局 150 食物、200 木材、50 黃金，只有 5 村民，另有 1 名免費監工與 1 斥候（人口 7/10）', modeled: 'yes', source: 'https://ageofempires.fandom.com/wiki/Zhu_Xi%27s_Legacy', note: '木材 200 由 Beasty S10／S13 流程算帳精確吻合；150 食物與 50 黃金只有 Fandom 與 AoE4 Analyzer（可能同源）加上 Yufka 收稅時間推算，沒有遊戲內畫面確認（中信度）。監工只佔人口，督導與收稅見下兩條。' },
-      { text: '監工督導投放建築：每次投放 +20%（不能督導城鎮中心、碼頭、市場、地標，17.0 起也不能督導據點）', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/abilities/zhuxi.json', note: '只計入開局監工督導磨坊：磨坊完成後全部食物 +20%。職業選手約 3:00 訓第 2 名監工督導伐木場，這部分與監工的訓練花費都沒算；後期農田分散在多座磨坊時高估。' },
+      { text: '監工督導投放建築：每次投放 +20%（不能督導城鎮中心、碼頭、市場、地標，17.0 起也不能督導據點）', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/abilities/zhuxi.json', note: '和中國相同的通用規則：沒在督導研究或生產的監工各督導一種有投放建築的資源（照採集人數由多到少），投放 +20%；城鎮中心投放不算。以前近似成「有磨坊後全部食物 +20%」，已改掉。' },
       { text: '稅收：村民投放資源的 8% 存成稅金（漁船 4%），生產單位 +2、研究科技 +24，由監工（攜帶 40）收回城鎮中心或江南塔', modeled: 'approx', source: 'https://www.ageofempires.com/news/age-of-empires-iv-update-16-1-9737-and-yue-feis-legacy-dlc-release-preview/', note: '近似成全部採集量的 7% 從 0:00 起直接入庫黃金（職業選手約 2:00 才第一次收稅，約 40 黃金，與此相符）；單位／科技稅、收稅路程與每座建築 20 秒冷卻都沒算，也沒扣監工離開磨坊收稅時少掉的督導。城鎮中心投放不產生稅。實際每分鐘收到多少稅沒有來源，0.07 是估計值。' },
       { text: '監工督導生產／研究建築：工作效率 +150%（地方巡察後 +300%）', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Imperial_Official', note: '開局那名監工的督導已計入：開始研究或生產時有空就督導，時間 ÷2.5（地方巡察後 ×4 沒有建模）。' },
       { text: '監工只能在城鎮中心訓練（100 食物、50 黃金、20 秒），同時最多 4 名（帝國朱印 +2、高級行政 +2）', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/units/zhuxi.json', note: '只用開局那 1 名；在城鎮中心加訓會中斷村民生產（違反硬性規則），所以引擎不加訓。' },

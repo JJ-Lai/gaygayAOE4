@@ -94,8 +94,18 @@ const swap = (rules: SiteRule[], drop: (r: SiteRule) => boolean, add: SiteRule[]
 
 // 乾燥阿拉伯實測 47 場（scripts/map-distances.json）：第一座採礦營地 9.8～10.6 格（近金礦）、第一座伐木場 5.4～6.7（主林線）、
 // 第一座磨坊 6.8～8.1（近野果）、兩城 68.4～71.6。其他資源（遠金礦、石礦、鹿、外圍森林）量不到，維持假設。
+// 近石礦 9.5～11 格：鄂圖曼職業開局派人採一趟 50 石頭、直接投放到城鎮中心，40 秒就回來（3 場），推算約 10 格；
+// 和本機統計檔第二座採礦營地的中位數 10.2 格一致（scripts/check-pro-replay.ts、map-distances.json）。
 const ARABIA_MEASURED: SiteRule[] = ARABIA.map((r) =>
-  r.label === '近金礦' ? { ...r, dist: [9.8, 10.6] } : r.label === '主林線' ? { ...r, dist: [5.4, 6.7] } : r.label === '近野果（6 叢）' ? { ...r, dist: [6.8, 8.1] } : r,
+  r.label === '近金礦'
+    ? { ...r, dist: [9.8, 10.6] }
+    : r.label === '主林線'
+      ? { ...r, dist: [5.4, 6.7] }
+      : r.label === '近野果（6 叢）'
+        ? { ...r, dist: [6.8, 8.1] }
+        : r.label === '近石礦'
+          ? { ...r, dist: [9.5, 11] }
+          : r,
 )
 
 export const MAP_TYPES: MapType[] = [
