@@ -191,6 +191,8 @@ export interface ReplayScript {
   perMin?: Partial<Record<'food' | 'wood' | 'gold' | 'stone', number[]>>
   /** 職業的市場交易（由收入與每分鐘採集量的差推算）：t 秒起、付得起就付 pay、得到 get（得到的也算收入） */
   trades?: { t: number; pay: Partial<Record<'food' | 'wood' | 'gold' | 'stone', number>>; get: Partial<Record<'food' | 'wood' | 'gold' | 'stone', number>> }[]
+  /** 投放點紀錄含搬家後重新架設的（蒙古蒙古包）：座數不代表付了錢 */
+  dropoffsMoved?: boolean
   /** 職業紀錄裡看不到的投放點（圖格魯克工作象）：不受 dropoffs 限制，照模擬自己的判斷蓋 */
   untracked?: string[]
 }

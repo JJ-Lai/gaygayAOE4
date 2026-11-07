@@ -345,6 +345,7 @@ function scriptOf(data: CivData, s: Sample): ReplayScript | null {
     farms: s.buildings.filter(([, id]) => id === data.spec.farm.id).map(([t]) => t),
     income: { t: g.t, food: g.food, wood: g.wood, gold: g.gold, stone: g.stone },
     trades: tradesOf(s),
+    dropoffsMoved: UNPAID[s.civ]?.kind === 'build',
     perMin: (g as any).perMin ?? undefined,
     // 投放點的完成時間減建造時間（一人蓋）當作開始蓋的時間
     // 同時收好幾種資源的投放點（採礦營地收金和石）：蓋好後 60 秒內收入速率增加最多的那種資源，就是這座營地給誰用的

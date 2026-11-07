@@ -53,6 +53,12 @@ const PEND_LEAD = 30
  * 表示模擬還有別處偏慢、剛好被「手上的資源也能花」抵掉，還沒找到。
  */
 const IN_HAND = false
+/**
+ * 回放：職業下一座投放點的花費、下一筆市場交易要付的錢也保證有人採。預設關閉：
+ * 搭配 IN_HAND 時修好了個別場次（蘇格蘭封建 +48 → +13、戰國 +55 → 正常），但整體封建 20 秒內只到 89／111；
+ * 不開 IN_HAND 時誤差中位數小一點、20 秒內的場次卻從 106 降到 100。等 IN_HAND 的問題找到後再一起打開。
+ */
+const DROP_GUARD = false
 const CTL = { rebalance: 8, move: 0.15, hyst: 3, setup: 120, camp: 6, houseLead: 12, farmLead: 90, look: 180 }
 const HUNT_CARRY = 25
 const RES_OF: Record<SiteKind | 'farm', Res> = {
@@ -269,12 +275,34 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       pendAge = st.kind === 'age'
       break
     }
+    // 職業下一座投放點：營地不是步驟，以前沒人保證它的木材。職業那種資源的收入曲線是平的時候，
+    // 模擬差幾塊木材就永遠湊不齊（蘇格蘭一場差 6 木材、2 分鐘蓋不了採礦營地，7 名礦工都走回城鎮中心交）
+    // 職業下一筆市場交易要付的錢（戰國開局用 130 黃金買木材）也保證有人採
+    if (DROP_GUARD && script.trades) {
+      const tr = script.trades[tradeIdx]
+      if (tr && tr.t <= t + PEND_LEAD) for (const [r, x] of Object.entries(tr.pay)) pend[r as Res] += x ?? 0
+    }
+    if (DROP_GUARD && !script.dropoffsMoved) {
+      const n = new Map<string, number>()
+      for (const d of script.dropoffs) {
+        if (d.t > t + PEND_LEAD) break
+        n.set(d.id, (n.get(d.id) ?? 0) + 1)
+        const it = items.get(d.id)
+        if (!it || it.kind === 'unit' || script.untracked?.includes(d.id)) continue
+        if ((n.get(d.id) ?? 0) <= blds.filter((b) => b.item === d.id).length + (freeDropUsed < spec.freeDropoffs ? 1 : 0)) continue
+        const c = costOf(variationAt(it, age))
+        for (const r of RES) pend[r] += c[r]
+        break
+      }
+    }
     for (const r of RES) {
       pendShort[r] = Math.max(0, pend[r] - bank[r])
       out[r] = Math.max(out[r], pendShort[r])
     }
     return out
   }
+  /** 回放：下一筆要做的市場交易 */
+  let tradeIdx = 0
   /** 回放：時間已到的動作還缺的資源（分配時保證有人採） */
   const pendShort = zero()
   let pendAge = false
@@ -1845,8 +1873,6 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   }
 
   // ---------- 每秒行動 ----------
-  /** 回放：下一筆要做的市場交易 */
-  let tradeIdx = 0
   const act = () => {
     // 回放：照職業的時間做市場交易（得到的資源也算收入，職業的累計收入裡就有）；付不起就等，60 秒還付不起就放棄這筆
     while (script?.trades && tradeIdx < script.trades.length && script.trades[tradeIdx].t <= t) {
