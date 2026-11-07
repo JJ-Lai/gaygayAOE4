@@ -3158,7 +3158,9 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     for (const x of sites) {
       // 手上的資源：投放了才入帳（職業的紀錄也是投放時才算）。每名在採的村民平均帶著半趟的量；
       // 人走了先投放（多出來的入帳），人來了先裝滿手上那半趟，才開始入帳。開局第一趟、每次換點都會晚一點入帳
-      const handCap = IN_HAND && x.fixed == null && !(x.res === 'wood' && spec.woodInstant) ? (Math.max(0, x.workers) * carryAt(x)) / 2 : 0
+      // 每秒入帳已經是投放速率（含走路），真正的投放是一階一階的：平均落後連續入帳「半趟 × 採集時間佔整趟的比例」
+      // （= 半趟 × 投放速率 ÷ 採集速率；走路多的點，例如沒營地的金礦，手上平均只有半趟的一半左右）
+      const handCap = IN_HAND && x.fixed == null && !(x.res === 'wood' && spec.woodInstant) && x.workers > 0 ? (x.workers * carryAt(x) * Math.min(1, effRate(x) / Math.max(1e-6, rawRate(x)))) / 2 : 0
       let dep = 0
       if ((x.hand ?? 0) > handCap) {
         dep = (x.hand ?? 0) - handCap
