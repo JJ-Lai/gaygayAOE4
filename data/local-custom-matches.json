@@ -1,10 +1,10 @@
 {
   "profileId": 10861747,
-  "extractedAt": "2026-11-05T14:25:02.033Z",
+  "extractedAt": "2026-11-07T16:14:29.857Z",
   "gameDir": "C:\\Users\\e1252\\OneDrive\\文件\\My Games\\Age of Empires IV",
   "counts": {
-    "total": 261,
-    "skirmish": 106,
+    "total": 265,
+    "skirmish": 110,
     "custom": 135,
     "localOnly": 10,
     "matchhistory": 10
@@ -7852,6 +7852,110 @@
           "name": "李侑玲",
           "civ": "jin_dynasty",
           "profileId": 10861747,
+          "result": "win"
+        }
+      ]
+    },
+    {
+      "id": "S316007157",
+      "gameId": 316007157,
+      "source": "network-skirmish",
+      "mode": "skirmish",
+      "startedAtLocal": null,
+      "cachedAt": "2026-11-06T16:48:11.462Z",
+      "map": null,
+      "durationSec": 1214,
+      "civ": "jin_dynasty",
+      "result": "win",
+      "players": [
+        {
+          "name": "2 AI 可笑",
+          "civ": null,
+          "profileId": null,
+          "result": "loss"
+        },
+        {
+          "name": "李侑玲",
+          "civ": "jin_dynasty",
+          "profileId": 10861747,
+          "result": "win"
+        }
+      ]
+    },
+    {
+      "id": "S316118919",
+      "gameId": 316118919,
+      "source": "network-skirmish",
+      "mode": "skirmish",
+      "startedAtLocal": null,
+      "cachedAt": "2026-11-07T03:19:26.589Z",
+      "map": null,
+      "durationSec": 310,
+      "civ": "jin_dynasty",
+      "result": "loss",
+      "players": [
+        {
+          "name": "李侑玲",
+          "civ": "jin_dynasty",
+          "profileId": 10861747,
+          "result": "loss"
+        },
+        {
+          "name": "2 AI 中等",
+          "civ": null,
+          "profileId": null,
+          "result": "win"
+        }
+      ]
+    },
+    {
+      "id": "S316121191",
+      "gameId": 316121191,
+      "source": "network-skirmish",
+      "mode": "skirmish",
+      "startedAtLocal": null,
+      "cachedAt": "2026-11-07T03:33:10.244Z",
+      "map": null,
+      "durationSec": 310,
+      "civ": "jin_dynasty",
+      "result": "loss",
+      "players": [
+        {
+          "name": "2 AI 中等",
+          "civ": null,
+          "profileId": null,
+          "result": "win"
+        },
+        {
+          "name": "李侑玲",
+          "civ": "jin_dynasty",
+          "profileId": 10861747,
+          "result": "loss"
+        }
+      ]
+    },
+    {
+      "id": "S316129506",
+      "gameId": 316129506,
+      "source": "network-skirmish",
+      "mode": "skirmish",
+      "startedAtLocal": null,
+      "cachedAt": "2026-11-07T04:24:43.232Z",
+      "map": null,
+      "durationSec": 342,
+      "civ": "jin_dynasty",
+      "result": "loss",
+      "players": [
+        {
+          "name": "李侑玲",
+          "civ": "jin_dynasty",
+          "profileId": 10861747,
+          "result": "loss"
+        },
+        {
+          "name": "2 AI 中等",
+          "civ": null,
+          "profileId": null,
           "result": "win"
         }
       ]
