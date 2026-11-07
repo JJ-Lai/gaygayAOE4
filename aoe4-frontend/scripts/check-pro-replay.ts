@@ -479,6 +479,25 @@ for (const s of pro.samples as Sample[]) {
       }
     }
   }
+  // SPLITDIAG=1：職業每分鐘實際採集量 ÷ 模擬那種資源每人每分鐘的量 = 「照模擬的效率，職業大約有幾人在採」，和模擬的人數比
+  if (process.env.SPLITDIAG && (s.gathered as any)?.perMin) {
+    const pm = (s.gathered as any).perMin
+    for (let tt = 120; tt <= Math.min(end, 720); tt += 60) {
+      const i = s.gathered!.t.findIndex((x) => x >= tt)
+      const x = [...ideal.samples].reverse().find((y) => y.t <= tt)
+      const y0 = [...ideal.samples].reverse().find((y) => y.t <= tt - 60)
+      if (i < 0 || !x?.gathered || !y0?.gathered) break
+      for (const r of ['food', 'wood', 'gold', 'stone'] as const) {
+        const w = (x.split[r] + y0.split[r]) / 2
+        const rate = (x.gathered[r] - y0.gathered[r]) / Math.max(1, w)
+        if (w < 1 || rate <= 5) continue
+        const implied = (pm[r][i] ?? 0) / rate
+        ;(globalThis as any).__split ??= {}
+        const key = `${r}@${tt / 60}`
+        ;((globalThis as any).__split[key] ??= []).push(x.split[r] - implied)
+      }
+    }
+  }
   results.push(row)
   const agg = byCiv.get(s.civ) ?? { inc: [], f: [], c: [], late: [] }
   if (inc != null) agg.inc.push(inc)
@@ -552,5 +571,9 @@ for (const k of ['food', 'wood', 'gold', 'stone'] as const) {
 }
 const allOf = (k: 'inc' | 'f' | 'c' | 'late') => med(all.flatMap((a) => a[k]))
 console.log(`\n全部：收入 ×${ratio(allOf('inc'))}、封建 ${sign(allOf('f'))}、城堡 ${sign(allOf('c'))}、動作延遲 ${sign(allOf('late'))}`)
+if (process.env.SPLITDIAG) {
+  const d = (globalThis as any).__split ?? {}
+  for (const r of ['food', 'wood', 'gold', 'stone']) console.log(`SPLIT ${r.padEnd(5)} ${[2, 3, 4, 5, 6, 8, 10, 12].map((m) => { const a = (d[`${r}@${m}`] ?? []).sort((p: number, q: number) => p - q); return a.length ? `${m}分 ${a[a.length >> 1] > 0 ? '+' : ''}${a[a.length >> 1].toFixed(1)}（${a.length}）` : '' }).join('  ')}`)
+}
 if (process.env.LIST) for (const r of results) { const d = r.atFeudalStart as Record<string, number> | undefined; if (d) console.log(`LIST ${r.civ} ${r.game} ${r.player} 放下差 ${Math.round(d.simPlace - d.t)} 庫存差 食${d.foodBank} 木${d.woodBank} 金${d.goldBank} 石${d.stoneBank}`) }
 if (!only && !process.env.GAME) writeFileSync(new URL('./pro-replay.json', import.meta.url), JSON.stringify({ ranAt: new Date().toISOString(), patch: pro.patch, mode: 'replay', summary, results }, null, 1) + '\n')
