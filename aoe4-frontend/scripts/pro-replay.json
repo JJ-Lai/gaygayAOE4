@@ -1,11 +1,11 @@
 {
- "ranAt": "2026-11-07T03:37:59.685Z",
+ "ranAt": "2026-11-07T04:03:07.372Z",
  "patch": 12260,
  "mode": "replay",
  "summary": {
   "abbasid_dynasty": {
    "n": 5,
-   "income": 1.1038181899499775,
+   "income": 1.1062452176813542,
    "feudal": 0,
    "castle": 0,
    "castleN": 4,
@@ -14,26 +14,26 @@
   "ayyubids": {
    "n": 5,
    "income": 1.107424677275911,
-   "feudal": 4,
+   "feudal": 0,
    "castle": 0,
    "castleN": 4,
    "actionLate": 3
   },
   "byzantines": {
    "n": 5,
-   "income": 0.95565923782538,
-   "feudal": 5,
-   "castle": 25,
+   "income": 0.9503226718557131,
+   "feudal": 4,
+   "castle": 24,
    "castleN": 5,
-   "actionLate": 7
+   "actionLate": 4
   },
   "chinese": {
    "n": 5,
-   "income": 1.092729261474637,
+   "income": 1.0872011642097685,
    "feudal": 2,
    "castle": 1,
    "castleN": 4,
-   "actionLate": -7
+   "actionLate": -9
   },
   "delhi_sultanate": {
    "n": 1,
@@ -47,7 +47,7 @@
    "n": 5,
    "income": 1.0938925823082042,
    "feudal": 0,
-   "castle": 4,
+   "castle": 2.5,
    "castleN": 4,
    "actionLate": 1
   },
@@ -61,95 +61,95 @@
   },
   "golden_horde": {
    "n": 4,
-   "income": 1.1226605345294183,
-   "feudal": 8,
+   "income": 1.1167791122381865,
+   "feudal": 1.5,
    "castle": 0,
    "castleN": 3,
-   "actionLate": 3
+   "actionLate": 2
   },
   "holy_roman_empire": {
    "n": 5,
    "income": 1.077585493734991,
-   "feudal": 0,
-   "castle": 14,
+   "feudal": 3,
+   "castle": 8,
    "castleN": 1,
    "actionLate": 1
   },
   "house_of_lancaster": {
    "n": 5,
-   "income": 1.0526472879707494,
-   "feudal": 9,
+   "income": 1.0716960236058706,
+   "feudal": 6,
    "castle": 2,
    "castleN": 5,
-   "actionLate": 4
+   "actionLate": 3.5
   },
   "japanese": {
    "n": 5,
-   "income": 1.1465399070338345,
+   "income": 1.1531184163380637,
    "feudal": 8,
-   "castle": 1.5,
+   "castle": 1,
    "castleN": 4,
    "actionLate": 1
   },
   "jeanne_darc": {
    "n": 2,
-   "income": 0.942238400649553,
+   "income": 0.96865779972904,
    "feudal": 6,
-   "castle": 39,
+   "castle": 32,
    "castleN": 1,
-   "actionLate": 8.25
+   "actionLate": 11.75
   },
   "jin_dynasty": {
    "n": 5,
-   "income": 1.0688027456768119,
-   "feudal": -1,
-   "castle": 3,
+   "income": 1.0460717888311941,
+   "feudal": 3,
+   "castle": 4,
    "castleN": 3,
-   "actionLate": 20
+   "actionLate": 5
   },
   "knights_templar": {
    "n": 5,
-   "income": 1.003866210748146,
-   "feudal": 0,
-   "castle": 4,
+   "income": 1.0056516569357048,
+   "feudal": 4,
+   "castle": 3.5,
    "castleN": 4,
-   "actionLate": 3
+   "actionLate": 4
   },
   "macedonian_dynasty": {
    "n": 5,
-   "income": 1.0023987128434297,
-   "feudal": 5,
-   "castle": 14.5,
+   "income": 1.0104557372145326,
+   "feudal": 3,
+   "castle": 8.5,
    "castleN": 4,
-   "actionLate": 2
+   "actionLate": 1
   },
   "malians": {
    "n": 5,
-   "income": 0.9596041641596413,
+   "income": 0.943060015010315,
    "feudal": 7,
+   "castle": 5,
+   "castleN": 5,
+   "actionLate": 0.5
+  },
+  "mongols": {
+   "n": 4,
+   "income": 1.0347239430544581,
+   "feudal": 24.5,
+   "castle": 4.5,
+   "castleN": 4,
+   "actionLate": 6
+  },
+  "order_of_the_dragon": {
+   "n": 5,
+   "income": 1.0039928479675309,
+   "feudal": 4,
    "castle": 5,
    "castleN": 5,
    "actionLate": 0
   },
-  "mongols": {
-   "n": 4,
-   "income": 1.0101965538152722,
-   "feudal": 11,
-   "castle": 4,
-   "castleN": 4,
-   "actionLate": 14.75
-  },
-  "order_of_the_dragon": {
-   "n": 5,
-   "income": 1.0034615877587567,
-   "feudal": 8,
-   "castle": 5,
-   "castleN": 5,
-   "actionLate": 1
-  },
   "ottomans": {
    "n": 5,
-   "income": 1.0645152674134084,
+   "income": 1.083136376420335,
    "feudal": 3,
    "castle": 1.5,
    "castleN": 2,
@@ -157,47 +157,47 @@
   },
   "rus": {
    "n": 5,
-   "income": 0.9538968846401926,
+   "income": 0.9509249353940681,
    "feudal": 0,
-   "castle": 7,
+   "castle": 3.5,
    "castleN": 4,
-   "actionLate": 7
+   "actionLate": 3
   },
   "scots": {
    "n": 3,
-   "income": 1.063641473452287,
-   "feudal": 9,
-   "castle": 4,
+   "income": 1.0561568950088946,
+   "feudal": 8,
+   "castle": 3.5,
    "castleN": 2,
-   "actionLate": 8
+   "actionLate": 9
   },
   "sengoku_daimyo": {
    "n": 5,
-   "income": 1.0374780969990858,
-   "feudal": 6,
-   "castle": 2,
+   "income": 1.020731652020184,
+   "feudal": 4,
+   "castle": 2.5,
    "castleN": 2,
-   "actionLate": 12
+   "actionLate": 4
   },
   "tughlaq_dynasty": {
    "n": 5,
-   "income": 0.863285778836078,
-   "feudal": 11,
-   "castle": 13,
+   "income": 0.8577526685308015,
+   "feudal": 4,
+   "castle": 17,
    "castleN": 3,
-   "actionLate": 6
+   "actionLate": 4
   },
   "vikings": {
    "n": 2,
-   "income": 1.0790955031054184,
-   "feudal": 9,
+   "income": 1.0307081232381008,
+   "feudal": 22.5,
    "castle": null,
    "castleN": 0,
-   "actionLate": 3.5
+   "actionLate": 11.5
   },
   "zhu_xis_legacy": {
    "n": 5,
-   "income": 1.0592648122592951,
+   "income": 1.082724680914221,
    "feudal": 7,
    "castle": null,
    "castleN": 0,
@@ -279,16 +279,16 @@
    "skipped": [],
    "feudal": {
     "pro": 310,
-    "ideal": 327
+    "ideal": 323
    },
    "castle": null,
-   "income": 1.1006072460858285,
+   "income": 1.0845089011425748,
    "incomeByRes": {
-    "food": 1.11,
-    "wood": 0.92,
-    "gold": 1
+    "food": 1.09,
+    "wood": 0.87,
+    "gold": 1.02
    },
-   "lateMedian": 14,
+   "lateMedian": 12,
    "unfinished": 0,
    "lag": [
     {
@@ -309,41 +309,41 @@
     },
     {
      "t": 180,
-     "food": 111,
+     "food": 98,
      "wood": -9,
-     "gold": -53,
+     "gold": -51,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 31,
-     "wood": 53,
-     "gold": -25,
+     "food": -10,
+     "wood": 33,
+     "gold": -7,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 182,
-     "wood": 32,
-     "gold": -13,
-     "stone": 4,
+     "food": 153,
+     "wood": 9,
+     "gold": -3,
+     "stone": 7,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 200,
-    "simPlace": 226,
-    "foodInc": 62,
+    "simPlace": 222,
+    "foodInc": 40,
     "foodSpent": 0,
-    "foodBank": 62,
+    "foodBank": 40,
     "woodInc": -5,
     "woodSpent": 0,
     "woodBank": -5,
-    "goldInc": -69,
+    "goldInc": -58,
     "goldSpent": 0,
-    "goldBank": -69,
+    "goldBank": -58,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -359,19 +359,19 @@
    "skipped": [],
    "feudal": {
     "pro": 338,
-    "ideal": 347
+    "ideal": 343
    },
    "castle": {
     "pro": 635,
-    "ideal": 637
+    "ideal": 636
    },
-   "income": 1.063641473452287,
+   "income": 1.0561568950088946,
    "incomeByRes": {
-    "food": 1.06,
+    "food": 1.05,
     "wood": 1.01,
     "gold": 1.07
    },
-   "lateMedian": 7,
+   "lateMedian": 5,
    "unfinished": 0,
    "lag": [
     {
@@ -400,73 +400,73 @@
     },
     {
      "t": 240,
-     "food": -1,
-     "wood": 27,
-     "gold": -53,
+     "food": -6,
+     "wood": 28,
+     "gold": -43,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 146,
-     "wood": 2,
-     "gold": -31,
+     "food": 128,
+     "wood": 13,
+     "gold": -26,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 232,
-     "wood": 16,
-     "gold": 52,
-     "stone": 0,
+     "food": 206,
+     "wood": 22,
+     "gold": 45,
+     "stone": 1,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 349,
-     "wood": -36,
-     "gold": 124,
-     "stone": 0,
+     "food": 329,
+     "wood": -35,
+     "gold": 114,
+     "stone": 1,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 489,
-     "wood": 21,
-     "gold": 249,
-     "stone": 0,
+     "food": 475,
+     "wood": 17,
+     "gold": 242,
+     "stone": 1,
      "vills": 0
     },
     {
      "t": 540,
      "food": 503,
-     "wood": -12,
-     "gold": 281,
-     "stone": 0,
+     "wood": -17,
+     "gold": 285,
+     "stone": 1,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 345,
-     "wood": 79,
-     "gold": 171,
-     "stone": 0,
+     "food": 320,
+     "wood": 84,
+     "gold": 167,
+     "stone": 1,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 240,
-    "simPlace": 269,
-    "foodInc": -1,
+    "simPlace": 265,
+    "foodInc": -6,
     "foodSpent": -125,
-    "foodBank": 124,
-    "woodInc": 27,
+    "foodBank": 119,
+    "woodInc": 28,
     "woodSpent": 0,
-    "woodBank": 27,
-    "goldInc": -53,
+    "woodBank": 28,
+    "goldInc": -43,
     "goldSpent": -25,
-    "goldBank": -28,
+    "goldBank": -18,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -482,25 +482,25 @@
    "skipped": [],
    "feudal": {
     "pro": 270,
-    "ideal": 280
+    "ideal": 277
    },
    "castle": {
     "pro": 522,
     "ideal": 524
    },
-   "income": 1.1175394762113644,
+   "income": 1.086039522470698,
    "incomeByRes": {
-    "food": 1.07,
-    "wood": 1.08,
-    "gold": 1.04,
-    "stone": 0.96
+    "food": 1.04,
+    "wood": 1.04,
+    "gold": 1.02,
+    "stone": 0.94
    },
    "lateMedian": 4,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 14,
+     "food": 10,
      "wood": 0,
      "gold": 10,
      "stone": 0,
@@ -508,76 +508,76 @@
     },
     {
      "t": 120,
-     "food": 54,
-     "wood": 21,
-     "gold": -2,
-     "stone": 8,
+     "food": 35,
+     "wood": 20,
+     "gold": 5,
+     "stone": 5,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 64,
-     "wood": 87,
-     "gold": -12,
-     "stone": 32,
+     "food": 38,
+     "wood": 68,
+     "gold": -9,
+     "stone": 30,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 257,
-     "wood": 95,
-     "gold": 17,
-     "stone": -13,
+     "food": 208,
+     "wood": 69,
+     "gold": 16,
+     "stone": -17,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 238,
-     "wood": 52,
+     "food": 183,
+     "wood": 30,
+     "gold": 116,
+     "stone": -12,
+     "vills": 0
+    },
+    {
+     "t": 360,
+     "food": 241,
+     "wood": 71,
      "gold": 147,
      "stone": -9,
      "vills": 0
     },
     {
-     "t": 360,
-     "food": 287,
-     "wood": 90,
-     "gold": 185,
-     "stone": -6,
-     "vills": 0
-    },
-    {
      "t": 420,
-     "food": 197,
-     "wood": 119,
-     "gold": 99,
-     "stone": -6,
+     "food": 168,
+     "wood": 100,
+     "gold": 72,
+     "stone": -9,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 281,
-     "wood": 165,
-     "gold": 102,
-     "stone": -6,
+     "food": 222,
+     "wood": 123,
+     "gold": 75,
+     "stone": -9,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 120,
-    "simPlace": 131,
-    "foodInc": 54,
+    "simPlace": 128,
+    "foodInc": 35,
     "foodSpent": -50,
-    "foodBank": 104,
-    "woodInc": 21,
+    "foodBank": 85,
+    "woodInc": 20,
     "woodSpent": 0,
-    "woodBank": 21,
-    "goldInc": -2,
+    "woodBank": 20,
+    "goldInc": 5,
     "goldSpent": 0,
-    "goldBank": -2,
-    "stoneInc": 8,
+    "goldBank": 5,
+    "stoneInc": 5,
     "stoneSpent": 0,
-    "stoneBank": 8
+    "stoneBank": 5
    }
   },
   {
@@ -590,64 +590,64 @@
    "skipped": [],
    "feudal": {
     "pro": 253,
-    "ideal": 265
+    "ideal": 285
    },
    "castle": null,
-   "income": 1.1057201243554575,
+   "income": 1.0399038248481198,
    "incomeByRes": {
-    "food": 1.08,
-    "wood": 1.08,
-    "gold": 1.36,
-    "stone": 0.89
+    "food": 1.18,
+    "wood": 0.92,
+    "gold": 1.05,
+    "stone": 0.8
    },
-   "lateMedian": 6,
+   "lateMedian": 16,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 20,
-     "wood": -18,
+     "food": 8,
+     "wood": -14,
      "gold": 4,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 120,
-     "food": -19,
-     "wood": 34,
-     "gold": -7,
+     "food": 8,
+     "wood": -3,
+     "gold": -6,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 32,
-     "wood": -22,
-     "gold": 37,
-     "stone": 35,
+     "food": 75,
+     "wood": -82,
+     "gold": 5,
+     "stone": 30,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 36,
-     "wood": 58,
-     "gold": 37,
-     "stone": 4,
+     "food": 81,
+     "wood": -11,
+     "gold": 5,
+     "stone": -26,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 120,
-    "simPlace": 144,
-    "foodInc": -19,
+    "simPlace": 163,
+    "foodInc": 8,
     "foodSpent": 0,
-    "foodBank": -19,
-    "woodInc": 34,
-    "woodSpent": 0,
-    "woodBank": 34,
-    "goldInc": -7,
+    "foodBank": 8,
+    "woodInc": -3,
+    "woodSpent": -50,
+    "woodBank": 47,
+    "goldInc": -6,
     "goldSpent": 0,
-    "goldBank": -7,
+    "goldBank": -6,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -663,21 +663,21 @@
    "skipped": [],
    "feudal": {
     "pro": 274,
-    "ideal": 280
+    "ideal": 287
    },
    "castle": null,
-   "income": 1.0524708818553794,
+   "income": 1.0215124216280815,
    "incomeByRes": {
-    "food": 0.99,
-    "wood": 1.08,
-    "gold": 1.25
+    "food": 0.98,
+    "wood": 1.02,
+    "gold": 1.21
    },
-   "lateMedian": 1,
+   "lateMedian": 7,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 18,
+     "food": -4,
      "wood": -3,
      "gold": 0,
      "stone": 0,
@@ -685,41 +685,41 @@
     },
     {
      "t": 120,
-     "food": 37,
-     "wood": -2,
-     "gold": -1,
+     "food": 4,
+     "wood": -23,
+     "gold": 12,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": -55,
-     "wood": 38,
-     "gold": 14,
+     "food": -74,
+     "wood": 4,
+     "gold": 9,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -10,
-     "wood": 5,
-     "gold": 14,
+     "food": -18,
+     "wood": -19,
+     "gold": 9,
      "stone": 0,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 140,
-    "simPlace": 159,
-    "foodInc": 23,
+    "simPlace": 166,
+    "foodInc": -19,
     "foodSpent": 0,
-    "foodBank": 23,
-    "woodInc": 13,
+    "foodBank": -19,
+    "woodInc": -8,
     "woodSpent": 0,
-    "woodBank": 13,
-    "goldInc": 2,
+    "woodBank": -8,
+    "goldInc": 4,
     "goldSpent": 0,
-    "goldBank": 2,
+    "goldBank": 4,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -735,21 +735,21 @@
    "skipped": [],
    "feudal": {
     "pro": 233,
-    "ideal": 237
+    "ideal": 234
    },
    "castle": null,
-   "income": 0.9661777392870105,
+   "income": 0.9458096719166242,
    "incomeByRes": {
-    "food": 0.98,
-    "wood": 0.86,
-    "gold": 0.86
+    "food": 0.97,
+    "wood": 0.8,
+    "gold": 0.88
    },
-   "lateMedian": 4,
+   "lateMedian": 1,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 56,
+     "food": 52,
      "wood": 4,
      "gold": 5,
      "stone": 0,
@@ -757,33 +757,33 @@
     },
     {
      "t": 120,
-     "food": 24,
+     "food": -7,
      "wood": 4,
-     "gold": 7,
+     "gold": 20,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": -46,
-     "wood": 57,
-     "gold": -19,
+     "food": -56,
+     "wood": 42,
+     "gold": -17,
      "stone": 0,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 120,
-    "simPlace": 136,
-    "foodInc": 24,
+    "simPlace": 133,
+    "foodInc": -7,
     "foodSpent": -75,
-    "foodBank": 99,
+    "foodBank": 68,
     "woodInc": 4,
     "woodSpent": -50,
     "woodBank": 54,
-    "goldInc": 7,
+    "goldInc": 20,
     "goldSpent": 0,
-    "goldBank": 7,
+    "goldBank": 20,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -799,17 +799,17 @@
    "skipped": [],
    "feudal": {
     "pro": 270,
-    "ideal": 269
+    "ideal": 262
    },
    "castle": {
     "pro": 661,
     "ideal": 662
    },
-   "income": 1.0565236175785029,
+   "income": 1.057990436668762,
    "incomeByRes": {
     "food": 0.98,
     "wood": 1.03,
-    "gold": 0.99,
+    "gold": 1,
     "stone": 1.01
    },
    "lateMedian": 0,
@@ -817,7 +817,7 @@
    "lag": [
     {
      "t": 60,
-     "food": 29,
+     "food": 26,
      "wood": 0,
      "gold": 3,
      "stone": 0,
@@ -825,92 +825,92 @@
     },
     {
      "t": 120,
-     "food": 42,
+     "food": 10,
      "wood": 1,
-     "gold": -3,
+     "gold": 7,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": -2,
-     "wood": 22,
-     "gold": 5,
-     "stone": 52,
+     "food": -8,
+     "wood": 16,
+     "gold": 1,
+     "stone": 45,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 62,
-     "wood": 103,
-     "gold": 5,
-     "stone": 26,
+     "food": 60,
+     "wood": 99,
+     "gold": 1,
+     "stone": 14,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 127,
-     "wood": 207,
-     "gold": 8,
-     "stone": -21,
+     "food": 128,
+     "wood": 193,
+     "gold": 3,
+     "stone": -17,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 173,
-     "wood": 159,
-     "gold": 49,
+     "food": 174,
+     "wood": 141,
+     "gold": 34,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 139,
-     "wood": 101,
-     "gold": 129,
+     "food": 142,
+     "wood": 98,
+     "gold": 131,
      "stone": 4,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 217,
-     "wood": 118,
-     "gold": 71,
-     "stone": 4,
-     "vills": 0
-    },
-    {
-     "t": 540,
-     "food": 348,
-     "wood": 141,
+     "food": 216,
+     "wood": 120,
      "gold": 81,
      "stone": 4,
      "vills": 0
     },
     {
+     "t": 540,
+     "food": 354,
+     "wood": 146,
+     "gold": 85,
+     "stone": 4,
+     "vills": 0
+    },
+    {
      "t": 600,
-     "food": 403,
-     "wood": 93,
-     "gold": 66,
+     "food": 412,
+     "wood": 101,
+     "gold": 82,
      "stone": 4,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 140,
-    "simPlace": 148,
-    "foodInc": 45,
+    "simPlace": 141,
+    "foodInc": 40,
     "foodSpent": 0,
-    "foodBank": 45,
-    "woodInc": 10,
+    "foodBank": 40,
+    "woodInc": 1,
     "woodSpent": -50,
-    "woodBank": 60,
-    "goldInc": -9,
+    "woodBank": 51,
+    "goldInc": 1,
     "goldSpent": 0,
-    "goldBank": -9,
-    "stoneInc": 11,
+    "goldBank": 1,
+    "stoneInc": 7,
     "stoneSpent": 0,
-    "stoneBank": 11
+    "stoneBank": 7
    }
   },
   {
@@ -987,19 +987,19 @@
    "skipped": [],
    "feudal": {
     "pro": 327,
-    "ideal": 331
+    "ideal": 335
    },
    "castle": {
     "pro": 445,
     "ideal": 451
    },
-   "income": 1.0459233696795318,
+   "income": 1.046487349710313,
    "incomeByRes": {
     "food": 1.04,
     "wood": 0.93,
-    "gold": 0.99
+    "gold": 1
    },
-   "lateMedian": 8,
+   "lateMedian": 9,
    "unfinished": 0,
    "lag": [
     {
@@ -1012,7 +1012,7 @@
     },
     {
      "t": 120,
-     "food": 54,
+     "food": 49,
      "wood": -13,
      "gold": -14,
      "stone": 0,
@@ -1020,57 +1020,57 @@
     },
     {
      "t": 180,
-     "food": -30,
-     "wood": 18,
-     "gold": -3,
+     "food": -47,
+     "wood": 26,
+     "gold": -13,
      "stone": 0,
      "vills": -1
     },
     {
      "t": 240,
-     "food": 169,
-     "wood": -17,
-     "gold": -11,
+     "food": 155,
+     "wood": -6,
+     "gold": -2,
      "stone": 0,
      "vills": -1
     },
     {
      "t": 300,
-     "food": 71,
-     "wood": -8,
+     "food": 70,
+     "wood": -6,
      "gold": -27,
      "stone": 0,
      "vills": -1
     },
     {
      "t": 360,
-     "food": 28,
-     "wood": 14,
-     "gold": -72,
+     "food": 25,
+     "wood": 18,
+     "gold": -58,
      "stone": 0,
      "vills": -1
     },
     {
      "t": 420,
-     "food": 86,
-     "wood": -32,
-     "gold": 33,
+     "food": 87,
+     "wood": -34,
+     "gold": 35,
      "stone": 0,
      "vills": -1
     }
    ],
    "atFeudalStart": {
     "t": 180,
-    "simPlace": 182,
-    "foodInc": -30,
+    "simPlace": 186,
+    "foodInc": -47,
     "foodSpent": -100,
-    "foodBank": 70,
-    "woodInc": 18,
+    "foodBank": 53,
+    "woodInc": 26,
     "woodSpent": 0,
-    "woodBank": 18,
-    "goldInc": -3,
+    "woodBank": 26,
+    "goldInc": -13,
     "goldSpent": 0,
-    "goldBank": -3,
+    "goldBank": -13,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -1088,20 +1088,20 @@
    ],
    "feudal": {
     "pro": 274,
-    "ideal": 296
+    "ideal": 276
    },
    "castle": {
     "pro": 872,
     "ideal": 872
    },
-   "income": 1.1364090741232997,
+   "income": 1.137753634987528,
    "incomeByRes": {
-    "food": 1.02,
-    "wood": 1.22,
-    "gold": 1.23,
+    "food": 1.03,
+    "wood": 1.19,
+    "gold": 1.29,
     "stone": 1.14
    },
-   "lateMedian": 6,
+   "lateMedian": 4,
    "unfinished": 0,
    "lag": [
     {
@@ -1114,89 +1114,89 @@
     },
     {
      "t": 120,
-     "food": 70,
-     "wood": 7,
-     "gold": -11,
+     "food": 62,
+     "wood": 8,
+     "gold": 6,
      "stone": -10,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 85,
-     "wood": 27,
-     "gold": -6,
+     "food": 69,
+     "wood": 45,
+     "gold": 7,
      "stone": -10,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 42,
-     "wood": 114,
-     "gold": 1,
+     "food": 46,
+     "wood": 132,
+     "gold": 7,
      "stone": -10,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 115,
-     "wood": 100,
-     "gold": 30,
+     "food": 132,
+     "wood": 118,
+     "gold": 31,
      "stone": -14,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 236,
-     "wood": 170,
-     "gold": 56,
+     "food": 254,
+     "wood": 183,
+     "gold": 55,
      "stone": -14,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 311,
-     "wood": 134,
-     "gold": 68,
+     "food": 320,
+     "wood": 140,
+     "gold": 64,
      "stone": -14,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 249,
-     "wood": 128,
-     "gold": 47,
+     "food": 255,
+     "wood": 134,
+     "gold": 44,
      "stone": -14,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 432,
-     "wood": 167,
-     "gold": 4,
+     "food": 439,
+     "wood": 174,
+     "gold": 5,
      "stone": -14,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 559,
-     "wood": 201,
-     "gold": 70,
+     "food": 566,
+     "wood": 207,
+     "gold": 71,
      "stone": -14,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 160,
-    "simPlace": 186,
-    "foodInc": 77,
+    "simPlace": 166,
+    "foodInc": 55,
     "foodSpent": 0,
-    "foodBank": 77,
-    "woodInc": 14,
+    "foodBank": 55,
+    "woodInc": 20,
     "woodSpent": 0,
-    "woodBank": 14,
-    "goldInc": -6,
+    "woodBank": 20,
+    "goldInc": 19,
     "goldSpent": 0,
-    "goldBank": -6,
+    "goldBank": 19,
     "stoneInc": -10,
     "stoneSpent": 0,
     "stoneBank": -10
@@ -1214,20 +1214,20 @@
    ],
    "feudal": {
     "pro": 264,
-    "ideal": 268
+    "ideal": 264
    },
    "castle": {
     "pro": 528,
     "ideal": 528
    },
-   "income": 1.1197119290093218,
+   "income": 1.1226739402206265,
    "incomeByRes": {
     "food": 0.98,
-    "wood": 1.26,
-    "gold": 0.94,
-    "stone": 0.36
+    "wood": 1.27,
+    "gold": 0.95,
+    "stone": 0.37
    },
-   "lateMedian": 2,
+   "lateMedian": 0,
    "unfinished": 0,
    "lag": [
     {
@@ -1240,73 +1240,73 @@
     },
     {
      "t": 120,
-     "food": 99,
-     "wood": 14,
-     "gold": -7,
+     "food": 83,
+     "wood": 15,
+     "gold": 8,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 88,
-     "wood": 57,
-     "gold": -1,
+     "food": 106,
+     "wood": 59,
+     "gold": 0,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 184,
-     "wood": -18,
-     "gold": 10,
+     "food": 199,
+     "wood": -17,
+     "gold": 18,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 209,
-     "wood": -11,
-     "gold": 170,
+     "food": 225,
+     "wood": -7,
+     "gold": 174,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 233,
-     "wood": 9,
-     "gold": 231,
+     "food": 244,
+     "wood": 7,
+     "gold": 241,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 420,
      "food": 211,
-     "wood": 77,
-     "gold": 207,
+     "wood": 79,
+     "gold": 217,
      "stone": 1,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 138,
-     "wood": 188,
-     "gold": 134,
+     "food": 146,
+     "wood": 195,
+     "gold": 144,
      "stone": 40,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 140,
-    "simPlace": 148,
-    "foodInc": 77,
+    "simPlace": 144,
+    "foodInc": 74,
     "foodSpent": -50,
-    "foodBank": 127,
-    "woodInc": 32,
+    "foodBank": 124,
+    "woodInc": 34,
     "woodSpent": -50,
-    "woodBank": 82,
-    "goldInc": -10,
+    "woodBank": 84,
+    "goldInc": -2,
     "goldSpent": 0,
-    "goldBank": -10,
+    "goldBank": -2,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -1454,13 +1454,13 @@
    },
    "castle": {
     "pro": 885,
-    "ideal": 899
+    "ideal": 893
    },
-   "income": 1.0074476130522747,
+   "income": 1.0206416662826896,
    "incomeByRes": {
-    "food": 0.98,
+    "food": 1,
     "wood": 1,
-    "gold": 0.92
+    "gold": 0.95
    },
    "lateMedian": 1,
    "unfinished": 0,
@@ -1475,7 +1475,7 @@
     },
     {
      "t": 120,
-     "food": -6,
+     "food": -10,
      "wood": 7,
      "gold": 3,
      "stone": 0,
@@ -1483,65 +1483,65 @@
     },
     {
      "t": 180,
-     "food": 46,
+     "food": 13,
      "wood": -18,
-     "gold": -11,
+     "gold": -4,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -77,
-     "wood": 25,
-     "gold": 26,
-     "stone": 0,
-     "vills": 0
-    },
-    {
-     "t": 300,
-     "food": 44,
-     "wood": 70,
-     "gold": 25,
-     "stone": 0,
-     "vills": 0
-    },
-    {
-     "t": 360,
-     "food": 371,
-     "wood": 126,
-     "gold": 9,
-     "stone": 0,
-     "vills": 0
-    },
-    {
-     "t": 420,
-     "food": 225,
-     "wood": 151,
-     "gold": -20,
-     "stone": 0,
-     "vills": 0
-    },
-    {
-     "t": 480,
-     "food": 125,
-     "wood": 275,
+     "food": -80,
+     "wood": 8,
      "gold": 23,
      "stone": 0,
      "vills": 0
     },
     {
+     "t": 300,
+     "food": 37,
+     "wood": 55,
+     "gold": 22,
+     "stone": 0,
+     "vills": 0
+    },
+    {
+     "t": 360,
+     "food": 363,
+     "wood": 122,
+     "gold": 11,
+     "stone": 0,
+     "vills": 0
+    },
+    {
+     "t": 420,
+     "food": 253,
+     "wood": 142,
+     "gold": 0,
+     "stone": 0,
+     "vills": 0
+    },
+    {
+     "t": 480,
+     "food": 150,
+     "wood": 310,
+     "gold": 33,
+     "stone": 0,
+     "vills": 0
+    },
+    {
      "t": 540,
-     "food": 3,
-     "wood": 200,
-     "gold": 43,
+     "food": 8,
+     "wood": 232,
+     "gold": 90,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 33,
-     "wood": 272,
-     "gold": -36,
+     "food": 28,
+     "wood": 285,
+     "gold": 61,
      "stone": 0,
      "vills": 0
     }
@@ -1549,15 +1549,15 @@
    "atFeudalStart": {
     "t": 200,
     "simPlace": 203,
-    "foodInc": 5,
+    "foodInc": 2,
     "foodSpent": -50,
-    "foodBank": 55,
-    "woodInc": 10,
+    "foodBank": 52,
+    "woodInc": 2,
     "woodSpent": 0,
-    "woodBank": 10,
-    "goldInc": 29,
+    "woodBank": 2,
+    "goldInc": 23,
     "goldSpent": 0,
-    "goldBank": 29,
+    "goldBank": 23,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -1675,11 +1675,11 @@
     "ideal": 242
    },
    "castle": null,
-   "income": 1.0743358477948182,
+   "income": 1.088081806830784,
    "incomeByRes": {
-    "food": 1.05,
-    "wood": 1,
-    "gold": 1.01,
+    "food": 1.06,
+    "wood": 1.03,
+    "gold": 1,
     "stone": 0.77
    },
    "lateMedian": 0,
@@ -1703,33 +1703,33 @@
     },
     {
      "t": 180,
-     "food": -54,
-     "wood": 41,
+     "food": -57,
+     "wood": 54,
      "gold": 0,
-     "stone": 58,
+     "stone": 57,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 60,
-     "wood": 87,
-     "gold": 1,
-     "stone": -14,
+     "food": 70,
+     "wood": 101,
+     "gold": 0,
+     "stone": -15,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 160,
     "simPlace": 182,
-    "foodInc": -21,
+    "foodInc": -31,
     "foodSpent": -50,
-    "foodBank": 29,
-    "woodInc": 36,
+    "foodBank": 19,
+    "woodInc": 42,
     "woodSpent": 0,
-    "woodBank": 36,
-    "goldInc": -12,
+    "woodBank": 42,
+    "goldInc": -2,
     "goldSpent": 0,
-    "goldBank": -12,
+    "goldBank": -2,
     "stoneInc": 14,
     "stoneSpent": 0,
     "stoneBank": 14
@@ -1749,20 +1749,20 @@
    },
    "castle": {
     "pro": 855,
-    "ideal": 860
+    "ideal": 858
    },
-   "income": 1.003866210748146,
+   "income": 1.0498682490561637,
    "incomeByRes": {
-    "food": 1.04,
-    "wood": 0.93,
-    "gold": 0.97
+    "food": 1.06,
+    "wood": 1,
+    "gold": 1.02
    },
-   "lateMedian": 2,
+   "lateMedian": 1,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 31,
+     "food": 28,
      "wood": 0,
      "gold": 3,
      "stone": 0,
@@ -1770,73 +1770,73 @@
     },
     {
      "t": 120,
-     "food": 9,
-     "wood": 35,
-     "gold": 18,
+     "food": -9,
+     "wood": 44,
+     "gold": 16,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 20,
-     "wood": 71,
-     "gold": 29,
+     "food": 6,
+     "wood": 81,
+     "gold": 19,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 151,
-     "wood": 14,
-     "gold": -12,
+     "food": 133,
+     "wood": 24,
+     "gold": -19,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 167,
-     "wood": -15,
-     "gold": 215,
+     "food": 153,
+     "wood": -11,
+     "gold": 213,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 152,
-     "wood": 33,
+     "food": 93,
+     "wood": 23,
      "gold": 223,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 41,
-     "wood": 86,
-     "gold": 242,
+     "food": -32,
+     "wood": 38,
+     "gold": 211,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 480,
-     "food": -13,
-     "wood": 47,
-     "gold": 246,
+     "food": 34,
+     "wood": -5,
+     "gold": 201,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 540,
-     "food": -132,
-     "wood": 32,
-     "gold": 180,
+     "food": 76,
+     "wood": -2,
+     "gold": 177,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 600,
-     "food": -216,
-     "wood": -46,
-     "gold": 199,
+     "food": -41,
+     "wood": -51,
+     "gold": 255,
      "stone": 0,
      "vills": 0
     }
@@ -1844,15 +1844,15 @@
    "atFeudalStart": {
     "t": 140,
     "simPlace": 142,
-    "foodInc": 38,
+    "foodInc": 18,
     "foodSpent": 0,
-    "foodBank": 38,
-    "woodInc": 36,
+    "foodBank": 18,
+    "woodInc": 45,
     "woodSpent": 0,
-    "woodBank": 36,
-    "goldInc": 16,
+    "woodBank": 45,
+    "goldInc": 6,
     "goldSpent": 0,
-    "goldBank": 16,
+    "goldBank": 6,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -1876,12 +1876,12 @@
     "pro": 691,
     "ideal": 690
    },
-   "income": 1.188358369853771,
+   "income": 1.1879021163776258,
    "incomeByRes": {
     "food": 1.12,
     "wood": 1.17,
     "gold": 1.21,
-    "stone": 1.89
+    "stone": 1.88
    },
    "lateMedian": 3,
    "unfinished": 0,
@@ -1896,92 +1896,92 @@
     },
     {
      "t": 120,
-     "food": 83,
-     "wood": 3,
-     "gold": 57,
-     "stone": 21,
+     "food": 74,
+     "wood": 2,
+     "gold": 54,
+     "stone": 17,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 113,
-     "wood": 58,
-     "gold": 53,
-     "stone": 20,
+     "food": 92,
+     "wood": 48,
+     "gold": 48,
+     "stone": 21,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 68,
-     "wood": 175,
-     "gold": -11,
-     "stone": 9,
-     "vills": 0
-    },
-    {
-     "t": 300,
-     "food": 178,
-     "wood": 255,
-     "gold": -5,
+     "food": 55,
+     "wood": 161,
+     "gold": -16,
      "stone": 10,
      "vills": 0
     },
     {
+     "t": 300,
+     "food": 165,
+     "wood": 243,
+     "gold": -3,
+     "stone": 13,
+     "vills": 0
+    },
+    {
      "t": 360,
-     "food": 223,
-     "wood": 220,
-     "gold": 2,
-     "stone": 11,
+     "food": 220,
+     "wood": 208,
+     "gold": 1,
+     "stone": 13,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 342,
-     "wood": 195,
-     "gold": 98,
-     "stone": 30,
+     "food": 335,
+     "wood": 189,
+     "gold": 96,
+     "stone": 32,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 459,
-     "wood": 154,
-     "gold": 156,
-     "stone": 55,
+     "food": 451,
+     "wood": 152,
+     "gold": 158,
+     "stone": 57,
      "vills": 0
     },
     {
      "t": 540,
      "food": 484,
-     "wood": 88,
-     "gold": 189,
-     "stone": 89,
+     "wood": 87,
+     "gold": 191,
+     "stone": 92,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 618,
-     "wood": 166,
-     "gold": 270,
-     "stone": 124,
+     "food": 613,
+     "wood": 165,
+     "gold": 272,
+     "stone": 127,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 160,
     "simPlace": 173,
-    "foodInc": 87,
+    "foodInc": 74,
     "foodSpent": 0,
-    "foodBank": 87,
-    "woodInc": 42,
+    "foodBank": 74,
+    "woodInc": 37,
     "woodSpent": 0,
-    "woodBank": 42,
-    "goldInc": 63,
+    "woodBank": 37,
+    "goldInc": 57,
     "goldSpent": 0,
-    "goldBank": 63,
-    "stoneInc": 22,
+    "goldBank": 57,
+    "stoneInc": 21,
     "stoneSpent": 0,
-    "stoneBank": 22
+    "stoneBank": 21
    }
   },
   {
@@ -1994,20 +1994,20 @@
    "skipped": [],
    "feudal": {
     "pro": 276,
-    "ideal": 283
+    "ideal": 279
    },
    "castle": {
     "pro": 632,
-    "ideal": 643
+    "ideal": 636
    },
-   "income": 0.9883470770639692,
+   "income": 1.0203539489715951,
    "incomeByRes": {
-    "food": 0.97,
-    "wood": 0.93,
-    "gold": 0.95,
-    "stone": 1
+    "food": 0.99,
+    "wood": 0.99,
+    "gold": 1.01,
+    "stone": 0.99
    },
-   "lateMedian": 7,
+   "lateMedian": 3,
    "unfinished": 0,
    "lag": [
     {
@@ -2020,89 +2020,89 @@
     },
     {
      "t": 120,
-     "food": 50,
+     "food": 32,
      "wood": -13,
-     "gold": 12,
+     "gold": 13,
      "stone": 0,
      "vills": -1
     },
     {
      "t": 180,
-     "food": -102,
-     "wood": 12,
-     "gold": 0,
+     "food": -109,
+     "wood": 10,
+     "gold": 1,
      "stone": 0,
      "vills": -1
     },
     {
      "t": 240,
-     "food": -55,
-     "wood": -48,
-     "gold": 23,
-     "stone": 7,
+     "food": -147,
+     "wood": -62,
+     "gold": 25,
+     "stone": 5,
      "vills": -1
     },
     {
      "t": 300,
-     "food": -57,
-     "wood": 56,
-     "gold": 24,
-     "stone": 34,
+     "food": -90,
+     "wood": 23,
+     "gold": 35,
+     "stone": 26,
      "vills": -1
     },
     {
      "t": 360,
-     "food": 35,
-     "wood": 8,
-     "gold": 42,
-     "stone": 1,
+     "food": 54,
+     "wood": -17,
+     "gold": 59,
+     "stone": 7,
      "vills": -1
     },
     {
      "t": 420,
-     "food": 35,
-     "wood": -56,
-     "gold": 33,
-     "stone": -30,
+     "food": -59,
+     "wood": -88,
+     "gold": 53,
+     "stone": 2,
      "vills": -1
     },
     {
      "t": 480,
-     "food": -141,
-     "wood": 4,
-     "gold": 78,
-     "stone": -26,
+     "food": -248,
+     "wood": -4,
+     "gold": 86,
+     "stone": -4,
      "vills": -1
     },
     {
      "t": 540,
-     "food": -21,
-     "wood": -12,
-     "gold": 85,
+     "food": 59,
+     "wood": -47,
+     "gold": 162,
      "stone": -4,
      "vills": -2
     },
     {
      "t": 600,
-     "food": -74,
-     "wood": -20,
-     "gold": -27,
-     "stone": 1,
-     "vills": -2
+     "food": 10,
+     "wood": 63,
+     "gold": 62,
+     "stone": -4,
+     "vills": -1
     }
    ],
    "atFeudalStart": {
     "t": 160,
     "simPlace": 162,
-    "foodInc": -18,
+    "foodInc": -17,
     "foodSpent": -50,
-    "foodBank": 32,
-    "woodInc": -10,
-    "woodSpent": -53,
-    "woodBank": 43,
-    "goldInc": 9,
+    "foodBank": 33,
+    "woodInc": -8,
+    "woodSpent": -28,
+    "woodBank": 20,
+    "goldInc": 15,
     "goldSpent": 0,
-    "goldBank": 9,
+    "goldBank": 15,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -2118,20 +2118,20 @@
    "skipped": [],
    "feudal": {
     "pro": 264,
-    "ideal": 265
+    "ideal": 261
    },
    "castle": {
     "pro": 586,
-    "ideal": 596
+    "ideal": 602
    },
-   "income": 0.9106771908437831,
+   "income": 0.9360980694977015,
    "incomeByRes": {
-    "food": 0.88,
-    "wood": 0.79,
-    "gold": 0.87,
+    "food": 0.89,
+    "wood": 0.83,
+    "gold": 0.9,
     "stone": 0.98
    },
-   "lateMedian": 7,
+   "lateMedian": 10,
    "unfinished": 0,
    "lag": [
     {
@@ -2144,84 +2144,84 @@
     },
     {
      "t": 120,
-     "food": -5,
+     "food": -21,
      "wood": 21,
-     "gold": -29,
-     "stone": 5,
+     "gold": -13,
+     "stone": 7,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 2,
-     "wood": 52,
+     "food": 19,
+     "wood": 41,
      "gold": 5,
-     "stone": 45,
-     "vills": -1
+     "stone": 37,
+     "vills": 0
     },
     {
      "t": 240,
-     "food": 13,
-     "wood": 64,
+     "food": 10,
+     "wood": 65,
      "gold": 5,
-     "stone": 36,
+     "stone": 37,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 96,
-     "wood": 75,
-     "gold": 15,
-     "stone": 43,
+     "food": 95,
+     "wood": 81,
+     "gold": 8,
+     "stone": 52,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 184,
-     "wood": 70,
-     "gold": 76,
-     "stone": -25,
+     "food": 169,
+     "wood": 72,
+     "gold": 84,
+     "stone": -14,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 162,
-     "wood": -5,
-     "gold": 62,
-     "stone": -15,
+     "food": 106,
+     "wood": -3,
+     "gold": 98,
+     "stone": -9,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 106,
-     "wood": -13,
-     "gold": -3,
-     "stone": -10,
+     "food": 78,
+     "wood": -6,
+     "gold": 45,
+     "stone": -9,
      "vills": 0
     },
     {
      "t": 540,
-     "food": -249,
-     "wood": -51,
-     "gold": -21,
-     "stone": -10,
-     "vills": -4
+     "food": -239,
+     "wood": -3,
+     "gold": 9,
+     "stone": -9,
+     "vills": -2
     }
    ],
    "atFeudalStart": {
     "t": 140,
-    "simPlace": 144,
-    "foodInc": 2,
-    "foodSpent": 0,
-    "foodBank": 2,
-    "woodInc": 49,
+    "simPlace": 140,
+    "foodInc": 9,
+    "foodSpent": 400,
+    "foodBank": -391,
+    "woodInc": 39,
     "woodSpent": 0,
-    "woodBank": 49,
-    "goldInc": -4,
-    "goldSpent": 0,
-    "goldBank": -4,
-    "stoneInc": 21,
+    "woodBank": 39,
+    "goldInc": 5,
+    "goldSpent": 200,
+    "goldBank": -195,
+    "stoneInc": 22,
     "stoneSpent": 0,
-    "stoneBank": 21
+    "stoneBank": 22
    }
   },
   {
@@ -2234,21 +2234,21 @@
    "skipped": [],
    "feudal": {
     "pro": 451,
-    "ideal": 451
+    "ideal": 456
    },
    "castle": null,
-   "income": 1.0511882537678998,
+   "income": 1.0136217105800356,
    "incomeByRes": {
-    "food": 1.02,
-    "wood": 1.02,
-    "gold": 1.12
+    "food": 0.98,
+    "wood": 0.99,
+    "gold": 1.05
    },
    "lateMedian": 0,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 95,
+     "food": 84,
      "wood": -14,
      "gold": 0,
      "stone": 0,
@@ -2256,7 +2256,7 @@
     },
     {
      "t": 120,
-     "food": 126,
+     "food": 115,
      "wood": -9,
      "gold": 0,
      "stone": 0,
@@ -2264,41 +2264,41 @@
     },
     {
      "t": 180,
-     "food": 87,
-     "wood": 56,
+     "food": 84,
+     "wood": 51,
      "gold": 0,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 58,
-     "wood": 86,
+     "food": 54,
+     "wood": 85,
      "gold": 0,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 162,
+     "food": 170,
      "wood": 84,
-     "gold": 34,
+     "gold": 31,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 286,
-     "wood": 72,
-     "gold": 55,
+     "food": 309,
+     "wood": 87,
+     "gold": 73,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 216,
-     "wood": 109,
-     "gold": 88,
+     "food": 142,
+     "wood": 90,
+     "gold": 65,
      "stone": 0,
      "vills": 0
     }
@@ -2306,15 +2306,15 @@
    "atFeudalStart": {
     "t": 380,
     "simPlace": 397,
-    "foodInc": 394,
+    "foodInc": 424,
     "foodSpent": -50,
-    "foodBank": 444,
-    "woodInc": 100,
+    "foodBank": 474,
+    "woodInc": 121,
     "woodSpent": -225,
-    "woodBank": 325,
-    "goldInc": 8,
+    "woodBank": 346,
+    "goldInc": 20,
     "goldSpent": 0,
-    "goldBank": 8,
+    "goldBank": 20,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -2330,13 +2330,13 @@
    "skipped": [],
    "feudal": {
     "pro": 246,
-    "ideal": 246
+    "ideal": 252
    },
    "castle": {
     "pro": 604,
-    "ideal": 607
+    "ideal": 608
    },
-   "income": 1.0066204943971702,
+   "income": 1.0056516569357048,
    "incomeByRes": {
     "food": 0.96,
     "wood": 0.89,
@@ -2364,84 +2364,84 @@
     },
     {
      "t": 180,
-     "food": -17,
-     "wood": 44,
+     "food": -27,
+     "wood": 54,
      "gold": -13,
-     "stone": 41,
+     "stone": 43,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 65,
-     "wood": 35,
-     "gold": -11,
-     "stone": -56,
+     "food": 54,
+     "wood": 50,
+     "gold": -13,
+     "stone": -35,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 221,
-     "wood": 62,
-     "gold": -4,
-     "stone": -11,
+     "food": 198,
+     "wood": 50,
+     "gold": -8,
+     "stone": -9,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 207,
-     "wood": 50,
+     "food": 197,
+     "wood": 48,
      "gold": -3,
      "stone": -7,
      "vills": -1
     },
     {
      "t": 420,
-     "food": 6,
-     "wood": 32,
+     "food": -3,
+     "wood": 29,
      "gold": 84,
-     "stone": -6,
+     "stone": -7,
      "vills": -2
     },
     {
      "t": 480,
-     "food": 99,
-     "wood": 26,
-     "gold": 80,
-     "stone": -6,
+     "food": 98,
+     "wood": 21,
+     "gold": 64,
+     "stone": -7,
      "vills": -1
     },
     {
      "t": 540,
-     "food": -52,
-     "wood": 120,
+     "food": -73,
+     "wood": 136,
      "gold": 88,
-     "stone": -6,
+     "stone": -7,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 94,
-     "wood": -77,
-     "gold": 152,
-     "stone": -6,
+     "food": 72,
+     "wood": -70,
+     "gold": 161,
+     "stone": -7,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 180,
-    "simPlace": 186,
-    "foodInc": -17,
+    "simPlace": 192,
+    "foodInc": -27,
     "foodSpent": 0,
-    "foodBank": -17,
-    "woodInc": 44,
+    "foodBank": -27,
+    "woodInc": 54,
     "woodSpent": 0,
-    "woodBank": 44,
+    "woodBank": 54,
     "goldInc": -13,
     "goldSpent": 0,
     "goldBank": -13,
-    "stoneInc": 41,
+    "stoneInc": 43,
     "stoneSpent": 0,
-    "stoneBank": 41
+    "stoneBank": 43
    }
   },
   {
@@ -2454,19 +2454,19 @@
    "skipped": [],
    "feudal": {
     "pro": 203,
-    "ideal": 214
+    "ideal": 257
    },
    "castle": {
     "pro": 1424,
     "ideal": 1424
    },
-   "income": 0.9949809464946557,
+   "income": 0.9840646959795999,
    "incomeByRes": {
-    "food": 0.97,
+    "food": 0.96,
     "wood": 0.98,
-    "gold": 0.98
+    "gold": 0.95
    },
-   "lateMedian": 3,
+   "lateMedian": 24,
    "unfinished": 76,
    "lag": [
     {
@@ -2479,89 +2479,89 @@
     },
     {
      "t": 120,
-     "food": -4,
-     "wood": 38,
-     "gold": -16,
+     "food": -10,
+     "wood": 35,
+     "gold": -1,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 7,
-     "wood": -27,
-     "gold": 14,
+     "food": -24,
+     "wood": 36,
+     "gold": -11,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 40,
-     "wood": -92,
-     "gold": 21,
+     "food": 19,
+     "wood": -59,
+     "gold": 18,
      "stone": 0,
      "vills": -1
     },
     {
      "t": 300,
-     "food": 24,
-     "wood": -164,
-     "gold": 88,
+     "food": -17,
+     "wood": -190,
+     "gold": -36,
      "stone": 0,
-     "vills": 0
+     "vills": -2
     },
     {
      "t": 360,
-     "food": 82,
-     "wood": -44,
-     "gold": 122,
+     "food": -10,
+     "wood": -139,
+     "gold": 45,
      "stone": 0,
-     "vills": 0
+     "vills": -2
     },
     {
      "t": 420,
-     "food": 60,
-     "wood": -49,
-     "gold": 145,
+     "food": -108,
+     "wood": -163,
+     "gold": 78,
      "stone": 0,
-     "vills": 0
+     "vills": -1
     },
     {
      "t": 480,
-     "food": -83,
-     "wood": -66,
-     "gold": 167,
+     "food": -327,
+     "wood": -153,
+     "gold": 95,
      "stone": 0,
-     "vills": 0
+     "vills": -1
     },
     {
      "t": 540,
-     "food": 73,
-     "wood": -64,
-     "gold": 205,
+     "food": -376,
+     "wood": -246,
+     "gold": 135,
      "stone": 0,
-     "vills": 0
+     "vills": -1
     },
     {
      "t": 600,
-     "food": 138,
-     "wood": -110,
-     "gold": 248,
+     "food": -332,
+     "wood": -410,
+     "gold": 178,
      "stone": 0,
-     "vills": 0
+     "vills": -1
     }
    ],
    "atFeudalStart": {
     "t": 140,
-    "simPlace": 154,
-    "foodInc": 4,
+    "simPlace": 197,
+    "foodInc": -16,
     "foodSpent": 0,
-    "foodBank": 4,
-    "woodInc": 52,
+    "foodBank": -16,
+    "woodInc": 63,
     "woodSpent": -4,
-    "woodBank": 56,
-    "goldInc": -17,
+    "woodBank": 67,
+    "goldInc": -22,
     "goldSpent": 0,
-    "goldBank": -17,
+    "goldBank": -22,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -2653,14 +2653,14 @@
    },
    "castle": {
     "pro": 569,
-    "ideal": 601
+    "ideal": 605
    },
-   "income": 0.9240308347285139,
+   "income": 0.9480300020029269,
    "incomeByRes": {
-    "food": 0.91,
-    "wood": 0.75,
-    "gold": 0.99,
-    "stone": 0.98
+    "food": 0.92,
+    "wood": 0.8,
+    "gold": 1.02,
+    "stone": 1.02
    },
    "lateMedian": 7.5,
    "unfinished": 0,
@@ -2700,42 +2700,42 @@
     {
      "t": 300,
      "food": -55,
-     "wood": 19,
-     "gold": 5,
-     "stone": -29,
+     "wood": -21,
+     "gold": -1,
+     "stone": 1,
      "vills": -1
     },
     {
      "t": 360,
-     "food": 92,
-     "wood": -100,
-     "gold": 32,
-     "stone": -19,
+     "food": 84,
+     "wood": -114,
+     "gold": 23,
+     "stone": -8,
      "vills": -1
     },
     {
      "t": 420,
-     "food": -202,
-     "wood": -95,
-     "gold": 48,
-     "stone": -9,
+     "food": -248,
+     "wood": -125,
+     "gold": 33,
+     "stone": 1,
      "vills": -2
     },
     {
      "t": 480,
-     "food": -448,
-     "wood": -79,
+     "food": -425,
+     "wood": -93,
      "gold": 26,
-     "stone": -5,
-     "vills": -3
+     "stone": 5,
+     "vills": -2
     },
     {
      "t": 540,
-     "food": -180,
-     "wood": -142,
-     "gold": -19,
-     "stone": -5,
-     "vills": -3
+     "food": -179,
+     "wood": -72,
+     "gold": 3,
+     "stone": 5,
+     "vills": -2
     }
    ],
    "atFeudalStart": {
@@ -2845,12 +2845,12 @@
     "pro": 600,
     "ideal": 601
    },
-   "income": 1.00198641779559,
+   "income": 1.004341710077908,
    "incomeByRes": {
     "food": 0.98,
-    "wood": 1.08,
-    "gold": 0.99,
-    "stone": 0.99
+    "wood": 1.09,
+    "gold": 1,
+    "stone": 0.98
    },
    "lateMedian": 1,
    "unfinished": 0,
@@ -2905,34 +2905,34 @@
     },
     {
      "t": 420,
-     "food": 262,
+     "food": 260,
      "wood": 2,
-     "gold": 100,
-     "stone": -7,
+     "gold": 112,
+     "stone": -12,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 155,
-     "wood": 18,
-     "gold": 58,
-     "stone": -7,
+     "food": 140,
+     "wood": 17,
+     "gold": 61,
+     "stone": -12,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 59,
-     "wood": 29,
-     "gold": 56,
-     "stone": -7,
+     "food": 52,
+     "wood": 39,
+     "gold": 63,
+     "stone": -12,
      "vills": 0
     },
     {
      "t": 600,
-     "food": -71,
-     "wood": 103,
-     "gold": -10,
-     "stone": -7,
+     "food": -68,
+     "wood": 113,
+     "gold": -3,
+     "stone": -12,
      "vills": 0
     }
    ],
@@ -2963,19 +2963,19 @@
    "skipped": [],
    "feudal": {
     "pro": 370,
-    "ideal": 387
+    "ideal": 384
    },
    "castle": {
     "pro": 453,
-    "ideal": 458
+    "ideal": 455
    },
-   "income": 1.0010254652477946,
+   "income": 1.0141729761432743,
    "incomeByRes": {
     "food": 0.98,
-    "wood": 0.94,
-    "gold": 1.05
+    "wood": 1,
+    "gold": 1.06
    },
-   "lateMedian": 11,
+   "lateMedian": 8,
    "unfinished": 0,
    "lag": [
     {
@@ -2988,7 +2988,7 @@
     },
     {
      "t": 120,
-     "food": 77,
+     "food": 75,
      "wood": -18,
      "gold": 0,
      "stone": 0,
@@ -2996,57 +2996,57 @@
     },
     {
      "t": 180,
-     "food": -48,
-     "wood": 0,
-     "gold": -20,
+     "food": -60,
+     "wood": 7,
+     "gold": -11,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -20,
-     "wood": 3,
-     "gold": -41,
+     "food": -4,
+     "wood": 11,
+     "gold": -8,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 35,
-     "wood": -3,
-     "gold": -7,
+     "food": 64,
+     "wood": 6,
+     "gold": 18,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 162,
-     "wood": -7,
-     "gold": -81,
+     "food": 207,
+     "wood": 10,
+     "gold": -63,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 420,
-     "food": -59,
-     "wood": 29,
-     "gold": 8,
+     "food": -51,
+     "wood": 42,
+     "gold": 20,
      "stone": 0,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 160,
-    "simPlace": 191,
-    "foodInc": 26,
+    "simPlace": 188,
+    "foodInc": 8,
     "foodSpent": 0,
-    "foodBank": 26,
-    "woodInc": -9,
+    "foodBank": 8,
+    "woodInc": -4,
     "woodSpent": -50,
-    "woodBank": 41,
-    "goldInc": -30,
+    "woodBank": 46,
+    "goldInc": -16,
     "goldSpent": 0,
-    "goldBank": -30,
+    "goldBank": -16,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -3068,11 +3068,11 @@
     "pro": 831,
     "ideal": 832
    },
-   "income": 1.1526983999734388,
+   "income": 1.180236091048601,
    "incomeByRes": {
-    "food": 1.21,
-    "wood": 1.15,
-    "gold": 1.02
+    "food": 1.23,
+    "wood": 1.17,
+    "gold": 1.05
    },
    "lateMedian": 2,
    "unfinished": 0,
@@ -3103,7 +3103,7 @@
     },
     {
      "t": 240,
-     "food": -57,
+     "food": -60,
      "wood": 23,
      "gold": 29,
      "stone": 0,
@@ -3111,49 +3111,49 @@
     },
     {
      "t": 300,
-     "food": 129,
-     "wood": 14,
+     "food": 119,
+     "wood": 35,
      "gold": 2,
      "stone": 1,
      "vills": -1
     },
     {
      "t": 360,
-     "food": 71,
-     "wood": 5,
-     "gold": 20,
+     "food": 101,
+     "wood": 14,
+     "gold": 37,
      "stone": 1,
      "vills": -1
     },
     {
      "t": 420,
-     "food": 71,
-     "wood": -6,
-     "gold": 31,
+     "food": 121,
+     "wood": 3,
+     "gold": 64,
      "stone": 1,
      "vills": -1
     },
     {
      "t": 480,
-     "food": 98,
-     "wood": 1,
-     "gold": 54,
+     "food": 148,
+     "wood": 20,
+     "gold": 95,
      "stone": 1,
      "vills": -1
     },
     {
      "t": 540,
-     "food": 72,
-     "wood": 24,
-     "gold": 84,
+     "food": 99,
+     "wood": 43,
+     "gold": 148,
      "stone": 1,
      "vills": -1
     },
     {
      "t": 600,
-     "food": 328,
-     "wood": 8,
-     "gold": 111,
+     "food": 413,
+     "wood": 23,
+     "gold": 178,
      "stone": 1,
      "vills": 0
     }
@@ -3191,11 +3191,11 @@
     "pro": 722,
     "ideal": 725
    },
-   "income": 1.0536813458936625,
+   "income": 1.048698551696316,
    "incomeByRes": {
     "food": 1.02,
-    "wood": 0.99,
-    "gold": 1.05,
+    "wood": 0.98,
+    "gold": 1.04,
     "stone": 1
    },
    "lateMedian": 0,
@@ -3235,49 +3235,49 @@
     },
     {
      "t": 300,
-     "food": -19,
-     "wood": 46,
-     "gold": 6,
-     "stone": -19,
+     "food": -27,
+     "wood": 27,
+     "gold": 5,
+     "stone": -8,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 88,
-     "wood": 114,
+     "food": 91,
+     "wood": 106,
      "gold": 47,
-     "stone": -10,
+     "stone": -5,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 10,
-     "wood": -140,
-     "gold": 26,
-     "stone": -5,
+     "food": 3,
+     "wood": -164,
+     "gold": 25,
+     "stone": -1,
      "vills": -2
     },
     {
      "t": 480,
-     "food": 15,
-     "wood": 16,
-     "gold": 43,
+     "food": 37,
+     "wood": 37,
+     "gold": 53,
      "stone": -1,
      "vills": -2
     },
     {
      "t": 540,
-     "food": 99,
-     "wood": 91,
-     "gold": 73,
+     "food": 55,
+     "wood": 117,
+     "gold": 80,
      "stone": -1,
      "vills": -2
     },
     {
      "t": 600,
-     "food": 93,
-     "wood": 30,
-     "gold": 185,
+     "food": 35,
+     "wood": 20,
+     "gold": 167,
      "stone": -1,
      "vills": -1
     }
@@ -3309,118 +3309,118 @@
    "skipped": [],
    "feudal": {
     "pro": 295,
-    "ideal": 306
+    "ideal": 298
    },
    "castle": {
     "pro": 696,
     "ideal": 698
    },
-   "income": 1.0495536444171707,
+   "income": 1.0301407519201105,
    "incomeByRes": {
-    "food": 1.03,
-    "wood": 1.01,
-    "gold": 1.12,
+    "food": 1.01,
+    "wood": 1,
+    "gold": 1.07,
     "stone": 1.04
    },
-   "lateMedian": 7,
+   "lateMedian": 4,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": -2,
+     "food": -27,
      "wood": 0,
-     "gold": -16,
-     "stone": 13,
+     "gold": -28,
+     "stone": 56,
      "vills": 0
     },
     {
      "t": 120,
-     "food": -47,
-     "wood": 3,
-     "gold": -26,
-     "stone": 13,
+     "food": -80,
+     "wood": 0,
+     "gold": -61,
+     "stone": 70,
      "vills": 0
     },
     {
      "t": 180,
-     "food": -80,
-     "wood": 6,
-     "gold": -28,
-     "stone": 19,
+     "food": -83,
+     "wood": 0,
+     "gold": -46,
+     "stone": 22,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -58,
-     "wood": 39,
-     "gold": -21,
-     "stone": -4,
-     "vills": 0
+     "food": -84,
+     "wood": 16,
+     "gold": -42,
+     "stone": -5,
+     "vills": -1
     },
     {
      "t": 300,
-     "food": -61,
-     "wood": 5,
-     "gold": 4,
-     "stone": -21,
-     "vills": 0
+     "food": -60,
+     "wood": 0,
+     "gold": -22,
+     "stone": 7,
+     "vills": -1
     },
     {
      "t": 360,
-     "food": -41,
-     "wood": -29,
-     "gold": -4,
-     "stone": 32,
-     "vills": 0
+     "food": -61,
+     "wood": -63,
+     "gold": 4,
+     "stone": 39,
+     "vills": -1
     },
     {
      "t": 420,
-     "food": 31,
-     "wood": -3,
-     "gold": 13,
-     "stone": 35,
-     "vills": 0
+     "food": -6,
+     "wood": -32,
+     "gold": -2,
+     "stone": 42,
+     "vills": -1
     },
     {
      "t": 480,
-     "food": 127,
-     "wood": 17,
-     "gold": 3,
-     "stone": 38,
-     "vills": 0
+     "food": 71,
+     "wood": -6,
+     "gold": -15,
+     "stone": 42,
+     "vills": -1
     },
     {
      "t": 540,
-     "food": 146,
-     "wood": 44,
-     "gold": 71,
-     "stone": 22,
-     "vills": 0
+     "food": 80,
+     "wood": 11,
+     "gold": 47,
+     "stone": 26,
+     "vills": -1
     },
     {
      "t": 600,
-     "food": 1,
-     "wood": 71,
-     "gold": 154,
-     "stone": 22,
-     "vills": 0
+     "food": -80,
+     "wood": 50,
+     "gold": 115,
+     "stone": 26,
+     "vills": -1
     }
    ],
    "atFeudalStart": {
     "t": 180,
-    "simPlace": 205,
-    "foodInc": -80,
+    "simPlace": 197,
+    "foodInc": -83,
     "foodSpent": -50,
-    "foodBank": -30,
-    "woodInc": 6,
+    "foodBank": -33,
+    "woodInc": 0,
     "woodSpent": 0,
-    "woodBank": 6,
-    "goldInc": -28,
+    "woodBank": 0,
+    "goldInc": -46,
     "goldSpent": 0,
-    "goldBank": -28,
-    "stoneInc": 19,
+    "goldBank": -46,
+    "stoneInc": 22,
     "stoneSpent": 62,
-    "stoneBank": -43
+    "stoneBank": -40
    }
   },
   {
@@ -3556,22 +3556,22 @@
    "skipped": [],
    "feudal": {
     "pro": 272,
-    "ideal": 258
+    "ideal": 261
    },
    "castle": null,
-   "income": 0.8966925062223081,
+   "income": 0.9003060001582621,
    "incomeByRes": {
-    "food": 0.9,
-    "wood": 0.81,
-    "gold": 0.99,
-    "stone": 0.69
+    "food": 0.86,
+    "wood": 0.66,
+    "gold": 0.97,
+    "stone": 0.56
    },
-   "lateMedian": -0.5,
+   "lateMedian": 1,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 59,
+     "food": 57,
      "wood": 0,
      "gold": 25,
      "stone": 0,
@@ -3579,41 +3579,41 @@
     },
     {
      "t": 120,
-     "food": -43,
+     "food": -69,
      "wood": 0,
-     "gold": 4,
+     "gold": 10,
      "stone": 0,
      "vills": -1
     },
     {
      "t": 180,
-     "food": -116,
-     "wood": 27,
-     "gold": -2,
+     "food": -132,
+     "wood": 24,
+     "gold": 4,
      "stone": 0,
      "vills": -1
     },
     {
      "t": 240,
-     "food": -80,
-     "wood": -3,
-     "gold": -1,
-     "stone": -22,
+     "food": -89,
+     "wood": -10,
+     "gold": 6,
+     "stone": -25,
      "vills": -1
     }
    ],
    "atFeudalStart": {
     "t": 140,
     "simPlace": 140,
-    "foodInc": -75,
+    "foodInc": -88,
     "foodSpent": 350,
-    "foodBank": -425,
-    "woodInc": 3,
+    "foodBank": -438,
+    "woodInc": 0,
     "woodSpent": -75,
-    "woodBank": 78,
-    "goldInc": 4,
+    "woodBank": 75,
+    "goldInc": 10,
     "goldSpent": 200,
-    "goldBank": -196,
+    "goldBank": -190,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -3633,115 +3633,115 @@
    ],
    "feudal": {
     "pro": 341,
-    "ideal": 367
+    "ideal": 368
    },
    "castle": {
     "pro": 747,
     "ideal": 751
    },
-   "income": 0.9796474991291305,
+   "income": 0.9733175571628256,
    "incomeByRes": {
-    "food": 1.01,
-    "wood": 0.92,
+    "food": 1,
+    "wood": 0.91,
     "gold": 0.9,
     "stone": 0.95
    },
-   "lateMedian": 9,
+   "lateMedian": 7,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 33,
-     "wood": -36,
+     "food": 24,
+     "wood": -27,
      "gold": 0,
      "stone": -6,
      "vills": 0
     },
     {
      "t": 120,
-     "food": 53,
-     "wood": -10,
+     "food": 61,
+     "wood": -6,
      "gold": 0,
      "stone": -6,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 28,
-     "wood": -23,
-     "gold": 0,
+     "food": 33,
+     "wood": -21,
+     "gold": -1,
      "stone": -6,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 32,
+     "food": 37,
      "wood": 1,
-     "gold": -59,
+     "gold": -60,
      "stone": -6,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 81,
-     "wood": 42,
+     "food": 69,
+     "wood": 49,
      "gold": -16,
      "stone": -6,
      "vills": 0
     },
     {
      "t": 360,
-     "food": -141,
-     "wood": 60,
-     "gold": -24,
+     "food": -321,
+     "wood": 216,
+     "gold": -23,
      "stone": -15,
      "vills": 0
     },
     {
      "t": 420,
-     "food": -268,
-     "wood": -54,
-     "gold": -15,
-     "stone": -19,
+     "food": -606,
+     "wood": 217,
+     "gold": -12,
+     "stone": -20,
      "vills": 0
     },
     {
      "t": 480,
-     "food": -36,
-     "wood": -72,
-     "gold": -25,
-     "stone": -19,
+     "food": -338,
+     "wood": 39,
+     "gold": -15,
+     "stone": -20,
      "vills": 0
     },
     {
      "t": 540,
-     "food": -19,
-     "wood": -91,
-     "gold": 43,
-     "stone": -19,
+     "food": -235,
+     "wood": -68,
+     "gold": 42,
+     "stone": -20,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 92,
-     "wood": 1,
-     "gold": 35,
-     "stone": -19,
+     "food": -22,
+     "wood": -41,
+     "gold": 25,
+     "stone": -20,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 260,
-    "simPlace": 290,
-    "foodInc": 110,
+    "simPlace": 291,
+    "foodInc": 112,
     "foodSpent": 0,
-    "foodBank": 110,
-    "woodInc": 4,
+    "foodBank": 112,
+    "woodInc": 1,
     "woodSpent": 0,
-    "woodBank": 4,
-    "goldInc": -44,
+    "woodBank": 1,
+    "goldInc": -45,
     "goldSpent": 0,
-    "goldBank": -44,
+    "goldBank": -45,
     "stoneInc": -6,
     "stoneSpent": 0,
     "stoneBank": -6
@@ -3760,33 +3760,33 @@
    ],
    "feudal": {
     "pro": 358,
-    "ideal": 364
+    "ideal": 359
    },
    "castle": {
     "pro": 816,
-    "ideal": 820
+    "ideal": 821
    },
-   "income": 1.1096615297019066,
+   "income": 1.125862974055773,
    "incomeByRes": {
     "food": 1.08,
-    "wood": 1.41,
+    "wood": 1.47,
     "gold": 1,
     "stone": 0.98
    },
-   "lateMedian": 37,
+   "lateMedian": 5,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 26,
-     "wood": -40,
+     "food": 14,
+     "wood": -27,
      "gold": 0,
      "stone": -7,
      "vills": 0
     },
     {
      "t": 120,
-     "food": 35,
+     "food": 39,
      "wood": 8,
      "gold": 0,
      "stone": -7,
@@ -3794,81 +3794,81 @@
     },
     {
      "t": 180,
-     "food": 72,
-     "wood": -23,
+     "food": 66,
+     "wood": -19,
      "gold": 0,
      "stone": -7,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -103,
-     "wood": 28,
-     "gold": 16,
+     "food": -134,
+     "wood": 54,
+     "gold": 28,
      "stone": -7,
      "vills": 0
     },
     {
      "t": 300,
-     "food": -16,
-     "wood": 67,
-     "gold": -30,
+     "food": -33,
+     "wood": 89,
+     "gold": -8,
      "stone": -7,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 21,
-     "wood": -12,
-     "gold": 24,
-     "stone": -8,
+     "food": -13,
+     "wood": 57,
+     "gold": 63,
+     "stone": -7,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 24,
-     "wood": -1,
-     "gold": -36,
-     "stone": -10,
+     "food": 51,
+     "wood": 43,
+     "gold": -68,
+     "stone": -7,
      "vills": 0
     },
     {
      "t": 480,
-     "food": -239,
-     "wood": 18,
-     "gold": 25,
-     "stone": -11,
+     "food": -98,
+     "wood": 142,
+     "gold": 15,
+     "stone": -8,
      "vills": 0
     },
     {
      "t": 540,
-     "food": -162,
-     "wood": 27,
-     "gold": -114,
-     "stone": -11,
+     "food": -134,
+     "wood": 107,
+     "gold": -107,
+     "stone": -9,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 35,
-     "wood": -123,
-     "gold": -111,
-     "stone": -11,
-     "vills": 0
+     "food": -75,
+     "wood": -86,
+     "gold": -100,
+     "stone": -9,
+     "vills": -1
     }
    ],
    "atFeudalStart": {
     "t": 280,
-    "simPlace": 294,
-    "foodInc": 21,
+    "simPlace": 289,
+    "foodInc": 17,
     "foodSpent": -50,
-    "foodBank": 71,
-    "woodInc": 55,
+    "foodBank": 67,
+    "woodInc": 76,
     "woodSpent": 100,
-    "woodBank": -45,
-    "goldInc": -23,
+    "woodBank": -24,
+    "goldInc": -15,
     "goldSpent": 0,
-    "goldBank": -23,
+    "goldBank": -15,
     "stoneInc": -7,
     "stoneSpent": 0,
     "stoneBank": -7
@@ -3888,20 +3888,20 @@
    ],
    "feudal": {
     "pro": 261,
-    "ideal": 277
+    "ideal": 289
    },
    "castle": {
     "pro": 798,
-    "ideal": 799
+    "ideal": 800
    },
-   "income": 0.9775728850508745,
+   "income": 1.0145704278820915,
    "incomeByRes": {
-    "food": 0.97,
-    "wood": 0.98,
-    "gold": 0.98,
+    "food": 1,
+    "wood": 1.02,
+    "gold": 1.03,
     "stone": 0.97
    },
-   "lateMedian": 20.5,
+   "lateMedian": 10,
    "unfinished": 0,
    "lag": [
     {
@@ -3914,89 +3914,89 @@
     },
     {
      "t": 120,
-     "food": 66,
-     "wood": -9,
-     "gold": -6,
+     "food": 35,
+     "wood": 1,
+     "gold": 7,
      "stone": -12,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 8,
-     "wood": -2,
-     "gold": 3,
+     "food": -19,
+     "wood": 42,
+     "gold": 16,
      "stone": -12,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 34,
-     "wood": 54,
-     "gold": -5,
+     "food": 122,
+     "wood": 1,
+     "gold": 15,
      "stone": -12,
      "vills": 0
     },
     {
      "t": 300,
-     "food": -37,
-     "wood": 64,
-     "gold": 2,
-     "stone": -20,
+     "food": 0,
+     "wood": 44,
+     "gold": 12,
+     "stone": -26,
      "vills": 0
     },
     {
      "t": 360,
-     "food": -20,
-     "wood": 29,
-     "gold": -6,
-     "stone": -20,
+     "food": -77,
+     "wood": 63,
+     "gold": 6,
+     "stone": -26,
      "vills": 0
     },
     {
      "t": 420,
-     "food": -89,
-     "wood": 11,
-     "gold": 29,
-     "stone": -21,
+     "food": -262,
+     "wood": 63,
+     "gold": 11,
+     "stone": -27,
      "vills": 0
     },
     {
      "t": 480,
-     "food": -49,
-     "wood": 5,
-     "gold": 21,
-     "stone": -21,
+     "food": -179,
+     "wood": 51,
+     "gold": -2,
+     "stone": -27,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 162,
-     "wood": 18,
-     "gold": 28,
-     "stone": -21,
+     "food": -56,
+     "wood": 20,
+     "gold": -13,
+     "stone": -27,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 251,
-     "wood": 30,
-     "gold": 137,
-     "stone": -21,
+     "food": 116,
+     "wood": 14,
+     "gold": 71,
+     "stone": -27,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 140,
-    "simPlace": 156,
-    "foodInc": 34,
+    "simPlace": 168,
+    "foodInc": -27,
     "foodSpent": 0,
-    "foodBank": 34,
-    "woodInc": -7,
+    "foodBank": -27,
+    "woodInc": 25,
     "woodSpent": 0,
-    "woodBank": -7,
-    "goldInc": -19,
+    "woodBank": 25,
+    "goldInc": -9,
     "goldSpent": 0,
-    "goldBank": -19,
+    "goldBank": -9,
     "stoneInc": -12,
     "stoneSpent": 0,
     "stoneBank": -12
@@ -4016,115 +4016,115 @@
    ],
    "feudal": {
     "pro": 247,
-    "ideal": 253
+    "ideal": 269
    },
    "castle": {
     "pro": 1003,
-    "ideal": 1011
+    "ideal": 1009
    },
-   "income": 1.040745608501414,
+   "income": 1.054877458226825,
    "incomeByRes": {
-    "food": 1.01,
+    "food": 1.03,
     "wood": 1.02,
-    "gold": 1.03,
-    "stone": 1.05
+    "gold": 1.06,
+    "stone": 1.04
    },
-   "lateMedian": 2,
+   "lateMedian": 0.5,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 9,
+     "food": 8,
      "wood": -23,
-     "gold": 35,
+     "gold": 36,
      "stone": -9,
      "vills": 0
     },
     {
      "t": 120,
-     "food": 50,
-     "wood": -11,
-     "gold": -27,
+     "food": 25,
+     "wood": -9,
+     "gold": -16,
      "stone": -9,
      "vills": 0
     },
     {
      "t": 180,
      "food": -26,
-     "wood": -9,
+     "wood": 19,
      "gold": 10,
      "stone": -9,
-     "vills": -1
+     "vills": 0
     },
     {
      "t": 240,
-     "food": -10,
-     "wood": -41,
-     "gold": 10,
+     "food": 14,
+     "wood": -32,
+     "gold": 16,
      "stone": -9,
      "vills": -1
     },
     {
      "t": 300,
-     "food": 17,
-     "wood": 14,
-     "gold": -15,
-     "stone": -11,
+     "food": 31,
+     "wood": 28,
+     "gold": -16,
+     "stone": -19,
      "vills": -1
     },
     {
      "t": 360,
-     "food": 22,
-     "wood": -9,
-     "gold": -56,
-     "stone": -11,
+     "food": 69,
+     "wood": 11,
+     "gold": -40,
+     "stone": -19,
      "vills": -1
     },
     {
      "t": 420,
-     "food": -149,
-     "wood": -43,
-     "gold": -62,
-     "stone": -12,
+     "food": -124,
+     "wood": 48,
+     "gold": -51,
+     "stone": -20,
      "vills": -1
     },
     {
      "t": 480,
-     "food": -226,
-     "wood": -123,
-     "gold": -106,
-     "stone": -12,
-     "vills": -2
-    },
-    {
-     "t": 540,
-     "food": -102,
-     "wood": -187,
-     "gold": -191,
-     "stone": -12,
+     "food": -352,
+     "wood": 4,
+     "gold": -178,
+     "stone": -20,
      "vills": -1
     },
     {
+     "t": 540,
+     "food": -192,
+     "wood": -98,
+     "gold": -249,
+     "stone": -20,
+     "vills": 0
+    },
+    {
      "t": 600,
-     "food": -154,
-     "wood": -133,
-     "gold": -164,
-     "stone": -12,
+     "food": -168,
+     "wood": -94,
+     "gold": -188,
+     "stone": -20,
      "vills": -1
     }
    ],
    "atFeudalStart": {
     "t": 140,
-    "simPlace": 152,
-    "foodInc": -14,
+    "simPlace": 168,
+    "foodInc": -44,
     "foodSpent": 0,
-    "foodBank": -14,
-    "woodInc": 2,
+    "foodBank": -44,
+    "woodInc": 14,
     "woodSpent": 0,
-    "woodBank": 2,
-    "goldInc": -10,
+    "woodBank": 14,
+    "goldInc": -11,
     "goldSpent": 0,
-    "goldBank": -10,
+    "goldBank": -11,
     "stoneInc": -8,
     "stoneSpent": 0,
     "stoneBank": -8
@@ -4318,7 +4318,7 @@
     "pro": 751,
     "ideal": 751
    },
-   "income": 1.1038181899499775,
+   "income": 1.1043282920775244,
    "incomeByRes": {
     "food": 1.09,
     "wood": 1.1,
@@ -4362,49 +4362,49 @@
     },
     {
      "t": 300,
-     "food": 76,
+     "food": 78,
      "wood": 142,
      "gold": -2,
-     "stone": 72,
+     "stone": 88,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 117,
-     "wood": 187,
+     "food": 118,
+     "wood": 200,
      "gold": -2,
-     "stone": 97,
+     "stone": 103,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 95,
-     "wood": 167,
+     "food": 107,
+     "wood": 176,
      "gold": 0,
-     "stone": 64,
+     "stone": 70,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 294,
-     "wood": 105,
+     "food": 305,
+     "wood": 114,
      "gold": 0,
-     "stone": 4,
+     "stone": 10,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 286,
-     "wood": 51,
-     "gold": 36,
-     "stone": -26,
+     "food": 300,
+     "wood": 55,
+     "gold": 49,
+     "stone": -20,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 373,
-     "wood": 64,
-     "gold": 147,
+     "food": 380,
+     "wood": 68,
+     "gold": 153,
      "stone": -15,
      "vills": 0
     }
@@ -4436,107 +4436,107 @@
    "skipped": [],
    "feudal": {
     "pro": 256,
-    "ideal": 257
+    "ideal": 261
    },
    "castle": {
     "pro": 599,
-    "ideal": 599
+    "ideal": 601
    },
-   "income": 0.9538968846401926,
+   "income": 0.9509249353940681,
    "incomeByRes": {
     "food": 0.93,
-    "wood": 0.93,
-    "gold": 1.04,
-    "stone": 1.02
+    "wood": 0.91,
+    "gold": 1.05,
+    "stone": 1.04
    },
    "lateMedian": 7.5,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 46,
+     "food": 40,
      "wood": 0,
-     "gold": 24,
+     "gold": 23,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 120,
-     "food": -7,
+     "food": -42,
      "wood": 0,
-     "gold": 16,
+     "gold": 23,
      "stone": 0,
      "vills": -1
     },
     {
      "t": 180,
-     "food": -83,
-     "wood": 14,
-     "gold": 15,
+     "food": -110,
+     "wood": 13,
+     "gold": 14,
      "stone": 0,
      "vills": -1
     },
     {
      "t": 240,
-     "food": -48,
-     "wood": -1,
-     "gold": 23,
-     "stone": 8,
+     "food": -67,
+     "wood": -10,
+     "gold": 19,
+     "stone": 4,
      "vills": -1
     },
     {
      "t": 300,
-     "food": -13,
-     "wood": 15,
-     "gold": 27,
-     "stone": 1,
+     "food": -43,
+     "wood": -12,
+     "gold": 14,
+     "stone": 6,
      "vills": -1
     },
     {
      "t": 360,
-     "food": 95,
-     "wood": 71,
-     "gold": 46,
-     "stone": -15,
+     "food": 39,
+     "wood": 36,
+     "gold": 42,
+     "stone": -6,
      "vills": -1
     },
     {
      "t": 420,
-     "food": 190,
-     "wood": -44,
-     "gold": 111,
+     "food": 172,
+     "wood": -85,
+     "gold": 81,
      "stone": 4,
      "vills": -2
     },
     {
      "t": 480,
-     "food": -80,
-     "wood": -49,
-     "gold": 94,
-     "stone": 7,
-     "vills": -3
+     "food": -83,
+     "wood": -40,
+     "gold": 120,
+     "stone": 13,
+     "vills": -2
     },
     {
      "t": 540,
-     "food": -56,
-     "wood": -50,
-     "gold": 23,
-     "stone": 7,
-     "vills": -3
+     "food": -190,
+     "wood": -64,
+     "gold": 29,
+     "stone": 13,
+     "vills": -2
     }
    ],
    "atFeudalStart": {
     "t": 140,
     "simPlace": 140,
-    "foodInc": -21,
+    "foodInc": -49,
     "foodSpent": 350,
-    "foodBank": -371,
+    "foodBank": -399,
     "woodInc": 0,
     "woodSpent": -75,
     "woodBank": 75,
-    "goldInc": 18,
+    "goldInc": 26,
     "goldSpent": 200,
-    "goldBank": -182,
+    "goldBank": -174,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -4556,16 +4556,16 @@
    },
    "castle": {
     "pro": 562,
-    "ideal": 580
+    "ideal": 589
    },
-   "income": 0.9006027681064661,
+   "income": 0.9149826044371249,
    "incomeByRes": {
-    "food": 0.81,
-    "wood": 0.95,
-    "gold": 0.81,
-    "stone": 1.02
+    "food": 0.83,
+    "wood": 0.96,
+    "gold": 0.82,
+    "stone": 1.01
    },
-   "lateMedian": 7,
+   "lateMedian": 5,
    "unfinished": 0,
    "lag": [
     {
@@ -4578,84 +4578,84 @@
     },
     {
      "t": 120,
-     "food": 84,
-     "wood": 7,
-     "gold": -1,
-     "stone": 8,
+     "food": 77,
+     "wood": 12,
+     "gold": 5,
+     "stone": 11,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 39,
-     "wood": 64,
-     "gold": 5,
-     "stone": 15,
+     "food": 31,
+     "wood": 79,
+     "gold": -2,
+     "stone": 24,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 75,
-     "wood": 137,
-     "gold": 5,
-     "stone": -10,
+     "food": 74,
+     "wood": 152,
+     "gold": -2,
+     "stone": -1,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 273,
-     "wood": 163,
-     "gold": 5,
-     "stone": 2,
+     "food": 257,
+     "wood": 161,
+     "gold": -2,
+     "stone": 1,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 529,
-     "wood": 77,
-     "gold": 39,
-     "stone": 2,
+     "food": 517,
+     "wood": 71,
+     "gold": 37,
+     "stone": 1,
      "vills": -1
     },
     {
      "t": 420,
-     "food": 329,
-     "wood": -7,
-     "gold": 194,
-     "stone": 5,
-     "vills": -1
+     "food": 327,
+     "wood": -1,
+     "gold": 191,
+     "stone": 4,
+     "vills": 0
     },
     {
      "t": 480,
-     "food": -150,
-     "wood": -16,
-     "gold": 131,
-     "stone": 5,
+     "food": -149,
+     "wood": 1,
+     "gold": 126,
+     "stone": 4,
      "vills": -1
     },
     {
      "t": 540,
-     "food": -326,
-     "wood": 16,
-     "gold": -25,
-     "stone": 5,
+     "food": -254,
+     "wood": 48,
+     "gold": -34,
+     "stone": 4,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 120,
     "simPlace": 137,
-    "foodInc": 84,
+    "foodInc": 77,
     "foodSpent": 0,
-    "foodBank": 84,
-    "woodInc": 7,
+    "foodBank": 77,
+    "woodInc": 12,
     "woodSpent": -50,
-    "woodBank": 57,
-    "goldInc": -1,
+    "woodBank": 62,
+    "goldInc": 5,
     "goldSpent": 0,
-    "goldBank": -1,
-    "stoneInc": 8,
+    "goldBank": 5,
+    "stoneInc": 11,
     "stoneSpent": 0,
-    "stoneBank": 8
+    "stoneBank": 11
    }
   },
   {
@@ -4668,16 +4668,16 @@
    "skipped": [],
    "feudal": {
     "pro": 225,
-    "ideal": 222
+    "ideal": 228
    },
    "castle": null,
-   "income": 1.0449310708176298,
+   "income": 1.0334130381706552,
    "incomeByRes": {
-    "food": 0.93,
-    "wood": 1.04,
-    "gold": 0.96
+    "food": 0.89,
+    "wood": 1.29,
+    "gold": 0.93
    },
-   "lateMedian": 21,
+   "lateMedian": 31.5,
    "unfinished": 0,
    "lag": [
     {
@@ -4690,33 +4690,33 @@
     },
     {
      "t": 120,
-     "food": 123,
-     "wood": 11,
+     "food": 135,
+     "wood": 9,
      "gold": 22,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": -29,
-     "wood": 38,
-     "gold": -7,
+     "food": -34,
+     "wood": 70,
+     "gold": -13,
      "stone": 0,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 160,
-    "simPlace": 170,
-    "foodInc": 117,
+    "simPlace": 176,
+    "foodInc": 67,
     "foodSpent": -50,
-    "foodBank": 167,
-    "woodInc": 15,
+    "foodBank": 117,
+    "woodInc": 51,
     "woodSpent": 0,
-    "woodBank": 15,
-    "goldInc": 0,
+    "woodBank": 51,
+    "goldInc": -8,
     "goldSpent": 0,
-    "goldBank": 0,
+    "goldBank": -8,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -4740,11 +4740,11 @@
     "pro": 912,
     "ideal": 912
    },
-   "income": 1.1089119949355366,
+   "income": 1.1009457800140294,
    "incomeByRes": {
     "food": 1.08,
-    "wood": 1.12,
-    "gold": 1.16,
+    "wood": 1.1,
+    "gold": 1.12,
     "stone": 0.98
    },
    "lateMedian": 0,
@@ -4776,57 +4776,57 @@
     },
     {
      "t": 240,
-     "food": 96,
-     "wood": 68,
+     "food": 69,
+     "wood": 82,
      "gold": 47,
      "stone": -9,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 126,
-     "wood": 123,
+     "food": 67,
+     "wood": 155,
      "gold": 39,
      "stone": -9,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 91,
-     "wood": 130,
-     "gold": 19,
+     "food": 56,
+     "wood": 124,
+     "gold": 17,
      "stone": -16,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 127,
-     "wood": 171,
-     "gold": 61,
+     "food": 73,
+     "wood": 158,
+     "gold": 52,
      "stone": -16,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 225,
-     "wood": 125,
-     "gold": 115,
+     "food": 94,
+     "wood": 119,
+     "gold": 112,
      "stone": -16,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 302,
-     "wood": 201,
-     "gold": 157,
+     "food": 73,
+     "wood": 153,
+     "gold": 108,
      "stone": -16,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 321,
-     "wood": 190,
-     "gold": 194,
+     "food": 218,
+     "wood": 128,
+     "gold": 141,
      "stone": -16,
      "vills": 0
     }
@@ -4957,118 +4957,118 @@
    "skipped": [],
    "feudal": {
     "pro": 276,
-    "ideal": 278
+    "ideal": 279
    },
    "castle": {
     "pro": 870,
-    "ideal": 946
+    "ideal": 944
    },
-   "income": 0.9336821049419353,
+   "income": 0.933323798352618,
    "incomeByRes": {
-    "food": 0.92,
+    "food": 0.91,
     "wood": 0.9,
-    "gold": 0.98,
+    "gold": 0.99,
     "stone": 1.02
    },
-   "lateMedian": -7,
+   "lateMedian": -8,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": -48,
+     "food": -70,
      "wood": 0,
-     "gold": 3,
-     "stone": 49,
+     "gold": 2,
+     "stone": 78,
      "vills": 0
     },
     {
      "t": 120,
-     "food": -68,
+     "food": -118,
      "wood": 0,
-     "gold": 0,
-     "stone": 45,
+     "gold": 15,
+     "stone": 74,
      "vills": 0
     },
     {
      "t": 180,
-     "food": -60,
-     "wood": 8,
-     "gold": -5,
-     "stone": -9,
+     "food": -61,
+     "wood": 15,
+     "gold": -11,
+     "stone": 16,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -38,
-     "wood": 2,
-     "gold": -43,
-     "stone": -20,
+     "food": -101,
+     "wood": 21,
+     "gold": -37,
+     "stone": 5,
      "vills": 0
     },
     {
      "t": 300,
-     "food": -10,
-     "wood": -46,
-     "gold": -9,
-     "stone": 40,
-     "vills": 0
+     "food": -33,
+     "wood": 6,
+     "gold": -12,
+     "stone": 16,
+     "vills": -1
     },
     {
      "t": 360,
-     "food": -68,
-     "wood": -40,
-     "gold": -22,
-     "stone": 40,
-     "vills": 0
+     "food": -151,
+     "wood": -21,
+     "gold": -5,
+     "stone": 52,
+     "vills": -1
     },
     {
      "t": 420,
-     "food": -44,
-     "wood": -58,
-     "gold": -32,
-     "stone": 49,
-     "vills": 0
+     "food": -155,
+     "wood": -63,
+     "gold": 38,
+     "stone": 52,
+     "vills": -1
     },
     {
      "t": 480,
-     "food": -98,
-     "wood": -32,
-     "gold": -10,
-     "stone": 34,
-     "vills": 0
+     "food": -124,
+     "wood": -4,
+     "gold": 16,
+     "stone": 44,
+     "vills": -1
     },
     {
      "t": 540,
-     "food": -51,
-     "wood": -86,
-     "gold": -16,
-     "stone": 27,
-     "vills": 0
+     "food": -26,
+     "wood": -68,
+     "gold": -3,
+     "stone": 36,
+     "vills": -1
     },
     {
      "t": 600,
-     "food": -42,
-     "wood": 113,
-     "gold": -2,
-     "stone": 19,
-     "vills": 0
+     "food": -69,
+     "wood": 123,
+     "gold": 12,
+     "stone": 10,
+     "vills": -1
     }
    ],
    "atFeudalStart": {
     "t": 160,
-    "simPlace": 177,
-    "foodInc": -49,
+    "simPlace": 178,
+    "foodInc": -68,
     "foodSpent": 0,
-    "foodBank": -49,
-    "woodInc": 0,
+    "foodBank": -68,
+    "woodInc": 3,
     "woodSpent": 0,
-    "woodBank": 0,
-    "goldInc": 4,
+    "woodBank": 3,
+    "goldInc": 25,
     "goldSpent": 0,
-    "goldBank": 4,
-    "stoneInc": 8,
+    "goldBank": 25,
+    "stoneInc": 28,
     "stoneSpent": 84,
-    "stoneBank": -76
+    "stoneBank": -56
    }
   },
   {
@@ -5081,16 +5081,16 @@
    "skipped": [],
    "feudal": {
     "pro": 327,
-    "ideal": 347
+    "ideal": 331
    },
    "castle": null,
-   "income": 0.8183388896922636,
+   "income": 0.7989921725421225,
    "incomeByRes": {
-    "food": 0.85,
-    "wood": 0.74,
-    "gold": 0.67
+    "food": 0.83,
+    "wood": 0.73,
+    "gold": 0.64
    },
-   "lateMedian": 9,
+   "lateMedian": 7,
    "unfinished": 0,
    "lag": [
     {
@@ -5111,41 +5111,41 @@
     },
     {
      "t": 180,
-     "food": -2,
-     "wood": -32,
-     "gold": 8,
+     "food": 6,
+     "wood": -57,
+     "gold": 25,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -97,
-     "wood": -129,
-     "gold": -15,
+     "food": -48,
+     "wood": -146,
+     "gold": -7,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": -68,
-     "wood": -199,
-     "gold": -75,
+     "food": -100,
+     "wood": -196,
+     "gold": -91,
      "stone": 0,
-     "vills": 0
+     "vills": -1
     }
    ],
    "atFeudalStart": {
     "t": 220,
-    "simPlace": 260,
-    "foodInc": -17,
+    "simPlace": 243,
+    "foodInc": 26,
     "foodSpent": -50,
-    "foodBank": 33,
-    "woodInc": -90,
+    "foodBank": 76,
+    "woodInc": -120,
     "woodSpent": -450,
-    "woodBank": 360,
-    "goldInc": -5,
+    "woodBank": 330,
+    "goldInc": 3,
     "goldSpent": 0,
-    "goldBank": -5,
+    "goldBank": 3,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -5161,19 +5161,19 @@
    "skipped": [],
    "feudal": {
     "pro": 200,
-    "ideal": 220
+    "ideal": 215
    },
    "castle": {
     "pro": 710,
     "ideal": 713
    },
-   "income": 1.1031079947716724,
+   "income": 1.0872011642097685,
    "incomeByRes": {
-    "food": 1.07,
-    "wood": 1.04,
-    "gold": 1.17
+    "food": 1.06,
+    "wood": 1.03,
+    "gold": 1.14
    },
-   "lateMedian": -7,
+   "lateMedian": -9,
    "unfinished": 0,
    "lag": [
     {
@@ -5186,89 +5186,89 @@
     },
     {
      "t": 120,
-     "food": 73,
+     "food": 54,
      "wood": -11,
-     "gold": -14,
+     "gold": -11,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 29,
-     "wood": 5,
+     "food": 0,
+     "wood": 9,
      "gold": -11,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -58,
-     "wood": 32,
-     "gold": 14,
-     "stone": 0,
-     "vills": 0
-    },
-    {
-     "t": 300,
-     "food": -70,
-     "wood": -55,
+     "food": -120,
+     "wood": 75,
      "gold": 29,
      "stone": 0,
      "vills": 0
     },
     {
-     "t": 360,
-     "food": -237,
-     "wood": -95,
-     "gold": -8,
+     "t": 300,
+     "food": -184,
+     "wood": -23,
+     "gold": 34,
      "stone": 0,
-     "vills": 0
+     "vills": -1
+    },
+    {
+     "t": 360,
+     "food": -388,
+     "wood": -51,
+     "gold": 33,
+     "stone": 0,
+     "vills": -1
     },
     {
      "t": 420,
-     "food": -166,
-     "wood": -78,
-     "gold": 58,
+     "food": -206,
+     "wood": -20,
+     "gold": 106,
      "stone": 0,
-     "vills": -2
+     "vills": -4
     },
     {
      "t": 480,
-     "food": -160,
-     "wood": -24,
-     "gold": 96,
+     "food": -151,
+     "wood": 10,
+     "gold": 111,
      "stone": 0,
-     "vills": -2
+     "vills": -4
     },
     {
      "t": 540,
-     "food": 60,
-     "wood": 40,
-     "gold": 148,
+     "food": 62,
+     "wood": 45,
+     "gold": 138,
      "stone": 0,
-     "vills": -2
+     "vills": -4
     },
     {
      "t": 600,
-     "food": 436,
-     "wood": 69,
-     "gold": 283,
+     "food": 468,
+     "wood": 61,
+     "gold": 284,
      "stone": 0,
-     "vills": -2
+     "vills": -4
     }
    ],
    "atFeudalStart": {
     "t": 140,
-    "simPlace": 173,
-    "foodInc": 59,
+    "simPlace": 168,
+    "foodInc": 35,
     "foodSpent": -50,
-    "foodBank": 109,
+    "foodBank": 85,
     "woodInc": -10,
     "woodSpent": -50,
     "woodBank": 40,
-    "goldInc": -15,
+    "goldInc": -9,
     "goldSpent": 0,
-    "goldBank": -15,
+    "goldBank": -9,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -5284,16 +5284,16 @@
    "skipped": [],
    "feudal": {
     "pro": 310,
-    "ideal": 318
+    "ideal": 313
    },
    "castle": null,
-   "income": 0.8713740494375665,
+   "income": 0.854545768210373,
    "incomeByRes": {
-    "food": 0.8,
+    "food": 0.78,
     "wood": 1.13,
-    "gold": 0.73
+    "gold": 0.75
    },
-   "lateMedian": 2.5,
+   "lateMedian": 0,
    "unfinished": 0,
    "lag": [
     {
@@ -5314,41 +5314,41 @@
     },
     {
      "t": 180,
-     "food": -16,
-     "wood": -19,
+     "food": -23,
+     "wood": -11,
      "gold": 3,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -186,
-     "wood": -5,
-     "gold": 4,
+     "food": -246,
+     "wood": -1,
+     "gold": 17,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": -294,
-     "wood": 47,
-     "gold": -50,
+     "food": -338,
+     "wood": 48,
+     "gold": -48,
      "stone": 0,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 260,
-    "simPlace": 284,
-    "foodInc": -276,
+    "simPlace": 279,
+    "foodInc": -302,
     "foodSpent": -80,
-    "foodBank": -196,
-    "woodInc": 27,
+    "foodBank": -222,
+    "woodInc": 31,
     "woodSpent": -50,
-    "woodBank": 77,
-    "goldInc": -29,
+    "woodBank": 81,
+    "goldInc": -12,
     "goldSpent": -15,
-    "goldBank": -14,
+    "goldBank": 3,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -5364,25 +5364,25 @@
    "skipped": [],
    "feudal": {
     "pro": 190,
-    "ideal": 198
+    "ideal": 192
    },
    "castle": {
     "pro": 658,
     "ideal": 658
    },
-   "income": 1.0034615877587567,
+   "income": 1.013404833365044,
    "incomeByRes": {
-    "food": 0.97,
-    "wood": 1.06,
-    "gold": 1.03,
+    "food": 0.96,
+    "wood": 1.08,
+    "gold": 1.07,
     "stone": 0.98
    },
-   "lateMedian": 1,
+   "lateMedian": 0,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 14,
+     "food": 8,
      "wood": 0,
      "gold": 18,
      "stone": 0,
@@ -5390,89 +5390,89 @@
     },
     {
      "t": 120,
-     "food": 89,
-     "wood": 12,
-     "gold": -11,
+     "food": 103,
+     "wood": 2,
+     "gold": 6,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": -3,
-     "wood": 50,
-     "gold": -1,
-     "stone": 18,
+     "food": -1,
+     "wood": 42,
+     "gold": -7,
+     "stone": 19,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 2,
-     "wood": 54,
-     "gold": 4,
-     "stone": 43,
+     "food": -5,
+     "wood": 58,
+     "gold": 2,
+     "stone": 58,
      "vills": -1
     },
     {
      "t": 300,
-     "food": 117,
-     "wood": 54,
-     "gold": 102,
-     "stone": -43,
+     "food": 139,
+     "wood": 47,
+     "gold": 107,
+     "stone": -36,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 50,
-     "wood": 23,
-     "gold": 35,
-     "stone": -27,
-     "vills": -1
+     "food": 55,
+     "wood": 28,
+     "gold": 47,
+     "stone": -13,
+     "vills": -2
     },
     {
      "t": 420,
-     "food": 53,
-     "wood": -14,
-     "gold": -25,
-     "stone": -15,
+     "food": 44,
+     "wood": -7,
+     "gold": -21,
+     "stone": -8,
      "vills": -1
     },
     {
      "t": 480,
-     "food": 254,
+     "food": 268,
      "wood": 29,
-     "gold": 32,
-     "stone": -15,
+     "gold": 35,
+     "stone": -8,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 81,
-     "wood": -14,
-     "gold": 84,
+     "food": 108,
+     "wood": -13,
+     "gold": 73,
      "stone": -8,
      "vills": -1
     },
     {
      "t": 600,
-     "food": -202,
-     "wood": 80,
-     "gold": 140,
+     "food": -175,
+     "wood": 117,
+     "gold": 168,
      "stone": -8,
      "vills": -1
     }
    ],
    "atFeudalStart": {
     "t": 120,
-    "simPlace": 140,
-    "foodInc": 89,
+    "simPlace": 134,
+    "foodInc": 103,
     "foodSpent": 0,
-    "foodBank": 89,
-    "woodInc": 12,
+    "foodBank": 103,
+    "woodInc": 2,
     "woodSpent": 0,
-    "woodBank": 12,
-    "goldInc": -11,
+    "woodBank": 2,
+    "goldInc": 6,
     "goldSpent": 0,
-    "goldBank": -11,
+    "goldBank": 6,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -5497,11 +5497,11 @@
     "pro": 1103,
     "ideal": 1108
    },
-   "income": 1.0150734591498638,
+   "income": 1.0216015129852973,
    "incomeByRes": {
-    "food": 1,
-    "wood": 1.01,
-    "gold": 1
+    "food": 1.01,
+    "wood": 1.02,
+    "gold": 1.01
    },
    "lateMedian": 0,
    "unfinished": 0,
@@ -5516,15 +5516,15 @@
     },
     {
      "t": 120,
-     "food": 85,
+     "food": 83,
      "wood": 0,
-     "gold": 32,
+     "gold": 50,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 11,
+     "food": 6,
      "wood": 27,
      "gold": 3,
      "stone": 0,
@@ -5532,57 +5532,57 @@
     },
     {
      "t": 240,
-     "food": -30,
-     "wood": 61,
+     "food": -31,
+     "wood": 62,
      "gold": -4,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": -74,
-     "wood": 50,
-     "gold": 8,
+     "food": -88,
+     "wood": 45,
+     "gold": 6,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 66,
-     "wood": 32,
-     "gold": -17,
+     "food": 58,
+     "wood": 23,
+     "gold": -19,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 420,
-     "food": -112,
-     "wood": 59,
-     "gold": -11,
+     "food": -149,
+     "wood": 39,
+     "gold": -8,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 56,
-     "wood": 45,
-     "gold": 7,
+     "food": -7,
+     "wood": 20,
+     "gold": -7,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 59,
-     "wood": -15,
-     "gold": 70,
+     "food": 21,
+     "wood": -51,
+     "gold": 56,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 137,
-     "wood": 58,
-     "gold": -8,
+     "food": 51,
+     "wood": 33,
+     "gold": -16,
      "stone": 0,
      "vills": 0
     }
@@ -5590,15 +5590,15 @@
    "atFeudalStart": {
     "t": 160,
     "simPlace": 166,
-    "foodInc": 72,
+    "foodInc": 65,
     "foodSpent": -60,
-    "foodBank": 132,
+    "foodBank": 125,
     "woodInc": 12,
     "woodSpent": 0,
     "woodBank": 12,
-    "goldInc": 31,
+    "goldInc": 37,
     "goldSpent": 0,
-    "goldBank": 31,
+    "goldBank": 37,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -5622,9 +5622,9 @@
     "pro": 836,
     "ideal": 837
    },
-   "income": 0.9638224577258931,
+   "income": 0.9598924632254349,
    "incomeByRes": {
-    "food": 0.93,
+    "food": 0.92,
     "wood": 0.98,
     "gold": 1.02
    },
@@ -5641,64 +5641,64 @@
     },
     {
      "t": 120,
-     "food": 89,
+     "food": 68,
      "wood": -24,
-     "gold": 7,
+     "gold": 12,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 56,
-     "wood": 21,
-     "gold": 24,
+     "food": 31,
+     "wood": 19,
+     "gold": 29,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 30,
-     "wood": 114,
-     "gold": 26,
+     "food": 18,
+     "wood": 105,
+     "gold": 33,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 186,
-     "wood": 121,
+     "food": 182,
+     "wood": 112,
      "gold": 56,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 265,
-     "wood": 135,
-     "gold": 69,
+     "food": 267,
+     "wood": 132,
+     "gold": 64,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 309,
-     "wood": 179,
-     "gold": 63,
+     "food": 301,
+     "wood": 170,
+     "gold": 56,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 197,
-     "wood": 272,
-     "gold": 117,
+     "food": 186,
+     "wood": 261,
+     "gold": 111,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 540,
      "food": 283,
-     "wood": 290,
+     "wood": 302,
      "gold": 61,
      "stone": 0,
      "vills": 0
@@ -5706,8 +5706,8 @@
     {
      "t": 600,
      "food": 295,
-     "wood": 216,
-     "gold": 69,
+     "wood": 228,
+     "gold": 70,
      "stone": 0,
      "vills": 0
     }
@@ -5715,15 +5715,15 @@
    "atFeudalStart": {
     "t": 180,
     "simPlace": 181,
-    "foodInc": 56,
+    "foodInc": 31,
     "foodSpent": 0,
-    "foodBank": 56,
-    "woodInc": 21,
+    "foodBank": 31,
+    "woodInc": 19,
     "woodSpent": 0,
-    "woodBank": 21,
-    "goldInc": 24,
+    "woodBank": 19,
+    "goldInc": 29,
     "goldSpent": 0,
-    "goldBank": 24,
+    "goldBank": 29,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -5739,20 +5739,20 @@
    "skipped": [],
    "feudal": {
     "pro": 436,
-    "ideal": 464
+    "ideal": 462
    },
    "castle": {
     "pro": 786,
-    "ideal": 822
+    "ideal": 808
    },
-   "income": 0.8565184117278168,
+   "income": 0.8240914849274178,
    "incomeByRes": {
-    "food": 0.78,
-    "wood": 0.89,
-    "gold": 0.86,
-    "stone": 0.7
+    "food": 0.76,
+    "wood": 0.83,
+    "gold": 0.8,
+    "stone": 0.81
    },
-   "lateMedian": 2.5,
+   "lateMedian": 2,
    "unfinished": 0,
    "lag": [
     {
@@ -5789,62 +5789,62 @@
     },
     {
      "t": 300,
-     "food": -1,
-     "wood": -63,
-     "gold": 5,
+     "food": 1,
+     "wood": -74,
+     "gold": 16,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": -57,
-     "wood": -261,
+     "food": -41,
+     "wood": -275,
      "gold": -25,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 420,
-     "food": -68,
-     "wood": -290,
-     "gold": -73,
+     "food": -63,
+     "wood": -314,
+     "gold": -75,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 480,
-     "food": -284,
-     "wood": -253,
-     "gold": -140,
-     "stone": 0,
+     "food": -276,
+     "wood": -313,
+     "gold": -112,
+     "stone": 1,
      "vills": 0
     },
     {
      "t": 540,
      "food": -145,
-     "wood": -135,
-     "gold": -122,
-     "stone": 0,
+     "wood": -154,
+     "gold": -132,
+     "stone": 1,
      "vills": 0
     },
     {
      "t": 600,
-     "food": -175,
-     "wood": -359,
-     "gold": -150,
-     "stone": 17,
+     "food": -193,
+     "wood": -340,
+     "gold": -171,
+     "stone": 18,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 340,
-    "simPlace": 364,
-    "foodInc": -78,
+    "simPlace": 362,
+    "foodInc": -61,
     "foodSpent": 25,
-    "foodBank": -103,
-    "woodInc": -191,
+    "foodBank": -86,
+    "woodInc": -204,
     "woodSpent": -750,
-    "woodBank": 559,
+    "woodBank": 546,
     "goldInc": -1,
     "goldSpent": 0,
     "goldBank": -1,
@@ -5869,14 +5869,14 @@
    },
    "castle": {
     "pro": 516,
-    "ideal": 518
+    "ideal": 517
    },
-   "income": 1.0582768611278626,
+   "income": 1.0563206506031193,
    "incomeByRes": {
     "food": 1.03,
-    "wood": 1.03,
+    "wood": 1.01,
     "gold": 1.07,
-    "stone": 1.22
+    "stone": 1.23
    },
    "lateMedian": 3,
    "unfinished": 0,
@@ -5891,76 +5891,76 @@
     },
     {
      "t": 120,
-     "food": 28,
+     "food": 25,
      "wood": 9,
-     "gold": 30,
+     "gold": 33,
      "stone": 7,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 49,
+     "food": 41,
      "wood": 5,
-     "gold": 52,
-     "stone": 26,
+     "gold": 58,
+     "stone": 28,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 16,
-     "wood": 50,
-     "gold": 8,
-     "stone": 17,
+     "food": 9,
+     "wood": 60,
+     "gold": 15,
+     "stone": 18,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 55,
-     "wood": 59,
-     "gold": -9,
+     "food": 66,
+     "wood": 63,
+     "gold": -7,
      "stone": 26,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 209,
-     "wood": -69,
-     "gold": 1,
-     "stone": -1,
+     "food": 220,
+     "wood": -67,
+     "gold": 3,
+     "stone": 3,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 264,
-     "wood": -16,
-     "gold": 88,
-     "stone": 44,
+     "food": 275,
+     "wood": -14,
+     "gold": 93,
+     "stone": 48,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 65,
-     "wood": 27,
-     "gold": 158,
-     "stone": 78,
+     "food": 82,
+     "wood": 21,
+     "gold": 155,
+     "stone": 80,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 180,
     "simPlace": 191,
-    "foodInc": 49,
+    "foodInc": 41,
     "foodSpent": -50,
-    "foodBank": 99,
+    "foodBank": 91,
     "woodInc": 5,
     "woodSpent": -50,
     "woodBank": 55,
-    "goldInc": 52,
+    "goldInc": 58,
     "goldSpent": 0,
-    "goldBank": 52,
-    "stoneInc": 26,
+    "goldBank": 58,
+    "stoneInc": 28,
     "stoneSpent": 0,
-    "stoneBank": 26
+    "stoneBank": 28
    }
   },
   {
@@ -5979,76 +5979,76 @@
     "pro": 480,
     "ideal": 483
    },
-   "income": 1.105395182303608,
+   "income": 1.1052593064038432,
    "incomeByRes": {
-    "food": 1.08,
+    "food": 1.09,
     "wood": 1.05,
-    "gold": 1.19
+    "gold": 1.18
    },
    "lateMedian": 7,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 64,
+     "food": 56,
      "wood": 0,
-     "gold": 19,
+     "gold": 26,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 120,
-     "food": 97,
+     "food": 89,
      "wood": 0,
-     "gold": 3,
+     "gold": 10,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 26,
-     "wood": 52,
-     "gold": 32,
+     "food": 28,
+     "wood": 51,
+     "gold": 37,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 44,
-     "wood": 67,
-     "gold": 40,
+     "food": 39,
+     "wood": 76,
+     "gold": 52,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 130,
-     "wood": 95,
-     "gold": 80,
+     "food": 135,
+     "wood": 99,
+     "gold": 90,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 408,
-     "wood": -32,
-     "gold": 111,
+     "food": 422,
+     "wood": -34,
+     "gold": 117,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 348,
+     "food": 361,
      "wood": 59,
-     "gold": 128,
+     "gold": 124,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 234,
-     "wood": 36,
-     "gold": 215,
+     "food": 239,
+     "wood": 35,
+     "gold": 211,
      "stone": 0,
      "vills": 0
     }
@@ -6056,15 +6056,15 @@
    "atFeudalStart": {
     "t": 160,
     "simPlace": 180,
-    "foodInc": 55,
+    "foodInc": 58,
     "foodSpent": -50,
-    "foodBank": 105,
-    "woodInc": 20,
+    "foodBank": 108,
+    "woodInc": 16,
     "woodSpent": 0,
-    "woodBank": 20,
-    "goldInc": 28,
+    "woodBank": 16,
+    "goldInc": 29,
     "goldSpent": 0,
-    "goldBank": 28,
+    "goldBank": 29,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -6089,12 +6089,12 @@
     "pro": 634,
     "ideal": 634
    },
-   "income": 1.0750430887900668,
+   "income": 1.1062452176813542,
    "incomeByRes": {
-    "food": 1.04,
-    "wood": 1.11,
-    "gold": 1.03,
-    "stone": 0.99
+    "food": 1.06,
+    "wood": 1.15,
+    "gold": 1.08,
+    "stone": 1
    },
    "lateMedian": 2,
    "unfinished": 0,
@@ -6125,59 +6125,59 @@
     },
     {
      "t": 240,
-     "food": 50,
-     "wood": 105,
-     "gold": -14,
-     "stone": 47,
+     "food": 45,
+     "wood": 102,
+     "gold": -9,
+     "stone": 48,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 70,
-     "wood": 159,
-     "gold": -10,
-     "stone": 26,
+     "food": 84,
+     "wood": 166,
+     "gold": -9,
+     "stone": 30,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 225,
-     "wood": 184,
-     "gold": 50,
+     "food": 248,
+     "wood": 183,
+     "gold": 51,
      "stone": -4,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 549,
-     "wood": 39,
-     "gold": 180,
+     "food": 589,
+     "wood": 38,
+     "gold": 182,
      "stone": -5,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 313,
-     "wood": 63,
-     "gold": 242,
-     "stone": -3,
-     "vills": -2
+     "food": 394,
+     "wood": 70,
+     "gold": 252,
+     "stone": -1,
+     "vills": -1
     },
     {
      "t": 540,
-     "food": 272,
-     "wood": 147,
-     "gold": 182,
-     "stone": -3,
-     "vills": -2
+     "food": 425,
+     "wood": 176,
+     "gold": 266,
+     "stone": -1,
+     "vills": -1
     },
     {
      "t": 600,
-     "food": 234,
-     "wood": 247,
-     "gold": 153,
-     "stone": -3,
-     "vills": -2
+     "food": 327,
+     "wood": 327,
+     "gold": 238,
+     "stone": -1,
+     "vills": -1
     }
    ],
    "atFeudalStart": {
@@ -6207,20 +6207,20 @@
    "skipped": [],
    "feudal": {
     "pro": 285,
-    "ideal": 293
+    "ideal": 297
    },
    "castle": {
     "pro": 639,
     "ideal": 642
    },
-   "income": 1.1609592448206503,
+   "income": 1.1043594876823313,
    "incomeByRes": {
-    "food": 1.15,
-    "wood": 1.17,
-    "gold": 1.17,
+    "food": 1.09,
+    "wood": 1.09,
+    "gold": 1.12,
     "stone": 1.13
    },
-   "lateMedian": 24,
+   "lateMedian": 3,
    "unfinished": 0,
    "lag": [
     {
@@ -6241,81 +6241,81 @@
     },
     {
      "t": 180,
-     "food": 62,
-     "wood": -20,
-     "gold": 37,
+     "food": 15,
+     "wood": 32,
+     "gold": 5,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -22,
-     "wood": 57,
-     "gold": 13,
+     "food": -133,
+     "wood": 186,
+     "gold": -89,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 114,
-     "wood": 48,
-     "gold": 25,
+     "food": 24,
+     "wood": 74,
+     "gold": -56,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 96,
-     "wood": -25,
-     "gold": 93,
-     "stone": 12,
-     "vills": 0
-    },
-    {
-     "t": 420,
-     "food": 162,
-     "wood": 38,
-     "gold": 84,
-     "stone": 39,
-     "vills": 0
-    },
-    {
-     "t": 480,
-     "food": 272,
-     "wood": 27,
-     "gold": 145,
+     "food": -109,
+     "wood": 66,
+     "gold": 14,
      "stone": 19,
      "vills": 0
     },
     {
+     "t": 420,
+     "food": 55,
+     "wood": 65,
+     "gold": 22,
+     "stone": 8,
+     "vills": 0
+    },
+    {
+     "t": 480,
+     "food": 220,
+     "wood": 35,
+     "gold": 89,
+     "stone": 20,
+     "vills": 0
+    },
+    {
      "t": 540,
-     "food": 126,
-     "wood": 89,
-     "gold": 266,
-     "stone": 63,
+     "food": 31,
+     "wood": 80,
+     "gold": 190,
+     "stone": 55,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 381,
-     "wood": 233,
-     "gold": 421,
-     "stone": 90,
+     "food": 163,
+     "wood": 194,
+     "gold": 308,
+     "stone": 75,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 200,
-    "simPlace": 206,
-    "foodInc": 83,
+    "simPlace": 210,
+    "foodInc": 11,
     "foodSpent": 0,
-    "foodBank": 83,
-    "woodInc": -20,
-    "woodSpent": -50,
-    "woodBank": 30,
-    "goldInc": 30,
+    "foodBank": 11,
+    "woodInc": 46,
+    "woodSpent": 0,
+    "woodBank": 46,
+    "goldInc": -19,
     "goldSpent": 0,
-    "goldBank": 30,
+    "goldBank": -19,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -6333,92 +6333,92 @@
    ],
    "feudal": {
     "pro": 217,
-    "ideal": 228
+    "ideal": 231
    },
    "castle": {
     "pro": 574,
     "ideal": 575
    },
-   "income": 1.1465399070338345,
+   "income": 1.1531184163380637,
    "incomeByRes": {
-    "food": 1.1,
-    "wood": 1.2,
+    "food": 1.11,
+    "wood": 1.21,
     "gold": 1.12,
-    "stone": 1.37
+    "stone": 1.39
    },
    "lateMedian": 1,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 36,
+     "food": 29,
      "wood": 0,
-     "gold": 16,
-     "stone": 3,
-     "vills": 0
-    },
-    {
-     "t": 120,
-     "food": 57,
-     "wood": 0,
-     "gold": 23,
+     "gold": 25,
      "stone": 5,
      "vills": 0
     },
     {
+     "t": 120,
+     "food": 41,
+     "wood": 0,
+     "gold": 28,
+     "stone": 13,
+     "vills": 0
+    },
+    {
      "t": 180,
-     "food": 53,
+     "food": 72,
      "wood": 6,
-     "gold": 33,
-     "stone": 10,
+     "gold": 29,
+     "stone": 13,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 98,
-     "wood": 15,
-     "gold": 17,
-     "stone": 8,
+     "food": 106,
+     "wood": 16,
+     "gold": 13,
+     "stone": 11,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 88,
-     "wood": 26,
-     "gold": 5,
-     "stone": 8,
+     "food": 80,
+     "wood": 35,
+     "gold": 2,
+     "stone": 14,
      "vills": 0
     },
     {
      "t": 360,
      "food": 96,
-     "wood": 98,
-     "gold": 43,
-     "stone": 24,
+     "wood": 107,
+     "gold": 55,
+     "stone": 26,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 207,
-     "wood": 56,
-     "gold": 162,
-     "stone": 60,
+     "food": 230,
+     "wood": 65,
+     "gold": 168,
+     "stone": 59,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 195,
-     "wood": 160,
-     "gold": 224,
-     "stone": 81,
+     "food": 208,
+     "wood": 175,
+     "gold": 230,
+     "stone": 87,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 299,
-     "wood": 161,
-     "gold": 220,
-     "stone": 108,
+     "food": 323,
+     "wood": 166,
+     "gold": 213,
+     "stone": 112,
      "vills": 0
     }
    ]
@@ -6433,67 +6433,67 @@
    "skipped": [],
    "feudal": {
     "pro": 286,
-    "ideal": 292
+    "ideal": 301
    },
    "castle": null,
-   "income": 0.8867286629044219,
+   "income": 0.76697523661698,
    "incomeByRes": {
-    "food": 0.88,
-    "wood": 0.84,
-    "gold": 0.7,
-    "stone": 0.92
+    "food": 0.8,
+    "wood": 0.76,
+    "gold": 0.49,
+    "stone": 0.73
    },
-   "lateMedian": 38,
+   "lateMedian": 48,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 1,
-     "wood": -38,
-     "gold": -55,
-     "stone": -11,
+     "food": -12,
+     "wood": 5,
+     "gold": -78,
+     "stone": -16,
      "vills": 0
     },
     {
      "t": 120,
-     "food": -74,
-     "wood": 2,
-     "gold": -132,
-     "stone": -7,
-     "vills": 0
+     "food": -99,
+     "wood": 5,
+     "gold": -222,
+     "stone": -36,
+     "vills": -1
     },
     {
      "t": 180,
-     "food": -85,
-     "wood": -24,
-     "gold": -142,
-     "stone": -4,
-     "vills": 0
+     "food": -83,
+     "wood": -30,
+     "gold": -304,
+     "stone": -49,
+     "vills": -1
     },
     {
      "t": 240,
-     "food": -130,
-     "wood": 20,
-     "gold": -162,
-     "stone": -8,
+     "food": -190,
+     "wood": 3,
+     "gold": -276,
+     "stone": -38,
      "vills": -1
     }
    ],
    "atFeudalStart": {
     "t": 200,
-    "simPlace": 215,
-    "foodInc": -95,
-    "foodSpent": -50,
-    "foodBank": -45,
-    "woodInc": -15,
+    "simPlace": 223,
+    "foodInc": -126,
+    "foodSpent": -100,
+    "foodBank": -26,
+    "woodInc": -26,
     "woodSpent": 100,
-    "woodBank": -115,
-    "goldInc": -141,
-    "goldSpent": -130,
-    "goldBank": -11,
-    "stoneInc": -4,
+    "woodBank": -126,
+    "goldInc": -293,
+    "goldSpent": -260,
+    "goldBank": -33,
+    "stoneInc": -47,
     "stoneSpent": 0,
-    "stoneBank": -4
+    "stoneBank": -47
    }
   },
   {
@@ -6508,21 +6508,21 @@
    ],
    "feudal": {
     "pro": 273,
-    "ideal": 297
+    "ideal": 289
    },
    "castle": {
     "pro": 1148,
-    "ideal": 1151
+    "ideal": 1152
    },
-   "income": 1.0526472879707494,
+   "income": 1.0716960236058706,
    "incomeByRes": {
-    "food": 1.02,
-    "wood": 1.03,
-    "gold": 1.15,
-    "stone": 1.04
+    "food": 1.03,
+    "wood": 1.05,
+    "gold": 1.19,
+    "stone": 1.14
    },
    "lateMedian": 0,
-   "unfinished": 53,
+   "unfinished": 54,
    "lag": [
     {
      "t": 60,
@@ -6534,92 +6534,92 @@
     },
     {
      "t": 120,
-     "food": 7,
+     "food": 0,
      "wood": 8,
-     "gold": -11,
-     "stone": 0,
+     "gold": 0,
+     "stone": 2,
      "vills": 0
     },
     {
      "t": 180,
-     "food": -78,
-     "wood": 17,
-     "gold": 4,
-     "stone": 41,
+     "food": -55,
+     "wood": 14,
+     "gold": 8,
+     "stone": 47,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 4,
+     "food": 6,
      "wood": 39,
-     "gold": 4,
-     "stone": 0,
+     "gold": 8,
+     "stone": 5,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 117,
+     "food": 120,
      "wood": 93,
-     "gold": 2,
-     "stone": -42,
+     "gold": 6,
+     "stone": -38,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 111,
-     "wood": 78,
-     "gold": 4,
-     "stone": -20,
+     "food": 124,
+     "wood": 79,
+     "gold": 7,
+     "stone": -31,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 71,
+     "food": 53,
      "wood": 17,
-     "gold": 59,
-     "stone": -5,
+     "gold": 77,
+     "stone": -11,
      "vills": -1
     },
     {
      "t": 480,
-     "food": 21,
-     "wood": 18,
-     "gold": -24,
-     "stone": -5,
+     "food": 45,
+     "wood": 28,
+     "gold": -19,
+     "stone": -11,
      "vills": -1
     },
     {
      "t": 540,
-     "food": -23,
-     "wood": -9,
-     "gold": -81,
-     "stone": 12,
+     "food": 15,
+     "wood": 13,
+     "gold": -64,
+     "stone": 5,
      "vills": 0
     },
     {
      "t": 600,
-     "food": -173,
-     "wood": 0,
-     "gold": -78,
-     "stone": 3,
+     "food": -55,
+     "wood": 66,
+     "gold": -40,
+     "stone": -3,
      "vills": -1
     }
    ],
    "atFeudalStart": {
     "t": 120,
-    "simPlace": 148,
-    "foodInc": 7,
+    "simPlace": 140,
+    "foodInc": 0,
     "foodSpent": -50,
-    "foodBank": 57,
+    "foodBank": 50,
     "woodInc": 8,
     "woodSpent": 0,
     "woodBank": 8,
-    "goldInc": -11,
+    "goldInc": 0,
     "goldSpent": 0,
-    "goldBank": -11,
-    "stoneInc": 0,
+    "goldBank": 0,
+    "stoneInc": 2,
     "stoneSpent": 0,
-    "stoneBank": 0
+    "stoneBank": 2
    }
   },
   {
@@ -6761,92 +6761,92 @@
     "pro": 826,
     "ideal": 831
    },
-   "income": 1.1038592021730949,
+   "income": 1.1065488899656686,
    "incomeByRes": {
     "food": 1.04,
-    "wood": 1.11,
+    "wood": 1.12,
     "gold": 1.08
    },
-   "lateMedian": -5.5,
+   "lateMedian": -6,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 64,
+     "food": 55,
      "wood": 14,
-     "gold": 23,
+     "gold": 25,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 120,
      "food": 91,
-     "wood": 2,
-     "gold": 12,
+     "wood": 1,
+     "gold": 13,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 79,
-     "wood": 10,
-     "gold": 8,
+     "food": 66,
+     "wood": 19,
+     "gold": 23,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 19,
-     "wood": 11,
-     "gold": 17,
+     "food": 29,
+     "wood": 21,
+     "gold": 26,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 62,
-     "wood": 44,
-     "gold": 5,
+     "food": 72,
+     "wood": 54,
+     "gold": 14,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 162,
-     "wood": 142,
-     "gold": 44,
+     "food": 172,
+     "wood": 157,
+     "gold": 47,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 222,
-     "wood": 186,
-     "gold": 48,
+     "food": 235,
+     "wood": 198,
+     "gold": 51,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 294,
-     "wood": 162,
-     "gold": 36,
+     "food": 303,
+     "wood": 179,
+     "gold": 37,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 178,
-     "wood": 130,
-     "gold": 66,
+     "food": 219,
+     "wood": 183,
+     "gold": 72,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 321,
-     "wood": 57,
-     "gold": 100,
+     "food": 372,
+     "wood": 103,
+     "gold": 120,
      "stone": 0,
      "vills": 0
     }
@@ -6854,15 +6854,15 @@
    "atFeudalStart": {
     "t": 200,
     "simPlace": 213,
-    "foodInc": 64,
+    "foodInc": 58,
     "foodSpent": -50,
-    "foodBank": 114,
-    "woodInc": 17,
+    "foodBank": 108,
+    "woodInc": 23,
     "woodSpent": 13,
-    "woodBank": 4,
-    "goldInc": 0,
+    "woodBank": 10,
+    "goldInc": 15,
     "goldSpent": 0,
-    "goldBank": 0,
+    "goldBank": 15,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -6878,17 +6878,17 @@
    "skipped": [],
    "feudal": {
     "pro": 203,
-    "ideal": 206
+    "ideal": 207
    },
    "castle": {
     "pro": 753,
-    "ideal": 796
+    "ideal": 758
    },
-   "income": 0.8972607902548971,
+   "income": 0.9838518371211296,
    "incomeByRes": {
-    "food": 0.85,
-    "wood": 0.89,
-    "gold": 0.94
+    "food": 0.95,
+    "wood": 0.97,
+    "gold": 1.01
    },
    "lateMedian": 4,
    "unfinished": 0,
@@ -6911,72 +6911,72 @@
     },
     {
      "t": 180,
-     "food": 22,
-     "wood": 7,
-     "gold": -8,
+     "food": 14,
+     "wood": 21,
+     "gold": -13,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 33,
-     "wood": -54,
-     "gold": 41,
+     "food": 20,
+     "wood": -55,
+     "gold": 34,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 45,
-     "wood": -54,
-     "gold": 93,
+     "food": 34,
+     "wood": -60,
+     "gold": -25,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 61,
-     "wood": -13,
-     "gold": 198,
+     "food": 36,
+     "wood": -11,
+     "gold": 67,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 420,
-     "food": -97,
-     "wood": -24,
-     "gold": 158,
+     "food": -152,
+     "wood": 11,
+     "gold": 7,
      "stone": 0,
-     "vills": 0
+     "vills": -1
     },
     {
      "t": 480,
-     "food": -56,
-     "wood": -81,
-     "gold": 292,
+     "food": -122,
+     "wood": -68,
+     "gold": 141,
      "stone": 0,
-     "vills": 0
+     "vills": -1
     },
     {
      "t": 540,
-     "food": -136,
-     "wood": -105,
-     "gold": 294,
+     "food": -198,
+     "wood": -83,
+     "gold": 157,
      "stone": 0,
-     "vills": 0
+     "vills": -1
     },
     {
      "t": 600,
-     "food": -270,
-     "wood": -143,
-     "gold": 321,
+     "food": -324,
+     "wood": -139,
+     "gold": 225,
      "stone": 0,
-     "vills": 0
+     "vills": -1
     }
    ],
    "atFeudalStart": {
     "t": 120,
-    "simPlace": 146,
+    "simPlace": 147,
     "foodInc": -24,
     "foodSpent": -50,
     "foodBank": 26,
@@ -7013,14 +7013,14 @@
     "pro": 816,
     "ideal": 816
    },
-   "income": 1.127249137619722,
+   "income": 1.1447347194899,
    "incomeByRes": {
-    "food": 1.14,
-    "wood": 1.11,
-    "gold": 1.07,
-    "stone": 0.99
+    "food": 1.16,
+    "wood": 1.13,
+    "gold": 1.09,
+    "stone": 1.08
    },
-   "lateMedian": 1,
+   "lateMedian": 0,
    "unfinished": 0,
    "lag": [
     {
@@ -7049,59 +7049,59 @@
     },
     {
      "t": 240,
-     "food": 42,
-     "wood": 72,
+     "food": 24,
+     "wood": 81,
      "gold": -12,
-     "stone": 39,
+     "stone": 41,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 111,
-     "wood": 218,
+     "food": 61,
+     "wood": 195,
      "gold": 5,
-     "stone": -14,
+     "stone": 15,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 166,
-     "wood": 202,
-     "gold": 38,
-     "stone": -2,
+     "food": 130,
+     "wood": 159,
+     "gold": 34,
+     "stone": 15,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 125,
-     "wood": 249,
-     "gold": 71,
-     "stone": -2,
-     "vills": -1
+     "food": 110,
+     "wood": 232,
+     "gold": 75,
+     "stone": 17,
+     "vills": 0
     },
     {
      "t": 480,
-     "food": 285,
-     "wood": 287,
+     "food": 314,
+     "wood": 283,
      "gold": 56,
-     "stone": -2,
-     "vills": -1
+     "stone": 17,
+     "vills": 0
     },
     {
      "t": 540,
-     "food": 591,
-     "wood": 276,
-     "gold": 77,
-     "stone": -2,
-     "vills": -1
+     "food": 616,
+     "wood": 285,
+     "gold": 73,
+     "stone": 17,
+     "vills": 0
     },
     {
      "t": 600,
-     "food": 713,
-     "wood": 249,
-     "gold": 69,
-     "stone": -2,
-     "vills": -1
+     "food": 788,
+     "wood": 274,
+     "gold": 78,
+     "stone": 17,
+     "vills": 0
     }
    ],
    "atFeudalStart": {
@@ -7133,118 +7133,118 @@
    ],
    "feudal": {
     "pro": 277,
-    "ideal": 282
+    "ideal": 281
    },
    "castle": {
     "pro": 893,
     "ideal": 933
    },
-   "income": 0.947167042890672,
+   "income": 0.9503226718557131,
    "incomeByRes": {
-    "food": 0.91,
+    "food": 0.92,
     "wood": 0.97,
-    "gold": 0.91,
-    "stone": 1.1
+    "gold": 0.93,
+    "stone": 1.07
    },
    "lateMedian": 4,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": -86,
+     "food": -87,
      "wood": 0,
-     "gold": -3,
-     "stone": 65,
+     "gold": -4,
+     "stone": 69,
      "vills": 0
     },
     {
      "t": 120,
-     "food": -51,
-     "wood": 2,
+     "food": -91,
+     "wood": 4,
      "gold": 6,
-     "stone": 32,
+     "stone": 86,
      "vills": 0
     },
     {
      "t": 180,
-     "food": -54,
-     "wood": 15,
-     "gold": -8,
-     "stone": 11,
+     "food": -56,
+     "wood": 9,
+     "gold": -17,
+     "stone": 34,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -24,
-     "wood": 8,
-     "gold": -32,
-     "stone": 29,
+     "food": -56,
+     "wood": -3,
+     "gold": -27,
+     "stone": 54,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 2,
-     "wood": 45,
-     "gold": -27,
-     "stone": 17,
+     "food": -19,
+     "wood": 32,
+     "gold": -19,
+     "stone": 24,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 51,
-     "wood": 64,
-     "gold": -11,
-     "stone": 20,
+     "food": 13,
+     "wood": 52,
+     "gold": -9,
+     "stone": 22,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 89,
-     "wood": -7,
-     "gold": 23,
-     "stone": 30,
+     "food": 59,
+     "wood": -14,
+     "gold": 26,
+     "stone": 28,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 127,
-     "wood": -8,
-     "gold": 23,
-     "stone": 38,
+     "food": 119,
+     "wood": -5,
+     "gold": 11,
+     "stone": 36,
      "vills": 0
     },
     {
      "t": 540,
-     "food": -146,
-     "wood": 6,
-     "gold": 35,
-     "stone": 38,
+     "food": -186,
+     "wood": -7,
+     "gold": 30,
+     "stone": 36,
      "vills": 0
     },
     {
      "t": 600,
-     "food": -395,
-     "wood": 72,
-     "gold": 8,
-     "stone": 30,
+     "food": -431,
+     "wood": 45,
+     "gold": 0,
+     "stone": 28,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 160,
-    "simPlace": 181,
-    "foodInc": -66,
+    "simPlace": 180,
+    "foodInc": -76,
     "foodSpent": -50,
-    "foodBank": -16,
-    "woodInc": 3,
+    "foodBank": -26,
+    "woodInc": 4,
     "woodSpent": 0,
-    "woodBank": 3,
-    "goldInc": -9,
+    "woodBank": 4,
+    "goldInc": -3,
     "goldSpent": 0,
-    "goldBank": -9,
-    "stoneInc": 32,
-    "stoneSpent": -26,
-    "stoneBank": 58
+    "goldBank": -3,
+    "stoneInc": 56,
+    "stoneSpent": 74,
+    "stoneBank": -18
    }
   },
   {
@@ -7260,79 +7260,79 @@
     "ideal": 417
    },
    "castle": null,
-   "income": 1.1446701575948741,
+   "income": 1.1439436140428152,
    "incomeByRes": {
     "food": 1.07,
     "wood": 1.22,
-    "gold": 1.18
+    "gold": 1.17
    },
    "lateMedian": 0,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 78,
-     "wood": 14,
+     "food": 61,
+     "wood": 20,
      "gold": 0,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 120,
-     "food": 137,
-     "wood": 6,
+     "food": 121,
+     "wood": 4,
      "gold": 0,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 116,
-     "wood": 75,
+     "food": 99,
+     "wood": 70,
      "gold": 0,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 195,
-     "wood": 139,
+     "food": 179,
+     "wood": 127,
      "gold": 25,
      "stone": 5,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 248,
-     "wood": 113,
-     "gold": 91,
-     "stone": 28,
+     "food": 229,
+     "wood": 105,
+     "gold": 78,
+     "stone": 26,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 186,
-     "wood": 184,
-     "gold": 97,
-     "stone": 31,
+     "food": 190,
+     "wood": 176,
+     "gold": 103,
+     "stone": 35,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 340,
     "simPlace": 340,
-    "foodInc": 205,
+    "foodInc": 192,
     "foodSpent": 400,
-    "foodBank": -195,
-    "woodInc": 154,
+    "foodBank": -208,
+    "woodInc": 145,
     "woodSpent": 50,
-    "woodBank": 104,
-    "goldInc": 71,
+    "woodBank": 95,
+    "goldInc": 78,
     "goldSpent": 200,
-    "goldBank": -129,
-    "stoneInc": 24,
+    "goldBank": -122,
+    "stoneInc": 28,
     "stoneSpent": 0,
-    "stoneBank": 24
+    "stoneBank": 28
    }
   },
   {
@@ -7349,13 +7349,13 @@
    },
    "castle": {
     "pro": 749,
-    "ideal": 752
+    "ideal": 753
    },
-   "income": 1.2251878279628738,
+   "income": 1.2271821817280408,
    "incomeByRes": {
     "food": 1.11,
-    "wood": 1.1,
-    "gold": 1.49
+    "wood": 1.14,
+    "gold": 1.47
    },
    "lateMedian": 0,
    "unfinished": 0,
@@ -7378,65 +7378,65 @@
     },
     {
      "t": 180,
-     "food": 287,
-     "wood": 69,
+     "food": 194,
+     "wood": 130,
      "gold": 9,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 266,
-     "wood": 117,
-     "gold": 10,
+     "food": 158,
+     "wood": 176,
+     "gold": 21,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 181,
-     "wood": 92,
-     "gold": 114,
+     "food": 73,
+     "wood": 136,
+     "gold": 120,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 176,
-     "wood": 150,
-     "gold": 112,
+     "food": 167,
+     "wood": 189,
+     "gold": 131,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 381,
-     "wood": 137,
-     "gold": 212,
+     "food": 377,
+     "wood": 145,
+     "gold": 221,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 264,
-     "wood": 173,
-     "gold": 175,
+     "food": 367,
+     "wood": 158,
+     "gold": 174,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 230,
-     "wood": 147,
-     "gold": 301,
+     "food": 360,
+     "wood": 157,
+     "gold": 327,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 657,
-     "wood": 243,
-     "gold": 328,
+     "food": 712,
+     "wood": 274,
+     "gold": 375,
      "stone": 0,
      "vills": 0
     }
@@ -7444,15 +7444,15 @@
    "atFeudalStart": {
     "t": 200,
     "simPlace": 209,
-    "foodInc": 306,
+    "foodInc": 189,
     "foodSpent": 0,
-    "foodBank": 306,
-    "woodInc": 118,
+    "foodBank": 189,
+    "woodInc": 190,
     "woodSpent": -50,
-    "woodBank": 168,
-    "goldInc": -21,
+    "woodBank": 240,
+    "goldInc": -10,
     "goldSpent": 0,
-    "goldBank": -21,
+    "goldBank": -10,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -7518,20 +7518,20 @@
    ],
    "feudal": {
     "pro": 263,
-    "ideal": 272
+    "ideal": 269
    },
    "castle": {
     "pro": 571,
     "ideal": 572
    },
-   "income": 1.065157529807182,
+   "income": 1.073410795096331,
    "incomeByRes": {
-    "food": 1.04,
-    "wood": 1.08,
-    "gold": 1.01,
+    "food": 1.05,
+    "wood": 1.09,
+    "gold": 1.02,
     "stone": 1
    },
-   "lateMedian": 4,
+   "lateMedian": 3.5,
    "unfinished": 0,
    "lag": [
     {
@@ -7544,81 +7544,81 @@
     },
     {
      "t": 120,
-     "food": 36,
+     "food": 26,
      "wood": 22,
-     "gold": -8,
+     "gold": 1,
      "stone": 8,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 8,
-     "wood": 51,
-     "gold": -7,
-     "stone": 59,
+     "food": 28,
+     "wood": 45,
+     "gold": 0,
+     "stone": 48,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 79,
-     "wood": 60,
-     "gold": -7,
-     "stone": 68,
+     "food": 87,
+     "wood": 62,
+     "gold": 0,
+     "stone": 63,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 182,
-     "wood": 63,
-     "gold": 28,
-     "stone": 66,
+     "food": 188,
+     "wood": 64,
+     "gold": 29,
+     "stone": 69,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 195,
-     "wood": 74,
-     "gold": 43,
-     "stone": -33,
+     "food": 180,
+     "wood": 76,
+     "gold": 72,
+     "stone": -21,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 291,
-     "wood": 38,
-     "gold": 69,
-     "stone": -12,
+     "food": 288,
+     "wood": 39,
+     "gold": 90,
+     "stone": -10,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 151,
-     "wood": 66,
-     "gold": 43,
-     "stone": -12,
+     "food": 181,
+     "wood": 61,
+     "gold": 57,
+     "stone": -10,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 125,
-     "wood": 133,
-     "gold": -19,
-     "stone": 13,
+     "food": 153,
+     "wood": 138,
+     "gold": -1,
+     "stone": 15,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 120,
-    "simPlace": 123,
-    "foodInc": 36,
-    "foodSpent": 0,
-    "foodBank": 36,
+    "simPlace": 120,
+    "foodInc": 26,
+    "foodSpent": 400,
+    "foodBank": -374,
     "woodInc": 22,
     "woodSpent": 0,
     "woodBank": 22,
-    "goldInc": -8,
-    "goldSpent": 0,
-    "goldBank": -8,
+    "goldInc": 1,
+    "goldSpent": 200,
+    "goldBank": -199,
     "stoneInc": 8,
     "stoneSpent": 0,
     "stoneBank": 8
@@ -7638,13 +7638,13 @@
    },
    "castle": {
     "pro": 585,
-    "ideal": 588
+    "ideal": 589
    },
-   "income": 1.0688027456768119,
+   "income": 1.0460717888311941,
    "incomeByRes": {
-    "food": 1.05,
-    "wood": 1.05,
-    "gold": 1.03
+    "food": 1.03,
+    "wood": 1.04,
+    "gold": 1
    },
    "lateMedian": 5,
    "unfinished": 0,
@@ -7667,57 +7667,57 @@
     },
     {
      "t": 180,
-     "food": 74,
-     "wood": 86,
+     "food": -3,
+     "wood": 143,
      "gold": 76,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 183,
-     "wood": 93,
+     "food": 40,
+     "wood": 185,
      "gold": 71,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 263,
-     "wood": 72,
-     "gold": 90,
+     "food": 88,
+     "wood": 159,
+     "gold": 38,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 275,
-     "wood": 58,
-     "gold": 185,
+     "food": 179,
+     "wood": 103,
+     "gold": 138,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 346,
-     "wood": 80,
-     "gold": 316,
+     "food": 305,
+     "wood": 81,
+     "gold": 271,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 480,
      "food": 302,
-     "wood": 88,
-     "gold": 395,
+     "wood": 92,
+     "gold": 335,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 222,
-     "wood": 146,
-     "gold": 216,
+     "food": 146,
+     "wood": 175,
+     "gold": 183,
      "stone": 0,
      "vills": 0
     }
@@ -7725,12 +7725,12 @@
    "atFeudalStart": {
     "t": 180,
     "simPlace": 183,
-    "foodInc": 74,
+    "foodInc": -3,
     "foodSpent": 0,
-    "foodBank": 74,
-    "woodInc": 86,
+    "foodBank": -3,
+    "woodInc": 143,
     "woodSpent": -50,
-    "woodBank": 136,
+    "woodBank": 193,
     "goldInc": 76,
     "goldSpent": 0,
     "goldBank": 76,
@@ -7749,55 +7749,55 @@
    "skipped": [],
    "feudal": {
     "pro": 236,
-    "ideal": 246
+    "ideal": 256
    },
    "castle": null,
-   "income": 1.0872751553111477,
+   "income": 1.0845087059345082,
    "incomeByRes": {
     "food": 1.02,
-    "wood": 1.25,
-    "gold": 1.13
+    "wood": 1.26,
+    "gold": 1.12
    },
-   "lateMedian": 5,
+   "lateMedian": 10,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 1,
+     "food": -1,
      "wood": 0,
-     "gold": 15,
+     "gold": 14,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 120,
-     "food": -12,
+     "food": -23,
      "wood": 0,
-     "gold": 56,
+     "gold": 59,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 12,
+     "food": 7,
      "wood": 38,
-     "gold": 26,
+     "gold": 25,
      "stone": 0,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 140,
-    "simPlace": 145,
-    "foodInc": -6,
+    "simPlace": 155,
+    "foodInc": -20,
     "foodSpent": 0,
-    "foodBank": -6,
+    "foodBank": -20,
     "woodInc": 0,
     "woodSpent": -50,
     "woodBank": 50,
-    "goldInc": 16,
+    "goldInc": 9,
     "goldSpent": 0,
-    "goldBank": 16,
+    "goldBank": 9,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -7820,13 +7820,13 @@
    },
    "castle": {
     "pro": 711,
-    "ideal": 715
+    "ideal": 716
    },
-   "income": 1.0412878532581307,
+   "income": 1.0333129280203568,
    "incomeByRes": {
-    "food": 1.08,
-    "wood": 0.96,
-    "gold": 0.99
+    "food": 1.07,
+    "wood": 0.95,
+    "gold": 0.98
    },
    "lateMedian": 0,
    "unfinished": 0,
@@ -7882,32 +7882,32 @@
     {
      "t": 420,
      "food": 109,
-     "wood": 49,
-     "gold": 196,
+     "wood": 28,
+     "gold": 216,
      "stone": 1,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 190,
-     "wood": 28,
-     "gold": 245,
+     "food": 188,
+     "wood": 18,
+     "gold": 249,
      "stone": 1,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 281,
-     "wood": 73,
-     "gold": 276,
+     "food": 283,
+     "wood": 64,
+     "gold": 279,
      "stone": 1,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 460,
-     "wood": 11,
-     "gold": 279,
+     "food": 424,
+     "wood": 14,
+     "gold": 276,
      "stone": 1,
      "vills": 0
     }
@@ -7948,13 +7948,13 @@
     "pro": 766,
     "ideal": 771
    },
-   "income": 0.9450457798861169,
+   "income": 0.9246245029902362,
    "incomeByRes": {
-    "food": 0.95,
-    "wood": 0.86,
-    "gold": 0.92
+    "food": 0.94,
+    "wood": 0.82,
+    "gold": 0.91
    },
-   "lateMedian": 0,
+   "lateMedian": 0.5,
    "unfinished": 0,
    "lag": [
     {
@@ -7999,41 +7999,41 @@
     },
     {
      "t": 360,
-     "food": -81,
-     "wood": -230,
-     "gold": 52,
+     "food": -86,
+     "wood": -246,
+     "gold": 59,
      "stone": 1,
      "vills": -2
     },
     {
      "t": 420,
-     "food": -96,
-     "wood": -214,
-     "gold": 7,
+     "food": -185,
+     "wood": -259,
+     "gold": 8,
      "stone": 1,
      "vills": -1
     },
     {
      "t": 480,
-     "food": -57,
-     "wood": -179,
-     "gold": -80,
+     "food": -127,
+     "wood": -215,
+     "gold": -109,
      "stone": 1,
      "vills": -1
     },
     {
      "t": 540,
-     "food": 126,
-     "wood": -293,
-     "gold": -127,
+     "food": 76,
+     "wood": -341,
+     "gold": -162,
      "stone": 1,
      "vills": -1
     },
     {
      "t": 600,
-     "food": 143,
-     "wood": -225,
-     "gold": -149,
+     "food": 7,
+     "wood": -295,
+     "gold": -181,
      "stone": 1,
      "vills": -1
     }
@@ -8071,15 +8071,15 @@
    },
    "castle": {
     "pro": 911,
-    "ideal": 914
+    "ideal": 913
    },
-   "income": 0.9596041641596413,
+   "income": 0.943060015010315,
    "incomeByRes": {
-    "food": 0.98,
-    "wood": 0.89,
-    "gold": 0.94
+    "food": 0.96,
+    "wood": 0.88,
+    "gold": 0.93
    },
-   "lateMedian": 6,
+   "lateMedian": 12,
    "unfinished": 0,
    "lag": [
     {
@@ -8108,58 +8108,58 @@
     },
     {
      "t": 240,
-     "food": -19,
-     "wood": 18,
-     "gold": 86,
+     "food": -36,
+     "wood": 10,
+     "gold": 91,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": -47,
-     "wood": 6,
-     "gold": 113,
-     "stone": 1,
-     "vills": 0
+     "food": -77,
+     "wood": -84,
+     "gold": 160,
+     "stone": 0,
+     "vills": -1
     },
     {
      "t": 360,
-     "food": -47,
-     "wood": -286,
-     "gold": 84,
-     "stone": 4,
-     "vills": 0
+     "food": -68,
+     "wood": -297,
+     "gold": 114,
+     "stone": 5,
+     "vills": -1
     },
     {
      "t": 420,
-     "food": 98,
-     "wood": -346,
-     "gold": 2,
-     "stone": 4,
-     "vills": 0
+     "food": 106,
+     "wood": -335,
+     "gold": 28,
+     "stone": 5,
+     "vills": -1
     },
     {
      "t": 480,
-     "food": 136,
-     "wood": -263,
-     "gold": -35,
-     "stone": 4,
+     "food": 155,
+     "wood": -242,
+     "gold": -14,
+     "stone": 5,
      "vills": 0
     },
     {
      "t": 540,
-     "food": -116,
-     "wood": -216,
-     "gold": 4,
-     "stone": 4,
+     "food": -86,
+     "wood": -194,
+     "gold": 32,
+     "stone": 5,
      "vills": 0
     },
     {
      "t": 600,
-     "food": -199,
-     "wood": -291,
-     "gold": -148,
-     "stone": 12,
+     "food": -283,
+     "wood": -309,
+     "gold": -65,
+     "stone": 6,
      "vills": 0
     }
    ],
@@ -8196,15 +8196,15 @@
    },
    "castle": {
     "pro": 670,
-    "ideal": 693
+    "ideal": 694
    },
-   "income": 0.9180460945122677,
+   "income": 0.8967611159082871,
    "incomeByRes": {
-    "food": 0.97,
-    "wood": 0.83,
-    "gold": 0.86
+    "food": 0.94,
+    "wood": 0.81,
+    "gold": 0.85
    },
-   "lateMedian": 3,
+   "lateMedian": 4,
    "unfinished": 0,
    "lag": [
     {
@@ -8227,64 +8227,64 @@
      "t": 180,
      "food": -96,
      "wood": -21,
-     "gold": 56,
+     "gold": 49,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
      "food": -111,
-     "wood": -64,
-     "gold": 61,
+     "wood": -58,
+     "gold": 49,
      "stone": 0,
      "vills": -1
     },
     {
      "t": 300,
-     "food": -137,
+     "food": -153,
      "wood": -72,
-     "gold": 78,
+     "gold": 60,
      "stone": 0,
      "vills": -1
     },
     {
      "t": 360,
-     "food": -219,
-     "wood": -84,
-     "gold": 131,
+     "food": -241,
+     "wood": -130,
+     "gold": 134,
      "stone": 0,
      "vills": -1
     },
     {
      "t": 420,
-     "food": -108,
-     "wood": -188,
-     "gold": 101,
+     "food": -135,
+     "wood": -338,
+     "gold": 157,
      "stone": 0,
      "vills": -2
     },
     {
      "t": 480,
-     "food": 42,
-     "wood": -304,
-     "gold": -92,
-     "stone": 3,
+     "food": -78,
+     "wood": -347,
+     "gold": -65,
+     "stone": 4,
      "vills": -2
     },
     {
      "t": 540,
-     "food": -6,
-     "wood": -370,
-     "gold": -246,
-     "stone": 3,
+     "food": -282,
+     "wood": -316,
+     "gold": -189,
+     "stone": 4,
      "vills": -2
     },
     {
      "t": 600,
-     "food": -77,
-     "wood": -392,
-     "gold": -342,
-     "stone": 3,
+     "food": -328,
+     "wood": -399,
+     "gold": -347,
+     "stone": 4,
      "vills": -2
     }
    ],
@@ -8317,17 +8317,17 @@
    ],
    "feudal": {
     "pro": 243,
-    "ideal": 263
+    "ideal": 261
    },
    "castle": {
     "pro": 848,
-    "ideal": 859
+    "ideal": 849
    },
-   "income": 1.0153939606294076,
+   "income": 0.9918906670162673,
    "incomeByRes": {
-    "food": 1.02,
-    "wood": 0.95,
-    "gold": 0.98
+    "food": 0.99,
+    "wood": 0.91,
+    "gold": 0.97
    },
    "lateMedian": 0,
    "unfinished": 0,
@@ -8350,78 +8350,78 @@
     },
     {
      "t": 180,
-     "food": -23,
-     "wood": -12,
-     "gold": 64,
+     "food": -16,
+     "wood": -22,
+     "gold": 50,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -71,
-     "wood": -23,
-     "gold": 77,
+     "food": -97,
+     "wood": -25,
+     "gold": 54,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": -80,
-     "wood": -91,
-     "gold": 63,
-     "stone": 1,
-     "vills": 0
+     "food": -110,
+     "wood": -101,
+     "gold": 39,
+     "stone": 0,
+     "vills": -1
     },
     {
      "t": 360,
-     "food": -153,
-     "wood": -165,
-     "gold": 51,
-     "stone": 1,
-     "vills": 0
+     "food": -187,
+     "wood": -188,
+     "gold": 27,
+     "stone": 0,
+     "vills": -1
     },
     {
      "t": 420,
-     "food": -204,
-     "wood": -193,
-     "gold": 77,
-     "stone": 1,
+     "food": -264,
+     "wood": -235,
+     "gold": 60,
+     "stone": 0,
      "vills": -1
     },
     {
      "t": 480,
-     "food": -296,
-     "wood": -156,
-     "gold": 86,
-     "stone": 1,
-     "vills": -1
+     "food": -336,
+     "wood": -212,
+     "gold": 68,
+     "stone": 0,
+     "vills": -2
     },
     {
      "t": 540,
-     "food": -240,
-     "wood": -169,
-     "gold": 78,
-     "stone": 2,
-     "vills": -1
+     "food": -245,
+     "wood": -216,
+     "gold": 79,
+     "stone": 0,
+     "vills": -2
     },
     {
      "t": 600,
-     "food": -193,
-     "wood": -186,
+     "food": -349,
+     "wood": -297,
      "gold": 99,
-     "stone": 2,
-     "vills": -1
+     "stone": 0,
+     "vills": -2
     }
    ],
    "atFeudalStart": {
     "t": 140,
-    "simPlace": 175,
-    "foodInc": -27,
+    "simPlace": 173,
+    "foodInc": -21,
     "foodSpent": -50,
-    "foodBank": 23,
-    "woodInc": -19,
+    "foodBank": 29,
+    "woodInc": -27,
     "woodSpent": -125,
-    "woodBank": 106,
+    "woodBank": 98,
     "goldInc": 47,
     "goldSpent": 0,
     "goldBank": 47,
@@ -8440,17 +8440,17 @@
    "skipped": [],
    "feudal": {
     "pro": 249,
-    "ideal": 260
+    "ideal": 256
    },
    "castle": {
     "pro": 562,
-    "ideal": 575
+    "ideal": 579
    },
-   "income": 0.863285778836078,
+   "income": 0.8577526685308015,
    "incomeByRes": {
-    "food": 0.88,
-    "wood": 0.64,
-    "gold": 0.71,
+    "food": 0.87,
+    "wood": 0.61,
+    "gold": 0.74,
     "stone": 0.98
    },
    "lateMedian": 12,
@@ -8458,89 +8458,89 @@
    "lag": [
     {
      "t": 60,
-     "food": 5,
+     "food": -12,
      "wood": 0,
-     "gold": 10,
+     "gold": 20,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 120,
-     "food": -40,
+     "food": -63,
      "wood": 1,
-     "gold": -25,
+     "gold": 7,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": -49,
-     "wood": -7,
-     "gold": -2,
-     "stone": -41,
+     "food": -84,
+     "wood": -37,
+     "gold": 16,
+     "stone": -9,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -52,
-     "wood": -40,
-     "gold": -2,
-     "stone": -60,
-     "vills": 0
+     "food": -67,
+     "wood": -93,
+     "gold": 16,
+     "stone": -45,
+     "vills": -1
     },
     {
      "t": 300,
-     "food": -39,
-     "wood": -7,
-     "gold": -2,
-     "stone": -190,
-     "vills": 0
+     "food": -72,
+     "wood": -44,
+     "gold": 16,
+     "stone": -196,
+     "vills": -1
     },
     {
      "t": 360,
-     "food": -72,
-     "wood": -21,
-     "gold": 35,
-     "stone": -121,
-     "vills": 0
+     "food": -214,
+     "wood": -42,
+     "gold": 67,
+     "stone": -86,
+     "vills": -1
     },
     {
      "t": 420,
-     "food": -198,
-     "wood": -75,
-     "gold": -17,
-     "stone": -31,
-     "vills": 0
+     "food": -281,
+     "wood": -115,
+     "gold": -18,
+     "stone": -23,
+     "vills": -1
     },
     {
      "t": 480,
-     "food": -266,
-     "wood": -141,
-     "gold": -102,
+     "food": -347,
+     "wood": -288,
+     "gold": 29,
      "stone": -19,
-     "vills": 0
+     "vills": -1
     },
     {
      "t": 540,
-     "food": -314,
-     "wood": -296,
-     "gold": -193,
+     "food": -352,
+     "wood": -333,
+     "gold": -158,
      "stone": -19,
      "vills": -1
     }
    ],
    "atFeudalStart": {
     "t": 120,
-    "simPlace": 139,
-    "foodInc": -40,
+    "simPlace": 135,
+    "foodInc": -63,
     "foodSpent": -50,
-    "foodBank": 10,
+    "foodBank": -13,
     "woodInc": 1,
     "woodSpent": 0,
     "woodBank": 1,
-    "goldInc": -25,
+    "goldInc": 7,
     "goldSpent": 0,
-    "goldBank": -25,
+    "goldBank": 7,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -8556,110 +8556,110 @@
    "skipped": [],
    "feudal": {
     "pro": 257,
-    "ideal": 260
+    "ideal": 258
    },
    "castle": {
     "pro": 584,
-    "ideal": 590
+    "ideal": 584
    },
-   "income": 0.9302050597670469,
+   "income": 0.9265863318023851,
    "incomeByRes": {
     "food": 0.9,
-    "wood": 0.83,
-    "gold": 0.81,
-    "stone": 0.97
+    "wood": 0.8,
+    "gold": 0.82,
+    "stone": 0.98
    },
-   "lateMedian": 6,
+   "lateMedian": 4,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 49,
+     "food": 35,
      "wood": 0,
-     "gold": 20,
+     "gold": 25,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 120,
-     "food": -42,
-     "wood": 2,
-     "gold": -17,
-     "stone": 6,
+     "food": -70,
+     "wood": 4,
+     "gold": 8,
+     "stone": 10,
      "vills": 0
     },
     {
      "t": 180,
-     "food": -75,
-     "wood": 3,
-     "gold": -10,
-     "stone": 9,
+     "food": -70,
+     "wood": -2,
+     "gold": -8,
+     "stone": 16,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -85,
-     "wood": -25,
-     "gold": -10,
-     "stone": -42,
+     "food": -87,
+     "wood": -28,
+     "gold": -8,
+     "stone": -32,
      "vills": 0
     },
     {
      "t": 300,
-     "food": -30,
-     "wood": -8,
-     "gold": -10,
-     "stone": -141,
+     "food": -58,
+     "wood": -13,
+     "gold": -3,
+     "stone": -108,
      "vills": 0
     },
     {
      "t": 360,
-     "food": -37,
-     "wood": 4,
-     "gold": 10,
-     "stone": -53,
+     "food": -38,
+     "wood": 5,
+     "gold": 16,
+     "stone": -45,
      "vills": 0
     },
     {
      "t": 420,
-     "food": -105,
-     "wood": -45,
-     "gold": -1,
-     "stone": 18,
+     "food": -127,
+     "wood": -38,
+     "gold": 2,
+     "stone": 52,
      "vills": 0
     },
     {
      "t": 480,
-     "food": -15,
-     "wood": -58,
-     "gold": 3,
-     "stone": -74,
+     "food": -4,
+     "wood": -112,
+     "gold": 42,
+     "stone": -56,
      "vills": 0
     },
     {
      "t": 540,
-     "food": -67,
-     "wood": -61,
-     "gold": -96,
-     "stone": -29,
+     "food": -63,
+     "wood": -133,
+     "gold": -69,
+     "stone": -18,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 120,
-    "simPlace": 139,
-    "foodInc": -42,
+    "simPlace": 137,
+    "foodInc": -70,
     "foodSpent": -75,
-    "foodBank": 33,
-    "woodInc": 2,
+    "foodBank": 5,
+    "woodInc": 4,
     "woodSpent": -50,
-    "woodBank": 52,
-    "goldInc": -17,
+    "woodBank": 54,
+    "goldInc": 8,
     "goldSpent": 0,
-    "goldBank": -17,
-    "stoneInc": 6,
+    "goldBank": 8,
+    "stoneInc": 10,
     "stoneSpent": 0,
-    "stoneBank": 6
+    "stoneBank": 10
    }
   },
   {
@@ -8672,16 +8672,16 @@
    "skipped": [],
    "feudal": {
     "pro": 242,
-    "ideal": 273
+    "ideal": 272
    },
    "castle": null,
-   "income": 1.0592648122592951,
+   "income": 1.082724680914221,
    "incomeByRes": {
-    "food": 0.96,
-    "wood": 0.83,
+    "food": 0.98,
+    "wood": 0.88,
     "gold": 1.03
    },
-   "lateMedian": 31,
+   "lateMedian": 30,
    "unfinished": 0,
    "lag": [
     {
@@ -8694,41 +8694,41 @@
     },
     {
      "t": 120,
-     "food": 46,
+     "food": 54,
      "wood": 3,
-     "gold": 29,
+     "gold": 42,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 52,
-     "wood": 55,
-     "gold": 58,
+     "food": 58,
+     "wood": 66,
+     "gold": 61,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 46,
-     "wood": 12,
-     "gold": 53,
+     "food": 66,
+     "wood": 28,
+     "gold": 52,
      "stone": 0,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 140,
-    "simPlace": 172,
-    "foodInc": 0,
+    "simPlace": 171,
+    "foodInc": 8,
     "foodSpent": 50,
-    "foodBank": -50,
-    "woodInc": 6,
+    "foodBank": -42,
+    "woodInc": 10,
     "woodSpent": -50,
-    "woodBank": 56,
-    "goldInc": 83,
+    "woodBank": 60,
+    "goldInc": 88,
     "goldSpent": 0,
-    "goldBank": 83,
+    "goldBank": 88,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -8754,109 +8754,109 @@
     "pro": 976,
     "ideal": 977
    },
-   "income": 1.0265625825313456,
+   "income": 1.0264455238156764,
    "incomeByRes": {
-    "food": 1.02,
+    "food": 1.03,
     "wood": 1.01,
-    "gold": 1.04,
-    "stone": 1.02
+    "gold": 1.02,
+    "stone": 1.07
    },
    "lateMedian": -1,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 34,
+     "food": 33,
      "wood": 52,
-     "gold": 1,
+     "gold": 0,
      "stone": -14,
      "vills": 0
     },
     {
      "t": 120,
-     "food": 183,
-     "wood": -8,
-     "gold": 38,
+     "food": 177,
+     "wood": -4,
+     "gold": 34,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 199,
+     "food": 197,
      "wood": 25,
-     "gold": 40,
+     "gold": 46,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 85,
-     "wood": 71,
-     "gold": -9,
+     "food": 75,
+     "wood": 79,
+     "gold": -12,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 161,
+     "food": 150,
      "wood": 110,
-     "gold": -6,
+     "gold": -4,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 200,
-     "wood": 146,
-     "gold": 15,
+     "food": 189,
+     "wood": 138,
+     "gold": 18,
      "stone": 39,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 261,
-     "wood": 216,
-     "gold": 10,
+     "food": 253,
+     "wood": 198,
+     "gold": 14,
      "stone": -3,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 286,
-     "wood": 221,
-     "gold": 26,
+     "food": 274,
+     "wood": 222,
+     "gold": 11,
      "stone": -3,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 237,
-     "wood": 364,
-     "gold": 73,
+     "food": 232,
+     "wood": 342,
+     "gold": 68,
      "stone": -3,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 220,
-     "wood": 365,
-     "gold": 85,
-     "stone": -3,
+     "food": 218,
+     "wood": 359,
+     "gold": 82,
+     "stone": -2,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 200,
     "simPlace": 215,
-    "foodInc": 227,
+    "foodInc": 228,
     "foodSpent": 0,
-    "foodBank": 227,
+    "foodBank": 228,
     "woodInc": 50,
     "woodSpent": 0,
     "woodBank": 50,
-    "goldInc": 35,
+    "goldInc": 38,
     "goldSpent": 0,
-    "goldBank": 35,
+    "goldBank": 38,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -8875,10 +8875,10 @@
     "ideal": 251
    },
    "castle": null,
-   "income": 0.9697943608552857,
+   "income": 0.962488506451539,
    "incomeByRes": {
-    "food": 0.89,
-    "wood": 0.98,
+    "food": 0.88,
+    "wood": 0.99,
     "gold": 0.89
    },
    "lateMedian": 20,
@@ -8902,17 +8902,17 @@
     },
     {
      "t": 180,
-     "food": -15,
-     "wood": 10,
+     "food": -41,
+     "wood": 27,
      "gold": -57,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -14,
-     "wood": 47,
-     "gold": -70,
+     "food": -27,
+     "wood": 51,
+     "gold": -69,
      "stone": 0,
      "vills": 0
     }
@@ -8920,12 +8920,12 @@
    "atFeudalStart": {
     "t": 160,
     "simPlace": 164,
-    "foodInc": 32,
+    "foodInc": 11,
     "foodSpent": 0,
-    "foodBank": 32,
-    "woodInc": 0,
+    "foodBank": 11,
+    "woodInc": 4,
     "woodSpent": 15,
-    "woodBank": -15,
+    "woodBank": -11,
     "goldInc": -16,
     "goldSpent": 0,
     "goldBank": -16,
@@ -8944,14 +8944,14 @@
    "skipped": [],
    "feudal": {
     "pro": 274,
-    "ideal": 289
+    "ideal": 288
    },
    "castle": null,
-   "income": 1.023337778692003,
+   "income": 0.994374219544715,
    "incomeByRes": {
-    "food": 0.97,
-    "wood": 1.17,
-    "gold": 0.94,
+    "food": 0.95,
+    "wood": 1.05,
+    "gold": 0.97,
     "stone": 0.93
    },
    "lateMedian": 10,
@@ -8967,25 +8967,25 @@
     },
     {
      "t": 120,
-     "food": -22,
+     "food": -49,
      "wood": 6,
-     "gold": 19,
+     "gold": 40,
      "stone": -9,
      "vills": 0
     },
     {
      "t": 180,
-     "food": -1,
+     "food": -40,
      "wood": 21,
-     "gold": -26,
+     "gold": 0,
      "stone": -9,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 18,
-     "wood": 75,
-     "gold": 3,
+     "food": -10,
+     "wood": 57,
+     "gold": 15,
      "stone": -9,
      "vills": 0
     }
@@ -9001,110 +9001,110 @@
    "skipped": [],
    "feudal": {
     "pro": 282,
-    "ideal": 286
+    "ideal": 292
    },
    "castle": {
     "pro": 561,
-    "ideal": 567
+    "ideal": 568
    },
-   "income": 1.0154148882822347,
+   "income": 0.9773042180691962,
    "incomeByRes": {
-    "food": 0.98,
-    "wood": 0.97,
-    "gold": 0.93,
-    "stone": 0.98
+    "food": 0.94,
+    "wood": 0.94,
+    "gold": 0.88,
+    "stone": 1.02
    },
-   "lateMedian": 31,
+   "lateMedian": 22,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": -61,
+     "food": -85,
      "wood": 0,
-     "gold": 1,
-     "stone": 49,
+     "gold": 0,
+     "stone": 84,
      "vills": 0
     },
     {
      "t": 120,
-     "food": -140,
-     "wood": 8,
-     "gold": -2,
-     "stone": 47,
+     "food": -114,
+     "wood": 0,
+     "gold": 7,
+     "stone": 46,
      "vills": 0
     },
     {
      "t": 180,
-     "food": -100,
-     "wood": 15,
-     "gold": -11,
-     "stone": -4,
+     "food": -136,
+     "wood": 11,
+     "gold": 15,
+     "stone": 45,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -77,
-     "wood": 25,
-     "gold": -36,
-     "stone": -11,
+     "food": -149,
+     "wood": 17,
+     "gold": 10,
+     "stone": 44,
      "vills": 0
     },
     {
      "t": 300,
-     "food": -48,
-     "wood": -55,
-     "gold": -5,
-     "stone": -4,
-     "vills": 0
+     "food": -47,
+     "wood": -57,
+     "gold": -16,
+     "stone": 13,
+     "vills": -1
     },
     {
      "t": 360,
-     "food": -10,
-     "wood": -46,
-     "gold": 0,
-     "stone": 31,
-     "vills": 0
+     "food": -103,
+     "wood": -61,
+     "gold": -28,
+     "stone": 49,
+     "vills": -1
     },
     {
      "t": 420,
-     "food": 74,
-     "wood": -45,
-     "gold": 58,
-     "stone": 31,
-     "vills": 0
+     "food": -29,
+     "wood": -72,
+     "gold": 0,
+     "stone": 49,
+     "vills": -1
     },
     {
      "t": 480,
-     "food": 127,
-     "wood": -7,
-     "gold": 99,
-     "stone": 31,
-     "vills": 0
+     "food": 17,
+     "wood": -27,
+     "gold": 0,
+     "stone": 49,
+     "vills": -1
     },
     {
      "t": 540,
-     "food": -125,
-     "wood": 44,
-     "gold": 125,
-     "stone": 31,
-     "vills": 0
+     "food": -181,
+     "wood": 19,
+     "gold": 32,
+     "stone": 49,
+     "vills": -1
     }
    ],
    "atFeudalStart": {
     "t": 180,
-    "simPlace": 185,
-    "foodInc": -100,
+    "simPlace": 191,
+    "foodInc": -136,
     "foodSpent": 0,
-    "foodBank": -100,
-    "woodInc": 15,
+    "foodBank": -136,
+    "woodInc": 11,
     "woodSpent": 0,
-    "woodBank": 15,
-    "goldInc": -11,
+    "woodBank": 11,
+    "goldInc": 15,
     "goldSpent": 0,
-    "goldBank": -11,
-    "stoneInc": -4,
+    "goldBank": 15,
+    "stoneInc": 45,
     "stoneSpent": 86,
-    "stoneBank": -90
+    "stoneBank": -41
    }
   },
   {
@@ -9117,118 +9117,118 @@
    "skipped": [],
    "feudal": {
     "pro": 277,
-    "ideal": 282
+    "ideal": 281
    },
    "castle": {
     "pro": 823,
-    "ideal": 848
+    "ideal": 847
    },
-   "income": 0.95565923782538,
+   "income": 0.9462700970574893,
    "incomeByRes": {
-    "food": 0.91,
+    "food": 0.89,
     "wood": 0.99,
-    "gold": 0.9,
-    "stone": 0.98
+    "gold": 0.91,
+    "stone": 1.01
    },
-   "lateMedian": 7.5,
+   "lateMedian": 4.5,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": -52,
+     "food": -69,
      "wood": 0,
-     "gold": 8,
-     "stone": 33,
+     "gold": 4,
+     "stone": 58,
      "vills": 0
     },
     {
      "t": 120,
-     "food": -40,
+     "food": -73,
      "wood": 0,
-     "gold": 6,
-     "stone": 30,
+     "gold": 7,
+     "stone": 48,
      "vills": 0
     },
     {
      "t": 180,
-     "food": -35,
-     "wood": 12,
-     "gold": 1,
-     "stone": 21,
+     "food": -60,
+     "wood": 7,
+     "gold": 2,
+     "stone": 58,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -37,
-     "wood": 24,
-     "gold": -4,
-     "stone": 49,
+     "food": -66,
+     "wood": 33,
+     "gold": -14,
+     "stone": 75,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 69,
-     "wood": 76,
-     "gold": -13,
-     "stone": 15,
+     "food": 16,
+     "wood": 90,
+     "gold": 11,
+     "stone": 44,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 106,
-     "wood": 77,
-     "gold": 2,
-     "stone": 34,
+     "food": 75,
+     "wood": 80,
+     "gold": 16,
+     "stone": 53,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 186,
-     "wood": 127,
-     "gold": 42,
-     "stone": 42,
+     "food": 171,
+     "wood": 117,
+     "gold": 37,
+     "stone": 61,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 186,
-     "wood": 167,
-     "gold": 126,
-     "stone": 40,
+     "food": 172,
+     "wood": 163,
+     "gold": 129,
+     "stone": 53,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 15,
-     "wood": 147,
-     "gold": 142,
-     "stone": 40,
+     "food": 27,
+     "wood": 149,
+     "gold": 148,
+     "stone": 53,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 169,
-     "wood": 90,
-     "gold": 153,
-     "stone": 32,
+     "food": 251,
+     "wood": 94,
+     "gold": 164,
+     "stone": 45,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 180,
-    "simPlace": 181,
-    "foodInc": -35,
-    "foodSpent": 0,
-    "foodBank": -35,
-    "woodInc": 12,
+    "simPlace": 180,
+    "foodInc": -60,
+    "foodSpent": 400,
+    "foodBank": -460,
+    "woodInc": 7,
     "woodSpent": 0,
-    "woodBank": 12,
-    "goldInc": 1,
-    "goldSpent": 0,
-    "goldBank": 1,
-    "stoneInc": 21,
+    "woodBank": 7,
+    "goldInc": 2,
+    "goldSpent": 200,
+    "goldBank": -198,
+    "stoneInc": 58,
     "stoneSpent": 78,
-    "stoneBank": -57
+    "stoneBank": -20
    }
   },
   {
@@ -9244,90 +9244,90 @@
    ],
    "feudal": {
     "pro": 260,
-    "ideal": 265
+    "ideal": 263
    },
    "castle": {
     "pro": 479,
-    "ideal": 495
+    "ideal": 499
    },
-   "income": 0.9361956925797521,
+   "income": 0.9098176610035302,
    "incomeByRes": {
-    "food": 0.94,
-    "wood": 1.07,
-    "gold": 0.87
+    "food": 0.91,
+    "wood": 1,
+    "gold": 0.86
    },
-   "lateMedian": 6,
+   "lateMedian": 4,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 162,
-     "wood": 0,
+     "food": 138,
+     "wood": 13,
      "gold": 25,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 120,
-     "food": 66,
+     "food": 39,
      "wood": 25,
-     "gold": 0,
+     "gold": 6,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 18,
-     "wood": 27,
-     "gold": -13,
+     "food": -7,
+     "wood": 25,
+     "gold": -2,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -4,
-     "wood": 29,
-     "gold": -34,
+     "food": -22,
+     "wood": 28,
+     "gold": -24,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": -66,
-     "wood": -30,
-     "gold": -10,
+     "food": -89,
+     "wood": -29,
+     "gold": -11,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": -199,
-     "wood": 27,
-     "gold": -30,
+     "food": -206,
+     "wood": 28,
+     "gold": -31,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 420,
-     "food": -222,
-     "wood": -3,
-     "gold": -70,
+     "food": -264,
+     "wood": -5,
+     "gold": -107,
      "stone": 0,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 160,
-    "simPlace": 164,
-    "foodInc": 2,
+    "simPlace": 162,
+    "foodInc": -25,
     "foodSpent": -50,
-    "foodBank": 52,
+    "foodBank": 25,
     "woodInc": 25,
     "woodSpent": 50,
     "woodBank": -25,
-    "goldInc": 0,
+    "goldInc": 11,
     "goldSpent": 0,
-    "goldBank": 0,
+    "goldBank": 11,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -9352,76 +9352,76 @@
     "pro": 498,
     "ideal": 515
    },
-   "income": 1.0023987128434297,
+   "income": 1.0104557372145326,
    "incomeByRes": {
     "food": 1.01,
-    "wood": 1.08,
-    "gold": 0.94
+    "wood": 1.09,
+    "gold": 0.97
    },
    "lateMedian": 6,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 116,
-     "wood": 1,
+     "food": 94,
+     "wood": 17,
      "gold": 24,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 120,
-     "food": 45,
-     "wood": 25,
-     "gold": 14,
+     "food": 41,
+     "wood": 26,
+     "gold": 11,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 38,
-     "wood": 36,
-     "gold": 11,
+     "food": 31,
+     "wood": 38,
+     "gold": 9,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
      "food": 29,
-     "wood": 30,
+     "wood": 26,
      "gold": 3,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": -27,
-     "wood": 0,
+     "food": -22,
+     "wood": 7,
      "gold": 14,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": -84,
-     "wood": 40,
-     "gold": -6,
+     "food": -58,
+     "wood": 36,
+     "gold": -3,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 420,
-     "food": -220,
+     "food": -212,
      "wood": 50,
-     "gold": -26,
+     "gold": -39,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 480,
-     "food": -11,
-     "wood": 51,
-     "gold": -56,
+     "food": -13,
+     "wood": 56,
+     "gold": -25,
      "stone": 0,
      "vills": 0
     }
@@ -9429,15 +9429,15 @@
    "atFeudalStart": {
     "t": 140,
     "simPlace": 159,
-    "foodInc": 59,
+    "foodInc": 55,
     "foodSpent": -50,
-    "foodBank": 109,
-    "woodInc": 25,
+    "foodBank": 105,
+    "woodInc": 26,
     "woodSpent": 50,
-    "woodBank": -25,
-    "goldInc": 22,
+    "woodBank": -24,
+    "goldInc": 18,
     "goldSpent": 0,
-    "goldBank": 22,
+    "goldBank": 18,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -9456,11 +9456,11 @@
     "ideal": 238
    },
    "castle": null,
-   "income": 1.0294633267457662,
+   "income": 1.028967437069699,
    "incomeByRes": {
-    "food": 1.02,
-    "wood": 0.93,
-    "gold": 1.07
+    "food": 1.01,
+    "wood": 0.91,
+    "gold": 1.1
    },
    "lateMedian": -1,
    "unfinished": 0,
@@ -9475,17 +9475,17 @@
     },
     {
      "t": 120,
-     "food": 25,
+     "food": 15,
      "wood": 0,
-     "gold": 38,
+     "gold": 50,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 25,
+     "food": 14,
      "wood": 35,
-     "gold": 20,
+     "gold": 32,
      "stone": 0,
      "vills": 0
     }
@@ -9493,15 +9493,15 @@
    "atFeudalStart": {
     "t": 160,
     "simPlace": 160,
-    "foodInc": 12,
+    "foodInc": 1,
     "foodSpent": 340,
-    "foodBank": -328,
+    "foodBank": -339,
     "woodInc": 8,
     "woodSpent": -50,
     "woodBank": 58,
-    "goldInc": 12,
+    "goldInc": 24,
     "goldSpent": 170,
-    "goldBank": -158,
+    "goldBank": -146,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -9520,11 +9520,11 @@
     "ideal": 238
    },
    "castle": null,
-   "income": 1.1175364751053696,
+   "income": 1.1283353001932834,
    "incomeByRes": {
-    "food": 1.08,
-    "wood": 1.23,
-    "gold": 1.06
+    "food": 1.09,
+    "wood": 1.24,
+    "gold": 1.08
    },
    "lateMedian": 1.5,
    "unfinished": 0,
@@ -9539,17 +9539,17 @@
     },
     {
      "t": 120,
-     "food": 20,
+     "food": 23,
      "wood": 0,
-     "gold": 40,
+     "gold": 56,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 47,
-     "wood": 49,
-     "gold": 24,
+     "food": 50,
+     "wood": 55,
+     "gold": 28,
      "stone": 0,
      "vills": 0
     }
@@ -9557,15 +9557,15 @@
    "atFeudalStart": {
     "t": 160,
     "simPlace": 160,
-    "foodInc": 23,
+    "foodInc": 26,
     "foodSpent": 340,
-    "foodBank": -317,
-    "woodInc": 9,
+    "foodBank": -314,
+    "woodInc": 18,
     "woodSpent": -50,
-    "woodBank": 59,
-    "goldInc": 21,
+    "woodBank": 68,
+    "goldInc": 26,
     "goldSpent": 170,
-    "goldBank": -149,
+    "goldBank": -144,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -9779,18 +9779,18 @@
    "skipped": [],
    "feudal": {
     "pro": 217,
-    "ideal": 219
+    "ideal": 217
    },
    "castle": {
     "pro": 976,
     "ideal": 981
    },
-   "income": 0.9630559020169699,
+   "income": 0.9505512222173617,
    "incomeByRes": {
-    "food": 0.93,
-    "wood": 0.98,
+    "food": 0.91,
+    "wood": 0.97,
     "gold": 0.98,
-    "stone": 0.97
+    "stone": 0.95
    },
    "lateMedian": -9,
    "unfinished": 0,
@@ -9805,89 +9805,89 @@
     },
     {
      "t": 120,
-     "food": 26,
+     "food": -12,
      "wood": -12,
-     "gold": 22,
+     "gold": 27,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": -55,
-     "wood": 8,
-     "gold": -11,
+     "food": -98,
+     "wood": 7,
+     "gold": -6,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -61,
-     "wood": 39,
-     "gold": 9,
+     "food": -123,
+     "wood": 41,
+     "gold": 30,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": -105,
-     "wood": -63,
-     "gold": 26,
+     "food": -157,
+     "wood": -91,
+     "gold": 50,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": -165,
-     "wood": -100,
-     "gold": 12,
+     "food": -244,
+     "wood": -115,
+     "gold": -12,
      "stone": 0,
-     "vills": -1
+     "vills": -2
     },
     {
      "t": 420,
-     "food": -244,
-     "wood": -89,
-     "gold": -1,
+     "food": -400,
+     "wood": -78,
+     "gold": -53,
      "stone": 0,
-     "vills": -1
+     "vills": -2
     },
     {
      "t": 480,
-     "food": -156,
-     "wood": -36,
-     "gold": 100,
+     "food": -315,
+     "wood": -67,
+     "gold": 69,
      "stone": 0,
-     "vills": -1
+     "vills": -2
     },
     {
      "t": 540,
-     "food": -249,
-     "wood": -89,
-     "gold": 118,
+     "food": -418,
+     "wood": -154,
+     "gold": 89,
      "stone": 0,
-     "vills": -1
+     "vills": -2
     },
     {
      "t": 600,
-     "food": -195,
-     "wood": -47,
-     "gold": 140,
+     "food": -359,
+     "wood": -147,
+     "gold": 101,
      "stone": 0,
-     "vills": -1
+     "vills": -2
     }
    ],
    "atFeudalStart": {
     "t": 160,
-    "simPlace": 172,
-    "foodInc": 4,
+    "simPlace": 170,
+    "foodInc": -35,
     "foodSpent": -80,
-    "foodBank": 84,
+    "foodBank": 45,
     "woodInc": -1,
     "woodSpent": 0,
     "woodBank": -1,
-    "goldInc": -20,
+    "goldInc": -15,
     "goldSpent": -15,
-    "goldBank": -5,
+    "goldBank": 0,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -9911,109 +9911,109 @@
     "pro": 780,
     "ideal": 784
    },
-   "income": 1.2466044110205894,
+   "income": 1.2729423094342351,
    "incomeByRes": {
-    "food": 1.21,
-    "wood": 1.1,
-    "gold": 1.51,
-    "stone": 1.7
+    "food": 1.23,
+    "wood": 1.11,
+    "gold": 1.58,
+    "stone": 1.75
    },
    "lateMedian": 0,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 43,
-     "wood": 4,
+     "food": 33,
+     "wood": 2,
      "gold": 0,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 120,
-     "food": 67,
-     "wood": 10,
-     "gold": 6,
+     "food": 63,
+     "wood": 8,
+     "gold": 3,
      "stone": 1,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 99,
-     "wood": -27,
-     "gold": 16,
-     "stone": 14,
+     "food": 88,
+     "wood": -29,
+     "gold": 17,
+     "stone": 13,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 19,
-     "wood": 14,
-     "gold": -15,
-     "stone": 10,
+     "food": 11,
+     "wood": -2,
+     "gold": -22,
+     "stone": 8,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 126,
-     "wood": 88,
+     "food": 110,
+     "wood": 77,
      "gold": -4,
-     "stone": 12,
+     "stone": 11,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 189,
-     "wood": 221,
-     "gold": 50,
+     "food": 170,
+     "wood": 209,
+     "gold": 54,
      "stone": 23,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 367,
-     "wood": 267,
-     "gold": 197,
-     "stone": 53,
+     "food": 354,
+     "wood": 261,
+     "gold": 202,
+     "stone": 54,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 691,
-     "wood": 197,
-     "gold": 188,
-     "stone": 68,
+     "food": 677,
+     "wood": 194,
+     "gold": 190,
+     "stone": 66,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 789,
-     "wood": 134,
-     "gold": 253,
-     "stone": 81,
+     "food": 807,
+     "wood": 130,
+     "gold": 263,
+     "stone": 80,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 786,
-     "wood": 427,
-     "gold": 222,
-     "stone": 75,
+     "food": 763,
+     "wood": 450,
+     "gold": 239,
+     "stone": 76,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 220,
     "simPlace": 232,
-    "foodInc": 89,
+    "foodInc": 67,
     "foodSpent": 0,
-    "foodBank": 89,
-    "woodInc": -14,
+    "foodBank": 67,
+    "woodInc": -16,
     "woodSpent": 0,
-    "woodBank": -14,
-    "goldInc": -27,
+    "woodBank": -16,
+    "goldInc": -24,
     "goldSpent": 0,
-    "goldBank": -27,
+    "goldBank": -24,
     "stoneInc": 7,
     "stoneSpent": 0,
     "stoneBank": 7
@@ -10035,10 +10035,10 @@
     "pro": 692,
     "ideal": 691
    },
-   "income": 1.1625818426593386,
+   "income": 1.1568246805737803,
    "incomeByRes": {
     "food": 1.13,
-    "wood": 1.16,
+    "wood": 1.15,
     "gold": 1.18
    },
    "lateMedian": -9,
@@ -10086,41 +10086,41 @@
     },
     {
      "t": 360,
-     "food": 115,
-     "wood": 68,
-     "gold": 87,
+     "food": 53,
+     "wood": 34,
+     "gold": 108,
      "stone": 6,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 236,
-     "wood": 72,
-     "gold": 149,
+     "food": 188,
+     "wood": 58,
+     "gold": 153,
      "stone": 6,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 478,
-     "wood": 109,
-     "gold": 187,
+     "food": 431,
+     "wood": 95,
+     "gold": 177,
      "stone": 6,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 546,
-     "wood": 163,
-     "gold": 359,
+     "food": 494,
+     "wood": 155,
+     "gold": 331,
      "stone": 6,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 981,
-     "wood": 178,
-     "gold": 359,
+     "food": 885,
+     "wood": 168,
+     "gold": 334,
      "stone": 6,
      "vills": 0
     }
@@ -10157,10 +10157,10 @@
     "ideal": 282
    },
    "castle": null,
-   "income": 1.1035847450260747,
+   "income": 1.100028962686658,
    "incomeByRes": {
     "food": 1.09,
-    "wood": 1.37,
+    "wood": 1.33,
     "gold": 0.95
    },
    "lateMedian": 2,
@@ -10168,33 +10168,33 @@
    "lag": [
     {
      "t": 60,
-     "food": 35,
-     "wood": 16,
-     "gold": 6,
-     "stone": -17,
+     "food": 21,
+     "wood": 22,
+     "gold": 3,
+     "stone": -14,
      "vills": 0
     },
     {
      "t": 120,
-     "food": 91,
+     "food": 77,
      "wood": -11,
-     "gold": 11,
+     "gold": 14,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 96,
-     "wood": 7,
-     "gold": 28,
+     "food": 82,
+     "wood": 11,
+     "gold": 23,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 53,
-     "wood": 75,
-     "gold": -18,
+     "food": 49,
+     "wood": 66,
+     "gold": -22,
      "stone": 0,
      "vills": 0
     }
@@ -10202,15 +10202,15 @@
    "atFeudalStart": {
     "t": 180,
     "simPlace": 194,
-    "foodInc": 96,
+    "foodInc": 82,
     "foodSpent": -50,
-    "foodBank": 146,
-    "woodInc": 7,
+    "foodBank": 132,
+    "woodInc": 11,
     "woodSpent": 0,
-    "woodBank": 7,
-    "goldInc": 28,
+    "woodBank": 11,
+    "goldInc": 23,
     "goldSpent": 0,
-    "goldBank": 28,
+    "goldBank": 23,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -10232,12 +10232,12 @@
     "pro": 609,
     "ideal": 607
    },
-   "income": 1.092729261474637,
+   "income": 1.089972845299173,
    "incomeByRes": {
     "food": 1.08,
     "wood": 1.05,
-    "gold": 1.07,
-    "stone": 0.97
+    "gold": 1.06,
+    "stone": 0.98
    },
    "lateMedian": 2.5,
    "unfinished": 0,
@@ -10276,51 +10276,51 @@
     },
     {
      "t": 300,
-     "food": -81,
-     "wood": 68,
+     "food": -87,
+     "wood": 63,
      "gold": 35,
-     "stone": 50,
+     "stone": 59,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 259,
-     "wood": -19,
-     "gold": 91,
-     "stone": -30,
+     "food": 247,
+     "wood": -27,
+     "gold": 89,
+     "stone": -21,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 193,
-     "wood": 57,
-     "gold": 161,
-     "stone": 12,
+     "food": 174,
+     "wood": 62,
+     "gold": 162,
+     "stone": 22,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 664,
-     "wood": 51,
-     "gold": 301,
-     "stone": -13,
-     "vills": -2
+     "food": 650,
+     "wood": 52,
+     "gold": 284,
+     "stone": -15,
+     "vills": -1
     },
     {
      "t": 540,
-     "food": 528,
-     "wood": 140,
-     "gold": 327,
+     "food": 515,
+     "wood": 142,
+     "gold": 310,
      "stone": -9,
-     "vills": -4
+     "vills": -3
     },
     {
      "t": 600,
-     "food": 389,
-     "wood": 207,
-     "gold": 197,
-     "stone": -9,
-     "vills": -6
+     "food": 378,
+     "wood": 202,
+     "gold": 187,
+     "stone": -7,
+     "vills": -5
     }
    ],
    "atFeudalStart": {
@@ -10350,118 +10350,118 @@
    "skipped": [],
    "feudal": {
     "pro": 300,
-    "ideal": 310
+    "ideal": 303
    },
    "castle": {
     "pro": 758,
-    "ideal": 759
+    "ideal": 761
    },
-   "income": 1.0374780969990858,
+   "income": 1.020731652020184,
    "incomeByRes": {
-    "food": 1.02,
-    "wood": 1.01,
-    "gold": 1.07,
-    "stone": 1.17
+    "food": 1,
+    "wood": 1,
+    "gold": 1.05,
+    "stone": 1.15
    },
-   "lateMedian": 4,
+   "lateMedian": 3.5,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 34,
-     "wood": 39,
-     "gold": -5,
+     "food": 12,
+     "wood": 58,
+     "gold": -6,
      "stone": -1,
      "vills": 0
     },
     {
      "t": 120,
-     "food": -5,
-     "wood": 67,
-     "gold": -19,
-     "stone": -3,
+     "food": -50,
+     "wood": 109,
+     "gold": -16,
+     "stone": -1,
      "vills": 0
     },
     {
      "t": 180,
-     "food": -17,
-     "wood": 68,
-     "gold": -25,
-     "stone": 8,
+     "food": -4,
+     "wood": 86,
+     "gold": -19,
+     "stone": -1,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -84,
-     "wood": 91,
-     "gold": -32,
-     "stone": 20,
+     "food": -51,
+     "wood": 100,
+     "gold": -29,
+     "stone": 2,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 85,
-     "wood": 19,
-     "gold": -19,
-     "stone": 23,
+     "food": 68,
+     "wood": 76,
+     "gold": -65,
+     "stone": 19,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 140,
-     "wood": 43,
-     "gold": 2,
-     "stone": 28,
+     "food": 98,
+     "wood": 160,
+     "gold": -49,
+     "stone": 30,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 175,
-     "wood": 15,
-     "gold": -11,
-     "stone": 35,
-     "vills": 0
-    },
-    {
-     "t": 480,
-     "food": 100,
-     "wood": 18,
-     "gold": 8,
+     "food": 142,
+     "wood": 83,
+     "gold": -19,
      "stone": 39,
      "vills": 0
     },
     {
+     "t": 480,
+     "food": 85,
+     "wood": 39,
+     "gold": 13,
+     "stone": 45,
+     "vills": 0
+    },
+    {
      "t": 540,
-     "food": 197,
-     "wood": 18,
-     "gold": 14,
-     "stone": 41,
+     "food": 209,
+     "wood": 14,
+     "gold": 9,
+     "stone": 45,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 323,
-     "wood": 28,
-     "gold": 47,
-     "stone": 48,
+     "food": 342,
+     "wood": 15,
+     "gold": 39,
+     "stone": 50,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 200,
-    "simPlace": 222,
-    "foodInc": -41,
+    "simPlace": 215,
+    "foodInc": -6,
     "foodSpent": -50,
-    "foodBank": 9,
-    "woodInc": 84,
+    "foodBank": 44,
+    "woodInc": 93,
     "woodSpent": 75,
-    "woodBank": 9,
-    "goldInc": -21,
+    "woodBank": 18,
+    "goldInc": -12,
     "goldSpent": -50,
-    "goldBank": 29,
-    "stoneInc": 16,
+    "goldBank": 38,
+    "stoneInc": 2,
     "stoneSpent": 0,
-    "stoneBank": 16
+    "stoneBank": 2
    }
   },
   {
@@ -10477,27 +10477,27 @@
     "ideal": 268
    },
    "castle": null,
-   "income": 1.0188619960090022,
+   "income": 1.0250097531362667,
    "incomeByRes": {
-    "food": 0.93,
-    "wood": 0.95,
-    "gold": 0.9
+    "food": 0.94,
+    "wood": 0.92,
+    "gold": 0.91
    },
    "lateMedian": 14.5,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 59,
-     "wood": 4,
+     "food": 54,
+     "wood": 8,
      "gold": 28,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 120,
-     "food": 152,
-     "wood": 33,
+     "food": 157,
+     "wood": 28,
      "gold": 23,
      "stone": 0,
      "vills": 0
@@ -10505,16 +10505,16 @@
     {
      "t": 180,
      "food": 74,
-     "wood": 13,
-     "gold": 51,
+     "wood": 15,
+     "gold": 54,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 50,
-     "wood": 0,
-     "gold": 27,
+     "food": 62,
+     "wood": -6,
+     "gold": 32,
      "stone": 0,
      "vills": 0
     }
@@ -10525,12 +10525,12 @@
     "foodInc": 103,
     "foodSpent": -100,
     "foodBank": 203,
-    "woodInc": 37,
+    "woodInc": 33,
     "woodSpent": 0,
-    "woodBank": 37,
-    "goldInc": 30,
+    "woodBank": 33,
+    "goldInc": 35,
     "goldSpent": 0,
-    "goldBank": 30,
+    "goldBank": 35,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -10554,10 +10554,10 @@
     "pro": 774,
     "ideal": 774
    },
-   "income": 1.1410529061937191,
+   "income": 1.1326124444623435,
    "incomeByRes": {
     "food": 1.08,
-    "wood": 1.35,
+    "wood": 1.32,
     "gold": 1,
     "stone": 0.97
    },
@@ -10590,57 +10590,57 @@
     },
     {
      "t": 240,
-     "food": 70,
-     "wood": 96,
+     "food": 32,
+     "wood": 114,
      "gold": 15,
      "stone": -10,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 95,
-     "wood": 181,
-     "gold": 45,
+     "food": 85,
+     "wood": 179,
+     "gold": 35,
      "stone": -10,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 173,
-     "wood": 95,
-     "gold": 71,
+     "food": 201,
+     "wood": 84,
+     "gold": 62,
      "stone": -17,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 292,
-     "wood": 147,
-     "gold": 58,
+     "food": 296,
+     "wood": 189,
+     "gold": 72,
      "stone": -17,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 414,
-     "wood": 283,
-     "gold": 54,
+     "food": 306,
+     "wood": 273,
+     "gold": 55,
      "stone": -17,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 530,
-     "wood": 215,
-     "gold": 117,
+     "food": 425,
+     "wood": 197,
+     "gold": 103,
      "stone": -17,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 539,
-     "wood": 193,
-     "gold": 277,
+     "food": 481,
+     "wood": 160,
+     "gold": 199,
      "stone": -17,
      "vills": 0
     }
@@ -10677,63 +10677,63 @@
     "ideal": 281
    },
    "castle": null,
-   "income": 1.0645152674134084,
+   "income": 1.083136376420335,
    "incomeByRes": {
-    "food": 1.06,
-    "wood": 1.16,
-    "gold": 0.96
+    "food": 1.07,
+    "wood": 1.19,
+    "gold": 0.99
    },
    "lateMedian": 1,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 68,
+     "food": 69,
      "wood": -17,
      "gold": 0,
-     "stone": -16,
+     "stone": -13,
      "vills": 0
     },
     {
      "t": 120,
-     "food": 39,
+     "food": 42,
      "wood": 0,
-     "gold": -1,
-     "stone": 0,
+     "gold": 6,
+     "stone": 2,
      "vills": 0
     },
     {
      "t": 180,
-     "food": -6,
-     "wood": 29,
-     "gold": 9,
-     "stone": 0,
+     "food": 0,
+     "wood": 31,
+     "gold": 21,
+     "stone": 2,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -10,
-     "wood": 58,
-     "gold": 2,
-     "stone": 0,
+     "food": 0,
+     "wood": 63,
+     "gold": 9,
+     "stone": 2,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 160,
     "simPlace": 180,
-    "foodInc": 52,
+    "foodInc": 55,
     "foodSpent": -50,
-    "foodBank": 102,
+    "foodBank": 105,
     "woodInc": 8,
     "woodSpent": 0,
     "woodBank": 8,
-    "goldInc": 2,
+    "goldInc": 16,
     "goldSpent": 0,
-    "goldBank": 2,
-    "stoneInc": 0,
+    "goldBank": 16,
+    "stoneInc": 2,
     "stoneSpent": 0,
-    "stoneBank": 0
+    "stoneBank": 2
    }
   },
   {
@@ -10756,15 +10756,15 @@
     "pro": 1604,
     "ideal": 1606
    },
-   "income": 1.0307698739907252,
+   "income": 1.031862445701226,
    "incomeByRes": {
     "food": 1.01,
-    "wood": 1.01,
-    "gold": 1.02,
-    "stone": 1.03
+    "wood": 1,
+    "gold": 1.01,
+    "stone": 1.04
    },
-   "lateMedian": 5,
-   "unfinished": 18,
+   "lateMedian": 4,
+   "unfinished": 19,
    "lag": [
     {
      "t": 60,
@@ -10792,57 +10792,57 @@
     },
     {
      "t": 240,
-     "food": 99,
+     "food": 88,
      "wood": 40,
      "gold": -3,
-     "stone": 53,
+     "stone": 58,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 140,
+     "food": 128,
      "wood": 96,
      "gold": 13,
-     "stone": 12,
+     "stone": 17,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 195,
-     "wood": 192,
-     "gold": 70,
+     "food": 193,
+     "wood": 196,
+     "gold": 63,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 262,
-     "wood": 193,
+     "food": 261,
+     "wood": 198,
      "gold": 66,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 344,
-     "wood": 175,
-     "gold": 67,
+     "food": 340,
+     "wood": 181,
+     "gold": 64,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 227,
-     "wood": 226,
-     "gold": 59,
+     "food": 220,
+     "wood": 220,
+     "gold": 60,
      "stone": 0,
      "vills": -1
     },
     {
      "t": 600,
-     "food": 108,
-     "wood": 176,
-     "gold": 41,
+     "food": 104,
+     "wood": 172,
+     "gold": 46,
      "stone": 0,
      "vills": -1
     }
@@ -10876,29 +10876,29 @@
    ],
    "feudal": {
     "pro": 278,
-    "ideal": 291
+    "ideal": 281
    },
    "castle": null,
-   "income": 1.144481492281935,
+   "income": 1.157374159808261,
    "incomeByRes": {
-    "food": 1.13,
-    "wood": 1.17,
-    "gold": 0.92
+    "food": 1.14,
+    "wood": 1.19,
+    "gold": 0.93
    },
-   "lateMedian": 13,
+   "lateMedian": 3,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 49,
-     "wood": -17,
-     "gold": 1,
-     "stone": -13,
+     "food": 51,
+     "wood": -21,
+     "gold": 3,
+     "stone": -10,
      "vills": 0
     },
     {
      "t": 120,
-     "food": 41,
+     "food": 47,
      "wood": 0,
      "gold": 24,
      "stone": 2,
@@ -10906,33 +10906,33 @@
     },
     {
      "t": 180,
-     "food": 7,
-     "wood": 29,
-     "gold": -6,
+     "food": 8,
+     "wood": 36,
+     "gold": 8,
      "stone": 2,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 96,
-     "wood": 73,
-     "gold": -11,
-     "stone": 9,
+     "food": 98,
+     "wood": 78,
+     "gold": -8,
+     "stone": 11,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 160,
-    "simPlace": 190,
-    "foodInc": 49,
+    "simPlace": 180,
+    "foodInc": 50,
     "foodSpent": 0,
-    "foodBank": 49,
-    "woodInc": 5,
+    "foodBank": 50,
+    "woodInc": 13,
     "woodSpent": 0,
-    "woodBank": 5,
-    "goldInc": 1,
+    "woodBank": 13,
+    "goldInc": 14,
     "goldSpent": 0,
-    "goldBank": 1,
+    "goldBank": 14,
     "stoneInc": 2,
     "stoneSpent": 0,
     "stoneBank": 2
@@ -10954,11 +10954,11 @@
     "pro": 557,
     "ideal": 557
    },
-   "income": 0.9939125013847763,
+   "income": 0.9833875102546339,
    "incomeByRes": {
-    "food": 0.99,
-    "wood": 0.96,
-    "gold": 0.98
+    "food": 0.98,
+    "wood": 0.95,
+    "gold": 0.97
    },
    "lateMedian": 0,
    "unfinished": 0,
@@ -10997,41 +10997,41 @@
     },
     {
      "t": 300,
-     "food": -51,
-     "wood": 76,
+     "food": -57,
+     "wood": 87,
      "gold": 15,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": -29,
-     "wood": -60,
-     "gold": -36,
+     "food": -42,
+     "wood": -57,
+     "gold": -41,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 36,
-     "wood": -31,
-     "gold": 4,
+     "food": 21,
+     "wood": -35,
+     "gold": -12,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 480,
-     "food": -70,
-     "wood": 23,
-     "gold": 72,
+     "food": -68,
+     "wood": 17,
+     "gold": 62,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 35,
-     "wood": -61,
-     "gold": 44,
+     "food": 1,
+     "wood": -78,
+     "gold": 33,
      "stone": 0,
      "vills": 0
     }
@@ -11071,13 +11071,13 @@
    },
    "castle": {
     "pro": 772,
-    "ideal": 773
+    "ideal": 771
    },
-   "income": 1.1881918013031085,
+   "income": 1.2037138303000074,
    "incomeByRes": {
-    "food": 1.19,
-    "wood": 1.08,
-    "gold": 1.28
+    "food": 1.2,
+    "wood": 1.09,
+    "gold": 1.31
    },
    "lateMedian": 1,
    "unfinished": 0,
@@ -11108,57 +11108,57 @@
     },
     {
      "t": 240,
-     "food": 89,
-     "wood": 53,
+     "food": 70,
+     "wood": 52,
      "gold": 11,
-     "stone": 0,
+     "stone": 9,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 107,
+     "food": 108,
      "wood": 79,
-     "gold": 1,
-     "stone": -26,
+     "gold": 6,
+     "stone": -6,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 107,
-     "wood": 111,
-     "gold": -4,
+     "food": 137,
+     "wood": 143,
+     "gold": 1,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 96,
-     "wood": 254,
-     "gold": -7,
+     "food": 146,
+     "wood": 294,
+     "gold": -12,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 394,
-     "wood": 91,
-     "gold": 48,
+     "food": 447,
+     "wood": 111,
+     "gold": 53,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 631,
-     "wood": 43,
-     "gold": 302,
+     "food": 696,
+     "wood": 56,
+     "gold": 341,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 916,
-     "wood": 174,
-     "gold": 464,
+     "food": 970,
+     "wood": 191,
+     "gold": 511,
      "stone": 0,
      "vills": 0
     }
@@ -11190,74 +11190,74 @@
    "skipped": [],
    "feudal": {
     "pro": 315,
-    "ideal": 328
+    "ideal": 322
    },
    "castle": null,
-   "income": 1.0947631718633113,
+   "income": 1.068994182089562,
    "incomeByRes": {
-    "food": 1.12,
-    "wood": 1.07,
-    "gold": 0.9
+    "food": 1.1,
+    "wood": 1.04,
+    "gold": 0.87
    },
-   "lateMedian": 12,
+   "lateMedian": 7,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 33,
-     "wood": 40,
+     "food": 24,
+     "wood": 37,
      "gold": 0,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 120,
-     "food": 80,
-     "wood": 0,
+     "food": 60,
+     "wood": 5,
      "gold": 0,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 131,
-     "wood": -43,
-     "gold": 33,
-     "stone": 10,
+     "food": 91,
+     "wood": -48,
+     "gold": 49,
+     "stone": 12,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 14,
-     "wood": 98,
-     "gold": -59,
-     "stone": 3,
+     "food": -1,
+     "wood": 78,
+     "gold": -56,
+     "stone": 1,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 108,
-     "wood": 107,
-     "gold": -49,
-     "stone": 7,
+     "food": 88,
+     "wood": 79,
+     "gold": -58,
+     "stone": 2,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 200,
-    "simPlace": 227,
-    "foodInc": 103,
+    "simPlace": 221,
+    "foodInc": 79,
     "foodSpent": -50,
-    "foodBank": 153,
-    "woodInc": -21,
-    "woodSpent": 0,
-    "woodBank": -21,
-    "goldInc": -7,
+    "foodBank": 129,
+    "woodInc": -33,
+    "woodSpent": -50,
+    "woodBank": 17,
+    "goldInc": 2,
     "goldSpent": 0,
-    "goldBank": -7,
-    "stoneInc": 8,
+    "goldBank": 2,
+    "stoneInc": 5,
     "stoneSpent": 0,
-    "stoneBank": 8
+    "stoneBank": 5
    }
   },
   {
@@ -11437,13 +11437,13 @@
    },
    "castle": {
     "pro": 841,
-    "ideal": 844
+    "ideal": 843
    },
-   "income": 1.1323282764075542,
+   "income": 1.1361277650969615,
    "incomeByRes": {
     "food": 1.04,
-    "wood": 1.05,
-    "gold": 1.17,
+    "wood": 1.06,
+    "gold": 1.18,
     "stone": 1.41
    },
    "lateMedian": 1,
@@ -11460,72 +11460,72 @@
     {
      "t": 120,
      "food": 112,
-     "wood": -28,
-     "gold": 20,
+     "wood": -23,
+     "gold": 21,
      "stone": 4,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 65,
+     "food": 63,
      "wood": 47,
-     "gold": 42,
-     "stone": 13,
+     "gold": 55,
+     "stone": 15,
      "vills": 0
     },
     {
      "t": 240,
      "food": 47,
-     "wood": 135,
-     "gold": 51,
-     "stone": 19,
+     "wood": 141,
+     "gold": 47,
+     "stone": 26,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 165,
-     "wood": 142,
-     "gold": 58,
-     "stone": 23,
+     "food": 178,
+     "wood": 151,
+     "gold": 53,
+     "stone": 27,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 208,
-     "wood": 211,
-     "gold": 47,
-     "stone": 24,
+     "food": 207,
+     "wood": 219,
+     "gold": 39,
+     "stone": 31,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 295,
-     "wood": 324,
-     "gold": 51,
-     "stone": 25,
+     "food": 299,
+     "wood": 326,
+     "gold": 52,
+     "stone": 34,
      "vills": 0
     },
     {
      "t": 480,
-     "food": 398,
-     "wood": 225,
-     "gold": 92,
-     "stone": 35,
+     "food": 396,
+     "wood": 214,
+     "gold": 87,
+     "stone": 41,
      "vills": 0
     },
     {
      "t": 540,
-     "food": 522,
-     "wood": 290,
-     "gold": 111,
-     "stone": 39,
+     "food": 523,
+     "wood": 269,
+     "gold": 120,
+     "stone": 47,
      "vills": 0
     },
     {
      "t": 600,
-     "food": 808,
-     "wood": 307,
-     "gold": 150,
+     "food": 835,
+     "wood": 308,
+     "gold": 151,
      "stone": 53,
      "vills": 0
     }
@@ -11533,18 +11533,18 @@
    "atFeudalStart": {
     "t": 200,
     "simPlace": 210,
-    "foodInc": 69,
+    "foodInc": 67,
     "foodSpent": -50,
-    "foodBank": 119,
-    "woodInc": 48,
+    "foodBank": 117,
+    "woodInc": 52,
     "woodSpent": 50,
-    "woodBank": -2,
-    "goldInc": 62,
+    "woodBank": 2,
+    "goldInc": 65,
     "goldSpent": 0,
-    "goldBank": 62,
-    "stoneInc": 20,
+    "goldBank": 65,
+    "stoneInc": 24,
     "stoneSpent": 0,
-    "stoneBank": 20
+    "stoneBank": 24
    }
   },
   {
@@ -11561,15 +11561,15 @@
    },
    "castle": {
     "pro": 793,
-    "ideal": 832
+    "ideal": 825
    },
-   "income": 0.8656148052901039,
+   "income": 0.9123058463218131,
    "incomeByRes": {
-    "food": 0.82,
-    "wood": 0.83,
-    "gold": 0.92
+    "food": 0.88,
+    "wood": 0.9,
+    "gold": 0.94
    },
-   "lateMedian": 2,
+   "lateMedian": 9,
    "unfinished": 0,
    "lag": [
     {
@@ -11582,73 +11582,73 @@
     },
     {
      "t": 120,
-     "food": 90,
-     "wood": 7,
-     "gold": 38,
+     "food": 85,
+     "wood": 10,
+     "gold": 37,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 35,
-     "wood": 1,
-     "gold": 28,
+     "food": 28,
+     "wood": -1,
+     "gold": 41,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -14,
-     "wood": 13,
-     "gold": 12,
+     "food": -7,
+     "wood": 17,
+     "gold": 17,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 300,
-     "food": -90,
-     "wood": -8,
-     "gold": -36,
+     "food": -110,
+     "wood": 13,
+     "gold": -25,
      "stone": 0,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 8,
-     "wood": -71,
-     "gold": -44,
-     "stone": 0,
-     "vills": -1
-    },
-    {
-     "t": 420,
-     "food": -9,
-     "wood": -9,
-     "gold": -76,
-     "stone": 0,
-     "vills": -1
-    },
-    {
-     "t": 480,
-     "food": -177,
-     "wood": -28,
-     "gold": -65,
-     "stone": 0,
-     "vills": -1
-    },
-    {
-     "t": 540,
-     "food": -180,
-     "wood": -53,
+     "food": -16,
+     "wood": -57,
      "gold": -42,
      "stone": 0,
      "vills": -1
     },
     {
+     "t": 420,
+     "food": -25,
+     "wood": -4,
+     "gold": -51,
+     "stone": 0,
+     "vills": -1
+    },
+    {
+     "t": 480,
+     "food": -160,
+     "wood": -18,
+     "gold": -41,
+     "stone": 0,
+     "vills": -1
+    },
+    {
+     "t": 540,
+     "food": -170,
+     "wood": -43,
+     "gold": -28,
+     "stone": 0,
+     "vills": -1
+    },
+    {
      "t": 600,
-     "food": -449,
-     "wood": -12,
-     "gold": -80,
+     "food": -223,
+     "wood": -9,
+     "gold": -62,
      "stone": 0,
      "vills": -1
     }
@@ -11656,15 +11656,15 @@
    "atFeudalStart": {
     "t": 200,
     "simPlace": 209,
-    "foodInc": -25,
+    "foodInc": -18,
     "foodSpent": -50,
-    "foodBank": 25,
-    "woodInc": 3,
+    "foodBank": 32,
+    "woodInc": 1,
     "woodSpent": 0,
-    "woodBank": 3,
-    "goldInc": 23,
+    "woodBank": 2,
+    "goldInc": 31,
     "goldSpent": 0,
-    "goldBank": 23,
+    "goldBank": 31,
     "stoneInc": 0,
     "stoneSpent": 0,
     "stoneBank": 0
@@ -11683,20 +11683,20 @@
    ],
    "feudal": {
     "pro": 295,
-    "ideal": 309
+    "ideal": 303
    },
    "castle": {
     "pro": 619,
-    "ideal": 632
+    "ideal": 619
    },
-   "income": 0.863572253717427,
+   "income": 0.933812998241789,
    "incomeByRes": {
-    "food": 0.82,
-    "wood": 0.96,
-    "gold": 0.91,
-    "stone": 1
+    "food": 0.91,
+    "wood": 1,
+    "gold": 0.94,
+    "stone": 1.01
    },
-   "lateMedian": 2,
+   "lateMedian": 1,
    "unfinished": 0,
    "lag": [
     {
@@ -11709,92 +11709,92 @@
     },
     {
      "t": 120,
-     "food": 27,
+     "food": 19,
      "wood": 2,
-     "gold": -16,
-     "stone": 8,
+     "gold": -8,
+     "stone": 9,
      "vills": 0
     },
     {
      "t": 180,
-     "food": -26,
-     "wood": 59,
-     "gold": -3,
-     "stone": -4,
+     "food": -14,
+     "wood": 49,
+     "gold": 2,
+     "stone": 4,
      "vills": 0
     },
     {
      "t": 240,
-     "food": 12,
-     "wood": 74,
-     "gold": -3,
-     "stone": -61,
+     "food": 26,
+     "wood": 104,
+     "gold": 2,
+     "stone": -54,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 78,
-     "wood": 25,
-     "gold": 15,
-     "stone": -11,
+     "food": 111,
+     "wood": 56,
+     "gold": 37,
+     "stone": 1,
      "vills": 0
     },
     {
      "t": 360,
-     "food": 185,
-     "wood": -31,
-     "gold": 110,
-     "stone": -3,
+     "food": 251,
+     "wood": -11,
+     "gold": 150,
+     "stone": 1,
      "vills": 0
     },
     {
      "t": 420,
-     "food": 161,
-     "wood": -12,
-     "gold": -9,
-     "stone": 0,
-     "vills": -1
+     "food": 230,
+     "wood": -7,
+     "gold": 88,
+     "stone": 4,
+     "vills": 0
     },
     {
      "t": 480,
-     "food": -122,
-     "wood": -12,
-     "gold": -22,
-     "stone": 0,
-     "vills": -1
+     "food": 57,
+     "wood": -11,
+     "gold": 28,
+     "stone": 4,
+     "vills": 0
     },
     {
      "t": 540,
-     "food": -579,
-     "wood": 11,
-     "gold": -18,
-     "stone": 0,
-     "vills": -1
+     "food": -239,
+     "wood": -7,
+     "gold": 12,
+     "stone": 4,
+     "vills": 0
     },
     {
      "t": 600,
-     "food": -870,
-     "wood": -15,
-     "gold": -73,
-     "stone": 0,
-     "vills": -2
+     "food": -454,
+     "wood": 5,
+     "gold": -38,
+     "stone": 4,
+     "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 140,
-    "simPlace": 160,
-    "foodInc": 9,
+    "simPlace": 154,
+    "foodInc": -11,
     "foodSpent": -50,
-    "foodBank": 59,
+    "foodBank": 39,
     "woodInc": 3,
     "woodSpent": 50,
     "woodBank": -47,
-    "goldInc": -27,
+    "goldInc": -7,
     "goldSpent": 0,
-    "goldBank": -27,
-    "stoneInc": 30,
+    "goldBank": -7,
+    "stoneInc": 41,
     "stoneSpent": 0,
-    "stoneBank": 30
+    "stoneBank": 41
    }
   },
   {
@@ -11890,69 +11890,69 @@
     "ideal": 309
    },
    "castle": null,
-   "income": 1.0221476345708493,
+   "income": 0.9986999761793641,
    "incomeByRes": {
-    "food": 1.04,
-    "wood": 0.95,
-    "gold": 0.9,
-    "stone": 1.09
+    "food": 1.02,
+    "wood": 0.92,
+    "gold": 0.89,
+    "stone": 1.05
    },
-   "lateMedian": 22,
+   "lateMedian": 4,
    "unfinished": 0,
    "lag": [
     {
      "t": 60,
-     "food": 11,
-     "wood": 94,
-     "gold": -29,
-     "stone": -4,
+     "food": -1,
+     "wood": 107,
+     "gold": -39,
+     "stone": -6,
      "vills": 0
     },
     {
      "t": 120,
-     "food": -4,
-     "wood": -8,
-     "gold": -27,
-     "stone": 2,
+     "food": 34,
+     "wood": -48,
+     "gold": -42,
+     "stone": 3,
      "vills": 0
     },
     {
      "t": 180,
-     "food": 45,
-     "wood": 62,
-     "gold": -19,
-     "stone": 9,
+     "food": 40,
+     "wood": 51,
+     "gold": -11,
+     "stone": 13,
      "vills": 0
     },
     {
      "t": 240,
-     "food": -26,
-     "wood": 53,
-     "gold": 1,
-     "stone": 22,
+     "food": -36,
+     "wood": 30,
+     "gold": 7,
+     "stone": 21,
      "vills": 0
     },
     {
      "t": 300,
-     "food": 118,
-     "wood": -34,
-     "gold": -24,
-     "stone": 20,
+     "food": 92,
+     "wood": -55,
+     "gold": -27,
+     "stone": 14,
      "vills": 0
     }
    ],
    "atFeudalStart": {
     "t": 220,
     "simPlace": 231,
-    "foodInc": 46,
+    "foodInc": 48,
     "foodSpent": -50,
-    "foodBank": 96,
-    "woodInc": 47,
-    "woodSpent": -25,
-    "woodBank": 72,
-    "goldInc": -6,
+    "foodBank": 98,
+    "woodInc": 18,
+    "woodSpent": -75,
+    "woodBank": 93,
+    "goldInc": 8,
     "goldSpent": 0,
-    "goldBank": -6,
+    "goldBank": 8,
     "stoneInc": 19,
     "stoneSpent": 0,
     "stoneBank": 19

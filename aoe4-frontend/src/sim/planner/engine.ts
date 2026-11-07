@@ -59,6 +59,12 @@ const IN_HAND = false
  * 不開 IN_HAND 時誤差中位數小一點、20 秒內的場次卻從 106 降到 100。等 IN_HAND 的問題找到後再一起打開。
  */
 const DROP_GUARD = false
+/**
+ * 回放：往後看幾秒內的建築、科技、升代（不含兵），一起算要幾人採（見分配）。以前只保證最早一個動作，
+ * 後面的動作沒人預先準備，到時錢不夠、資源分配錯（多半是黃金少 15～50、食物木材多）。
+ * 2026-11-07 試 60／90／120 秒、含不含兵：90 秒不含兵時城堡平均誤差 7.7 → 6.8 秒，封建不變；含兵時城堡變差（兵一批接一批，累計花費太大）
+ */
+const MULTI = 90
 const CTL = { rebalance: 8, move: 0.15, hyst: 3, setup: 120, camp: 6, houseLead: 12, farmLead: 90, look: 180 }
 const HUNT_CARRY = 25
 const RES_OF: Record<SiteKind | 'farm', Res> = {
@@ -1516,15 +1522,33 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     if (script) {
       // 不從村民生產、房屋需要的資源調人（以前城鎮中心缺 300 石頭時把所有人調去採石，阿拔斯 4:00～5:20 沒人採食物、停產村民）
       const pf = productionFloor(N)
+      const perW = zero()
       for (const r of RES) {
-        if (pendShort[r] <= 0) continue
         const x = bestSite(r)
-        const rate = x ? effRate(x, true) : 0
+        perW[r] = x ? effRate(x, true) : 0
+      }
+      // 往後看 MULTI 秒內還沒開始的建築、科技、升代（照職業的開始時間排），累計花費：每個動作在它的開始時間前要湊齊
+      // 「到那個動作為止的累計花費 − 現有庫存」；需要的人數 = 缺口 ÷（每人速率 × 距離開始時間的秒數，至少 30 秒），取最大
+      const needW = zero()
+      if (MULTI > 0) {
+        const acc = zero()
+        const list = steps.map((st, k) => ({ st, k })).filter(({ st, k }) => st.kind !== 'army' && !started.has(k) && stepDone[k] == null && (st.earliest ?? 0) <= t + MULTI).sort((a, b) => (a.st.earliest ?? 0) - (b.st.earliest ?? 0))
+        for (const { st } of list) {
+          const cst = stepCost(st)
+          if ((st.earliest ?? 0) <= t && RES.every((r) => cst[r] <= bank[r])) continue
+          for (const r of RES) acc[r] += cst[r]
+          const dt = Math.max(30, (st.earliest ?? 0) - t)
+          for (const r of RES) if (perW[r] > 0 && acc[r] > bank[r]) needW[r] = Math.max(needW[r], (acc[r] - bank[r]) / (perW[r] * dt))
+        }
+      }
+      for (const r of RES) {
+        if (pendShort[r] <= 0 && needW[r] <= 0) continue
+        const rate = perW[r]
         if (rate <= 0) continue
         // 已經在採的人不調走，直到錢湊齊（照缺口重算人數的話，缺口越小人越少，最後幾十塊要拖很久）
-        const want = Math.min(N, Math.max(1, Math.ceil(pendShort[r] / (rate * 30)), pendAge ? c[r] : 0))
+        const want = Math.min(N, Math.max(pendShort[r] > 0 ? Math.max(1, Math.ceil(pendShort[r] / (rate * 30)), pendAge ? c[r] : 0) : 0, Math.ceil(needW[r])))
         while (tgt[r] < want) {
-          const donor = RES.filter((y) => y !== r && tgt[y] > pf[y] && pendShort[y] <= 0).sort((a, b) => tgt[b] - tgt[a])[0]
+          const donor = RES.filter((y) => y !== r && tgt[y] > pf[y] && pendShort[y] <= 0 && tgt[y] - 1 >= Math.ceil(needW[y])).sort((a, b) => tgt[b] - tgt[a])[0]
           if (!donor) break
           tgt[donor]--
           tgt[r]++
