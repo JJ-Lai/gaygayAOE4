@@ -1270,7 +1270,7 @@ const SPECS: Record<string, CivSpec> = {
     horses: { building: 'grassland', every: [0, 75, 60, 45], max: 5, at: ['war-stable'], cls: 'cavalry', discount: { food: 25 } },
     bonuses: [
       { text: '開局 3 名鄉騎、1 斥候、2 隻羊，資源 200 食物 / 150 木材 / 100 黃金', modeled: 'yes', source: 'https://aoe4world.com/games', note: '2026-11 AoE4 World 12260 對局摘要 4/4 場一致：0 秒時 3 名鄉騎、1 斥候、2 隻羊（標準文明是 5 隻），資源 200/150/100/0。aoe4guides 金朝流程也都從 3 名鄉騎開始。' },
-      { text: '城鎮中心下有 2 頭馴鹿，共 800 食物', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Reindeer', note: '2 頭由官方文明頁確認；每頭 400 食物只有 Fandom 寫。引擎當作城鎮中心旁的獵物：獵肉速率 0.825/秒、獵肉攜帶量（鄉騎 30）、吃得到狩獵科技，最多 8 人同時採，在羊之前採。' },
+      { text: '城鎮中心下有 2 頭馴鹿，共 800 食物', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Reindeer', note: '2 頭由官方文明頁確認；每頭 400 食物只有 Fandom 寫。引擎當作城鎮中心旁的獵物：獵肉速率 0.825/秒、獵肉攜帶量（鄉騎 30）、吃得到狩獵科技，最多 8 人同時採，在羊之前採。馴鹿被射時會跑開，投放距離當作單程 5 格（2026-11-07 用 5 場職業開局推算：每名鄉騎每分鐘約 55～75 食物，1 格時引擎算出 100）。' },
       { text: '鄉騎採集 +120%（農田只有 +90%），攜帶 +5', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Mounted_Villager', note: '倍率與攜帶量只出自 Fandom；論壇實測 1 名無科技鄉騎每分鐘採 81–85 黃金，與 ×2.2 吻合（引擎算出約每分鐘 80）。獵肉攜帶 25 + 5 = 30。17.0 修正後採金科技也套用到鄉騎，引擎的科技本來就對所有工人生效。' },
       { text: '鄉騎上限 20 名（每個朝貢國 +3），之後只能訓普通村民；鄉騎 65 食物 50 黃金、35 秒', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/units/jindynasty/mounted-villager-1.json', note: '每座朝貢國 +3 已計入（頁面「貿易」開啟時）。職業選手黃金不夠時會先訓普通村民再換回鄉騎，引擎只在滿上限後才改訓。' },
       { text: '鄉騎移動較快（1.42），建造較快：地標 +75%、一般建築 +100%、防禦建築 +40%', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Mounted_Villager', note: '移動速度出自目錄；建造倍率只出自 Fandom，Swaggy 3 名鄉騎蓋大牧場約 70 秒，與 +75% 推算的 65 秒吻合。引擎依工人組成取平均（混了普通村民就變慢），防禦建築也用 +100%。沒建模前金朝最快封建算出 4:38，比 23 場頂尖玩家（1850–2500 分）金朝的中位數 4:30 還慢；建模後約 3:31（頂尖最快 3:44）。' },
@@ -1309,11 +1309,16 @@ const SPECS: Record<string, CivSpec> = {
 
       // 朝聖者：安全通道後立刻出發、之後每 60 秒 1 名，走到聖地才給黃金：30 + 每格 1.8（最多 130，54 格）。地圖沒有聖地，假設 48 格（約地圖中央）→ 116 黃金、走 64 秒
       { on: 'safe-passage', every: 60, delay: 64, each: { gold: 116 } },
+      // 聖所、每座要塞：每批朝聖者多 1 名（Fandom Pilgrim、Sanctuary 頁；要等這一輪 60 秒走完才加入，平均多等 30 秒）。
+      // 要塞假設蓋在安全通道之後（職業 5 場只有 1 場蓋要塞，也是之後）。2026-11-07 以前沒有計入，回放時聖殿騎士團 7～12 分鐘的收入少一成多
+      { on: 'sanctuary', every: 60, delay: 94, each: { gold: 116 } },
+      { on: 'fortress', every: 60, delay: 94, each: { gold: 116 } },
     ],
     civTechs: [
       { id: 'lettre-de-change', requires: 'market' },
 
       { id: 'safe-passage', tc: true },
+      { id: 'sanctuary', requires: 'safe-passage', tc: true },
     ],
     // 匯票（Fandom Lettre de Change 頁）：市場研究後可貸款：1000 食物 → 2 分鐘每秒 5 黃金、2500 → 3 分鐘每秒 10、4000 → 4 分鐘每秒 15
     loans: {
@@ -1331,7 +1336,7 @@ const SPECS: Record<string, CivSpec> = {
       { text: '木材採集逐代提升：封建 +20%，城堡、帝王各再 +15%（17.0 從 20% 調降）', modeled: 'approx', source: SRC.off, note: '只有封建 0.72 有玩家實測。城堡、帝王採加法疊加（×1.35、×1.5）；若是乘法則為 ×1.38、×1.587，未證實。' },
       { text: '伐木時另得 20% 的食物', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/templar.json', note: '按時代加成後的木材量計算（玩家實測封建 0.72 木 → 0.864 總量）。黑暗時代每名伐木村民約 0.11 食物/秒。' },
       { text: '在城鎮中心研究分團升代：封建 400 食物/200 黃金 60 秒，城堡 1200 食物/600 黃金、帝王 2400 食物/1200 黃金各 45 秒，不需要村民蓋地標', modeled: 'yes', source: 'https://data.aoe4world.com/technologies/templar.json', note: '研究期間該城鎮中心不能生產村民。模擬允許任何城鎮中心升代（目錄如此），Fandom 說只在首都，未證實。安全通道（10 秒）與聖所（15 秒）只能在首都城鎮中心研究，同樣暫停村民。' },
-      { text: '朝聖者產金：安全通道（50 食物/200 木材）後每 60 秒出發一批，1 人，聖所 +1、每座要塞 +1（上限 10），每人最多 130 黃金', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Pilgrim_(Age_of_Empires_IV)', note: '安全通道（首都城鎮中心研究 10 秒）後立刻出發、之後每 60 秒 1 名（聖所 +1、每座要塞 +1 沒有建模）；到聖地才給黃金：30 + 每格約 1.8，最多 130（54 格），速度 0.75 格/秒（Fandom Pilgrim 頁）。引擎的地圖沒有聖地，假設聖地在 48 格（約地圖中央）→ 每名 116 黃金、出發 64 秒後入帳。' },
+      { text: '朝聖者產金：安全通道（50 食物/200 木材）後每 60 秒出發一批，1 人，聖所 +1、每座要塞 +1（上限 10），每人最多 130 黃金', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Pilgrim_(Age_of_Empires_IV)', note: '安全通道（首都城鎮中心研究 10 秒）後立刻出發、之後每 60 秒 1 名；聖所（150 食物 250 木材、15 秒）與每座要塞各 +1 名（2026-11-07 補上，加入下一批、平均晚 30 秒）；到聖地才給黃金：30 + 每格約 1.8，最多 130（54 格），速度 0.75 格/秒（Fandom Pilgrim 頁）。引擎的地圖沒有聖地，假設聖地在 48 格（約地圖中央）→ 每名 116 黃金、出發 64 秒後入帳。' },
       { text: '攻城專家：攻城工坊與攻城器械木材 -25%', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/templar.json', note: '以費用修正套用（工坊 187.5、衝車 150、攻城塔 93.75、弩砲 112.5、投石車 300、配重投石機 300 木材）；遊戲內進位方式未證實。' },
       { text: '分團效果：醫院騎士團平民 +8% 移速、+25% 生命；法蘭西王國陸軍生產 +15%、黃金 -5%；熱那亞共和國朝聖者黃金 +20%', modeled: 'approx', source: 'https://data.aoe4world.com/technologies/templar.json', note: '法蘭西王國（陸軍生產 +15%、單位黃金 -5%，村民沒有黃金花費所以不受影響）與醫院騎士團（村民移動 +8%）已計入；熱那亞共和國的朝聖者黃金 +20% 沒有建模。' },
       { text: '匯票：市場可用 1000/2500/4000 食物借貸，分 2/3/4 分鐘換回 600/1800/3600 黃金', modeled: 'approx', source: 'https://data.aoe4world.com/abilities/templar.json', note: '搜尋決定研不研匯票（城堡時代，市場，100 食物 250 黃金、45 秒；要先有市場，引擎會先蓋）；之後缺黃金、食物真的有多（扣掉需求）時借付得起的最大一筆：1000 食物 → 2 分鐘共 600 黃金、2500 → 3 分鐘共 1800、4000 → 4 分鐘共 3600（Fandom Lettre de Change 頁），一次一筆。能不能同時借多筆、有沒有冷卻沒有寫。' },
@@ -1545,6 +1550,7 @@ const SPECS: Record<string, CivSpec> = {
     startNote: '開局 200 食物、200 木材、100 黃金、0 石頭，5 名鍍金村民、1 斥候、城鎮中心旁 5 隻羊，沒有神職人員，人口 6/10（Fandom、官方 9.1.370 起始木材 150 → 200；到 17.0.12260 都沒改）。',
     worker: 'gilded-villager',
     startWorkers: { 'gilded-villager': 5 },
+    // 鍍金村民建造快 25%（建造時間 -20%，Fandom Gilded Villager 頁）：目錄裡龍騎士團的建築時間已經是 ×0.8（邁因維克宮 152 秒），不另外加
     // extraPop 用預設 1（只有斥候）；龍騎士團開局沒有神職人員。ownedSheep 用預設 5
     // 目錄 gilded-villager 60 食物、23 秒是每名（每次點擊 1 名，villagerBatch 預設 1）
     carry: 14, // Pushcarts +40%：10 × 1.4。手推車 +5 由目錄效果疊在上面（= 19，順序未驗證）；獵物肉仍被引擎固定為 25

@@ -131,7 +131,9 @@ function gatheredOf(sp, horizon) {
   const raw = (k) => (Array.isArray(r[k]) ? r[k].slice(0, n).map((x) => Math.round(x)) : null)
   const spent = { food: raw('foodGathered'), wood: raw('woodGathered'), gold: raw('goldGathered'), stone: raw('stoneGathered') }
   const stock = { food: raw('food'), wood: raw('wood'), gold: raw('gold'), stone: raw('stone') }
-  return { t: ts.slice(0, n), food: col('food'), wood: col('wood'), gold: col('gold'), stone: col('stone'), income: true, spent, stock }
+  // 每分鐘採集量（過去 60 秒實際採到的，含被動收入，不含市場買賣）：用來分出市場交易（累計收入 − 實際採集）
+  const perMin = { food: raw('foodPerMin'), wood: raw('woodPerMin'), gold: raw('goldPerMin'), stone: raw('stonePerMin') }
+  return { t: ts.slice(0, n), food: col('food'), wood: col('wood'), gold: col('gold'), stone: col('stone'), income: true, spent, stock, perMin }
 }
 
 const first = await getJson('https://aoe4world.com/api/v0/games?page=1')
@@ -148,6 +150,7 @@ const save = () =>
 // 舊樣本沒有累計採集（或 REEXTRACT=1）：重抓摘要補上、重算操作紀錄
 for (const smp of samples) {
   if (smp.gathered?.spent && !process.env.REEXTRACT) continue
+  if (process.env.ONLY_MISSING_PERMIN && smp.gathered?.perMin) continue
   if (process.env.CIV && smp.civ !== process.env.CIV) continue
   const s = await getJson(`https://aoe4world.com/players/${smp.profileId}/games/${smp.game}/summary?camelize=true`)
   await sleep(1200)

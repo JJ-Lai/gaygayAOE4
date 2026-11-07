@@ -47,6 +47,12 @@ const ECO_WEIGHT = 0.01
  * 2026-11-07 用 111 場試 0/10/20/30/45/60 秒：30 秒封建誤差中位數 11 → 6 秒、20 秒內 87 → 104 場，城堡不變
  */
 const PEND_LEAD = 30
+/**
+ * 手上的資源投放了才入帳（見每秒採集）。預設關閉：2026-11-07 回放試過，開啟後開局收入和職業的紀錄對得更準
+ * （收入 ×1.05 → ×1.01、1:00 食物多 41 → 17），但升代時間反而差很多（封建 20 秒內 106 → 87 場），
+ * 表示模擬還有別處偏慢、剛好被「手上的資源也能花」抵掉，還沒找到。
+ */
+const IN_HAND = false
 const CTL = { rebalance: 8, move: 0.15, hyst: 3, setup: 120, camp: 6, houseLead: 12, farmLead: 90, look: 180 }
 const HUNT_CARRY = 25
 const RES_OF: Record<SiteKind | 'farm', Res> = {
@@ -65,6 +71,8 @@ interface SiteSt {
   s: Site
   res: Res
   left: number
+  /** 在這裡採的村民手上還沒投放的資源 */
+  hand?: number
   /** 固定每人每秒（清酒釀造所金蓆），不算走路與採集科技 */
   fixed?: number
   /** 這個點額外的採集倍率（雙塔伊斯蘭學院野果 +50%） */
@@ -255,6 +263,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       // 已完成的步驟（隱含的生產建築已經有了）不算
       if (started.has(k) || stepDone[k] != null || (st.earliest ?? 0) > t + PEND_LEAD) continue
       const c = stepCost(st)
+      // 四種資源已經付得起、卻還沒開始的（等橄欖油、等生產建築、等人口）跳過，看下一個（以前拜占庭等油的傭兵擋住後面的升城堡）
+      if (RES.every((r) => c[r] <= bank[r])) continue
       for (const r of RES) pend[r] += c[r]
       pendAge = st.kind === 'age'
       break
@@ -511,7 +521,14 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     wmul = out
     baseCarry = (carry + rest * spec.carry) / all
     wSpeed = (speed + rest * SPEED) / all / SPEED
+    // 建造：派最會蓋的那種工人去蓋（金朝職業用鄉騎蓋地標），有 3 名以上就用它的倍率，不取平均
+    // （以前取平均，金朝混訓普通村民時大牧場要蓋 101 秒，職業約 70 秒）
     wBuild = { landmark: (build.landmark + rest) / all, other: (build.other + rest) / all }
+    for (const [id, n] of workerCount) {
+      const b = spec.workerSpecs[id]?.build
+      if (!b || n < 3) continue
+      wBuild = { landmark: Math.max(wBuild.landmark, b.landmark ?? 1), other: Math.max(wBuild.other, b.other ?? 1) }
+    }
   }
   refreshWorkers()
   const carryNow = () => baseCarry + mods.carry + tCarry
@@ -715,20 +732,27 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
 
   const dropDist = (x: SiteSt) => {
     // 羊（與城鎮中心旁的獵物、拖回來的鹿）緊貼城鎮中心：單程約 1 格（職業回放：2 格時封建中位數晚 20 秒、1 格晚 9 秒）
-    if (x === sheep || x === startHunt || x.hauled) return 1
+    // 城鎮中心下的獵物（金朝馴鹿）：被射時會跑開，倒在幾格外，單程約 5 格。1 格時鄉騎每人每分鐘 100 食物，
+    // 職業 5 場開局推算約 55～75（扣掉採金的人，採金速率與理論相符）；5 格約 76，金朝收入 ×1.17 → ×1.07（2026-11-07）
+    if (x === startHunt) return 5
+    if (x === sheep || x.hauled) return 1
     if (x === farm) return 2.5
     if (x.camp === 2) return x.res === 'wood' ? 2 + Math.min(4, x.chopped / 2500) : x.res === 'food' ? 2 : 1.5
     return Math.max(2, x.s.dist - 2)
   }
 
+  /** 這個採集點每名村民一次帶多少 */
+  const carryAt = (x: SiteSt) => {
+    const hunt = x.s.kind === 'deer' || x.s.kind === 'boar'
+    const c = carryNow()
+    // 獵肉攜帶量也吃工人種類的攜帶加成（金朝鄉騎 +5 → 30）
+    return hunt ? Math.max(HUNT_CARRY + (baseCarry - spec.carry), c) : c + (x.s.kind === 'berry' && x !== farm ? spec.berryCarry : 0)
+  }
   const effRate = (x: SiteSt, assumeCamp = false) => {
     if (x.fixed != null) return x.fixed
     const raw = rawRate(x)
     if (x.res === 'wood' && spec.woodInstant) return raw
-    const hunt = x.s.kind === 'deer' || x.s.kind === 'boar'
-    const c = carryNow()
-    // 獵肉攜帶量也吃工人種類的攜帶加成（金朝鄉騎 +5 → 30）
-    const carry = hunt ? Math.max(HUNT_CARRY + (baseCarry - spec.carry), c) : c + (x.s.kind === 'berry' && x !== farm ? spec.berryCarry : 0)
+    const carry = carryAt(x)
     const d = assumeCamp && x.camp !== 2 ? (x.res === 'wood' ? 2 : 1.5) : dropDist(x)
     return carry / (carry / raw + (2 * d) / (SPEED * mods.speed * wSpeed * tSpeed))
   }
@@ -811,7 +835,25 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     const resOf = (b: Bld) => sites.find((y) => y.s.id === b.siteId)?.res
     const proN = script.dropoffs.filter((d) => d.t <= t && d.id === it.id && (!d.res || d.res === x.res)).length
     const simN = blds.filter((b) => b.role === 'camp' && b.item === it.id && (!script.dropoffs.some((d) => d.id === it.id && d.res) || resOf(b) === x.res)).length
-    return proN > simN
+    if (proN > simN) return true
+    // 職業一座營地同時收兩種資源（懸崖等地圖金礦、石礦相鄰），模擬的乾燥阿拉伯兩個礦分開：
+    // 職業已經有這種營地、而且正在採這種資源（前後 30 秒每秒 1 以上）時，這種資源可以有自己的第一座
+    // （以前龍騎士團一場職業只蓋 1 座採礦營地，模擬的石頭只能走回城鎮中心交，城鎮中心晚 50 秒）
+    if (!script.dropoffs.some((d) => d.t <= t && d.id === it.id)) return false
+    if (blds.some((b) => b.role === 'camp' && b.item === it.id && resOf(b) === x.res)) return false
+    // 每秒 1 以上（約 2 名村民持續在採；0.5 時戰國開局採一點石頭就多蓋一座 100 木的祭典，封建晚 34 秒）
+    const ts = script.income.t
+    // 有每分鐘採集量就用它（累計收入含市場買的資源，戰國用黃金買木材時會被誤當成在採木材）
+    const pm = script.perMin?.[x.res]
+    if (pm) {
+      const i = ts.findIndex((y) => y >= t + 30)
+      return (pm[i < 0 ? ts.length - 1 : i] ?? 0) / 60 >= 1
+    }
+    const at = (u: number) => {
+      const i = ts.findIndex((y) => y >= u)
+      return script.income[x.res][i < 0 ? ts.length - 1 : Math.max(0, i)]
+    }
+    return (at(t + 30) - at(t - 30)) / 60 >= 1
   }
   /** 有木材就派這名村民去蓋投放點；回傳是否成功 */
   const tryCamp = (x: SiteSt, from: string) => {
@@ -1444,6 +1486,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     }
     // 回放：時間已到的動作缺的資源，保證有足夠的人去採（約 30 秒補齊、至少 1 人），從人最多的資源調
     if (script) {
+      // 不從村民生產、房屋需要的資源調人（以前城鎮中心缺 300 石頭時把所有人調去採石，阿拔斯 4:00～5:20 沒人採食物、停產村民）
+      const pf = productionFloor(N)
       for (const r of RES) {
         if (pendShort[r] <= 0) continue
         const x = bestSite(r)
@@ -1452,7 +1496,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         // 已經在採的人不調走，直到錢湊齊（照缺口重算人數的話，缺口越小人越少，最後幾十塊要拖很久）
         const want = Math.min(N, Math.max(1, Math.ceil(pendShort[r] / (rate * 30)), pendAge ? c[r] : 0))
         while (tgt[r] < want) {
-          const donor = RES.filter((y) => y !== r && tgt[y] > 0 && pendShort[y] <= 0).sort((a, b) => tgt[b] - tgt[a])[0]
+          const donor = RES.filter((y) => y !== r && tgt[y] > pf[y] && pendShort[y] <= 0).sort((a, b) => tgt[b] - tgt[a])[0]
           if (!donor) break
           tgt[donor]--
           tgt[r]++
@@ -1801,7 +1845,28 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   }
 
   // ---------- 每秒行動 ----------
+  /** 回放：下一筆要做的市場交易 */
+  let tradeIdx = 0
   const act = () => {
+    // 回放：照職業的時間做市場交易（得到的資源也算收入，職業的累計收入裡就有）；付不起就等，60 秒還付不起就放棄這筆
+    while (script?.trades && tradeIdx < script.trades.length && script.trades[tradeIdx].t <= t) {
+      const tr = script.trades[tradeIdx]
+      const c = { ...zero(), ...tr.pay } as Bundle
+      if (!RES.every((r) => bank[r] >= c[r])) {
+        if (t > tr.t + 60) {
+          tradeIdx++
+          continue
+        }
+        break
+      }
+      pay(c)
+      for (const [r, x] of Object.entries(tr.get)) {
+        bank[r as Res] += x ?? 0
+        incomeAcc[r as Res] += x ?? 0
+      }
+      log('note', `市場交易（照職業）：${Object.entries(tr.pay).map(([r, x]) => `${x} ${RES_ZH[r as Res]}`).join('、') || '—'} → ${Object.entries(tr.get).map(([r, x]) => `${x} ${RES_ZH[r as Res]}`).join('、')}`)
+      tradeIdx++
+    }
     // 0. 房屋優先（人口不能卡住村民）
     for (let k = 0; k < 3 && houseNeeded(); k++) {
       const it = items.get(data.houseId!)!
@@ -2784,6 +2849,18 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         if (x.s.kind === 'berry' && spec.orchardBush > 250) x.left += (spec.orchardBush - 250) * x.s.units
       }
     }
+    // 第二座以後的城鎮中心：職業會蓋在野果、鹿群、礦旁，同時是那裡的投放點。當作一個還沒有投放點的採集點的投放點
+    // （挑現在最多人在採的，同樣多就挑食物、剩比較多的）。以前城鎮中心不當投放點，馬其頓一場職業 10 分鐘前沒蓋磨坊，
+    // 模擬的野果、鹿群全都走回首都交，7～10 分鐘收入只有職業的七成
+    if (isTC(b.item) && blds.filter((y) => y.done && isTC(y.item)).length > 1) {
+      const cand = sites.filter((x) => x.camp !== 2 && x !== sheep && x !== farm && x !== startHunt && !x.hauled && x.fixed == null && x.left > 300 && x.s.kind !== 'sheep')
+      cand.sort((a, c) => c.workers - a.workers || (c.res === 'food' ? 1 : 0) - (a.res === 'food' ? 1 : 0) || c.left - a.left)
+      const x = cand[0]
+      if (x) {
+        x.camp = 2
+        log('note', `${name(b.item)}當作${x.s.label}的投放點`)
+      }
+    }
     // 蓋好就給的資源（蘇格蘭集結大廳 1 次集結）
     for (const [k, x] of Object.entries(spec.grants[b.item] ?? {})) addRes(k, x ?? 0)
     // 新城鎮中心旁生成的羊（蘭開斯特 4 隻）：併進唯一的羊群
@@ -3029,11 +3106,25 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       }
     }
     for (const x of sites) {
-      if (x.workers <= 0) continue
+      // 手上的資源：投放了才入帳（職業的紀錄也是投放時才算）。每名在採的村民平均帶著半趟的量；
+      // 人走了先投放（多出來的入帳），人來了先裝滿手上那半趟，才開始入帳。開局第一趟、每次換點都會晚一點入帳
+      const handCap = IN_HAND && x.fixed == null && !(x.res === 'wood' && spec.woodInstant) ? (Math.max(0, x.workers) * carryAt(x)) / 2 : 0
+      let dep = 0
+      if ((x.hand ?? 0) > handCap) {
+        dep = (x.hand ?? 0) - handCap
+        x.hand = handCap
+      }
+      if (x.workers <= 0 && dep <= 0) continue
       if (x === farm && x.workers > farmSlots()) x.workers = farmSlots()
-      let amt = effRate(x) * x.workers
+      let amt = x.workers > 0 ? effRate(x) * x.workers : 0
       if (amt > x.left) amt = x.left
       x.left -= amt
+      if (handCap > 0 && (x.hand ?? 0) < handCap) {
+        const fill = Math.min(amt, handCap - (x.hand ?? 0))
+        x.hand = (x.hand ?? 0) + fill
+        amt -= fill
+      }
+      amt += dep
       if (x.res === 'wood') x.chopped += amt
       bank[x.res] += amt
       incomeAcc[x.res] += amt

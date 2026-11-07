@@ -58,7 +58,8 @@ function payTime(s: Sample, ts: number, cost: { food: number; wood: number; gold
   const dt = g.t[i + 1] - g.t[i]
   let at = 0
   for (const k of ['food', 'wood', 'gold', 'stone'] as const) {
-    const short = cost[k] - g.stock[k][i]
+    // 費用用這一格實際花掉的（有文明折扣時比目錄價低）
+    const short = Math.min(cost[k], Math.max(0, g.spent[k][i + 1] - g.spent[k][i])) - g.stock[k][i]
     if (short <= 0) continue
     const rate = (g[k][i + 1] - g[k][i]) / dt
     at = Math.max(at, rate > 0 ? Math.min(dt, short / rate) : dt)
@@ -97,10 +98,13 @@ function goalsOf(data: CivData, s: Sample) {
     if (opt && g?.spent) {
       let ts: number | null = null
       for (let i = 1; i < g.t.length && g.t[i] <= done + 20; i++) {
-        if (g.spent.food[i] - g.spent.food[i - 1] >= opt.cost.food * 0.9 && g.spent.gold[i] - g.spent.gold[i - 1] >= opt.cost.gold * 0.9) ts = g.t[i - 1]
+        // 付錢的那一格要在完成前（蓋好之後才付的是別的東西）
+        if (g.spent.food[i] - g.spent.food[i - 1] >= opt.cost.food * 0.9 && g.spent.gold[i] - g.spent.gold[i - 1] >= opt.cost.gold * 0.9 && g.t[i - 1] <= done - 15) ts = g.t[i - 1]
       }
       if (ts != null && ts < done) {
-        start = ts
+        // 最早開始 = 推算的付錢那一秒（以前用格子起點，模擬可能比職業早 10 多秒開始；111 場城堡誤差中位數 7 → 4 秒）
+        // 研究升代（金帳、阿拔斯、阿尤布…）：完成 − 研究時間就是開始的那一秒，比從花費推算準（職業的黃金看不到收入時推算會落到格子尾端）
+        start = opt.mode === 'building' ? payTime(s, ts, opt.cost) : Math.max(ts - 20, done - opt.time)
         // 地標：由職業的建造時間反推派了幾個人（建造速度 (人數 + 2) ÷ 3），模擬照同樣人數蓋
         if (opt.mode === 'building') builders[a] = Math.max(1, Math.min(15, Math.round((3 * opt.time) / bMul.landmark / Math.max(1, done - payTime(s, ts, opt.cost) - WALK) - 2)))
       }
@@ -135,10 +139,24 @@ function goalsOf(data: CivData, s: Sample) {
       for (let i = 1; i < g.t.length && g.t[i] <= t + 20; i++) {
         if (g.t[i] < t - durOf(id) - 20) continue
         const ok = (['food', 'wood', 'gold', 'stone'] as const).every((k) => need[k] <= 0 || g.spent[k][i] - g.spent[k][i - 1] >= need[k] * 0.9)
-        if (ok) ts = g.t[i - 1]
+        if (ok && g.t[i - 1] <= t - 15) ts = g.t[i - 1]
       }
+      // 一格找不到：先放寬到目錄價的 60%（文明折扣，例如阿拔斯新月沃土城鎮中心 -30%：職業付 280 木 210 石），
+      // 再找付錢跨了兩格的（木材、石頭分在相鄰兩格入帳），取前一格的起點（以前找不到就當 1 人蓋，阿拔斯的城鎮中心晚 1 分半）
+      if (ts == null)
+        for (let i = 1; i < g.t.length && g.t[i] <= t + 20; i++) {
+          if (g.t[i] < t - durOf(id) - 20) continue
+          const ok = (['food', 'wood', 'gold', 'stone'] as const).every((k) => need[k] <= 0 || g.spent[k][i] - g.spent[k][i - 1] >= need[k] * 0.6)
+          if (ok && g.t[i - 1] <= t - 15) ts = g.t[i - 1]
+        }
+      if (ts == null)
+        for (let i = 2; i < g.t.length && g.t[i] <= t + 20; i++) {
+          if (g.t[i] < t - durOf(id) - 20) continue
+          const ok = (['food', 'wood', 'gold', 'stone'] as const).every((k) => need[k] <= 0 || g.spent[k][i] - g.spent[k][i - 2] >= need[k] * 0.9)
+          if (ok && g.t[i - 2] <= t - 15) ts = g.t[i - 2]
+        }
       if (ts != null && ts < t) {
-        start = ts
+        start = payTime(s, ts, need)
         nb = Math.max(1, Math.min(15, Math.round((3 * durOf(id)) / bMul.other / Math.max(1, t - payTime(s, ts, need) - WALK) - 2)))
       }
     }
@@ -272,6 +290,49 @@ function campRes(data: CivData, s: Sample, id: string, done: number): 'food' | '
   return a.d >= 0.5 && a.d >= 3 * Math.max(0, b?.d ?? 0) ? a.r : undefined
 }
 
+/**
+ * 職業的市場交易：累計收入（花費 + 庫存 − 開局）減掉實際採集（每分鐘採集量 perMin 往回累加：G(t) = perMin(t) + G(t − 60)）。
+ * 某種資源多出來的跳一格 ≥ 40：
+ *   - 食物／木材／石頭多了，而且那一格黃金花了至少這麼多：用黃金買的（價格 = 那一格的黃金花費，每單位最多 1.6 黃金）；
+ *   - 黃金多了，而且那一格有另一種資源花了 100 以上：賣掉那種資源（每 100 換約 70 黃金，照多出的黃金推算賣了幾批）。
+ * 沒有對應付款的（阿尤布工業側翼送的木材、蘇格蘭教士的黃金等）不是交易，模擬自己的模型會給，不另外加。
+ * 2026-11-07 用 30 場對過：其他時候多出來的都是 0（被動收入都算在 perMin 裡）。摘要裡沒有交易紀錄，只能這樣推算。
+ */
+function tradesOf(s: Sample): NonNullable<ReplayScript['trades']> {
+  const g = s.gathered as any
+  if (!g?.perMin?.wood || !g.spent) return []
+  const RES = ['food', 'wood', 'gold', 'stone'] as const
+  const ex: Record<string, number[]> = {}
+  for (const r of RES) {
+    const pm = g.perMin[r] as number[]
+    const G: number[] = []
+    for (let i = 0; i < g.t.length; i++) {
+      const j = g.t.findIndex((x: number) => x >= g.t[i] - 60 - 1e-6)
+      G[i] = (pm[i] ?? 0) + (j >= 0 && j < i && g.t[i] - g.t[j] >= 59 ? G[j] : 0)
+    }
+    ex[r] = g[r].map((x: number, i: number) => x - G[i])
+  }
+  const out: NonNullable<ReplayScript['trades']> = []
+  for (let i = 1; i < g.t.length; i++) {
+    const d = (r: (typeof RES)[number]) => ex[r][i] - ex[r][i - 1]
+    const sp = (r: (typeof RES)[number]) => g.spent[r][i] - g.spent[r][i - 1]
+    for (const r of ['food', 'wood', 'stone'] as const) {
+      const n = d(r)
+      if (n < 40 || sp('gold') < n * 0.9) continue
+      out.push({ t: g.t[i - 1], pay: { gold: Math.round(n * Math.min(1.6, sp('gold') / n)) }, get: { [r]: Math.round(n) } })
+    }
+    const ng = d('gold')
+    if (ng >= 40) {
+      const sold = (['food', 'wood', 'stone'] as const).filter((r) => sp(r) >= 100).sort((a, b) => sp(b) - sp(a))[0]
+      if (sold) {
+        const lots = Math.max(1, Math.min(Math.floor(sp(sold) / 100), Math.round(ng / 70)))
+        out.push({ t: g.t[i - 1], pay: { [sold]: lots * 100 }, get: { gold: Math.round(ng) } })
+      }
+    }
+  }
+  return out
+}
+
 function scriptOf(data: CivData, s: Sample): ReplayScript | null {
   const g = s.gathered
   if (!g?.income) return null
@@ -283,6 +344,8 @@ function scriptOf(data: CivData, s: Sample): ReplayScript | null {
     support: Object.fromEntries((data.spec.support ?? []).map((su) => [su.unit, s.units.filter(([, id]) => id === su.unit).map(([t]) => t)])),
     farms: s.buildings.filter(([, id]) => id === data.spec.farm.id).map(([t]) => t),
     income: { t: g.t, food: g.food, wood: g.wood, gold: g.gold, stone: g.stone },
+    trades: tradesOf(s),
+    perMin: (g as any).perMin ?? undefined,
     // 投放點的完成時間減建造時間（一人蓋）當作開始蓋的時間
     // 同時收好幾種資源的投放點（採礦營地收金和石）：蓋好後 60 秒內收入速率增加最多的那種資源，就是這座營地給誰用的
     dropoffs: s.buildings.filter(([, id]) => isDropoff(data, id)).map(([t, id]) => ({ t: t - (data.items.get(id)?.variations[0]?.time ?? 20), id, res: campRes(data, s, id, t) })),
@@ -442,12 +505,18 @@ for (const s of pro.samples as Sample[]) {
       })
       console.log(`    人力 ${clock(tt)} ${parts.join('  ')}  走 ${x.walking} 蓋 ${x.building}`)
     }
+    // SITES=a-b：那段時間每 20 秒各採集點的人數、剩餘量、每人每分鐘速率
+    if (process.env.SITES) {
+      const [a, b] = process.env.SITES.split('-').map(Number)
+      for (const x of ideal.samples.filter((y) => y.t >= a && y.t <= b && Math.round(y.t) % 20 === 0))
+        console.log(`    採集點 ${clock(x.t)} ${x.sites.filter((y) => y.workers > 0 || (y.left > 0 && y.left < 1e9 && y.id !== 'farm')).map((y) => `${y.id}:${y.workers}人/剩${Math.round(y.left)}@${y.rate ?? '-'}`).join(' ')}`)
+    }
     if (process.env.DUMP) {
       const [a, b] = process.env.DUMP.split('-').map(Number)
       for (const e of ideal.events.filter((e) => (e.kind === 'rally' || e.kind === 'villager') && e.t >= a && e.t <= b)) console.log(`    派工 ${clock(e.t)} ${e.text}`)
       for (const x of ideal.samples.filter((y) => y.t >= a && y.t <= b)) console.log(`    樣本 ${clock(x.t)} 庫存 ${Object.values(x.bank).map((v) => Math.round(v)).join('/')} 村民 ${x.villagers} 人口 ${x.pop}/${x.popCap} 蓋 ${x.building} 走 ${x.walking}`)
     }
-    for (const e of ideal.events.filter((e) => (e.kind === 'place' || e.kind === 'research' || e.kind === 'age' || e.kind === 'train' || (process.env.DONE && e.kind === 'done')) && e.t <= end + 1)) console.log(`    理論 ${clock(e.t)} ${e.text}  [${Object.values(e.bank).map((v) => Math.round(v)).join('/')}]`)
+    for (const e of ideal.events.filter((e) => (e.kind === 'place' || e.kind === 'research' || e.kind === 'age' || e.kind === 'train' || (process.env.DONE && e.kind === 'done') || (process.env.NOTES && e.kind === 'note')) && e.t <= end + 1)) console.log(`    理論 ${clock(e.t)} ${e.text}  [${Object.values(e.bank).map((v) => Math.round(v)).join('/')}]`)
     for (let t = 60; t <= end + 1; t += 60) {
       const p = (proIncome(s, t) ?? 0) - (proIncome(s, t - 60) ?? 0)
       const m = (simIncome(ideal, t) ?? 0) - (simIncome(ideal, t - 60) ?? 0)

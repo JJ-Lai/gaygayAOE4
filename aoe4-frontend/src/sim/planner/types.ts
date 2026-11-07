@@ -187,6 +187,10 @@ export interface ReplayScript {
   income: { t: number[]; food: number[]; wood: number[]; gold: number[]; stone: number[] }
   /** 職業投放點開始蓋的時間；res：同時收好幾種資源的投放點（採礦營地）是給哪種資源用的（由收入變化推斷） */
   dropoffs: { t: number; id: string; res?: 'food' | 'wood' | 'gold' | 'stone' }[]
+  /** 職業過去 60 秒實際採到的量（和 income.t 對齊；不含市場買賣） */
+  perMin?: Partial<Record<'food' | 'wood' | 'gold' | 'stone', number[]>>
+  /** 職業的市場交易（由收入與每分鐘採集量的差推算）：t 秒起、付得起就付 pay、得到 get（得到的也算收入） */
+  trades?: { t: number; pay: Partial<Record<'food' | 'wood' | 'gold' | 'stone', number>>; get: Partial<Record<'food' | 'wood' | 'gold' | 'stone', number>> }[]
   /** 職業紀錄裡看不到的投放點（圖格魯克工作象）：不受 dropoffs 限制，照模擬自己的判斷蓋 */
   untracked?: string[]
 }
