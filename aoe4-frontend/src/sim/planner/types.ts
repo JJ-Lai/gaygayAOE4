@@ -174,14 +174,19 @@ export interface Policy {
  */
 export interface ReplayScript {
   villagers: number[]
+  /** 每名村民的種類（和 villagers 對應）：有兩種工人的文明（金朝）照職業訓練的種類 */
+  workerIds?: string[]
   /** 監工（中國、朱熹）的出生秒數：照職業的時間訓練 */
   officials?: number[]
+  /** 收入單位（蘇格蘭高地牛、教士…）的出生秒數：照職業的時間訓練 */
+  support?: Record<string, number[]>
   /** 學者（德里）的出生秒數：照職業的時間訓練 */
   scholars?: number[]
   /** 職業每塊農田（橄欖園、牧場…）完成的秒數：照時間蓋田，不等天然食物採完 */
   farms?: number[]
   income: { t: number[]; food: number[]; wood: number[]; gold: number[]; stone: number[] }
-  dropoffs: { t: number; id: string }[]
+  /** 職業投放點開始蓋的時間；res：同時收好幾種資源的投放點（採礦營地）是給哪種資源用的（由收入變化推斷） */
+  dropoffs: { t: number; id: string; res?: 'food' | 'wood' | 'gold' | 'stone' }[]
   /** 職業紀錄裡看不到的投放點（圖格魯克工作象）：不受 dropoffs 限制，照模擬自己的判斷蓋 */
   untracked?: string[]
 }

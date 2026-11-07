@@ -47,6 +47,33 @@ function controllerBuilt(data: CivData, id: string) {
 const isDropoff = (data: CivData, id: string) => Object.values(data.spec.dropoff).some((l) => l.includes(id)) || ['mill', 'lumber-camp', 'mining-camp'].includes(id)
 
 /** 職業每個動作 → 帶開始時間的目標，照開始時間排序 */
+/**
+ * 職業在 20 秒那一格裡哪一秒付錢：格子起點的庫存加上這格的收入速率，算每種資源湊齊費用的時間，取最晚的
+ * （花費序列只有 20 秒一筆；直接用格子中間會讓反推的建造人數偏少）
+ */
+function payTime(s: Sample, ts: number, cost: { food: number; wood: number; gold: number; stone: number }) {
+  const g = s.gathered!
+  const i = g.t.findIndex((x) => x >= ts)
+  if (i < 0 || i + 1 >= g.t.length) return ts + 10
+  const dt = g.t[i + 1] - g.t[i]
+  let at = 0
+  for (const k of ['food', 'wood', 'gold', 'stone'] as const) {
+    const short = cost[k] - g.stock[k][i]
+    if (short <= 0) continue
+    const rate = (g[k][i + 1] - g[k][i]) / dt
+    at = Math.max(at, rate > 0 ? Math.min(dt, short / rate) : dt)
+  }
+  return ts + at
+}
+/**
+ * 紀錄裡有、但職業沒付錢的動作（照花費序列檢查，付不出來的不當目標）：
+ * 蒙古的建築可以打包搬家，重新架設也記成一筆建築；鄂圖曼軍事學校免費持續產兵，產出的兵也記成一筆單位
+ */
+const UNPAID: Record<string, { kind: 'build' | 'army'; label: string }> = { mongols: { kind: 'build', label: '搬家' }, ottomans: { kind: 'army', label: '軍事學校免費' } }
+// 2026-11-07：其他文明也檢查單位（免費產出的兵），111 場城堡 20 秒內 56 → 58 場，其他不變
+/** 模擬的建造人走到工地約幾秒（反推人數時扣掉） */
+const WALK = 6
+
 function goalsOf(data: CivData, s: Sample) {
   const end = s.ages[3] ?? s.ages[2]!
   const ageIds = new Set(Object.values(data.ageOptions).flat().map((o) => o.id))
@@ -56,6 +83,9 @@ function goalsOf(data: CivData, s: Sample) {
   const ageStart: Record<number, number> = {}
   /** 升代地標的建造人數（由職業的建造時間反推） */
   const builders: Record<number, number> = {}
+  // 工人的建造倍率（金朝鄉騎：地標 ×1.75、一般建築 ×2）：反推人數時要除掉，否則人數會多算
+  const wb = data.spec.workerSpecs?.[data.spec.worker ?? '']?.build
+  const bMul = { landmark: wb?.landmark ?? 1, other: wb?.other ?? 1 }
   for (const a of [2, 3]) {
     const done = s.ages[a]
     if (done == null) continue
@@ -72,7 +102,7 @@ function goalsOf(data: CivData, s: Sample) {
       if (ts != null && ts < done) {
         start = ts
         // 地標：由職業的建造時間反推派了幾個人（建造速度 (人數 + 2) ÷ 3），模擬照同樣人數蓋
-        if (opt.mode === 'building') builders[a] = Math.max(1, Math.min(15, Math.round((3 * opt.time) / Math.max(1, done - (ts + 10)) - 2)))
+        if (opt.mode === 'building') builders[a] = Math.max(1, Math.min(15, Math.round((3 * opt.time) / bMul.landmark / Math.max(1, done - payTime(s, ts, opt.cost) - WALK) - 2)))
       }
     }
     ageStart[a] = start
@@ -109,7 +139,7 @@ function goalsOf(data: CivData, s: Sample) {
       }
       if (ts != null && ts < t) {
         start = ts
-        nb = Math.max(1, Math.min(15, Math.round((3 * durOf(id)) / Math.max(1, t - (ts + 10)) - 2)))
+        nb = Math.max(1, Math.min(15, Math.round((3 * durOf(id)) / bMul.other / Math.max(1, t - payTime(s, ts, need) - WALK) - 2)))
       }
     }
     list.push({ key: after(id, start), done: t, goal: { kind: 'build', item: id, count: 1, at: Math.max(0, start) }, builders: nb })
@@ -135,14 +165,111 @@ function goalsOf(data: CivData, s: Sample) {
     const start = t - durOf(id)
     list.push({ key: after(id, start), done: t, goal: { kind: 'army', unit: id, count: unitCount.get(id)!, at: Math.max(0, start) } })
   }
+  /** 職業在 t 秒時的時代 */
+  const ageAt = (t: number) => ([4, 3, 2] as const).find((a) => s.ages[a] != null && t >= s.ages[a]!) ?? 1
   for (const [t, id] of s.techs) {
     if (t > end || !known(id)) continue
     if (ageIds.has(id) || data.items.get(id)!.kind !== 'technology') continue
+    // 時代還不到就出現的科技是送的（蒙古鹿石完成時給驛站網路），不是研究的
+    if (minAge(data.items.get(id)!) > ageAt(t)) {
+      skipped.add(`${id}（送的）`)
+      continue
+    }
     const start = t - durOf(id)
     list.push({ key: after(id, start), done: t, goal: { kind: 'tech', item: id, at: Math.max(0, start) } })
   }
+  // 照時間順序累計職業的花費，花費序列付不出來的那筆當成沒付錢（蒙古搬家：例如 4 秒內 3 座馬廄；鄂圖曼軍事學校免費產的兵）
+  // 其他文明：單位紀錄也照花費檢查（拜占庭競技場、蘭卡斯特伯爵衛隊、黃金部隊等免費產出的兵）
+  const unpaid = UNPAID[s.civ] ?? { kind: 'army' as const, label: '沒付錢' }
+  if (unpaid && s.gathered?.spent) {
+    const g = s.gathered
+    const spentBy = (k: 'food' | 'wood' | 'gold' | 'stone', at: number) => {
+      const i = g.t.findIndex((x) => x >= at)
+      return g.spent[k][i < 0 ? g.t.length - 1 : i]
+    }
+    const zeroC = { food: 0, wood: 0, gold: 0, stone: 0 }
+    const ageOpt = new Map(Object.values(data.ageOptions).flat().map((o) => [o.id, o]))
+    const costOfId = (id: string) => {
+      const o = ageOpt.get(id)
+      if (o) return o.cost
+      const it = data.items.get(id)
+      return it ? variationAt(it, Math.max(2, minAge(it))) : zeroC
+    }
+    // 職業所有的紀錄（村民、建築、單位、科技）都算進花費；只有要檢查的那一類可能被判定沒付錢
+    const recs = [
+      ...s.villagers.map(([t, id]) => ({ t, id, kind: 'vill' })),
+      ...s.buildings.map(([t, id]) => ({ t, id, kind: 'build' })),
+      ...s.units.map(([t, id]) => ({ t, id, kind: 'army' })),
+      ...s.techs.map(([t, id]) => ({ t, id, kind: 'tech' })),
+    ]
+      .filter((r) => r.t <= end + 60)
+      .sort((a, b) => a.t - b.t)
+    const keyOf = (kind: string, id: string, t: number) => `${kind}:${id}:${t}`
+    const goalKeys = new Set(list.map((x) => keyOf(x.goal.kind, x.goal.kind === 'army' ? x.goal.unit : x.goal.kind === 'age' ? '' : x.goal.item, x.done)))
+    const acc = { ...zeroC }
+    const res = ['food', 'wood', 'gold', 'stone'] as const
+    /** 判定沒付錢的紀錄：kind:id:秒 → 筆數 */
+    const free = new Map<string, number>()
+    let prev: { id: string; t: number; kind: string } | null = null
+    for (const r of recs) {
+      let c = costOfId(r.id)
+      // 蒙古雙倍生產：同一秒出的第二名只付石頭（等於一名的總價）
+      if (data.spec.doubleProduce && (r.kind === 'army' || r.kind === 'vill') && prev && prev.id === r.id && prev.t === r.t && prev.kind === r.kind) {
+        c = { ...zeroC, stone: c.food + c.wood + c.gold }
+        prev = null
+      } else prev = r
+      // 要檢查的那一類裡，不是目標的紀錄（蒙古包等投放點、開局展開的城鎮中心）由模擬自己處理，不算進花費
+      if (r.kind === unpaid.kind && !goalKeys.has(keyOf(r.kind, r.id, r.t))) continue
+      if (r.kind === unpaid.kind && !res.every((k) => c[k] <= 0 || spentBy(k, r.t + 20) >= acc[k] + c[k] * 0.9)) {
+        const key = `${r.kind}:${r.id}:${r.t}`
+        free.set(key, (free.get(key) ?? 0) + 1)
+        continue
+      }
+      for (const k of res) acc[k] += c[k]
+    }
+    const drop = new Set<number>()
+    list.forEach((x, i) => {
+      const gl = x.goal
+      if (gl.kind !== unpaid.kind) return
+      const key = `${gl.kind}:${gl.kind === 'army' ? gl.unit : (gl as { item: string }).item}:${x.done}`
+      const n = free.get(key) ?? 0
+      if (n > 0) {
+        free.set(key, n - 1)
+        drop.add(i)
+      }
+    })
+    if (drop.size) {
+      for (const i of drop) {
+        const gl = list[i].goal
+        skipped.add(`${gl.kind === 'army' ? gl.unit : (gl as { item: string }).item}（${unpaid.label}）`)
+      }
+      const keep = list.filter((_, i) => !drop.has(i))
+      // 單位目標的數量是累計的：拿掉免費的之後重新編號
+      const n = new Map<string, number>()
+      for (const x of keep) if (x.goal.kind === 'army') {
+        n.set(x.goal.unit, (n.get(x.goal.unit) ?? 0) + 1)
+        x.goal = { ...x.goal, count: n.get(x.goal.unit)! }
+      }
+      list.length = 0
+      list.push(...keep)
+    }
+  }
   list.sort((a, b) => a.key - b.key)
   return { goals: list.map((x) => x.goal), proDone: list.map((x) => x.done), skipped: [...skipped], builders, extra, goalBuilders: list.map((x) => x.builders) }
+}
+
+function campRes(data: CivData, s: Sample, id: string, done: number): 'food' | 'wood' | 'gold' | 'stone' | undefined {
+  const rs = (['food', 'wood', 'gold', 'stone'] as const).filter((r) => data.spec.dropoff[r].includes(id))
+  if (rs.length < 2) return undefined
+  const g = s.gathered!
+  const at = (r: (typeof rs)[number], x: number) => {
+    const i = g.t.findIndex((y) => y >= x)
+    return g[r][i < 0 ? g.t.length - 1 : i]
+  }
+  // 只在訊號明確時才指定（每秒多 0.5 以上、而且是第二名的 3 倍以上）；開局同時蓋的營地、多用途的蒙古包分不出來，不指定
+  const gains = rs.map((r) => ({ r, d: (at(r, done + 60) - at(r, done)) / 60 - (at(r, done) - at(r, done - 40)) / 40 })).sort((a, b) => b.d - a.d)
+  const [a, b] = gains
+  return a.d >= 0.5 && a.d >= 3 * Math.max(0, b?.d ?? 0) ? a.r : undefined
 }
 
 function scriptOf(data: CivData, s: Sample): ReplayScript | null {
@@ -150,12 +277,15 @@ function scriptOf(data: CivData, s: Sample): ReplayScript | null {
   if (!g?.income) return null
   return {
     villagers: s.villagers.map(([t]) => t),
+    workerIds: s.villagers.map(([, id]) => id),
     officials: data.spec.officials ? s.units.filter(([, id]) => id === data.spec.officials!.unit).map(([t]) => t) : undefined,
     scholars: data.spec.scholars ? s.units.filter(([, id]) => id === data.spec.scholars!.unit).map(([t]) => t) : undefined,
+    support: Object.fromEntries((data.spec.support ?? []).map((su) => [su.unit, s.units.filter(([, id]) => id === su.unit).map(([t]) => t)])),
     farms: s.buildings.filter(([, id]) => id === data.spec.farm.id).map(([t]) => t),
     income: { t: g.t, food: g.food, wood: g.wood, gold: g.gold, stone: g.stone },
     // 投放點的完成時間減建造時間（一人蓋）當作開始蓋的時間
-    dropoffs: s.buildings.filter(([, id]) => isDropoff(data, id)).map(([t, id]) => ({ t: t - (data.items.get(id)?.variations[0]?.time ?? 20), id })),
+    // 同時收好幾種資源的投放點（採礦營地收金和石）：蓋好後 60 秒內收入速率增加最多的那種資源，就是這座營地給誰用的
+    dropoffs: s.buildings.filter(([, id]) => isDropoff(data, id)).map(([t, id]) => ({ t: t - (data.items.get(id)?.variations[0]?.time ?? 20), id, res: campRes(data, s, id, t) })),
     // 這個文明所有職業對局都沒有紀錄的投放點（圖格魯克工作象在摘要裡看不到）：照模擬自己的判斷蓋
     untracked: [...new Set(Object.values(data.spec.dropoff).flat())].filter((id) => !pro.samples.some((x: Sample) => x.civ === s.civ && x.buildings.some(([, b]) => b === id))),
   }
@@ -256,6 +386,7 @@ for (const s of pro.samples as Sample[]) {
     }
   }
   ;(row as Record<string, unknown>).lag = lag
+  if (process.env.GAME) for (const l of lag) console.log(`    累計差 ${clock(l.t)} 食${l.food} 木${l.wood} 金${l.gold} 石${l.stone} 村民${l.vills}`)
   // 職業開始升封建的時間：花費序列裡地標／升代科技的費用入帳（20 秒一筆，取那一格的起點）
   {
     const g = s.gathered!

@@ -289,6 +289,8 @@ export interface CivSpec {
   depositBonus?: { res: Res[]; mul: number }
   /** 打獵時另得黃金的比例（羅斯賞金） */
   huntGold: number
+  /** 羅斯賞金階級：打獵得到的賞金黃金累計到 at 後，食物採集 ×food、狩獵小屋產金 ×cabin（取最高一階） */
+  bountyTiers?: { at: number; food: number; cabin: number }[]
   landmarkCostMul: number
   /** 開局已擁有的建築（城鎮中心以外） */
   prebuilt: string[]
@@ -779,7 +781,8 @@ const SPECS: Record<string, CivSpec> = {
 { on: 'compound-of-the-defender', costMul: [{ kind: 'building', res: ['stone'], mul: 0.75 }] }],
     // 學者：清真寺／信仰圓頂訓練，駐紮後所有研究加速；第一座清真寺送 1 名
     scholars: { unit: 'scholar', at: ['mosque', 'dome-of-the-faith'], free: { mosque: 1 }, max: 8, costAt: { 'dome-of-the-faith': { gold: 80 } } },
-    minAgeOverride: { scholar: 1 },
+    // 虔誠：德里免費、135 秒，從黑暗時代就能研究（Fandom Piety 頁；目錄只有帝王版）
+    minAgeOverride: { scholar: 1, piety: 1 },
     civTechs: [
       { id: 'sanctity', requires: 'mosque' },
 
@@ -1645,15 +1648,19 @@ const SPECS: Record<string, CivSpec> = {
   ru: spec('ru', '羅斯', {
     start: { food: 200, wood: 200, gold: 100, stone: 0 },
     startNote: '開局 200 食物、200 木材、100 黃金、0 石頭，6 村民、1 斥候，城鎮中心旁 5 隻自有羊，人口 7/10，沒有特殊資源，賞金從 0 起算（Fandom、aoe4analyzer）。',
-    // 賞金一階（+10% 食物採集）約在 2:30–3:00 達成，之後整場至少一階，所以直接固定 ×1.1
-    gather: { all: 1, sheep: 1.1, berry: 1.1, hunt: 1.1, farm: 1.1, wood: 1, gold: 1, stone: 1 },
-    // 賞金：羊、鹿、野豬每 1 食物另得 0.1 黃金
+    // 賞金：羊、鹿、野豬每 1 食物另得 0.1 黃金；累計賞金 100／400／1000 時食物採集 +10／15／20%、狩獵小屋產金 +10／25／40%
+    // （Fandom Rus 頁，16.2.10604）。以前固定 ×1.1，回放時職業封建後期打鹿每秒 16 食物，模擬只有三分之二
     huntGold: 0.1,
+    bountyTiers: [
+      { at: 100, food: 1.1, cabin: 1.1 },
+      { at: 400, food: 1.15, cabin: 1.25 },
+      { at: 1000, food: 1.2, cabin: 1.4 },
+    ],
     // 克里姆林宮 20×20 格影響範圍（4×4 建築往外 8 格）內的伐木場投放木材 +20%：等同採集 ×1.2，只算範圍內的伐木點（Fandom Kremlin 頁）
     zones: [{ building: 'kremlin', res: 'wood', mul: 1.2, radius: 8, half: 2 }],
     dropoff: { food: ['hunting-cabin'], wood: ['lumber-camp'], gold: ['mining-camp'], stone: ['mining-camp'] },
     trickles: [
-      { building: 'hunting-cabin', perMin: { gold: 16 }, max: 3, note: '每座約 16 黃金/分（Fandom：20–25 棵樹 × 每棵 0.7–0.75），用賞金零階的數字，因為封建前付克里姆林宮黃金時還沒到一階。投放用的小屋也算在內，最多算 3 座（假設，後來蓋在鹿群旁的小屋標到的樹少）。賞金一、二、三階 +10/25/40% 與全部小屋 300（三階 420）/分的上限未建模。' },
+      { building: 'hunting-cabin', perMin: { gold: 16 }, max: 3, note: '每座約 16 黃金/分（Fandom：20–25 棵樹 × 每棵 0.7–0.75，賞金零階），賞金一、二、三階 ×1.1／1.25／1.4（bountyTiers）。投放用的小屋也算在內，最多算 3 座（假設，後來蓋在鹿群旁的小屋標到的樹少）。全部小屋 300（三階 420）/分的上限沒有計入（3 座最多 67/分，碰不到）。' },
       { building: 'high-trade-house', perMin: { gold: 200 }, max: 1, note: '地標，只有升城堡選它時才會蓋；不佔樹、不算進上限；Fandom 實測一般 190–250/分，取 200。每 60 秒生 1 隻鹿未建模。' },
     ],
     // 交易者是經濟單位；戰鬥僧侶是宗教單位（撿聖物、治療、加成），都不拿來自動湊軍隊
@@ -1670,9 +1677,9 @@ const SPECS: Record<string, CivSpec> = {
     bonuses: [
       { text: '開局 200 食物、200 木材、100 黃金，6 村民、1 斥候、5 隻羊', modeled: 'yes', source: 'https://ageofempires.fandom.com/wiki/Rus', note: 'Fandom 與 aoe4analyzer 一致，沒有官方修正記錄；第 13 季職業開局 0:30 兩座狩獵小屋＋一棟房屋剛好花完 200 木材。' },
       { text: '賞金：村民從羊、鹿、野豬每採 10 食物另得 1 黃金，並累計成賞金', modeled: 'yes', source: 'https://ageofempires.fandom.com/wiki/Patch_11.1.1201', note: '這是現行規則（11.1.1201 起），不是舊版比例；引擎採到就入帳，實際是投放時入帳，只差一趟。擊殺不給黃金。' },
-      { text: '賞金門檻 100／400／1000：食物採集 +10／15／20%（16.2.10604 從 5／10／15% 提高）', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/rus.json', note: '從開局就固定一階 ×1.1，套在羊、野果、獵物、農田；前 1000 動物食物其實是基礎速率（多算約 100 食物），二階（4000 動物食物）、三階未建模。是否含獵物、漁船資料沒寫明（信心中）。' },
+      { text: '賞金門檻 100／400／1000：食物採集 +10／15／20%（16.2.10604 從 5／10／15% 提高）', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/rus.json', note: '已計入（2026-11-07）：打獵賞金累計 100／400／1000 時（1000／4000／10000 動物食物）食物採集 ×1.1／1.15／1.2，套在羊、野果、獵物、農田。是否含漁船資料沒寫明（信心中）。以前固定一階 ×1.1，回放時封建後期打鹿的食物只有職業的三分之二。' },
       { text: '狩獵小屋取代磨坊（75 木材、35 秒），是食物投放點，也能訓練斥候', modeled: 'yes', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/rus.json', note: '目錄已列狩獵小屋為斥候的生產建築，第二隻斥候可以不佔城鎮中心。' },
-      { text: '狩獵小屋依 5 格內的樹木每 30 秒產金，每棵樹只算給第一座小屋；賞金一／二／三階 +10／25／40%，全部小屋上限 300（三階 420）黃金/分', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Hunting_Cabin', note: '每座固定 16 黃金/分、最多算 3 座，不隨賞金階級增加。每棵 0.7–0.75 黃金/分只有 Fandom 估算（未驗證，官方沒有公式）；15.1.6970 已砍 15%。' },
+      { text: '狩獵小屋依 5 格內的樹木每 30 秒產金，每棵樹只算給第一座小屋；賞金一／二／三階 +10／25／40%，全部小屋上限 300（三階 420）黃金/分', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Hunting_Cabin', note: '每座 16 黃金/分（賞金零階）、最多算 3 座，賞金階級 ×1.1／1.25／1.4 已計入。每棵 0.7–0.75 黃金/分只有 Fandom 估算（未驗證，官方沒有公式）；15.1.6970 已砍 15%。上限 300／420 碰不到，沒有計入。' },
       { text: '木堡（150 木材、60 秒）與克里姆林宮影響範圍內，伐木場、城鎮中心投放木材 +20%', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/civilizations/rus.json', note: '克里姆林宮 8 格內的伐木點投放 +20%（近似成採集 ×1.2），搜尋決定蓋在哪條林線旁或農田區（城鎮中心旁散樹）；木堡沒有計入。' },
       { text: '克里姆林宮徵召民兵：每 80 秒 1 張券，30 食物換 2 名民兵戟兵，城堡時代起再加 1 名民兵手砲兵（16.1.9737）', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Kremlin', note: '每 80 秒 1 張券（完成後要等 80 秒才有第一張，可累積），每次徵召付 30 食物、要有空人口，換 2 名民兵戟兵（Fandom Kremlin 頁）。城堡時代起多 1 名民兵手砲兵，但目錄沒有這個單位，沒有建模。' },
       { text: '金門：完成時 1 張、之後每 50 秒 1 張交易券，100 食物／木材／石頭換 150 黃金，或 100 黃金換 150', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/The_Golden_Gate', note: '完成時 1 張、之後每 50 秒 1 張交易券（Fandom The Golden Gate 頁）；每張立刻用掉：缺黃金時賣 100 真正多出來的食物／木材／石頭換 150 黃金，黃金多時花 100 黃金買 150 當下最缺的資源，都不划算就跳過（實際可以累積交易券）。' },
@@ -1691,15 +1698,11 @@ const SPECS: Record<string, CivSpec> = {
     // 塔屋（175 木材、60 秒）+15 人口，職業開局 0:00 就蓋，取代第一座房屋。思凱塔是否也 +15 沒有來源，先不算。
     popBuildings: { 'tower-house': 15 },
     // 高地牛：每頭吃野果每分鐘 30 食物、0 人口、不需攜帶、不耗野果。上限 9 頭（含開局免費的 1 頭）。
-    // 免費那頭掛在首都城鎮中心（開局就存在，搜尋不會另外蓋），其餘 8 頭平均攤到 2 座塔屋，每座 4 頭 = 120 食物/分。
+    // 免費那頭掛在首都城鎮中心（開局就存在，搜尋不會另外蓋）；其餘 8 頭是塔屋訓練的收入單位（support），搜尋決定訓練幾頭。
     trickles: [
       { building: 'capital-town-center', perMin: { food: 30 }, max: 1, note: '開局免費的 1 頭高地牛（0 人口、不花錢），0:00 走去野果，從開局就算每分鐘 30 食物（實際約 0:05 起）。Fermtouns and Pastures +20% 沒計入。' },
-      { building: 'tower-house', perMin: { food: 120 }, max: 2, note: '近似：每座塔屋 4 頭訓練出的高地牛（4 × 30），最多 2 座，加上免費那頭 = 上限 9。4 頭牛的 300 食物 100 黃金用 costOverride 併進塔屋花費，塔屋完工就滿收入（實際每 25 秒在塔屋多 1 頭、還要走到野果）。高地地標每座 +4 上限、Fermtouns and Pastures +20% 都沒計入。' },
     ],
     costOverride: {
-      // 目錄塔屋是 175 木材（正確）；這裡把 4 頭高地牛（各 75 食物 25 黃金）併進塔屋，搭配 trickles 的 120 食物/分（同馬利牧牛場的做法）。
-      // 代價：職業 0:00 就蓋的塔屋要等湊滿 300 食物，人口可能要先補一座房屋。目錄或引擎能訓練高地牛之後要拿掉。
-      'tower-house': { food: 300, wood: 175, gold: 100 },
       // kirkman-3 是燉魚池送的那 1 名教士，目錄卻當成集結大廳 0 成本、2 秒可訓練的單位；套成 kirkman-2 的 150 黃金、30 秒，避免免費洗教士（kirkman-3 的人口仍是 0）。
       kirkman: { gold: 150, time: 30 },
     },
@@ -1743,12 +1746,17 @@ const SPECS: Record<string, CivSpec> = {
       { id: 'wallaces-rally' },
 { id: 'fermtouns-and-pastures' }],
     // 教士：在命運之石、修道院訓練（150 黃金、30 秒、1 人口），放下魚池後每分鐘 40 黃金（Fandom Kirkman 頁）；魚池上限 = 1 + 低地地標數（命運之石、斯諾當門、杜恩艾丁各 +1）
-    support: [{ unit: 'kirkman', at: ['stone-of-destiny', 'monastery'], max: 4, perMin: { gold: 40 }, maxFrom: { base: 1, per: ['stone-of-destiny', 'snowdoun-gate', 'dhun-eideann'] } }],
+    support: [
+      { unit: 'kirkman', at: ['stone-of-destiny', 'monastery'], max: 4, perMin: { gold: 40 }, maxFrom: { base: 1, per: ['stone-of-destiny', 'snowdoun-gate', 'dhun-eideann'] } },
+      // 高地牛：塔屋或思凱塔訓練（目錄 75 食物 25 黃金、25 秒、0 人口），每頭每分鐘 30 食物；Fermtouns and Pastures +20%。
+      // 2026-11-07 以前把 4 頭牛併進塔屋花費（300 食物 175 木材 100 黃金），回放時職業 0:20 只花 175 木材的塔屋要等湊滿食物，蘇格蘭封建晚 20 秒
+      { unit: 'highland-cattle', at: ['tower-house', 'tower-of-skye'], max: 8, perMin: { food: 30 }, mulOn: [{ on: 'fermtouns-and-pastures', mul: 1.2 }] },
+    ],
     bonuses: [
       { text: '開局 200 食物 / 200 木材 / 100 黃金（木材 +50），6 村民 + 1 斥候 + 5 隻羊，另送 1 頭高地牛（0 人口）', modeled: 'yes', source: 'https://aoe4analyzer.app/guide/scots', note: '資源與人口已計入；免費高地牛當作首都城鎮中心的每分鐘 30 食物，從 0:00 起算。木材 200 有 Niki45nk、Mango、BeastyQT 的 0:00 塔屋（175 木材）算術佐證；食物 200、黃金 100 只有 AoE4 Analyzer 一個來源（未驗證）。' },
-      { text: '塔屋取代前哨：175 木材、60 秒、+15 人口，可訓練高地牛與吉利服', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/scots.json', note: '+15 人口已計入。為了扣高地牛的花費，塔屋花費改成 300 食物 175 木材 100 黃金（含 4 頭牛），所以引擎不會像職業開局那樣 0:00 就蓋。塔屋本身的訓練佇列沒有建模；思凱塔也算塔屋，是否 +15 人口沒有來源，未計入。' },
-      { text: '高地牛吃野果：每頭每分鐘 30 食物，不需攜帶、不耗野果；75 食物 25 黃金、25 秒、0 人口，上限 9 頭（含免費那頭），每座高地地標 +4', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/units/scots.json', note: '免費 1 頭 + 每座塔屋 4 頭（花費併進塔屋）、最多 2 座 = 9 頭。塔屋完工就一次滿 4 頭，沒有逐頭 25 秒的訓練；高地地標 +4 上限（13 / 17 / 21）沒計入；牛佔用的野果村民仍可採，可能重複計算。免費牛算在上限內（建造順序 1 + 5 = 6/6）。' },
-      { text: 'Fermtouns and Pastures（磨坊，封建，100 木材 250 黃金、45 秒）：農田 +20%、高地牛 +20%', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/technologies/scots.json', note: '農田 +20% 已計入；高地牛的收入是固定的 trickles，+20% 沒有套上去。Corvinus1 實測每頭 37 食物/分，比 36 多 1，原因不明。' },
+      { text: '塔屋取代前哨：175 木材、60 秒、+15 人口，可訓練高地牛與吉利服', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/buildings/scots.json', note: '+15 人口已計入，用目錄的 175 木材（2026-11-07 起不再把高地牛併進花費）。塔屋同時是高地牛的生產建築；思凱塔也算塔屋，是否 +15 人口沒有來源，未計入。' },
+      { text: '高地牛吃野果：每頭每分鐘 30 食物，不需攜帶、不耗野果；75 食物 25 黃金、25 秒、0 人口，上限 9 頭（含免費那頭），每座高地地標 +4', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/units/scots.json', note: '免費 1 頭（首都城鎮中心的每分鐘 30 食物）+ 塔屋逐頭訓練（75 食物 25 黃金、25 秒，搜尋決定幾頭，最多 8 頭）。走到野果的時間、高地地標 +4 上限（13 / 17 / 21）沒計入；牛佔用的野果村民仍可採，可能重複計算。免費牛算在上限內（建造順序 1 + 5 = 6/6）。' },
+      { text: 'Fermtouns and Pastures（磨坊，封建，100 木材 250 黃金、45 秒）：農田 +20%、高地牛 +20%', modeled: 'approx', source: 'https://raw.githubusercontent.com/aoe4world/data/main/technologies/scots.json', note: '農田 +20%、訓練的高地牛 +20% 已計入（免費那頭沒有套）。Corvinus1 實測每頭 37 食物/分，比 36 多 1，原因不明。' },
       { text: '教士魚池：教士（150 黃金、30 秒、1 人口）放下魚池後每分鐘 40 黃金，附近工人採集 +10%（燉魚池後 +20%）', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Kirkman', note: '搜尋決定訓練幾名教士（命運之石或修道院，150 黃金、30 秒、1 人口），每名放魚池後每分鐘 40 黃金（Fandom Kirkman 頁）。魚池上限：每座低地地標 +1（Fandom 命運之石、斯諾當門頁），基礎值沒有寫，依職業只有命運之石就放 2 座推為 1。附近村民採集 +10% 的範圍沒有公開，沒有建模；燉魚池沒有建模。' },
       { text: '命運之石（低地封建地標）：8 格內建造的建築返還 30% 建造費為黃金（地標與城牆除外）', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Stone_of_Destiny', note: '近似：命運之石完成後，家附近（距城鎮中心 12 格內）完成的非地標建築與農田返還 30% 花費為黃金；遠處的投放點不算。' },
       { text: '艾爾斯修道院（高地封建地標）：聖物所在的一座軍事或科技建築生產與研究速度 +135%', modeled: 'approx', source: 'https://ageofempires.fandom.com/wiki/Abbey_of_the_Isles', note: '聖物所在的一棟生產與研究速度 +135%（時間 ÷2.35，Fandom Abbey of the Isles 頁）；近似：聖物一直放在最早蓋好的那一棟軍事或科技建築（實際可以搬，搬動冷卻 2 分鐘）。7 格治療光環不影響規劃。' },

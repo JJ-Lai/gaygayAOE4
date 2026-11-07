@@ -42,6 +42,11 @@ const SPEED = 1.125
 const ECO_WEIGHT = 0.01
 /** 控制器規則的預設參數（policy.ctl 可覆蓋，由搜尋調整）；setup = 選採集點時把走路與蓋投放點的一次性時間攤到多少秒的採集上 */
 // look = 分配人力時往後看幾秒的花費（職業對局重跑比對：0 → 180 讓城堡偏差從 +80～+250 秒降到 +50～+70 秒，2026-11-07）
+/**
+ * 回放：動作在職業開始時間前幾秒就算「快到了」，保證有人採它缺的資源（職業付錢前就在存）。
+ * 2026-11-07 用 111 場試 0/10/20/30/45/60 秒：30 秒封建誤差中位數 11 → 6 秒、20 秒內 87 → 104 場，城堡不變
+ */
+const PEND_LEAD = 30
 const CTL = { rebalance: 8, move: 0.15, hyst: 3, setup: 120, camp: 6, houseLead: 12, farmLead: 90, look: 180 }
 const HUNT_CARRY = 25
 const RES_OF: Record<SiteKind | 'farm', Res> = {
@@ -244,12 +249,14 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     // 時間已到、還沒開始的動作缺的錢也要補（只追收入曲線時，差幾塊錢就會卡住：職業錢夠了就不再採，模擬少一點就永遠湊不齊）
     // 只看最早一個時間已到、還沒開始的動作（全部加總會把後面好幾批兵的花費都算進來，分配一直來回切換）
     const pend = zero()
+    pendAge = false
     for (let k = cur; k < steps.length; k++) {
       const st = steps[k]
       // 已完成的步驟（隱含的生產建築已經有了）不算
-      if (started.has(k) || stepDone[k] != null || (st.earliest ?? 0) > t) continue
+      if (started.has(k) || stepDone[k] != null || (st.earliest ?? 0) > t + PEND_LEAD) continue
       const c = stepCost(st)
       for (const r of RES) pend[r] += c[r]
+      pendAge = st.kind === 'age'
       break
     }
     for (const r of RES) {
@@ -260,6 +267,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   }
   /** 回放：時間已到的動作還缺的資源（分配時保證有人採） */
   const pendShort = zero()
+  let pendAge = false
   const ctl = { ...CTL, ...policy.ctl }
   const efficiency = opts.efficiency ?? 1
   const events: PlanEvent[] = []
@@ -457,6 +465,14 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
   const vilCap = () => (spec.freeVillagers ? spec.freeVillagers.base + spec.freeVillagers.perHouse * houses() : Infinity)
 
   const workerItem = (): CatalogItem | undefined => {
+    // 回放：第 k 名村民照職業訓練的種類（金朝職業會混著訓普通村民與鄉騎）
+    if (script?.workerIds) {
+      let n = blds.reduce((a, b) => a + (b.job?.kind === 'vill' ? b.job.count : 0), 0) - startVillagers
+      for (const v of workerCount.values()) n += v
+      const id = script.workerIds[Math.max(0, Math.min(n, script.workerIds.length - 1))]
+      const it = id && (id === spec.worker || id === spec.fallbackWorker) ? items.get(id) : undefined
+      if (it) return it
+    }
     const inTraining = blds.reduce((n, b) => n + (b.job?.kind === 'vill' && b.job.item === spec.worker ? b.job.count : 0), 0)
     const cap = spec.workerCap + (spec.trade?.tributary?.workerCap ?? 0) * tribs.length
     if (spec.fallbackWorker && (workerCount.get(spec.worker) ?? 0) + inTraining >= cap) return items.get(spec.fallbackWorker)
@@ -653,6 +669,12 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     spec.inspire && x === inspireSite && x.workers > 0 ? 1 + ((spec.inspire.mul - 1) * Math.min(spec.inspire.villagers, x.workers)) / x.workers : 1
 
   let globalMul = 1
+  /** 羅斯賞金目前的階級（打獵得到的賞金黃金累計） */
+  const bountyTier = () => {
+    let best: { food: number; cabin: number } | undefined
+    for (const x of spec.bountyTiers ?? []) if (huntDone * spec.huntGold >= x.at) best = x
+    return best
+  }
 
   const rawRate = (x: SiteSt) => {
     const g = spec.gather
@@ -688,7 +710,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         r = 0.75 * g.stone * mods.stone * wmul.stone
     }
     const tk: keyof Gather = x === farm || x.farmLike ? 'farm' : x.s.kind === 'deer' || x.s.kind === 'boar' ? 'hunt' : x.s.kind
-    return r * (x.mul ?? 1) * g.all * globalMul * zoneMul(x) * inspireAt(x) * tGather.all * tGather[tk] * efficiency * (supervisedRes.has(x.res) && supervisable(x) ? 1.2 : 1)
+    return r * (x.mul ?? 1) * (x.res === 'food' ? (bountyTier()?.food ?? 1) : 1) * g.all * globalMul * zoneMul(x) * inspireAt(x) * tGather.all * tGather[tk] * efficiency * (supervisedRes.has(x.res) && supervisable(x) ? 1.2 : 1)
   }
 
   const dropDist = (x: SiteSt) => {
@@ -781,18 +803,33 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
 
   const needsCamp = (x: SiteSt) => x !== sheep && x !== farm && x.camp === 0 && x.s.dist > ctl.camp && !(x.res === 'wood' && spec.woodInstant)
 
+  /** 回放：職業蓋的投放點座數夠不夠讓模擬再蓋一座（照投放點建築本身算座數：採礦營地同時收金和石，不能各算一次） */
+  const scriptAllowsCamp = (it: CatalogItem, x: SiteSt) => {
+    // 開局免費的投放點、本身是單位的投放點（圖格魯克工作象）不在職業的建築紀錄裡，不受限制
+    if (!script || it.kind === 'unit' || script.untracked?.includes(it.id) || freeDropUsed < spec.freeDropoffs) return true
+    // 知道職業那座營地是給哪種資源用的（採礦營地：金或石），就分開算座數
+    const resOf = (b: Bld) => sites.find((y) => y.s.id === b.siteId)?.res
+    const proN = script.dropoffs.filter((d) => d.t <= t && d.id === it.id && (!d.res || d.res === x.res)).length
+    const simN = blds.filter((b) => b.role === 'camp' && b.item === it.id && (!script.dropoffs.some((d) => d.id === it.id && d.res) || resOf(b) === x.res)).length
+    return proN > simN
+  }
   /** 有木材就派這名村民去蓋投放點；回傳是否成功 */
   const tryCamp = (x: SiteSt, from: string) => {
-    const it = campItem(x.res)
-    if (!it) return false
-    // 回放：職業還沒蓋這種投放點就不蓋營地（例如只去採一趟石頭，走回城鎮中心投放）
-    // 照投放點建築本身算座數（採礦營地同時收金和石，不能各算一次）。
-    // 開局免費的投放點、本身是單位的投放點（圖格魯克工作象）不在職業的建築紀錄裡，不受限制
-    if (script && it.kind !== 'unit' && !script.untracked?.includes(it.id) && freeDropUsed >= spec.freeDropoffs) {
-      const proN = script.dropoffs.filter((d) => d.t <= t && d.id === it.id).length
-      const simN = blds.filter((b) => b.role === 'camp' && b.item === it.id).length
-      if (proN <= simN) return false
+    // 回放：職業還沒蓋這種投放點就不蓋營地（例如只去採一趟石頭，走回城鎮中心投放）。
+    // 有好幾種投放點時（蘭開斯特：磨坊或莊園），用職業蓋了的那一種；以前只看第一種，職業不蓋磨坊時鹿群一直沒有投放點
+    let it = campItem(x.res)
+    if (script && it && !scriptAllowsCamp(it, x)) {
+      it = null
+      for (const id of spec.dropoff[x.res]) {
+        const y = items.get(id)
+        // 只換成職業真的蓋過的那種（紀錄裡沒有的投放點，例如馬其頓大酒莊，不拿來替代）
+        if (y && minAge(y) <= age && script.dropoffs.some((d) => d.id === id) && scriptAllowsCamp(y, x)) {
+          it = y
+          break
+        }
+      }
     }
+    if (!it) return false
     const v = variationAt(it, age)
     // 開局送的投放點（圖格魯克的工作象）不用錢
     const isFree = freeDropUsed < spec.freeDropoffs
@@ -1060,6 +1097,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     const short = new Map<string, number>()
     steps.forEach((st, i) => {
       if (st.kind !== 'army' || stepDone[i] != null) return
+      // 回放：只留時間已到的兵的人口（職業的兵是陸續出的、也會陣亡；全部預留的話，蘭開斯特 135 名兵會讓村民卡在 32 名）
+      if (script && (st.earliest ?? 0) > t) return
       short.set(st.item, Math.max(short.get(st.item) ?? 0, st.count - armyHave(st.item)))
     })
     for (const [id, k] of short) {
@@ -1264,6 +1303,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     // 還要蓋的光環建築（蓄水池）
     for (const z of spec.zones ?? []) {
       if (!z.max || (z.requires && !fired.has(z.requires) && !owned(z.requires))) continue
+      // 回放：職業蓋的光環建築本來就是目標，不另外多蓋（以前拜占庭開局多蓋 1 座蓄水池，100 石頭）
+      if (script && steps.some((st) => st.kind === 'build' && st.item === z.building)) continue
       const it = items.get(z.building)
       if (!it || minAge(it) > age) continue
       if (blds.filter((b) => b.item === z.building).length >= Math.min(z.max, zonePlan(spec, policy, map, z.building).length)) continue
@@ -1408,7 +1449,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         const x = bestSite(r)
         const rate = x ? effRate(x, true) : 0
         if (rate <= 0) continue
-        const want = Math.min(N, Math.max(1, Math.ceil(pendShort[r] / (rate * 30))))
+        // 已經在採的人不調走，直到錢湊齊（照缺口重算人數的話，缺口越小人越少，最後幾十塊要拖很久）
+        const want = Math.min(N, Math.max(1, Math.ceil(pendShort[r] / (rate * 30)), pendAge ? c[r] : 0))
         while (tgt[r] < want) {
           const donor = RES.filter((y) => y !== r && tgt[y] > 0 && pendShort[y] <= 0).sort((a, b) => tgt[b] - tgt[a])[0]
           if (!donor) break
@@ -1561,7 +1603,15 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
       // 長屋 150 木材、30 秒：比一般房屋多留 2 名村民的時間來湊木材
       if (villagers + Math.ceil((lead * scale * tcList().length) / trainTime()) + 3 + policy.houseBuffer >= capV) return true
     }
-    const projected = Math.min(200, popCap() + pending * spec.housePop)
+    // 蓋到一半、或時間快到的加人口建築（蘇格蘭塔屋 +15）也算：職業 0:03 蓋塔屋就不另蓋房屋
+    let soon = 0
+    for (const [id, p] of Object.entries(spec.popBuildings ?? {})) {
+      soon += blds.filter((b) => !b.done && b.item === id).length * p
+      if (script) steps.forEach((st, i) => {
+        if (st.kind === 'build' && st.item === id && !started.has(i) && stepDone[i] == null && (st.earliest ?? 0) <= t + lead) soon += p
+      })
+    }
+    const projected = Math.min(200, popCap() + pending * spec.housePop + soon)
     return projected < 200 && cpop() + buffer >= projected
   }
 
@@ -1840,14 +1890,29 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
           const horse = !!spec.horses && horses >= 1 && spec.horses.at.includes(b.item) && v.cls.includes(spec.horses.cls)
           if (horse) for (const [r, x] of Object.entries(spec.horses!.discount)) c[r as Res] = Math.max(0, c[r as Res] - (x ?? 0))
           if (!affordable(c) || !hasOther(otherOf(v), batch) || cpop() + v.pop * batch + villRoom > popCap()) break
+          // 蒙古敖包範圍內雙倍生產：同一格出 2 倍、時間不變，原價付一次，另付等於這批總價的石頭（例如怯薛 120 食物 80 黃金 + 200 石頭、斥候 65 食物 + 65 石頭；
+          // 2026-11 職業花費序列與 16.1.9737 斥候修正吻合）。白塔石頭減半。回放：職業同時訓練一對才用；其他時候照搜尋的 policy.double
+          let mult = 1
+          const dp = spec.doubleProduce
+          if (dp && owned(dp.requires) && !horse) {
+            const stone = (c.food + c.wood + c.gold) * (owned('the-white-stupa') ? 0.5 : 1)
+            const pair = script
+              ? steps.some((y, j) => j > i && y.kind === 'army' && y.item === st.item && Math.abs((y.earliest ?? 0) - (st.earliest ?? 0)) <= 2 && y.count >= armyHave(st.item) + 2 * batch)
+              : !!policy.double && st.count - armyHave(st.item) >= 2 * batch
+            if (pair && bank.stone >= c.stone + stone && cpop() + 2 * v.pop * batch + villRoom <= popCap()) {
+              c.stone += stone
+              mult = 2
+            }
+          }
           pay(c)
           addMilSpend(c)
           payOther(otherOf(v), batch)
           if (horse) horses -= 1
-          b.job = { kind: 'unit', item: st.item, ...(horse ? { end: t, supervised: false } : supervise(b, ub.time * pm.time)), count: batch, step: i, pop: v.pop * batch, dur: ub.time * pm.time }
-          armyPop += v.pop * batch
-          queued.set(i, (queued.get(i) ?? 0) + batch)
-          log('train', `訓練${name(st.item)}`, st.item, c)
+          const n = batch * mult
+          b.job = { kind: 'unit', item: st.item, ...(horse ? { end: t, supervised: false } : supervise(b, ub.time * pm.time)), count: n, step: i, pop: v.pop * n, dur: ub.time * pm.time }
+          armyPop += v.pop * n
+          queued.set(i, (queued.get(i) ?? 0) + n)
+          log('train', `訓練${name(st.item)}${mult > 1 ? ` ×${n}（雙倍生產）` : ''}`, st.item, c)
         }
         advanced = armyHave(st.item) >= st.count
       } else if (st.kind === 'tech') {
@@ -2074,7 +2139,11 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
     // 4f. 有收入的輔助單位（教士、僧侶）
     for (const su of spec.support ?? []) {
       const cap = su.maxFrom ? Math.min(su.max, su.maxFrom.base + su.maxFrom.per.filter((id) => owned(id)).length) : su.max
-      const want = Math.min(cap, policy.support?.[su.unit] ?? 0)
+      // 回放：照職業訓練的時間（出生時間減訓練時間）
+      const st = script?.support?.[su.unit]
+      const it0 = items.get(su.unit)
+      const due = st && it0 ? st.filter((x) => x - variationAt(it0, Math.max(age, minAge(it0))).time <= t).length : Infinity
+      const want = Math.min(cap, policy.support?.[su.unit] ?? 0, due)
       if (want <= (supportN.get(su.unit) ?? 0) + (supportTraining.get(su.unit) ?? 0)) continue
       if (su.requires && !owned(su.requires) && !researched.has(su.requires)) continue
       const it = items.get(su.unit)
@@ -2981,10 +3050,19 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         if (!hit) continue
         if (bp.requires && !owned(bp.requires)) continue
         addRes(bp.to, amt * bp.ratio * specialMul(x, bp.to))
+        // 副產品也是收入（職業的累計收入 = 花費 + 庫存 − 開局，含副產品）
+        if ((RES as string[]).includes(bp.to)) incomeAcc[bp.to as Res] += amt * bp.ratio * specialMul(x, bp.to)
         if (!(RES as string[]).includes(bp.to)) specialGathered[bp.to] = (specialGathered[bp.to] ?? 0) + amt * bp.ratio * specialMul(x, bp.to)
       }
-      if (spec.depositBonus && spec.depositBonus.res.includes(x.res)) bank[x.res] += amt * (spec.depositBonus.mul - 1)
-      if ((x.s.kind === 'deer' || x.s.kind === 'boar' || x === sheep) && spec.huntGold) bank.gold += amt * spec.huntGold
+      if (spec.depositBonus && spec.depositBonus.res.includes(x.res)) {
+        bank[x.res] += amt * (spec.depositBonus.mul - 1)
+        incomeAcc[x.res] += amt * (spec.depositBonus.mul - 1)
+      }
+      // 羅斯賞金：獵物每 10 食物 1 黃金。以前只進庫存、沒算進收入，回放以為黃金落後職業，派人去挖職業根本沒挖的金礦
+      if ((x.s.kind === 'deer' || x.s.kind === 'boar' || x === sheep) && spec.huntGold) {
+        bank.gold += amt * spec.huntGold
+        incomeAcc.gold += amt * spec.huntGold
+      }
       if (x.left <= 0 && x !== farm) {
         for (let k = 0; k < x.workers; k++) free.push({ from: x.s.id })
         x.workers = 0
@@ -3517,7 +3595,7 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
         }
       }
       for (const [k, perMin] of Object.entries(tr.perMin)) {
-        const amt = ((perMin ?? 0) * n * (tr.ageMul?.[age - 1] ?? 1) * mulOnOf(tr.mulOn)) / 60
+        const amt = ((perMin ?? 0) * n * (tr.ageMul?.[age - 1] ?? 1) * mulOnOf(tr.mulOn) * (spec.bountyTiers && tr.building === 'hunting-cabin' ? (bountyTier()?.cabin ?? 1) : 1)) / 60
         addRes(k, amt)
         if ((RES as string[]).includes(k)) incomeAcc[k as Res] += amt
       }
