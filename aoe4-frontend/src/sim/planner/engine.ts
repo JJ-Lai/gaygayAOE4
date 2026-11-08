@@ -54,11 +54,11 @@ const PEND_LEAD = 30
  */
 const IN_HAND = false
 /**
- * 回放：職業下一座投放點的花費、下一筆市場交易要付的錢也保證有人採。預設關閉：
- * 搭配 IN_HAND 時修好了個別場次（蘇格蘭封建 +48 → +13、戰國 +55 → 正常），但整體封建 20 秒內只到 89／111；
- * 不開 IN_HAND 時誤差中位數小一點、20 秒內的場次卻從 106 降到 100。等 IN_HAND 的問題找到後再一起打開。
+ * 回放：職業下一座投放點的花費、下一筆市場交易要付的錢也保證有人採（營地、交易不是步驟，以前差幾塊錢就沒人補：
+ * 鄂圖曼一場軍事學校後木材 48、差 2 塊蓋不了採礦營地，到 3:34 才蓋，封建晚 35 秒）。
+ * 2026-11-08 搭配「往後看只看到下一次升代」後打開：封建平均誤差 5.3 → 5.0 秒、20 秒內 108 → 109 場，城堡 6.1 → 6.3 秒
  */
-const DROP_GUARD = false
+const DROP_GUARD = true
 /**
  * 回放：往後看幾秒內的建築、科技、升代（不含兵），一起算要幾人採（見分配）。以前只保證最早一個動作，
  * 後面的動作沒人預先準備，到時錢不夠、資源分配錯（多半是黃金少 15～50、食物木材多）。
@@ -1539,6 +1539,8 @@ export function simulate(data: CivData, map: GameMap, steps: Step[], policy: Pol
           for (const r of RES) acc[r] += cst[r]
           const dt = Math.max(30, (st.earliest ?? 0) - t)
           for (const r of RES) if (perW[r] > 0 && acc[r] > bank[r]) needW[r] = Math.max(needW[r], (acc[r] - bank[r]) / (perW[r] * dt))
+          // 只看到下一次升代為止：職業先存升代的錢、付完才去採後面要的（以前把後面馬廄的木材也算進來，蒙古兩場封建晚 22～28 秒）
+          if (st.kind === 'age') break
         }
       }
       for (const r of RES) {
