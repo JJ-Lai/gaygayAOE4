@@ -1,12 +1,12 @@
 {
   "profileId": 10861747,
-  "extractedAt": "2026-11-07T16:14:29.857Z",
+  "extractedAt": "2026-11-15T10:26:55.697Z",
   "gameDir": "C:\\Users\\e1252\\OneDrive\\文件\\My Games\\Age of Empires IV",
   "counts": {
-    "total": 265,
+    "total": 267,
     "skirmish": 110,
     "custom": 135,
-    "localOnly": 10,
+    "localOnly": 12,
     "matchhistory": 10
   },
   "matches": [
@@ -7956,6 +7956,72 @@
           "name": "2 AI 中等",
           "civ": null,
           "profileId": null,
+          "result": "win"
+        }
+      ]
+    },
+    {
+      "id": "M261036649",
+      "gameId": 261036649,
+      "source": "network-local-only",
+      "mode": "custom",
+      "startedAtLocal": "2026/11/15 下午 03:33",
+      "startedAt": "2026-11-15T07:33:29.000Z",
+      "cachedAt": "2026-11-15T08:15:44.000Z",
+      "map": "megarandom",
+      "durationSec": 2535,
+      "civ": "japanese",
+      "result": "win",
+      "players": [
+        {
+          "name": "jerryjoshku",
+          "civ": "french",
+          "profileId": 10857013,
+          "result": "win"
+        },
+        {
+          "name": "Intolerant",
+          "civ": "scots",
+          "profileId": 10853087,
+          "result": "win"
+        },
+        {
+          "name": "李侑玲",
+          "civ": "japanese",
+          "profileId": 10861747,
+          "result": "win"
+        }
+      ]
+    },
+    {
+      "id": "M261041832",
+      "gameId": 261041832,
+      "source": "network-local-only",
+      "mode": "custom",
+      "startedAtLocal": "2026/11/15 下午 04:19",
+      "startedAt": "2026-11-15T08:18:34.000Z",
+      "cachedAt": "2026-11-15T09:03:57.000Z",
+      "map": "megarandom",
+      "durationSec": 2723,
+      "civ": "byzantine",
+      "result": "win",
+      "players": [
+        {
+          "name": "jerryjoshku",
+          "civ": "french",
+          "profileId": 10857013,
+          "result": "win"
+        },
+        {
+          "name": "Intolerant",
+          "civ": "jin_dynasty",
+          "profileId": 10853087,
+          "result": "win"
+        },
+        {
+          "name": "李侑玲",
+          "civ": "byzantine",
+          "profileId": 10861747,
           "result": "win"
         }
       ]
