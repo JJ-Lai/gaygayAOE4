@@ -1,12 +1,12 @@
 {
   "profileId": 10861747,
-  "extractedAt": "2026-11-15T10:26:55.697Z",
+  "extractedAt": "2026-11-22T04:26:46.944Z",
   "gameDir": "C:\\Users\\e1252\\OneDrive\\文件\\My Games\\Age of Empires IV",
   "counts": {
-    "total": 267,
+    "total": 270,
     "skirmish": 110,
     "custom": 135,
-    "localOnly": 12,
+    "localOnly": 15,
     "matchhistory": 10
   },
   "matches": [
@@ -8023,6 +8023,87 @@
           "civ": "byzantine",
           "profileId": 10861747,
           "result": "win"
+        }
+      ]
+    },
+    {
+      "id": "M261930767",
+      "gameId": 261930767,
+      "source": "network-local-only",
+      "mode": "custom",
+      "startedAtLocal": "2026/11/21 下午 10:18",
+      "startedAt": "2026-11-21T14:18:29.000Z",
+      "cachedAt": "2026-11-21T14:49:51.000Z",
+      "map": "megarandom",
+      "durationSec": 1882,
+      "civ": "sultanate_ha_tug",
+      "result": "loss",
+      "players": [
+        {
+          "name": "jerryjoshku",
+          "civ": "english",
+          "profileId": 10857013,
+          "result": "loss"
+        },
+        {
+          "name": "李侑玲",
+          "civ": "sultanate_ha_tug",
+          "profileId": 10861747,
+          "result": "loss"
+        }
+      ]
+    },
+    {
+      "id": "M261936905",
+      "gameId": 261936905,
+      "source": "network-local-only",
+      "mode": "custom",
+      "startedAtLocal": "2026/11/21 下午 10:52",
+      "startedAt": "2026-11-21T14:52:19.000Z",
+      "cachedAt": "2026-11-21T15:22:27.000Z",
+      "map": "megarandom",
+      "durationSec": 1808,
+      "civ": "sultanate_ha_tug",
+      "result": "loss",
+      "players": [
+        {
+          "name": "jerryjoshku",
+          "civ": "english",
+          "profileId": 10857013,
+          "result": "loss"
+        },
+        {
+          "name": "李侑玲",
+          "civ": "sultanate_ha_tug",
+          "profileId": 10861747,
+          "result": "loss"
+        }
+      ]
+    },
+    {
+      "id": "M261942292",
+      "gameId": 261942292,
+      "source": "network-local-only",
+      "mode": "custom",
+      "startedAtLocal": "2026/11/21 下午 11:25",
+      "startedAt": "2026-11-21T15:25:31.000Z",
+      "cachedAt": "2026-11-21T15:48:33.000Z",
+      "map": "dungeon",
+      "durationSec": 1382,
+      "civ": "sultanate_ha_tug",
+      "result": "loss",
+      "players": [
+        {
+          "name": "jerryjoshku",
+          "civ": "english",
+          "profileId": 10857013,
+          "result": "loss"
+        },
+        {
+          "name": "李侑玲",
+          "civ": "sultanate_ha_tug",
+          "profileId": 10861747,
+          "result": "loss"
         }
       ]
     }
